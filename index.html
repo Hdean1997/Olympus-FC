@@ -4963,7 +4963,7 @@ async function saveMyPlayerStatus(){
   try{
     const {error} = await supabaseClient.from("player_statuses").upsert({
       player_key:selectedProfilePlayerId,
-      status
+      status_message:status
     },{onConflict:"player_key"});
     if(error) throw error;
     playerStatuses[selectedProfilePlayerId] = status;
@@ -6469,11 +6469,11 @@ async function loadRemoteData(){
 
     const {data:statusRows,error:statusError} = await supabaseClient
       .from("player_statuses")
-      .select("player_key,status");
+      .select("player_key,status_message");
     if(statusError) throw statusError;
     playerStatuses = {};
     (statusRows || []).forEach(row => {
-      if(row.player_key) playerStatuses[row.player_key] = row.status || "";
+      if(row.player_key) playerStatuses[row.player_key] = row.status_message || "";
     });
 
     const {data:seasons,error:seasonError} = await supabaseClient
