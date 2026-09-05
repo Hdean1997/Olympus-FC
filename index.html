@@ -2199,6 +2199,22 @@ input[type="date"]::-webkit-date-and-time-value{
   </div>
 
   <div class="hub-section">
+    <div class="hub-heading">SUPABASE CONNECTION</div>
+
+    <div class="hub-card">
+      <div class="info-row">
+        <div class="info-label">Database</div>
+        <div id="supabaseConnectionStatus" class="info-value">Not configured</div>
+      </div>
+
+      <div class="info-row">
+        <div class="info-label">Players found online</div>
+        <div id="supabasePlayerCount" class="info-value">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hub-section">
     <div class="hub-heading">DATA & BACKUP</div>
 
     <div class="hub-card">
@@ -2640,7 +2656,18 @@ input[type="date"]::-webkit-date-and-time-value{
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+
+/* SUPABASE CONNECTION TEST
+   Paste ONLY your publishable key below.
+   Never put a secret/service_role key in this file.
+*/
+const SUPABASE_URL = "https://jkfzgyovjximsqglpdkr.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_lPcjKyOTOxjfSceyUUT6Mg_h-e1oATt";
+
+let supabaseClient = null;
 
 const players = [
   {id:"tyrone",name:"Tyrone Dean",number:40,position:"CM",nation:"England",captain:true},
@@ -5278,6 +5305,58 @@ function resetSeasonData(){
   );
 }
 
+/* SUPABASE TEST */
+
+async function testSupabaseConnection(){
+
+  const status = el("supabaseConnectionStatus");
+  const count = el("supabasePlayerCount");
+
+  if(!status || !count){
+    return;
+  }
+
+  if(
+    !window.supabase ||
+    !SUPABASE_PUBLISHABLE_KEY ||
+    SUPABASE_PUBLISHABLE_KEY.includes("PASTE_YOUR")
+  ){
+    status.textContent = "Add publishable key";
+    status.style.color = "#e8bd4b";
+    count.textContent = "—";
+    return;
+  }
+
+  status.textContent = "Connecting…";
+  status.style.color = "#9aa9bc";
+  count.textContent = "—";
+
+  try{
+    supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    const {data,error} = await supabaseClient
+      .from("players")
+      .select("id");
+
+    if(error){
+      throw error;
+    }
+
+    status.textContent = "Connected";
+    status.style.color = "#67d894";
+    count.textContent = Array.isArray(data) ? String(data.length) : "0";
+
+  }catch(error){
+    console.error("Supabase connection test failed:",error);
+    status.textContent = "Connection failed";
+    status.style.color = "#ff9ea6";
+    count.textContent = "—";
+  }
+}
+
 /* RENDER */
 
 function renderEverything(){
@@ -5292,6 +5371,7 @@ function renderEverything(){
 }
 
 renderEverything();
+testSupabaseConnection();
 
 </script>
 
