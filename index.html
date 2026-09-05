@@ -6675,14 +6675,20 @@ async function loadRemoteData(){
     setOnlineStatus("Loading…");
     await ensureRemoteLookups();
 
-    const {data:statusRows,error:statusError} = await supabaseClient
-      .from("player_statuses")
-      .select("player_key,status_message");
-    if(statusError) throw statusError;
+    // Player statuses are an optional profile feature. If this table has a
+    // permissions/schema problem, keep the main Olympus database connected.
     playerStatuses = {};
-    (statusRows || []).forEach(row => {
-      if(row.player_key) playerStatuses[row.player_key] = row.status_message || "";
-    });
+    try{
+      const {data:statusRows,error:statusError} = await supabaseClient
+        .from("player_statuses")
+        .select("player_key,status_message");
+      if(statusError) throw statusError;
+      (statusRows || []).forEach(row => {
+        if(row.player_key) playerStatuses[row.player_key] = row.status_message || "";
+      });
+    }catch(statusError){
+      console.warn("Player statuses could not be loaded:",statusError);
+    }
 
     const {data:seasons,error:seasonError} = await supabaseClient
       .from("seasons")
@@ -7104,7 +7110,7 @@ function renderEverything(){
   });
 }
 
-const OLYMPUS_APP_BUILD = "20260906-spotify-jam-3";
+const OLYMPUS_APP_BUILD = "20260906-spotify-jam-4";
 
 async function checkForAppUpdate(){
   try{
