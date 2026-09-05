@@ -37,6 +37,8 @@ button,.nav-item,.player-card,.stats-card{
 
 .app{
   min-height:100vh;
+  /* Keep all app content below the Dynamic Island / camera cutout in standalone mode. */
+  padding-top:env(safe-area-inset-top);
   padding-bottom:calc(165px + env(safe-area-inset-bottom));
 }
 
