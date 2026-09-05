@@ -2623,6 +2623,11 @@ input[type="date"]::-webkit-date-and-time-value{
     <div class="profile-section-title">RECENT LOGGED PERFORMANCES</div>
     <div id="profilePerformances"></div>
   </div>
+
+  <div class="player-profile-section">
+    <div class="profile-section-title">PLAYER OF THE NIGHT AWARDS</div>
+    <div id="profilePotnHistory"></div>
+  </div>
 </div>
 
 </div>
@@ -4194,6 +4199,7 @@ function blankPlayerTotal(){
     ratedAppearances:0,
     averageRating:null,
     potm:0,
+    potn:0,
     passes:null,
     passCompletion:null
   };
@@ -4285,6 +4291,21 @@ function calculatePlayerStats(){
       }
     });
   });
+
+  // Player of the Night awards come from completed Matchday votes.
+  // A tied vote gives one POTN award to each joint winner.
+  matchdaySessions
+    .filter(session =>
+      session.status === "ended" &&
+      (activeSeason === "ALL_TIME" || session.season === activeSeason)
+    )
+    .forEach(session => {
+      const potn = calculatePotnResult(session);
+      if(!potn.complete || !potn.winners.length) return;
+      potn.winners.forEach(winner => {
+        if(totals[winner.id]) totals[winner.id].potn++;
+      });
+    });
 
   players.forEach(player => {
 
@@ -4535,6 +4556,11 @@ function renderSquad(){
             <div class="mini-label">POTM</div>
           </div>
 
+          <div class="mini-stat">
+            <div class="mini-number">${stat.potn}</div>
+            <div class="mini-label">POTN</div>
+          </div>
+
         </div>
 
         <div class="profile-tap">
@@ -4732,6 +4758,11 @@ function renderStatsPage(){
             <div class="stats-box-label">POTM</div>
           </div>
 
+          <div class="stats-box">
+            <div class="stats-box-number">${stat.potn}</div>
+            <div class="stats-box-label">POTN</div>
+          </div>
+
           ${activeSeason === "FC26" ? `
             <div class="stats-box">
               <div class="stats-box-number">${FC26_BASELINE[player.id].passes ?? "—"}</div>
@@ -4890,6 +4921,11 @@ function renderPlayerProfile(){
       <div class="profile-stat-label">POTM</div>
     </div>
 
+    <div class="profile-stat-card">
+      <div class="profile-stat-value">${stat.potn}</div>
+      <div class="profile-stat-label">POTN</div>
+    </div>
+
     ${activeSeason === "FC26" ? `
       <div class="profile-stat-card">
         <div class="profile-stat-value">${FC26_BASELINE[player.id].passes ?? "—"}</div>
@@ -4918,6 +4954,34 @@ function renderPlayerProfile(){
       </div>
     ` : ""}
   `;
+
+  const potnAwards = matchdaySessions
+    .filter(session =>
+      session.status === "ended" &&
+      (activeSeason === "ALL_TIME" || session.season === activeSeason)
+    )
+    .map(session => ({session,result:calculatePotnResult(session)}))
+    .filter(item => item.result.complete && item.result.winners.some(winner => winner.id === player.id))
+    .sort((a,b) => Number(b.session.id) - Number(a.session.id));
+
+  if(potnAwards.length){
+    el("profilePotnHistory").innerHTML = potnAwards.map(({session,result}) => `
+      <div class="form-match">
+        <div class="form-match-top">
+          <div>
+            <div class="form-match-opponent">🏅 Player of the Night</div>
+            <div class="form-match-date">${formatDate(session.sessionDate)}${activeSeason === "ALL_TIME" ? " · " + session.season : ""}</div>
+          </div>
+          <div class="result-badge" style="border-color:#d6aa35;color:#f2c84b;background:rgba(214,170,53,.10);">${result.maxVotes} VOTE${result.maxVotes===1?"":"S"}</div>
+        </div>
+        <div class="form-match-score">
+          ${result.winners.length > 1 ? "Joint Player of the Night" : "Player of the Night"} · ${result.maxVotes}/${result.eligibleCount} votes
+        </div>
+      </div>
+    `).join("");
+  }else{
+    el("profilePotnHistory").innerHTML = `<div class="detail-none">No Player of the Night awards recorded for this ${activeSeason === "ALL_TIME" ? "club history" : "season"} yet.</div>`;
+  }
 
   const performances = currentMatches()
     .filter(match => match.playerStats?.[player.id]?.played)
@@ -5112,6 +5176,7 @@ function renderRecordsPage(){
     ["Most Assists","🎯","assists"],
     ["Most Goal Contributions","👑","contributions"],
     ["Most POTM Awards","⭐","potm"],
+    ["Most Player of the Night Awards","🏅","potn"],
     ["Most Appearances","👕","appearances"]
   ];
 
@@ -5703,6 +5768,13 @@ function renderComparison(){
       rightValue:right.potm,
       leftDisplay:left.potm,
       rightDisplay:right.potm
+    },
+    {
+      name:"Player of the Night Awards",
+      leftValue:left.potn,
+      rightValue:right.potn,
+      leftDisplay:left.potn,
+      rightDisplay:right.potn
     }
   ];
 
