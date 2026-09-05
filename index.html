@@ -555,6 +555,19 @@ h1{
 .matchday-status.live{background:#163622;color:#8de6a9;}
 .matchday-report-summary{margin-top:6px;color:#9aa9bc;font-size:12px;}
 .matchday-report-leaders{margin-top:12px;padding-top:12px;border-top:1px solid #25384f;color:#c9d2df;font-size:11px;line-height:1.7;}
+.matchday-potn{margin-top:14px;padding-top:14px;border-top:1px solid #25384f;}
+.matchday-potn-head{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.matchday-potn-title{font-size:13px;font-weight:bold;color:#f3c85b;}
+.matchday-potn-progress{font-size:10px;color:#8fa0b6;font-weight:bold;}
+.matchday-potn-result{margin-top:10px;padding:11px 12px;border-radius:12px;background:#0a1625;border:1px solid #29425f;color:#dbe4ef;font-size:12px;line-height:1.5;}
+.matchday-potn-result strong{color:#f3c85b;}
+.matchday-potn-votes{display:grid;gap:8px;margin-top:10px;}
+.matchday-potn-row{display:grid;grid-template-columns:minmax(0,1fr) 150px;align-items:center;gap:10px;}
+.matchday-potn-voter{font-size:11px;color:#c9d2df;font-weight:600;min-width:0;}
+.matchday-potn-select{height:40px;padding:7px 9px;border:1px solid #29425f;border-radius:10px;background:#07111f;color:#fff;min-width:0;}
+.matchday-potn-save{width:100%;margin-top:10px;min-height:43px;border:1px solid #315d9d;border-radius:11px;background:#10233b;color:#fff;font-weight:bold;}
+.matchday-potn-note{margin-top:7px;color:#8392a6;font-size:10px;line-height:1.45;}
+@media(max-width:390px){.matchday-potn-row{grid-template-columns:1fr}.matchday-potn-select{width:100%}}
 .matchday-squad-row{display:grid;grid-template-columns:auto 1fr 110px;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #25384f;}
 .matchday-squad-row:last-child{border-bottom:0;}
 .matchday-player-name{font-weight:bold;font-size:13px;}
@@ -2822,6 +2835,7 @@ let remoteSeasonIds = {};
 let remotePlayerIds = {};
 let remoteReady = false;
 let matchdaySessions = [];
+let matchdayPotnVotes = [];
 let matchdayTimerInterval = setInterval(updateMatchdayTimers,1000);
 
 const players = [
@@ -3396,6 +3410,106 @@ function updateMatchdayTimers(){
   });
 }
 
+function potnVotesForSession(sessionId){
+  return matchdayPotnVotes.filter(v => String(v.sessionId) === String(sessionId));
+}
+
+function calculatePotnResult(session){
+  const eligibleKeys = new Set((session.players || []).map(item => item.playerKey));
+  const votes = potnVotesForSession(session.id).filter(v => eligibleKeys.has(v.voterPlayerKey) && eligibleKeys.has(v.votedForPlayerKey));
+  const counts = {};
+  (session.players || []).forEach(item => { counts[item.playerKey] = 0; });
+  votes.forEach(v => {
+    if(v.voterPlayerKey !== v.votedForPlayerKey && Object.prototype.hasOwnProperty.call(counts,v.votedForPlayerKey)){
+      counts[v.votedForPlayerKey] += 1;
+    }
+  });
+  const maxVotes = Math.max(0,...Object.values(counts));
+  const winners = maxVotes > 0
+    ? Object.entries(counts).filter(([,count]) => count === maxVotes).map(([key]) => players.find(p => p.id === key)).filter(Boolean)
+    : [];
+  return {
+    votes,
+    counts,
+    maxVotes,
+    winners,
+    complete: (session.players || []).length > 1 && votes.length >= (session.players || []).length,
+    eligibleCount:(session.players || []).length
+  };
+}
+
+function matchdayPotnHTML(session){
+  const result = calculatePotnResult(session);
+  const resultText = result.complete
+    ? (result.winners.length === 1
+        ? `🏅 <strong>Player of the Night — ${escapeHTML(result.winners[0].name)}</strong> (${result.maxVotes} vote${result.maxVotes===1?"":"s"})`
+        : result.winners.length > 1
+          ? `🏅 <strong>Joint Players of the Night — ${result.winners.map(p=>escapeHTML(p.name)).join(" & ")}</strong> (${result.maxVotes} vote${result.maxVotes===1?"":"s"} each)`
+          : "🏅 No Player of the Night awarded")
+    : `Voting in progress — ${result.votes.length}/${result.eligibleCount} votes recorded`;
+
+  const voteRows = isAdmin ? (session.players || []).map(item => {
+    const voter = players.find(p => p.id === item.playerKey);
+    if(!voter) return "";
+    const currentVote = result.votes.find(v => v.voterPlayerKey === voter.id)?.votedForPlayerKey || "";
+    const candidates = (session.players || []).map(candidateItem => players.find(p => p.id === candidateItem.playerKey)).filter(p => p && p.id !== voter.id);
+    return `<div class="matchday-potn-row">
+      <div class="matchday-potn-voter">${escapeHTML(voter.name)}'s vote</div>
+      <select class="matchday-potn-select" id="potn-vote-${session.id}-${voter.id}">
+        <option value="">Select teammate</option>
+        ${candidates.map(candidate => `<option value="${candidate.id}" ${currentVote===candidate.id?"selected":""}>${escapeHTML(candidate.name)}</option>`).join("")}
+      </select>
+    </div>`;
+  }).join("") : "";
+
+  return `<div class="matchday-potn">
+    <div class="matchday-potn-head">
+      <div class="matchday-potn-title">🏅 Player of the Night</div>
+      <div class="matchday-potn-progress">${result.votes.length}/${result.eligibleCount} VOTES</div>
+    </div>
+    <div class="matchday-potn-result">${resultText}</div>
+    ${isAdmin ? `<div class="matchday-potn-votes">${voteRows}</div>
+      <button class="matchday-potn-save" onclick="event.stopPropagation();savePotnVotes(${session.id})">Save POTN Votes</button>
+      <div class="matchday-potn-note">One vote per squad member. Players cannot vote for themselves. You can update a vote later if someone was entered incorrectly.</div>` : ""}
+  </div>`;
+}
+
+async function savePotnVotes(sessionId){
+  if(!isAdmin) return;
+  const session = matchdaySessions.find(s => String(s.id) === String(sessionId));
+  if(!session || session.status !== "ended") return;
+  try{
+    await ensureRemoteLookups();
+    const rows = [];
+    for(const item of session.players || []){
+      const voter = players.find(p => p.id === item.playerKey);
+      if(!voter) continue;
+      const select = el(`potn-vote-${session.id}-${voter.id}`);
+      const votedForKey = select?.value || "";
+      if(!votedForKey) continue;
+      if(votedForKey === voter.id) throw new Error("Players cannot vote for themselves.");
+      const voterId = remotePlayerIds[voter.id];
+      const votedForId = remotePlayerIds[votedForKey];
+      if(!voterId || !votedForId) throw new Error("Player lookup failed.");
+      rows.push({session_id:Number(session.id),voter_player_id:Number(voterId),voted_for_player_id:Number(votedForId)});
+    }
+
+    if(!rows.length){
+      alert("Choose at least one Player of the Night vote first.");
+      return;
+    }
+
+    const {error} = await supabaseClient
+      .from("matchday_potn_votes")
+      .upsert(rows,{onConflict:"session_id,voter_player_id"});
+    if(error) throw error;
+    await loadRemoteData();
+  }catch(error){
+    console.error("Save POTN votes failed:",error);
+    alert(error?.message || "The Player of the Night votes could not be saved. Please try again.");
+  }
+}
+
 function matchdaySummaryHTML(session,compact=false){
   const st = calculateMatchdayStats(session);
   const form = [...st.matches].sort((a,b) => Number(a.id)-Number(b.id)).map(m => m.result);
@@ -3436,7 +3550,7 @@ function matchdaySummaryHTML(session,compact=false){
         ⚽ Top scorer — ${st.topScorer ? `${escapeHTML(st.topScorer.player.name)} (${st.topScorer.value})` : "No goals"}<br>
         🎯 Top assister — ${st.topAssister ? `${escapeHTML(st.topAssister.player.name)} (${st.topAssister.value})` : "No assists"}<br>
         ⭐ Most POTM — ${st.topPotm ? `${escapeHTML(st.topPotm.player.name)} (${st.topPotm.value})` : "No POTM"}
-      </div>` : ""}
+      </div>${matchdayPotnHTML(session)}` : ""}
       ${isAdmin ? `<div class="matchday-actions">
         ${session.status === "active" ? `<button class="matchday-action primary" onclick="event.stopPropagation();endMatchday(${session.id})">End Matchday</button>` : ""}
         <button class="matchday-action danger" onclick="event.stopPropagation();deleteMatchday(${session.id})">Delete Matchday</button>
@@ -6152,10 +6266,25 @@ async function loadRemoteData(){
       .select("session_id,player_id,position");
     if(sessionPlayerError) throw sessionPlayerError;
 
+    const {data:potnVoteRows,error:potnVoteError} = await supabaseClient
+      .from("matchday_potn_votes")
+      .select("id,session_id,voter_player_id,voted_for_player_id,created_at");
+    if(potnVoteError) throw potnVoteError;
+
     const seasonById = {};
     (seasons || []).forEach(row => { seasonById[String(row.id)] = row.name; });
     const playerKeyById = {};
     Object.entries(remotePlayerIds).forEach(([key,id]) => { playerKeyById[String(id)] = key; });
+
+    matchdayPotnVotes = (potnVoteRows || []).map(row => ({
+      id:Number(row.id),
+      sessionId:Number(row.session_id),
+      voterPlayerId:Number(row.voter_player_id),
+      votedForPlayerId:Number(row.voted_for_player_id),
+      voterPlayerKey:playerKeyById[String(row.voter_player_id)] || "",
+      votedForPlayerKey:playerKeyById[String(row.voted_for_player_id)] || "",
+      createdAt:row.created_at || null
+    })).filter(v => v.voterPlayerKey && v.votedForPlayerKey);
 
     const sessionPlayersBySession = {};
     (sessionPlayerRows || []).forEach(row => {
