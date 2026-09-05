@@ -66,11 +66,10 @@ button,
 }
 
 /* ========================================
-   OLYMPUS BACK BUTTON
+   BACK BUTTON
 ======================================== */
 
 .app-back-button {
-  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 9px;
@@ -79,12 +78,11 @@ button,
   margin: 0 0 24px;
   border-radius: 999px;
   border: 1px solid #315d9d;
-  background:
-    linear-gradient(
-      145deg,
-      rgba(29,60,102,.92),
-      rgba(10,27,49,.94)
-    );
+  background: linear-gradient(
+    145deg,
+    rgba(29,60,102,.92),
+    rgba(10,27,49,.94)
+  );
   color: #dbe9ff;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.07),
@@ -95,17 +93,12 @@ button,
   line-height: 1;
   transition:
     transform .12s ease,
-    border-color .12s ease,
-    box-shadow .12s ease;
+    border-color .12s ease;
 }
 
 .app-back-button:active {
   transform: scale(.96);
   border-color: #4b80d1;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.05),
-    0 3px 10px rgba(0,0,0,.26),
-    0 0 10px rgba(50,110,255,.14);
 }
 
 .app-back-icon {
@@ -116,25 +109,16 @@ button,
   display: flex;
   align-items: center;
   justify-content: center;
-  background:
-    linear-gradient(
-      145deg,
-      #244b7f,
-      #172f52
-    );
+  background: linear-gradient(
+    145deg,
+    #244b7f,
+    #172f52
+  );
   border: 1px solid rgba(106,156,255,.35);
   color: #dfeaff;
   font-size: 27px;
-  font-weight: normal;
   line-height: 1;
   padding-bottom: 2px;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.08);
-}
-
-.app-back-text {
-  padding-right: 2px;
-  letter-spacing: .1px;
 }
 
 .modal-back-button {
@@ -255,8 +239,6 @@ h1 {
 
 .division-path {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
   gap: 5px;
   margin-top: 22px;
 }
@@ -338,7 +320,8 @@ h1 {
   font-size: 13px;
 }
 
-.record-section {
+.record-section,
+.section {
   padding: 24px 16px 0;
 }
 
@@ -417,10 +400,6 @@ h1 {
 .form-empty {
   background: #1c2b3d;
   color: #63748a;
-}
-
-.section {
-  padding: 24px 16px 0;
 }
 
 .section h3 {
@@ -621,6 +600,14 @@ h1 {
   border-radius: 18px;
   background: #101d2e;
   border: 1px solid #1c314c;
+  transition:
+    transform .12s ease,
+    border-color .12s ease;
+}
+
+.match-card:active {
+  transform: scale(.985);
+  border-color: #315d9d;
 }
 
 .match-card-top {
@@ -683,6 +670,17 @@ h1 {
   font-size: 13px;
 }
 
+.match-tap {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #21364f;
+  color: #6f9dff;
+  font-size: 11px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+}
+
 /* ========================================
    STATS
 ======================================== */
@@ -699,12 +697,6 @@ h1 {
   border-radius: 16px;
   background: #101d2e;
   border: 1px solid #1c314c;
-}
-
-.stats-player-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
 .stats-player-left {
@@ -879,7 +871,6 @@ h1 {
 .hub-action-arrow {
   color: #6682a7;
   font-size: 20px;
-  flex-shrink: 0;
 }
 
 .hub-action.blue .hub-action-main {
@@ -900,32 +891,38 @@ h1 {
 }
 
 /* ========================================
-   RECORDS
+   SUB PAGES
 ======================================== */
 
 .records-top,
-.compare-top {
+.compare-top,
+.match-detail-top {
   padding: 30px 20px 12px;
   background: linear-gradient(180deg,#0d213a,#07111f);
 }
 
 .records-title,
-.compare-title {
+.compare-title,
+.match-detail-title {
   margin: 0;
   font-size: 32px;
 }
 
 .records-subtitle,
-.compare-subtitle {
+.compare-subtitle,
+.match-detail-subtitle {
   margin-top: 7px;
   color: #9aa9bc;
 }
 
-.records-section {
+.records-section,
+.compare-section,
+.match-detail-section {
   padding: 22px 16px 0;
 }
 
-.records-section-title {
+.records-section-title,
+.detail-section-title {
   margin: 0 0 12px;
   color: #9aa9bc;
   font-size: 12px;
@@ -969,7 +966,6 @@ h1 {
 }
 
 .award-value {
-  flex-shrink: 0;
   color: #e8bd4b;
   font-size: 25px;
   font-weight: bold;
@@ -1018,10 +1014,6 @@ h1 {
    PLAYER COMPARISON
 ======================================== */
 
-.compare-section {
-  padding: 18px 16px 0;
-}
-
 .compare-season-box {
   padding: 13px 15px;
   border-radius: 14px;
@@ -1050,10 +1042,6 @@ h1 {
   gap: 8px;
   align-items: end;
   margin-bottom: 18px;
-}
-
-.compare-selector-box {
-  min-width: 0;
 }
 
 .compare-select-label {
@@ -1094,7 +1082,6 @@ h1 {
 }
 
 .compare-player-head {
-  min-width: 0;
   text-align: center;
   padding: 14px 8px;
   border-radius: 14px;
@@ -1166,10 +1153,6 @@ h1 {
   color: #e8bd4b;
 }
 
-.compare-stat-value.tie {
-  color: white;
-}
-
 .compare-stat-name {
   padding: 12px 5px;
   text-align: center;
@@ -1193,7 +1176,6 @@ h1 {
   color: #9aa9bc;
   font-size: 10px;
   font-weight: bold;
-  letter-spacing: .7px;
 }
 
 .compare-summary-result {
@@ -1210,7 +1192,116 @@ h1 {
 }
 
 /* ========================================
-   MATCH ENTRY BANNER
+   MATCH DETAILS
+======================================== */
+
+.match-detail-hero {
+  margin: 8px 16px 14px;
+  padding: 20px;
+  border-radius: 20px;
+  background: linear-gradient(145deg,#12243d,#101d2e);
+  border: 1px solid #284a76;
+  text-align: center;
+}
+
+.match-detail-score {
+  margin-top: 10px;
+  font-size: 27px;
+  font-weight: bold;
+  line-height: 1.25;
+}
+
+.match-detail-meta {
+  margin-top: 9px;
+  color: #9aa9bc;
+  font-size: 12px;
+}
+
+.detail-player {
+  padding: 14px;
+  margin-bottom: 9px;
+  border-radius: 14px;
+  background: #101d2e;
+  border: 1px solid #1c314c;
+}
+
+.detail-player-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.detail-player-name {
+  font-weight: bold;
+}
+
+.detail-potm {
+  color: #e8bd4b;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.detail-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.detail-stat {
+  padding: 10px 4px;
+  border-radius: 10px;
+  background: #0b1625;
+  text-align: center;
+}
+
+.detail-stat-value {
+  font-weight: bold;
+}
+
+.detail-stat-label {
+  margin-top: 3px;
+  color: #8392a6;
+  font-size: 9px;
+}
+
+.detail-none {
+  padding: 18px;
+  border-radius: 14px;
+  background: #101d2e;
+  border: 1px solid #1c314c;
+  color: #9aa9bc;
+  text-align: center;
+}
+
+.detail-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.edit-match-button,
+.delete-match-button {
+  min-height: 52px;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+.edit-match-button {
+  border: 1px solid #315d9d;
+  background: #132845;
+  color: #8eb3ff;
+}
+
+.delete-match-button {
+  border: 1px solid #71343c;
+  background: #3b1f25;
+  color: #ff9ea6;
+}
+
+/* ========================================
+   MODALS
 ======================================== */
 
 .match-season-banner {
@@ -1234,10 +1325,6 @@ h1 {
   font-size: 21px;
   font-weight: bold;
 }
-
-/* ========================================
-   MODALS
-======================================== */
 
 .modal {
   display: none;
@@ -1479,18 +1566,19 @@ input[type="date"]::-webkit-date-and-time-value {
   font-weight: bold;
 }
 
-@media (max-width: 390px) {
+@media (max-width:390px) {
 
-  .compare-player-name {
-    font-size: 12px;
-  }
-
+  .compare-player-name,
   .compare-player-select {
     font-size: 12px;
   }
 
   .compare-stat-value {
     font-size: 17px;
+  }
+
+  .match-detail-score {
+    font-size: 23px;
   }
 
 }
@@ -1506,241 +1594,254 @@ input[type="date"]::-webkit-date-and-time-value {
 
 <div id="home" class="page active">
 
-  <div class="top">
+<div class="top">
 
-    <img
-      src="Olympus FC Badge.PNG"
-      class="badge"
-      alt="Olympus FC Badge"
-    >
+<img
+src="Olympus FC Badge.PNG"
+class="badge"
+alt="Olympus FC Badge"
+>
 
-    <h1>OLYMPUS FC</h1>
+<h1>OLYMPUS FC</h1>
 
-    <div class="subtitle">
-      Pro Clubs Stats Tracker
-    </div>
+<div class="subtitle">
+Pro Clubs Stats Tracker
+</div>
 
-  </div>
+</div>
 
-  <div class="season-switcher">
+<div class="season-switcher">
 
-    <div>
-      <div class="season-switcher-label">
-        VIEWING SEASON
-      </div>
+<div>
 
-      <div
-        id="homeSeasonValue"
-        class="season-switcher-value"
-      >
-        FC26
-      </div>
-    </div>
+<div class="season-switcher-label">
+VIEWING SEASON
+</div>
 
-    <select
-      class="season-select season-selector"
-      onchange="changeSeason(this.value)"
-    >
-      <option value="FC26">FC26</option>
-      <option value="FC27">FC27</option>
-      <option value="ALL_TIME">All Time</option>
-    </select>
+<div
+id="homeSeasonValue"
+class="season-switcher-value"
+>
+FC26
+</div>
 
-  </div>
+</div>
 
-  <div id="divisionCard" class="division-card">
+<select
+class="season-select season-selector"
+onchange="changeSeason(this.value)"
+>
 
-    <div class="division-top">
+<option value="FC26">FC26</option>
+<option value="FC27">FC27</option>
+<option value="ALL_TIME">All Time</option>
 
-      <div>
+</select>
 
-        <div class="division-small">
-          Current Division
-        </div>
+</div>
 
-        <div
-          id="currentDivision"
-          class="division-name"
-        >
-          Division 5
-        </div>
+<div
+id="divisionCard"
+class="division-card"
+>
 
-      </div>
+<div class="division-top">
 
-      <button
-        class="change-division"
-        onclick="openDivisionModal()"
-      >
-        Change
-      </button>
+<div>
 
-    </div>
+<div class="division-small">
+Current Division
+</div>
 
-    <div
-      id="divisionPath"
-      class="division-path"
-    ></div>
+<div
+id="currentDivision"
+class="division-name"
+>
+Division 5
+</div>
 
-    <div class="division-labels">
-      <span>D5</span>
-      <span>D4</span>
-      <span>D3</span>
-      <span>D2</span>
-      <span>D1</span>
-      <span>ELITE</span>
-    </div>
+</div>
 
-  </div>
+<button
+class="change-division"
+onclick="openDivisionModal()"
+>
+Change
+</button>
 
-  <div class="season-card">
+</div>
 
-    <h2 id="seasonCardTitle">
-      FC26 Season
-    </h2>
+<div
+id="divisionPath"
+class="division-path"
+></div>
 
-    <p id="seasonCardText">
-      The climb to the summit continues.
-    </p>
+<div class="division-labels">
 
-  </div>
+<span>D5</span>
+<span>D4</span>
+<span>D3</span>
+<span>D2</span>
+<span>D1</span>
+<span>ELITE</span>
 
-  <div
-    id="historicalNote"
-    class="data-note"
-  ></div>
+</div>
 
-  <div class="stats-grid">
+</div>
 
-    <div class="stat">
-      <div id="homeMatches" class="stat-number">0</div>
-      <div class="stat-label">Logged Matches</div>
-    </div>
+<div class="season-card">
 
-    <div class="stat">
-      <div id="homeWins" class="stat-number">0</div>
-      <div class="stat-label">Logged Wins</div>
-    </div>
+<h2 id="seasonCardTitle">
+FC26 Season
+</h2>
 
-    <div class="stat">
-      <div id="homeGoals" class="stat-number">0</div>
-      <div class="stat-label">Logged Goals</div>
-    </div>
+<p id="seasonCardText">
+The climb to the summit continues.
+</p>
 
-    <div class="stat">
-      <div id="homeWinRate" class="stat-number">0%</div>
-      <div class="stat-label">Logged Win Rate</div>
-    </div>
+</div>
 
-  </div>
+<div
+id="historicalNote"
+class="data-note"
+></div>
 
-  <div class="record-section">
+<div class="stats-grid">
 
-    <h3 class="record-title">
-      Logged Season Record
-    </h3>
+<div class="stat">
+<div id="homeMatches" class="stat-number">0</div>
+<div class="stat-label">Logged Matches</div>
+</div>
 
-    <div class="record-grid">
+<div class="stat">
+<div id="homeWins" class="stat-number">0</div>
+<div class="stat-label">Logged Wins</div>
+</div>
 
-      <div class="record-mini">
-        <div id="recordWins" class="record-number">0</div>
-        <div class="record-label">WINS</div>
-      </div>
+<div class="stat">
+<div id="homeGoals" class="stat-number">0</div>
+<div class="stat-label">Logged Goals</div>
+</div>
 
-      <div class="record-mini">
-        <div id="recordDraws" class="record-number">0</div>
-        <div class="record-label">DRAWS</div>
-      </div>
+<div class="stat">
+<div id="homeWinRate" class="stat-number">0%</div>
+<div class="stat-label">Logged Win Rate</div>
+</div>
 
-      <div class="record-mini">
-        <div id="recordLosses" class="record-number">0</div>
-        <div class="record-label">LOSSES</div>
-      </div>
+</div>
 
-      <div class="record-mini">
-        <div id="recordGF" class="record-number">0</div>
-        <div class="record-label">GF</div>
-      </div>
+<div class="record-section">
 
-      <div class="record-mini">
-        <div id="recordGA" class="record-number">0</div>
-        <div class="record-label">GA</div>
-      </div>
+<h3 class="record-title">
+Logged Season Record
+</h3>
 
-      <div class="record-mini">
-        <div id="recordGD" class="record-number">0</div>
-        <div class="record-label">GD</div>
-      </div>
+<div class="record-grid">
 
-    </div>
+<div class="record-mini">
+<div id="recordWins" class="record-number">0</div>
+<div class="record-label">WINS</div>
+</div>
 
-    <div class="form-card">
+<div class="record-mini">
+<div id="recordDraws" class="record-number">0</div>
+<div class="record-label">DRAWS</div>
+</div>
 
-      <div class="form-heading">
-        LAST 5 LOGGED MATCHES
-      </div>
+<div class="record-mini">
+<div id="recordLosses" class="record-number">0</div>
+<div class="record-label">LOSSES</div>
+</div>
 
-      <div
-        id="formRow"
-        class="form-row"
-      ></div>
+<div class="record-mini">
+<div id="recordGF" class="record-number">0</div>
+<div class="record-label">GF</div>
+</div>
 
-    </div>
+<div class="record-mini">
+<div id="recordGA" class="record-number">0</div>
+<div class="record-label">GA</div>
+</div>
 
-  </div>
+<div class="record-mini">
+<div id="recordGD" class="record-number">0</div>
+<div class="record-label">GD</div>
+</div>
 
-  <div class="section">
+</div>
 
-    <h3>Player Leaders</h3>
+<div class="form-card">
 
-    <div class="leader">
+<div class="form-heading">
+LAST 5 LOGGED MATCHES
+</div>
 
-      <div>
-        <div
-          id="topScorerName"
-          class="leader-name"
-        >
-          No goals yet
-        </div>
+<div
+id="formRow"
+class="form-row"
+></div>
 
-        <div class="leader-detail">
-          Top Goalscorer
-        </div>
-      </div>
+</div>
 
-      <div
-        id="topScorerGoals"
-        class="leader-value"
-      >
-        0
-      </div>
+</div>
 
-    </div>
+<div class="section">
 
-    <div class="leader">
+<h3>Player Leaders</h3>
 
-      <div>
-        <div
-          id="topAssisterName"
-          class="leader-name"
-        >
-          No assists yet
-        </div>
+<div class="leader">
 
-        <div class="leader-detail">
-          Top Assists
-        </div>
-      </div>
+<div>
 
-      <div
-        id="topAssisterAssists"
-        class="leader-value"
-      >
-        0
-      </div>
+<div
+id="topScorerName"
+class="leader-name"
+>
+No goals yet
+</div>
 
-    </div>
+<div class="leader-detail">
+Top Goalscorer
+</div>
 
-  </div>
+</div>
+
+<div
+id="topScorerGoals"
+class="leader-value"
+>
+0
+</div>
+
+</div>
+
+<div class="leader">
+
+<div>
+
+<div
+id="topAssisterName"
+class="leader-name"
+>
+No assists yet
+</div>
+
+<div class="leader-detail">
+Top Assists
+</div>
+
+</div>
+
+<div
+id="topAssisterAssists"
+class="leader-value"
+>
+0
+</div>
+
+</div>
+
+</div>
 
 </div>
 
@@ -1748,37 +1849,44 @@ input[type="date"]::-webkit-date-and-time-value {
 
 <div id="squad" class="page">
 
-  <div class="page-header">
-    <h2>Squad</h2>
-    <p id="squadSeasonSubtitle">
-      Olympus FC · FC26
-    </p>
-  </div>
+<div class="page-header">
 
-  <div class="season-switcher">
+<h2>Squad</h2>
 
-    <div>
-      <div class="season-switcher-label">
-        VIEWING SEASON
-      </div>
+<p id="squadSeasonSubtitle">
+Olympus FC · FC26
+</p>
 
-      <div class="season-switcher-value seasonText">
-        FC26
-      </div>
-    </div>
+</div>
 
-    <select
-      class="season-select season-selector"
-      onchange="changeSeason(this.value)"
-    >
-      <option value="FC26">FC26</option>
-      <option value="FC27">FC27</option>
-      <option value="ALL_TIME">All Time</option>
-    </select>
+<div class="season-switcher">
 
-  </div>
+<div>
 
-  <div id="squadList"></div>
+<div class="season-switcher-label">
+VIEWING SEASON
+</div>
+
+<div class="season-switcher-value seasonText">
+FC26
+</div>
+
+</div>
+
+<select
+class="season-select season-selector"
+onchange="changeSeason(this.value)"
+>
+
+<option value="FC26">FC26</option>
+<option value="FC27">FC27</option>
+<option value="ALL_TIME">All Time</option>
+
+</select>
+
+</div>
+
+<div id="squadList"></div>
 
 </div>
 
@@ -1786,77 +1894,113 @@ input[type="date"]::-webkit-date-and-time-value {
 
 <div id="matches" class="page">
 
-  <div class="page-header">
-    <h2>Matches</h2>
+<div class="page-header">
 
-    <p id="matchesSeasonSubtitle">
-      Olympus FC · FC26
-    </p>
-  </div>
+<h2>Matches</h2>
 
-  <div class="season-switcher">
+<p id="matchesSeasonSubtitle">
+Olympus FC · FC26
+</p>
 
-    <div>
-      <div class="season-switcher-label">
-        VIEWING SEASON
-      </div>
+</div>
 
-      <div class="season-switcher-value seasonText">
-        FC26
-      </div>
-    </div>
+<div class="season-switcher">
 
-    <select
-      class="season-select season-selector"
-      onchange="changeSeason(this.value)"
-    >
-      <option value="FC26">FC26</option>
-      <option value="FC27">FC27</option>
-      <option value="ALL_TIME">All Time</option>
-    </select>
+<div>
 
-  </div>
+<div class="season-switcher-label">
+VIEWING SEASON
+</div>
 
-  <div class="matches-summary">
+<div class="season-switcher-value seasonText">
+FC26
+</div>
 
-    <div class="match-summary-box">
-      <div id="matchesPlayed" class="match-summary-number">0</div>
-      <div class="match-summary-label">Logged</div>
-    </div>
+</div>
 
-    <div class="match-summary-box">
-      <div id="matchesWins" class="match-summary-number">0</div>
-      <div class="match-summary-label">Wins</div>
-    </div>
+<select
+class="season-select season-selector"
+onchange="changeSeason(this.value)"
+>
 
-    <div class="match-summary-box">
-      <div id="matchesGoals" class="match-summary-number">0</div>
-      <div class="match-summary-label">Goals</div>
-    </div>
+<option value="FC26">FC26</option>
+<option value="FC27">FC27</option>
+<option value="ALL_TIME">All Time</option>
 
-  </div>
+</select>
 
-  <button
-    id="addMatchButton"
-    class="add-match-button"
-    onclick="openMatchForm()"
-  >
-    + Add Match
-  </button>
+</div>
 
-  <div
-    id="allTimeMatchMessage"
-    class="all-time-message"
-  >
-    All Time combines FC26 and FC27. To add a new match,
-    select the season the match belongs to first.
-  </div>
+<div class="matches-summary">
 
-  <div class="match-list-title">
-    Recorded Match History
-  </div>
+<div class="match-summary-box">
 
-  <div id="matchHistory"></div>
+<div
+id="matchesPlayed"
+class="match-summary-number"
+>
+0
+</div>
+
+<div class="match-summary-label">
+Logged
+</div>
+
+</div>
+
+<div class="match-summary-box">
+
+<div
+id="matchesWins"
+class="match-summary-number"
+>
+0
+</div>
+
+<div class="match-summary-label">
+Wins
+</div>
+
+</div>
+
+<div class="match-summary-box">
+
+<div
+id="matchesGoals"
+class="match-summary-number"
+>
+0
+</div>
+
+<div class="match-summary-label">
+Goals
+</div>
+
+</div>
+
+</div>
+
+<button
+id="addMatchButton"
+class="add-match-button"
+onclick="openMatchForm()"
+>
++ Add Match
+</button>
+
+<div
+id="allTimeMatchMessage"
+class="all-time-message"
+>
+All Time combines FC26 and FC27. To add a new match,
+select the season the match belongs to first.
+</div>
+
+<div class="match-list-title">
+Recorded Match History
+</div>
+
+<div id="matchHistory"></div>
 
 </div>
 
@@ -1864,42 +2008,48 @@ input[type="date"]::-webkit-date-and-time-value {
 
 <div id="stats" class="page">
 
-  <div class="page-header">
-    <h2>Player Stats</h2>
+<div class="page-header">
 
-    <p id="statsSeasonSubtitle">
-      Olympus FC · FC26
-    </p>
-  </div>
+<h2>Player Stats</h2>
 
-  <div class="season-switcher">
+<p id="statsSeasonSubtitle">
+Olympus FC · FC26
+</p>
 
-    <div>
-      <div class="season-switcher-label">
-        VIEWING SEASON
-      </div>
+</div>
 
-      <div class="season-switcher-value seasonText">
-        FC26
-      </div>
-    </div>
+<div class="season-switcher">
 
-    <select
-      class="season-select season-selector"
-      onchange="changeSeason(this.value)"
-    >
-      <option value="FC26">FC26</option>
-      <option value="FC27">FC27</option>
-      <option value="ALL_TIME">All Time</option>
-    </select>
+<div>
 
-  </div>
+<div class="season-switcher-label">
+VIEWING SEASON
+</div>
 
-  <div class="leaderboard-title">
-    Ranked by goal contributions
-  </div>
+<div class="season-switcher-value seasonText">
+FC26
+</div>
 
-  <div id="statsLeaderboard"></div>
+</div>
+
+<select
+class="season-select season-selector"
+onchange="changeSeason(this.value)"
+>
+
+<option value="FC26">FC26</option>
+<option value="FC27">FC27</option>
+<option value="ALL_TIME">All Time</option>
+
+</select>
+
+</div>
+
+<div class="leaderboard-title">
+Ranked by goal contributions
+</div>
+
+<div id="statsLeaderboard"></div>
 
 </div>
 
@@ -1907,277 +2057,305 @@ input[type="date"]::-webkit-date-and-time-value {
 
 <div id="more" class="page">
 
-  <div class="more-hero">
-    <h2>Club Hub</h2>
-
-    <p id="moreSeasonSubtitle">
-      Olympus FC · FC26
-    </p>
-  </div>
+<div class="more-hero">
 
-  <div class="season-switcher">
+<h2>Club Hub</h2>
 
-    <div>
-      <div class="season-switcher-label">
-        VIEWING SEASON
-      </div>
+<p id="moreSeasonSubtitle">
+Olympus FC · FC26
+</p>
 
-      <div class="season-switcher-value seasonText">
-        FC26
-      </div>
-    </div>
+</div>
 
-    <select
-      class="season-select season-selector"
-      onchange="changeSeason(this.value)"
-    >
-      <option value="FC26">FC26</option>
-      <option value="FC27">FC27</option>
-      <option value="ALL_TIME">All Time</option>
-    </select>
+<div class="season-switcher">
 
-  </div>
+<div>
 
-  <div class="hub-section">
+<div class="season-switcher-label">
+VIEWING SEASON
+</div>
 
-    <div class="hub-heading">
-      CLUB INFORMATION
-    </div>
+<div class="season-switcher-value seasonText">
+FC26
+</div>
 
-    <div class="hub-card">
+</div>
 
-      <div class="info-row">
-        <div class="info-label">Club</div>
-        <div class="info-value">Olympus FC</div>
-      </div>
+<select
+class="season-select season-selector"
+onchange="changeSeason(this.value)"
+>
 
-      <div class="info-row">
-        <div class="info-label">Stadium</div>
-        <div class="info-value">Mount Olympus</div>
-      </div>
+<option value="FC26">FC26</option>
+<option value="FC27">FC27</option>
+<option value="ALL_TIME">All Time</option>
 
-      <div class="info-row">
-        <div class="info-label">Season</div>
-        <div id="moreSeason" class="info-value">FC26</div>
-      </div>
+</select>
 
-      <div class="info-row">
-        <div class="info-label">Current Division</div>
-        <div id="moreDivision" class="info-value">Division 5</div>
-      </div>
+</div>
 
-    </div>
+<div class="hub-section">
 
-  </div>
+<div class="hub-heading">
+CLUB INFORMATION
+</div>
 
-  <div class="hub-section">
+<div class="hub-card">
 
-    <div class="hub-heading">
-      LOGGED MATCH RECORD
-    </div>
+<div class="info-row">
+<div class="info-label">Club</div>
+<div class="info-value">Olympus FC</div>
+</div>
 
-    <div class="hub-record-grid">
+<div class="info-row">
+<div class="info-label">Stadium</div>
+<div class="info-value">Mount Olympus</div>
+</div>
 
-      <div class="hub-record">
-        <div id="morePlayed" class="hub-record-number">0</div>
-        <div class="hub-record-label">PLAYED</div>
-      </div>
+<div class="info-row">
+<div class="info-label">Season</div>
+<div id="moreSeason" class="info-value">FC26</div>
+</div>
 
-      <div class="hub-record">
-        <div id="moreWins" class="hub-record-number">0</div>
-        <div class="hub-record-label">WINS</div>
-      </div>
+<div class="info-row">
+<div class="info-label">Current Division</div>
+<div id="moreDivision" class="info-value">Division 5</div>
+</div>
 
-      <div class="hub-record">
-        <div id="moreDraws" class="hub-record-number">0</div>
-        <div class="hub-record-label">DRAWS</div>
-      </div>
+</div>
 
-      <div class="hub-record">
-        <div id="moreLosses" class="hub-record-number">0</div>
-        <div class="hub-record-label">LOSSES</div>
-      </div>
+</div>
 
-      <div class="hub-record">
-        <div id="moreGF" class="hub-record-number">0</div>
-        <div class="hub-record-label">GF</div>
-      </div>
+<div class="hub-section">
 
-      <div class="hub-record">
-        <div id="moreGA" class="hub-record-number">0</div>
-        <div class="hub-record-label">GA</div>
-      </div>
+<div class="hub-heading">
+LOGGED MATCH RECORD
+</div>
 
-    </div>
+<div class="hub-record-grid">
 
-  </div>
+<div class="hub-record">
+<div id="morePlayed" class="hub-record-number">0</div>
+<div class="hub-record-label">PLAYED</div>
+</div>
 
-  <div class="hub-section">
+<div class="hub-record">
+<div id="moreWins" class="hub-record-number">0</div>
+<div class="hub-record-label">WINS</div>
+</div>
 
-    <div class="hub-heading">
-      OLYMPUS FC
-    </div>
+<div class="hub-record">
+<div id="moreDraws" class="hub-record-number">0</div>
+<div class="hub-record-label">DRAWS</div>
+</div>
 
-    <div class="hub-card">
+<div class="hub-record">
+<div id="moreLosses" class="hub-record-number">0</div>
+<div class="hub-record-label">LOSSES</div>
+</div>
 
-      <button
-        class="hub-action gold"
-        onclick="openRecordsPage()"
-      >
+<div class="hub-record">
+<div id="moreGF" class="hub-record-number">0</div>
+<div class="hub-record-label">GF</div>
+</div>
 
-        <div>
-          <div class="hub-action-main">
-            🏆 Records & Awards
-          </div>
+<div class="hub-record">
+<div id="moreGA" class="hub-record-number">0</div>
+<div class="hub-record-label">GA</div>
+</div>
 
-          <div class="hub-action-sub">
-            Player leaders and recorded match records
-          </div>
-        </div>
+</div>
 
-        <div class="hub-action-arrow">›</div>
+</div>
 
-      </button>
+<div class="hub-section">
 
-      <button
-        class="hub-action blue"
-        onclick="openComparePage()"
-      >
+<div class="hub-heading">
+OLYMPUS FC
+</div>
 
-        <div>
-          <div class="hub-action-main">
-            ⚖️ Player Comparison
-          </div>
+<div class="hub-card">
 
-          <div class="hub-action-sub">
-            Compare any two Olympus FC players side-by-side
-          </div>
-        </div>
+<button
+class="hub-action gold"
+onclick="openRecordsPage()"
+>
 
-        <div class="hub-action-arrow">›</div>
+<div>
 
-      </button>
+<div class="hub-action-main">
+🏆 Records & Awards
+</div>
 
-    </div>
+<div class="hub-action-sub">
+Player leaders and recorded match records
+</div>
 
-  </div>
+</div>
 
-  <div
-    id="seasonSettingsSection"
-    class="hub-section"
-  >
+<div class="hub-action-arrow">
+›
+</div>
 
-    <div class="hub-heading">
-      SEASON SETTINGS
-    </div>
+</button>
 
-    <div class="hub-card">
+<button
+class="hub-action blue"
+onclick="openComparePage()"
+>
 
-      <button
-        class="hub-action blue"
-        onclick="openDivisionModal()"
-      >
+<div>
 
-        <div>
-          <div class="hub-action-main">
-            Change Division
-          </div>
+<div class="hub-action-main">
+⚖️ Player Comparison
+</div>
 
-          <div class="hub-action-sub">
-            Update this season's current division
-          </div>
-        </div>
+<div class="hub-action-sub">
+Compare any two Olympus FC players side-by-side
+</div>
 
-        <div class="hub-action-arrow">›</div>
+</div>
 
-      </button>
+<div class="hub-action-arrow">
+›
+</div>
 
-    </div>
+</button>
 
-  </div>
+</div>
 
-  <div class="hub-section">
+</div>
 
-    <div class="hub-heading">
-      DATA & BACKUP
-    </div>
+<div
+id="seasonSettingsSection"
+class="hub-section"
+>
 
-    <div class="hub-card">
+<div class="hub-heading">
+SEASON SETTINGS
+</div>
 
-      <button
-        class="hub-action blue"
-        onclick="exportBackup()"
-      >
+<div class="hub-card">
 
-        <div>
-          <div class="hub-action-main">
-            Export Full Backup
-          </div>
+<button
+class="hub-action blue"
+onclick="openDivisionModal()"
+>
 
-          <div class="hub-action-sub">
-            Save FC26 and FC27 data together
-          </div>
-        </div>
+<div>
 
-        <div class="hub-action-arrow">↓</div>
+<div class="hub-action-main">
+Change Division
+</div>
 
-      </button>
+<div class="hub-action-sub">
+Update this season's current division
+</div>
 
-      <button
-        class="hub-action blue"
-        onclick="chooseBackupFile()"
-      >
+</div>
 
-        <div>
-          <div class="hub-action-main">
-            Restore Backup
-          </div>
+<div class="hub-action-arrow">
+›
+</div>
 
-          <div class="hub-action-sub">
-            Restore your Olympus FC tracker data
-          </div>
-        </div>
+</button>
 
-        <div class="hub-action-arrow">↑</div>
+</div>
 
-      </button>
+</div>
 
-      <button
-        id="resetSeasonButton"
-        class="hub-action danger"
-        onclick="resetSeasonData()"
-      >
+<div class="hub-section">
 
-        <div>
+<div class="hub-heading">
+DATA & BACKUP
+</div>
 
-          <div
-            id="resetSeasonTitle"
-            class="hub-action-main"
-          >
-            Reset Logged FC26 Data
-          </div>
+<div class="hub-card">
 
-          <div class="hub-action-sub">
-            Historical imported totals are kept safe
-          </div>
+<button
+class="hub-action blue"
+onclick="exportBackup()"
+>
 
-        </div>
+<div>
 
-        <div class="hub-action-arrow">›</div>
+<div class="hub-action-main">
+Export Full Backup
+</div>
 
-      </button>
+<div class="hub-action-sub">
+Save FC26 and FC27 data together
+</div>
 
-    </div>
+</div>
 
-    <input
-      id="backupFileInput"
-      type="file"
-      accept=".json,application/json"
-      style="display:none"
-      onchange="restoreBackup(event)"
-    >
+<div class="hub-action-arrow">
+↓
+</div>
 
-  </div>
+</button>
+
+<button
+class="hub-action blue"
+onclick="chooseBackupFile()"
+>
+
+<div>
+
+<div class="hub-action-main">
+Restore Backup
+</div>
+
+<div class="hub-action-sub">
+Restore your Olympus FC tracker data
+</div>
+
+</div>
+
+<div class="hub-action-arrow">
+↑
+</div>
+
+</button>
+
+<button
+id="resetSeasonButton"
+class="hub-action danger"
+onclick="resetSeasonData()"
+>
+
+<div>
+
+<div
+id="resetSeasonTitle"
+class="hub-action-main"
+>
+Reset Logged FC26 Data
+</div>
+
+<div class="hub-action-sub">
+Historical imported totals are kept safe
+</div>
+
+</div>
+
+<div class="hub-action-arrow">
+›
+</div>
+
+</button>
+
+</div>
+
+<input
+id="backupFileInput"
+type="file"
+accept=".json,application/json"
+style="display:none"
+onchange="restoreBackup(event)"
+>
+
+</div>
 
 </div>
 
@@ -2185,59 +2363,60 @@ input[type="date"]::-webkit-date-and-time-value {
 
 <div id="records" class="page">
 
-  <div class="records-top">
+<div class="records-top">
 
-    <button
-      class="app-back-button"
-      onclick="closeRecordsPage()"
-      aria-label="Back"
-    >
-      <span class="app-back-icon">‹</span>
-      <span class="app-back-text">Back</span>
-    </button>
+<button
+class="app-back-button"
+onclick="closeRecordsPage()"
+>
 
-    <h2 class="records-title">
-      Records & Awards
-    </h2>
+<span class="app-back-icon">‹</span>
+<span>Back</span>
 
-    <div
-      id="recordsSubtitle"
-      class="records-subtitle"
-    >
-      Olympus FC · FC26
-    </div>
+</button>
 
-  </div>
+<h2 class="records-title">
+Records & Awards
+</h2>
 
-  <div class="records-section">
+<div
+id="recordsSubtitle"
+class="records-subtitle"
+>
+Olympus FC · FC26
+</div>
 
-    <div class="records-section-title">
-      PLAYER LEADERS
-    </div>
+</div>
 
-    <div id="playerLeaderRecords"></div>
+<div class="records-section">
 
-  </div>
+<div class="records-section-title">
+PLAYER LEADERS
+</div>
 
-  <div class="records-section">
+<div id="playerLeaderRecords"></div>
 
-    <div class="records-section-title">
-      RECORDED SINGLE-MATCH RECORDS
-    </div>
+</div>
 
-    <div id="singleMatchRecords"></div>
+<div class="records-section">
 
-  </div>
+<div class="records-section-title">
+RECORDED SINGLE-MATCH RECORDS
+</div>
 
-  <div class="records-section">
+<div id="singleMatchRecords"></div>
 
-    <div class="records-section-title">
-      RECORDED CLUB RECORDS
-    </div>
+</div>
 
-    <div id="clubRecords"></div>
+<div class="records-section">
 
-  </div>
+<div class="records-section-title">
+RECORDED CLUB RECORDS
+</div>
+
+<div id="clubRecords"></div>
+
+</div>
 
 </div>
 
@@ -2245,165 +2424,228 @@ input[type="date"]::-webkit-date-and-time-value {
 
 <div id="compare" class="page">
 
-  <div class="compare-top">
+<div class="compare-top">
 
-    <button
-      class="app-back-button"
-      onclick="closeComparePage()"
-      aria-label="Back"
-    >
-      <span class="app-back-icon">‹</span>
-      <span class="app-back-text">Back</span>
-    </button>
+<button
+class="app-back-button"
+onclick="closeComparePage()"
+>
 
-    <h2 class="compare-title">
-      Player Comparison
-    </h2>
+<span class="app-back-icon">‹</span>
+<span>Back</span>
 
-    <div
-      id="compareSubtitle"
-      class="compare-subtitle"
-    >
-      Olympus FC · FC26
-    </div>
+</button>
 
-  </div>
+<h2 class="compare-title">
+Player Comparison
+</h2>
 
-  <div class="compare-section">
+<div
+id="compareSubtitle"
+class="compare-subtitle"
+>
+Olympus FC · FC26
+</div>
 
-    <div class="compare-season-box">
+</div>
 
-      <div class="compare-season-label">
-        COMPARING STATS FROM
-      </div>
+<div class="compare-section">
 
-      <div
-        id="compareSeasonValue"
-        class="compare-season-value"
-      >
-        FC26
-      </div>
+<div class="compare-season-box">
 
-    </div>
+<div class="compare-season-label">
+COMPARING STATS FROM
+</div>
 
-    <div class="compare-selectors">
+<div
+id="compareSeasonValue"
+class="compare-season-value"
+>
+FC26
+</div>
 
-      <div class="compare-selector-box">
+</div>
 
-        <div class="compare-select-label">
-          PLAYER 1
-        </div>
+<div class="compare-selectors">
 
-        <select
-          id="comparePlayer1"
-          class="compare-player-select"
-          onchange="comparisonPlayerChanged('left')"
-        ></select>
+<div>
 
-      </div>
+<div class="compare-select-label">
+PLAYER 1
+</div>
 
-      <div class="compare-vs">
-        VS
-      </div>
+<select
+id="comparePlayer1"
+class="compare-player-select"
+onchange="comparisonPlayerChanged('left')"
+></select>
 
-      <div class="compare-selector-box">
+</div>
 
-        <div class="compare-select-label">
-          PLAYER 2
-        </div>
+<div class="compare-vs">
+VS
+</div>
 
-        <select
-          id="comparePlayer2"
-          class="compare-player-select"
-          onchange="comparisonPlayerChanged('right')"
-        ></select>
+<div>
 
-      </div>
+<div class="compare-select-label">
+PLAYER 2
+</div>
 
-    </div>
+<select
+id="comparePlayer2"
+class="compare-player-select"
+onchange="comparisonPlayerChanged('right')"
+></select>
 
-    <div class="compare-player-heads">
+</div>
 
-      <div class="compare-player-head">
+</div>
 
-        <div
-          id="compareLeftNumber"
-          class="compare-number"
-        >
-          40
-        </div>
+<div class="compare-player-heads">
 
-        <div
-          id="compareLeftName"
-          class="compare-player-name"
-        >
-          Tyrone Dean
-        </div>
+<div class="compare-player-head">
 
-        <div
-          id="compareLeftMeta"
-          class="compare-player-meta"
-        >
-          CM · England
-        </div>
+<div
+id="compareLeftNumber"
+class="compare-number"
+>
+40
+</div>
 
-      </div>
+<div
+id="compareLeftName"
+class="compare-player-name"
+>
+Tyrone Dean
+</div>
 
-      <div class="compare-vs-main">
-        VS
-      </div>
+<div
+id="compareLeftMeta"
+class="compare-player-meta"
+>
+CM · England
+</div>
 
-      <div class="compare-player-head">
+</div>
 
-        <div
-          id="compareRightNumber"
-          class="compare-number"
-        >
-          78
-        </div>
+<div class="compare-vs-main">
+VS
+</div>
 
-        <div
-          id="compareRightName"
-          class="compare-player-name"
-        >
-          Baganor Jamba
-        </div>
+<div class="compare-player-head">
 
-        <div
-          id="compareRightMeta"
-          class="compare-player-meta"
-        >
-          CM · DR Congo
-        </div>
+<div
+id="compareRightNumber"
+class="compare-number"
+>
+78
+</div>
 
-      </div>
+<div
+id="compareRightName"
+class="compare-player-name"
+>
+Baganor Jamba
+</div>
 
-    </div>
+<div
+id="compareRightMeta"
+class="compare-player-meta"
+>
+CM · DR Congo
+</div>
 
-    <div
-      id="comparisonTable"
-      class="compare-table"
-    ></div>
+</div>
 
-    <div class="compare-summary">
+</div>
 
-      <div class="compare-summary-title">
-        CATEGORY SCORE
-      </div>
+<div
+id="comparisonTable"
+class="compare-table"
+></div>
 
-      <div
-        id="compareSummaryResult"
-        class="compare-summary-result"
-      ></div>
+<div class="compare-summary">
 
-      <div
-        id="compareSummarySub"
-        class="compare-summary-sub"
-      ></div>
+<div class="compare-summary-title">
+CATEGORY SCORE
+</div>
 
-    </div>
+<div
+id="compareSummaryResult"
+class="compare-summary-result"
+></div>
 
-  </div>
+<div
+id="compareSummarySub"
+class="compare-summary-sub"
+></div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- MATCH DETAILS -->
+
+<div id="matchDetail" class="page">
+
+<div class="match-detail-top">
+
+<button
+class="app-back-button"
+onclick="closeMatchDetails()"
+>
+
+<span class="app-back-icon">‹</span>
+<span>Back</span>
+
+</button>
+
+<h2 class="match-detail-title">
+Match Details
+</h2>
+
+<div
+id="matchDetailSubtitle"
+class="match-detail-subtitle"
+></div>
+
+</div>
+
+<div
+id="matchDetailHero"
+class="match-detail-hero"
+></div>
+
+<div class="match-detail-section">
+
+<div class="detail-section-title">
+PLAYER PERFORMANCES
+</div>
+
+<div id="matchDetailPlayers"></div>
+
+<div class="detail-actions">
+
+<button
+class="edit-match-button"
+onclick="editSelectedMatch()"
+>
+✏️ Edit Match
+</button>
+
+<button
+class="delete-match-button"
+onclick="deleteSelectedMatch()"
+>
+🗑 Delete Match
+</button>
+
+</div>
+
+</div>
 
 </div>
 
@@ -2411,319 +2653,344 @@ input[type="date"]::-webkit-date-and-time-value {
 
 <!-- NAVIGATION -->
 
-<div id="bottomNav" class="nav">
+<div
+id="bottomNav"
+class="nav"
+>
 
-  <div
-    class="nav-item active"
-    onclick="showPage('home',this)"
-  >
-    <span class="nav-icon">⌂</span>
-    Home
-  </div>
+<div
+class="nav-item active"
+onclick="showPage('home',this)"
+>
+<span class="nav-icon">⌂</span>
+Home
+</div>
 
-  <div
-    class="nav-item"
-    onclick="showPage('squad',this)"
-  >
-    <span class="nav-icon">♟</span>
-    Squad
-  </div>
+<div
+class="nav-item"
+onclick="showPage('squad',this)"
+>
+<span class="nav-icon">♟</span>
+Squad
+</div>
 
-  <div
-    class="nav-item"
-    onclick="showPage('matches',this)"
-  >
-    <span class="nav-icon">⚽</span>
-    Matches
-  </div>
+<div
+class="nav-item"
+onclick="showPage('matches',this)"
+>
+<span class="nav-icon">⚽</span>
+Matches
+</div>
 
-  <div
-    class="nav-item"
-    onclick="showPage('stats',this)"
-  >
-    <span class="nav-icon">▥</span>
-    Stats
-  </div>
+<div
+class="nav-item"
+onclick="showPage('stats',this)"
+>
+<span class="nav-icon">▥</span>
+Stats
+</div>
 
-  <div
-    class="nav-item"
-    onclick="showPage('more',this)"
-  >
-    <span class="nav-icon">•••</span>
-    More
-  </div>
+<div
+class="nav-item"
+onclick="showPage('more',this)"
+>
+<span class="nav-icon">•••</span>
+More
+</div>
 
 </div>
 
 <!-- DIVISION MODAL -->
 
-<div id="divisionModal" class="modal">
+<div
+id="divisionModal"
+class="modal"
+>
 
-  <div class="modal-card small-modal-card">
+<div class="modal-card small-modal-card">
 
-    <div class="modal-title">
-      Club Division
-    </div>
+<div class="modal-title">
+Club Division
+</div>
 
-    <div
-      id="divisionModalSubtitle"
-      class="modal-subtitle"
-    >
-      Update Olympus FC's division.
-    </div>
+<div
+id="divisionModalSubtitle"
+class="modal-subtitle"
+>
+Update Olympus FC's division.
+</div>
 
-    <div class="form-group">
+<div class="form-group">
 
-      <label class="form-label">
-        Current Division
-      </label>
+<label class="form-label">
+Current Division
+</label>
 
-      <select
-        id="divisionSelect"
-        class="form-control"
-      >
-        <option>Division 5</option>
-        <option>Division 4</option>
-        <option>Division 3</option>
-        <option>Division 2</option>
-        <option>Division 1</option>
-        <option>Elite</option>
-      </select>
+<select
+id="divisionSelect"
+class="form-control"
+>
 
-    </div>
+<option>Division 5</option>
+<option>Division 4</option>
+<option>Division 3</option>
+<option>Division 2</option>
+<option>Division 1</option>
+<option>Elite</option>
 
-    <div class="form-buttons">
+</select>
 
-      <button
-        class="cancel-button"
-        onclick="closeDivisionModal()"
-      >
-        Cancel
-      </button>
+</div>
 
-      <button
-        class="save-button"
-        onclick="saveDivision()"
-      >
-        Save Division
-      </button>
+<div class="form-buttons">
 
-    </div>
+<button
+class="cancel-button"
+onclick="closeDivisionModal()"
+>
+Cancel
+</button>
 
-  </div>
+<button
+class="save-button"
+onclick="saveDivision()"
+>
+Save Division
+</button>
+
+</div>
+
+</div>
 
 </div>
 
 <!-- MATCH MODAL -->
 
-<div id="matchModal" class="modal">
+<div
+id="matchModal"
+class="modal"
+>
 
 <div class="modal-card">
 
 <div id="matchStep1">
 
-  <div class="step-indicator">
-    STEP 1 OF 2
-  </div>
+<div class="step-indicator">
+STEP 1 OF 2
+</div>
 
-  <div class="match-season-banner">
+<div class="match-season-banner">
 
-    <div class="match-season-banner-label">
-      ADDING MATCH TO
-    </div>
+<div
+id="matchSeasonBannerLabel"
+class="match-season-banner-label"
+>
+ADDING MATCH TO
+</div>
 
-    <div
-      id="matchEntrySeason"
-      class="match-season-banner-value"
-    >
-      FC26
-    </div>
-
-  </div>
-
-  <div class="modal-title">
-    Add Match
-  </div>
-
-  <div
-    id="addMatchSubtitle"
-    class="modal-subtitle"
-  >
-    Enter your Olympus FC result.
-  </div>
-
-  <div class="form-group">
-
-    <label class="form-label">
-      Opponent
-    </label>
-
-    <input
-      id="opponent"
-      class="form-control"
-      placeholder="e.g. Test FC"
-    >
-
-  </div>
-
-  <div class="form-group">
-
-    <label class="form-label">
-      Date
-    </label>
-
-    <input
-      id="matchDate"
-      class="form-control"
-      type="date"
-    >
-
-  </div>
-
-  <div class="form-group">
-
-    <label class="form-label">
-      Match Type
-    </label>
-
-    <select
-      id="matchType"
-      class="form-control"
-    >
-      <option>League</option>
-      <option>Promotion</option>
-      <option>Playoffs</option>
-      <option>Friendly</option>
-    </select>
-
-  </div>
-
-  <div class="score-inputs">
-
-    <div class="form-group">
-
-      <label class="form-label">
-        Olympus FC
-      </label>
-
-      <input
-        id="olympusScore"
-        class="form-control"
-        type="number"
-        min="0"
-      >
-
-    </div>
-
-    <div class="score-divider">
-      –
-    </div>
-
-    <div class="form-group">
-
-      <label class="form-label">
-        Opponent
-      </label>
-
-      <input
-        id="opponentScore"
-        class="form-control"
-        type="number"
-        min="0"
-      >
-
-    </div>
-
-  </div>
-
-  <div
-    id="matchError"
-    class="form-error"
-  ></div>
-
-  <div class="form-buttons">
-
-    <button
-      class="cancel-button"
-      onclick="closeMatchForm()"
-    >
-      Cancel
-    </button>
-
-    <button
-      class="save-button"
-      onclick="continueToPlayerStats()"
-    >
-      Continue
-    </button>
-
-  </div>
+<div
+id="matchEntrySeason"
+class="match-season-banner-value"
+>
+FC26
+</div>
 
 </div>
 
 <div
-  id="matchStep2"
-  style="display:none"
+id="matchModalTitle"
+class="modal-title"
+>
+Add Match
+</div>
+
+<div
+id="addMatchSubtitle"
+class="modal-subtitle"
+>
+Enter your Olympus FC result.
+</div>
+
+<div class="form-group">
+
+<label class="form-label">
+Opponent
+</label>
+
+<input
+id="opponent"
+class="form-control"
+placeholder="e.g. Test FC"
 >
 
-  <div class="step-indicator">
-    STEP 2 OF 2
-  </div>
+</div>
 
-  <div class="match-season-banner">
+<div class="form-group">
 
-    <div class="match-season-banner-label">
-      ADDING MATCH TO
-    </div>
+<label class="form-label">
+Date
+</label>
 
-    <div
-      id="matchEntrySeasonStep2"
-      class="match-season-banner-value"
-    >
-      FC26
-    </div>
+<input
+id="matchDate"
+class="form-control"
+type="date"
+>
 
-  </div>
+</div>
 
-  <div class="modal-title">
-    Player Stats
-  </div>
+<div class="form-group">
 
-  <div
-    id="playerStatsSubtitle"
-    class="modal-subtitle"
-  ></div>
+<label class="form-label">
+Match Type
+</label>
 
-  <div id="playerEntryList"></div>
+<select
+id="matchType"
+class="form-control"
+>
 
-  <div
-    id="playerError"
-    class="form-error"
-  ></div>
+<option>League</option>
+<option>Promotion</option>
+<option>Playoffs</option>
+<option>Friendly</option>
 
-  <div class="form-buttons">
+</select>
 
-    <button
-      class="app-back-button modal-back-button"
-      onclick="backToMatchDetails()"
-      aria-label="Back"
-    >
-      <span class="app-back-icon">‹</span>
-      <span class="app-back-text">Back</span>
-    </button>
+</div>
 
-    <button
-      class="save-button"
-      onclick="finishMatch()"
-    >
-      Finish Match
-    </button>
+<div class="score-inputs">
 
-  </div>
+<div class="form-group">
+
+<label class="form-label">
+Olympus FC
+</label>
+
+<input
+id="olympusScore"
+class="form-control"
+type="number"
+min="0"
+>
+
+</div>
+
+<div class="score-divider">
+–
+</div>
+
+<div class="form-group">
+
+<label class="form-label">
+Opponent
+</label>
+
+<input
+id="opponentScore"
+class="form-control"
+type="number"
+min="0"
+>
 
 </div>
 
 </div>
+
+<div
+id="matchError"
+class="form-error"
+></div>
+
+<div class="form-buttons">
+
+<button
+class="cancel-button"
+onclick="closeMatchForm()"
+>
+Cancel
+</button>
+
+<button
+class="save-button"
+onclick="continueToPlayerStats()"
+>
+Continue
+</button>
+
+</div>
+
+</div>
+
+<div
+id="matchStep2"
+style="display:none"
+>
+
+<div class="step-indicator">
+STEP 2 OF 2
+</div>
+
+<div class="match-season-banner">
+
+<div
+id="matchSeasonBannerLabel2"
+class="match-season-banner-label"
+>
+ADDING MATCH TO
+</div>
+
+<div
+id="matchEntrySeasonStep2"
+class="match-season-banner-value"
+>
+FC26
+</div>
+
+</div>
+
+<div class="modal-title">
+Player Stats
+</div>
+
+<div
+id="playerStatsSubtitle"
+class="modal-subtitle"
+></div>
+
+<div id="playerEntryList"></div>
+
+<div
+id="playerError"
+class="form-error"
+></div>
+
+<div class="form-buttons">
+
+<button
+class="app-back-button modal-back-button"
+onclick="backToMatchDetailsForm()"
+>
+
+<span class="app-back-icon">‹</span>
+<span>Back</span>
+
+</button>
+
+<button
+id="finishMatchButton"
+class="save-button"
+onclick="finishMatch()"
+>
+Finish Match
+</button>
+
+</div>
+
+</div>
+
+</div>
+
 </div>
 
 <script>
@@ -2734,50 +3001,50 @@ input[type="date"]::-webkit-date-and-time-value {
 
 const players = [
 
-  {
-    id:"tyrone",
-    name:"Tyrone Dean",
-    number:40,
-    position:"CM",
-    nation:"England",
-    captain:true
-  },
+{
+id:"tyrone",
+name:"Tyrone Dean",
+number:40,
+position:"CM",
+nation:"England",
+captain:true
+},
 
-  {
-    id:"baganor",
-    name:"Baganor Jamba",
-    number:78,
-    position:"CM",
-    nation:"DR Congo",
-    captain:true
-  },
+{
+id:"baganor",
+name:"Baganor Jamba",
+number:78,
+position:"CM",
+nation:"DR Congo",
+captain:true
+},
 
-  {
-    id:"kenny",
-    name:"Kenny Kitbag",
-    number:26,
-    position:"CAM",
-    nation:"England",
-    captain:false
-  },
+{
+id:"kenny",
+name:"Kenny Kitbag",
+number:26,
+position:"CAM",
+nation:"England",
+captain:false
+},
 
-  {
-    id:"deano",
-    name:"Deano",
-    number:7,
-    position:"ST",
-    nation:"England",
-    captain:false
-  },
+{
+id:"deano",
+name:"Deano",
+number:7,
+position:"ST",
+nation:"England",
+captain:false
+},
 
-  {
-    id:"juanny",
-    name:"Juanny P",
-    number:23,
-    position:"TBC",
-    nation:"Mexico",
-    captain:false
-  }
+{
+id:"juanny",
+name:"Juanny P",
+number:23,
+position:"TBC",
+nation:"Mexico",
+captain:false
+}
 
 ];
 
@@ -2787,81 +3054,86 @@ const players = [
 
 const FC26_BASELINE = {
 
-  tyrone:{
-    appearances:60,
-    goals:20,
-    assists:33,
-    averageRating:8.4,
-    potm:7
-  },
+tyrone:{
+appearances:60,
+goals:20,
+assists:33,
+averageRating:8.4,
+potm:7
+},
 
-  baganor:{
-    appearances:60,
-    goals:25,
-    assists:60,
-    averageRating:8.5,
-    potm:12
-  },
+baganor:{
+appearances:60,
+goals:25,
+assists:60,
+averageRating:8.5,
+potm:12
+},
 
-  deano:{
-    appearances:60,
-    goals:95,
-    assists:34,
-    averageRating:8.5,
-    potm:21
-  },
+deano:{
+appearances:60,
+goals:95,
+assists:34,
+averageRating:8.5,
+potm:21
+},
 
-  kenny:{
-    appearances:46,
-    goals:49,
-    assists:39,
-    averageRating:8.2,
-    potm:5
-  },
+kenny:{
+appearances:46,
+goals:49,
+assists:39,
+averageRating:8.2,
+potm:5
+},
 
-  juanny:{
-    appearances:11,
-    goals:2,
-    assists:2,
-    averageRating:6.7,
-    potm:0
-  }
+juanny:{
+appearances:11,
+goals:2,
+assists:2,
+averageRating:6.7,
+potm:0
+}
 
 };
 
 const divisions = [
-  "Division 5",
-  "Division 4",
-  "Division 3",
-  "Division 2",
-  "Division 1",
-  "Elite"
+"Division 5",
+"Division 4",
+"Division 3",
+"Division 2",
+"Division 1",
+"Elite"
 ];
 
 const STORAGE_KEY =
-  "olympusFCSeasonDataV2";
+"olympusFCSeasonDataV2";
 
 const ACTIVE_SEASON_KEY =
-  "olympusFCActiveSeason";
+"olympusFCActiveSeason";
 
 let activeSeason =
-  localStorage.getItem(
-    ACTIVE_SEASON_KEY
-  ) || "FC26";
+localStorage.getItem(
+ACTIVE_SEASON_KEY
+) || "FC26";
 
 if(
-  ![
-    "FC26",
-    "FC27",
-    "ALL_TIME"
-  ].includes(activeSeason)
+![
+"FC26",
+"FC27",
+"ALL_TIME"
+].includes(activeSeason)
 ){
-  activeSeason = "FC26";
+activeSeason = "FC26";
 }
 
 let pendingMatch = null;
 
+let editContext = null;
+
+let selectedMatchRef = null;
+
 let comparisonPlayer1 = "tyrone";
+
 let comparisonPlayer2 = "baganor";
 
 /* ========================================
@@ -2869,23 +3141,25 @@ let comparisonPlayer2 = "baganor";
 ======================================== */
 
 function el(id){
-  return document.getElementById(id);
+
+return document.getElementById(id);
+
 }
 
 function seasonLabel(season){
 
-  return season === "ALL_TIME"
-    ? "ALL TIME"
-    : season;
+return season === "ALL_TIME"
+? "ALL TIME"
+: season;
 
 }
 
 function getPlayer(playerId){
 
-  return players.find(
-    player =>
-      player.id === playerId
-  );
+return players.find(
+player =>
+player.id === playerId
+);
 
 }
 
@@ -2895,134 +3169,223 @@ function getPlayer(playerId){
 
 function createDefaultSeasonData(){
 
-  return {
+return {
 
-    FC26:{
-      division:"Division 5",
-      matches:[]
-    },
+FC26:{
+division:"Division 5",
+matches:[]
+},
 
-    FC27:{
-      division:"Division 5",
-      matches:[]
-    }
+FC27:{
+division:"Division 5",
+matches:[]
+}
 
-  };
+};
 
 }
 
 function loadSeasonData(){
 
-  try{
+try{
 
-    const saved =
-      JSON.parse(
-        localStorage.getItem(
-          STORAGE_KEY
-        )
-      );
+const saved =
+JSON.parse(
+localStorage.getItem(
+STORAGE_KEY
+)
+);
 
-    if(
-      saved &&
-      saved.FC26 &&
-      saved.FC27 &&
-      Array.isArray(saved.FC26.matches) &&
-      Array.isArray(saved.FC27.matches)
-    ){
-      return saved;
-    }
+if(
+saved &&
+saved.FC26 &&
+saved.FC27 &&
+Array.isArray(
+saved.FC26.matches
+) &&
+Array.isArray(
+saved.FC27.matches
+)
+){
+return saved;
+}
 
-  }catch{}
+}catch{}
 
-  const newData =
-    createDefaultSeasonData();
+const newData =
+createDefaultSeasonData();
 
-  try{
+try{
 
-    const oldMatches =
-      JSON.parse(
-        localStorage.getItem(
-          "olympusFCMatches"
-        )
-      );
+const oldMatches =
+JSON.parse(
+localStorage.getItem(
+"olympusFCMatches"
+)
+);
 
-    if(
-      Array.isArray(oldMatches)
-    ){
+if(
+Array.isArray(
+oldMatches
+)
+){
 
-      newData.FC26.matches =
-        oldMatches.map(
-          match=>({
-            ...match,
-            season:"FC26"
-          })
-        );
+newData.FC26.matches =
+oldMatches.map(
+match=>({
+...match,
+season:"FC26"
+})
+);
 
-    }
+}
 
-  }catch{}
+}catch{}
 
-  const oldDivision =
-    localStorage.getItem(
-      "olympusFCDivision"
-    );
+const oldDivision =
+localStorage.getItem(
+"olympusFCDivision"
+);
 
-  if(
-    divisions.includes(
-      oldDivision
-    )
-  ){
+if(
+divisions.includes(
+oldDivision
+)
+){
 
-    newData.FC26.division =
-      oldDivision;
+newData.FC26.division =
+oldDivision;
 
-  }
+}
 
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(newData)
-  );
+localStorage.setItem(
+STORAGE_KEY,
+JSON.stringify(newData)
+);
 
-  return newData;
+return newData;
 
 }
 
 let seasonData =
-  loadSeasonData();
+loadSeasonData();
 
 function saveSeasonData(){
 
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(
-      seasonData
-    )
-  );
+localStorage.setItem(
+STORAGE_KEY,
+JSON.stringify(
+seasonData
+)
+);
 
 }
 
 function currentMatches(){
 
-  if(
-    activeSeason === "ALL_TIME"
-  ){
+if(
+activeSeason === "ALL_TIME"
+){
 
-    return [
+return [
 
-      ...seasonData.FC27.matches,
-      ...seasonData.FC26.matches
+...seasonData.FC27.matches.map(
+match=>({
+...match,
+season:
+match.season ||
+"FC27"
+})
+),
 
-    ].sort(
-      (a,b)=>
-        Number(b.id || 0) -
-        Number(a.id || 0)
-    );
+...seasonData.FC26.matches.map(
+match=>({
+...match,
+season:
+match.season ||
+"FC26"
+})
+)
 
-  }
+].sort(
+(a,b)=>
+Number(b.id || 0) -
+Number(a.id || 0)
+);
 
-  return seasonData[
-    activeSeason
-  ].matches;
+}
+
+return seasonData[
+activeSeason
+].matches;
+
+}
+
+function findStoredMatch(
+season,
+id
+){
+
+const matches =
+seasonData[
+season
+]?.matches || [];
+
+const index =
+matches.findIndex(
+match=>
+String(match.id) ===
+String(id)
+);
+
+if(
+index < 0
+){
+return null;
+}
+
+return {
+
+match:
+matches[index],
+
+index
+
+};
+
+}
+
+function sourceSeason(
+match
+){
+
+if(
+match.season === "FC26" ||
+match.season === "FC27"
+){
+
+return match.season;
+
+}
+
+if(
+activeSeason !== "ALL_TIME"
+){
+
+return activeSeason;
+
+}
+
+const foundInFC27 =
+seasonData.FC27.matches.some(
+stored=>
+String(stored.id) ===
+String(match.id)
+);
+
+return foundInFC27
+? "FC27"
+: "FC26";
 
 }
 
@@ -3030,106 +3393,136 @@ function currentMatches(){
    SEASON SWITCHING
 ======================================== */
 
-function changeSeason(season){
+function changeSeason(
+season
+){
 
-  activeSeason = season;
+activeSeason =
+season;
 
-  localStorage.setItem(
-    ACTIVE_SEASON_KEY,
-    activeSeason
-  );
+localStorage.setItem(
+ACTIVE_SEASON_KEY,
+activeSeason
+);
 
-  syncSeasonSelectors();
+renderEverything();
 
-  renderEverything();
+if(
+el(
+"compare"
+).classList.contains(
+"active"
+)
+){
 
-  if(
-    el("compare").classList.contains(
-      "active"
-    )
-  ){
+renderComparison();
 
-    renderComparison();
+}
 
-  }
+if(
+el(
+"records"
+).classList.contains(
+"active"
+)
+){
 
-  if(
-    el("records").classList.contains(
-      "active"
-    )
-  ){
+renderRecordsPage();
 
-    renderRecordsPage();
+}
 
-  }
-
-  window.scrollTo(0,0);
+window.scrollTo(
+0,
+0
+);
 
 }
 
 function syncSeasonSelectors(){
 
-  document
-    .querySelectorAll(
-      ".season-selector"
-    )
-    .forEach(
-      select=>{
-        select.value =
-          activeSeason;
-      }
-    );
+document
+.querySelectorAll(
+".season-selector"
+)
+.forEach(
+select=>{
 
-  document
-    .querySelectorAll(
-      ".seasonText"
-    )
-    .forEach(
-      node=>{
-        node.textContent =
-          seasonLabel(
-            activeSeason
-          );
-      }
-    );
+select.value =
+activeSeason;
 
-  const displaySeason =
-    seasonLabel(
-      activeSeason
-    );
+}
+);
 
-  el("homeSeasonValue").textContent =
-    displaySeason;
+document
+.querySelectorAll(
+".seasonText"
+)
+.forEach(
+node=>{
 
-  el("squadSeasonSubtitle").textContent =
-    "Olympus FC · " +
-    displaySeason;
+node.textContent =
+seasonLabel(
+activeSeason
+);
 
-  el("matchesSeasonSubtitle").textContent =
-    "Olympus FC · " +
-    displaySeason;
+}
+);
 
-  el("statsSeasonSubtitle").textContent =
-    "Olympus FC · " +
-    displaySeason;
+const displaySeason =
+seasonLabel(
+activeSeason
+);
 
-  el("moreSeasonSubtitle").textContent =
-    "Olympus FC · " +
-    displaySeason;
+el(
+"homeSeasonValue"
+).textContent =
+displaySeason;
 
-  el("recordsSubtitle").textContent =
-    "Olympus FC · " +
-    displaySeason;
+el(
+"squadSeasonSubtitle"
+).textContent =
+"Olympus FC · " +
+displaySeason;
 
-  el("compareSubtitle").textContent =
-    "Olympus FC · " +
-    displaySeason;
+el(
+"matchesSeasonSubtitle"
+).textContent =
+"Olympus FC · " +
+displaySeason;
 
-  el("compareSeasonValue").textContent =
-    displaySeason;
+el(
+"statsSeasonSubtitle"
+).textContent =
+"Olympus FC · " +
+displaySeason;
 
-  el("moreSeason").textContent =
-    displaySeason;
+el(
+"moreSeasonSubtitle"
+).textContent =
+"Olympus FC · " +
+displaySeason;
+
+el(
+"recordsSubtitle"
+).textContent =
+"Olympus FC · " +
+displaySeason;
+
+el(
+"compareSubtitle"
+).textContent =
+"Olympus FC · " +
+displaySeason;
+
+el(
+"compareSeasonValue"
+).textContent =
+displaySeason;
+
+el(
+"moreSeason"
+).textContent =
+displaySeason;
 
 }
 
@@ -3138,53 +3531,66 @@ function syncSeasonSelectors(){
 ======================================== */
 
 function showPage(
-  pageId,
-  navItem
+pageId,
+navItem
 ){
 
-  document
-    .querySelectorAll(
-      ".page"
-    )
-    .forEach(
-      page=>{
-        page.classList.remove(
-          "active"
-        );
-      }
-    );
+document
+.querySelectorAll(
+".page"
+)
+.forEach(
+page=>{
 
-  el(pageId)
-    .classList.add(
-      "active"
-    );
+page.classList.remove(
+"active"
+);
 
-  document
-    .querySelectorAll(
-      ".nav-item"
-    )
-    .forEach(
-      item=>{
-        item.classList.remove(
-          "active"
-        );
-      }
-    );
+}
+);
 
-  if(navItem){
-    navItem.classList.add(
-      "active"
-    );
-  }
+el(
+pageId
+).classList.add(
+"active"
+);
 
-  el("bottomNav")
-    .classList.remove(
-      "hidden"
-    );
+document
+.querySelectorAll(
+".nav-item"
+)
+.forEach(
+item=>{
 
-  renderEverything();
+item.classList.remove(
+"active"
+);
 
-  window.scrollTo(0,0);
+}
+);
+
+if(
+navItem
+){
+
+navItem.classList.add(
+"active"
+);
+
+}
+
+el(
+"bottomNav"
+).classList.remove(
+"hidden"
+);
+
+renderEverything();
+
+window.scrollTo(
+0,
+0
+);
 
 }
 
@@ -3194,129 +3600,161 @@ function showPage(
 
 function renderDivision(){
 
-  if(
-    activeSeason === "ALL_TIME"
-  ){
+if(
+activeSeason === "ALL_TIME"
+){
 
-    el("divisionCard").style.display =
-      "none";
+el(
+"divisionCard"
+).style.display =
+"none";
 
-    el("moreDivision").textContent =
-      "—";
+el(
+"moreDivision"
+).textContent =
+"—";
 
-    el("seasonSettingsSection").style.display =
-      "none";
+el(
+"seasonSettingsSection"
+).style.display =
+"none";
 
-    return;
+return;
 
-  }
+}
 
-  el("divisionCard").style.display =
-    "block";
+el(
+"divisionCard"
+).style.display =
+"block";
 
-  el("seasonSettingsSection").style.display =
-    "block";
+el(
+"seasonSettingsSection"
+).style.display =
+"block";
 
-  const currentDivision =
-    seasonData[
-      activeSeason
-    ].division;
+const currentDivision =
+seasonData[
+activeSeason
+].division;
 
-  el("currentDivision").textContent =
-    currentDivision;
+el(
+"currentDivision"
+).textContent =
+currentDivision;
 
-  el("moreDivision").textContent =
-    currentDivision;
+el(
+"moreDivision"
+).textContent =
+currentDivision;
 
-  const currentIndex =
-    divisions.indexOf(
-      currentDivision
-    );
+const currentIndex =
+divisions.indexOf(
+currentDivision
+);
 
-  el("divisionPath").innerHTML =
-    divisions.map(
-      (division,index)=>{
+el(
+"divisionPath"
+).innerHTML =
+divisions.map(
+(division,index)=>{
 
-        let className =
-          "division-step";
+let className =
+"division-step";
 
-        if(
-          index < currentIndex
-        ){
-          className +=
-            " complete";
-        }
+if(
+index <
+currentIndex
+){
 
-        if(
-          index === currentIndex
-        ){
-          className +=
-            " current";
-        }
+className +=
+" complete";
 
-        return `
-          <div class="${className}"></div>
-        `;
+}
 
-      }
-    ).join("");
+if(
+index ===
+currentIndex
+){
+
+className +=
+" current";
+
+}
+
+return `
+<div class="${className}"></div>
+`;
+
+}
+).join("");
 
 }
 
 function openDivisionModal(){
 
-  if(
-    activeSeason === "ALL_TIME"
-  ){
-    return;
-  }
+if(
+activeSeason === "ALL_TIME"
+){
+return;
+}
 
-  el("divisionSelect").value =
-    seasonData[
-      activeSeason
-    ].division;
+el(
+"divisionSelect"
+).value =
+seasonData[
+activeSeason
+].division;
 
-  el("divisionModalSubtitle").textContent =
-    `Update Olympus FC's ${activeSeason} division.`;
+el(
+"divisionModalSubtitle"
+).textContent =
+`Update Olympus FC's ${activeSeason} division.`;
 
-  el("divisionModal").classList.add(
-    "open"
-  );
+el(
+"divisionModal"
+).classList.add(
+"open"
+);
 
-  document.body.style.overflow =
-    "hidden";
+document.body.style.overflow =
+"hidden";
 
 }
 
 function closeDivisionModal(){
 
-  el("divisionModal").classList.remove(
-    "open"
-  );
+el(
+"divisionModal"
+).classList.remove(
+"open"
+);
 
-  document.body.style.overflow =
-    "";
+document.body.style.overflow =
+"";
 
 }
 
 function saveDivision(){
 
-  if(
-    activeSeason === "ALL_TIME"
-  ){
-    return;
-  }
+if(
+activeSeason === "ALL_TIME"
+){
+return;
+}
 
-  seasonData[
-    activeSeason
-  ].division =
-    el("divisionSelect").value;
+seasonData[
+activeSeason
+].division =
+el(
+"divisionSelect"
+).value;
 
-  saveSeasonData();
+saveSeasonData();
 
-  closeDivisionModal();
+closeDivisionModal();
 
-  renderEverything();
+renderEverything();
 
 }
 
@@ -3326,588 +3764,952 @@ function saveDivision(){
 
 function localDate(){
 
-  const now =
-    new Date();
+const now =
+new Date();
 
-  const year =
-    now.getFullYear();
+const year =
+now.getFullYear();
 
-  const month =
-    String(
-      now.getMonth()+1
-    ).padStart(
-      2,
-      "0"
-    );
+const month =
+String(
+now.getMonth()+1
+).padStart(
+2,
+"0"
+);
 
-  const day =
-    String(
-      now.getDate()
-    ).padStart(
-      2,
-      "0"
-    );
+const day =
+String(
+now.getDate()
+).padStart(
+2,
+"0"
+);
 
-  return `${year}-${month}-${day}`;
+return `${year}-${month}-${day}`;
 
 }
 
 function formatDate(
-  dateString
+dateString
 ){
 
-  if(
-    !dateString
-  ){
-    return "—";
-  }
+if(
+!dateString
+){
+return "—";
+}
 
-  return new Date(
-    dateString +
-    "T12:00:00"
-  ).toLocaleDateString(
-    "en-GB",
-    {
-      day:"numeric",
-      month:"short",
-      year:"numeric"
-    }
-  );
+return new Date(
+dateString +
+"T12:00:00"
+).toLocaleDateString(
+"en-GB",
+{
+day:"numeric",
+month:"short",
+year:"numeric"
+}
+);
 
 }
 
 /* ========================================
-   MATCH ENTRY
+   MATCH ENTRY / EDITING
 ======================================== */
+
+function configureMatchModal(
+season,
+isEdit
+){
+
+el(
+"matchSeasonBannerLabel"
+).textContent =
+isEdit
+? "EDITING MATCH IN"
+: "ADDING MATCH TO";
+
+el(
+"matchSeasonBannerLabel2"
+).textContent =
+isEdit
+? "EDITING MATCH IN"
+: "ADDING MATCH TO";
+
+el(
+"matchEntrySeason"
+).textContent =
+season;
+
+el(
+"matchEntrySeasonStep2"
+).textContent =
+season;
+
+el(
+"matchModalTitle"
+).textContent =
+isEdit
+? "Edit Match"
+: "Add Match";
+
+el(
+"addMatchSubtitle"
+).textContent =
+isEdit
+? `Update this Olympus FC ${season} result.`
+: `Enter your Olympus FC ${season} result.`;
+
+el(
+"finishMatchButton"
+).textContent =
+isEdit
+? "Save Changes"
+: "Finish Match";
+
+}
 
 function openMatchForm(){
 
-  if(
-    activeSeason === "ALL_TIME"
-  ){
-    return;
-  }
+if(
+activeSeason === "ALL_TIME"
+){
+return;
+}
 
-  pendingMatch =
-    null;
+editContext =
+null;
 
-  el("opponent").value =
-    "";
+pendingMatch =
+null;
 
-  el("matchDate").value =
-    localDate();
+el(
+"opponent"
+).value =
+"";
 
-  el("matchType").value =
-    "League";
+el(
+"matchDate"
+).value =
+localDate();
 
-  el("olympusScore").value =
-    "";
+el(
+"matchType"
+).value =
+"League";
 
-  el("opponentScore").value =
-    "";
+el(
+"olympusScore"
+).value =
+"";
 
-  el("matchError").classList.remove(
-    "show"
-  );
+el(
+"opponentScore"
+).value =
+"";
 
-  el("playerError").classList.remove(
-    "show"
-  );
+el(
+"matchError"
+).classList.remove(
+"show"
+);
 
-  el("matchEntrySeason").textContent =
-    activeSeason;
+el(
+"playerError"
+).classList.remove(
+"show"
+);
 
-  el("matchEntrySeasonStep2").textContent =
-    activeSeason;
+configureMatchModal(
+activeSeason,
+false
+);
 
-  el("addMatchSubtitle").textContent =
-    `Enter your Olympus FC ${activeSeason} result.`;
+el(
+"matchStep1"
+).style.display =
+"block";
 
-  el("matchStep1").style.display =
-    "block";
+el(
+"matchStep2"
+).style.display =
+"none";
 
-  el("matchStep2").style.display =
-    "none";
+el(
+"matchModal"
+).classList.add(
+"open"
+);
 
-  el("matchModal").classList.add(
-    "open"
-  );
+document.body.style.overflow =
+"hidden";
 
-  document.body.style.overflow =
-    "hidden";
+}
+
+function openMatchForEdit(
+season,
+id
+){
+
+const found =
+findStoredMatch(
+season,
+id
+);
+
+if(
+!found
+){
+return;
+}
+
+const match =
+found.match;
+
+editContext = {
+
+season,
+
+id:
+match.id
+
+};
+
+pendingMatch =
+null;
+
+el(
+"opponent"
+).value =
+match.opponent ||
+"";
+
+el(
+"matchDate"
+).value =
+match.date ||
+localDate();
+
+el(
+"matchType"
+).value =
+match.type ||
+"League";
+
+el(
+"olympusScore"
+).value =
+match.olympusScore ??
+"";
+
+el(
+"opponentScore"
+).value =
+match.opponentScore ??
+"";
+
+el(
+"matchError"
+).classList.remove(
+"show"
+);
+
+el(
+"playerError"
+).classList.remove(
+"show"
+);
+
+configureMatchModal(
+season,
+true
+);
+
+el(
+"matchStep1"
+).style.display =
+"block";
+
+el(
+"matchStep2"
+).style.display =
+"none";
+
+el(
+"matchModal"
+).classList.add(
+"open"
+);
+
+document.body.style.overflow =
+"hidden";
 
 }
 
 function closeMatchForm(){
 
-  el("matchModal").classList.remove(
-    "open"
-  );
+el(
+"matchModal"
+).classList.remove(
+"open"
+);
 
-  document.body.style.overflow =
-    "";
+document.body.style.overflow =
+"";
 
-  pendingMatch =
-    null;
+pendingMatch =
+null;
+
+editContext =
+null;
 
 }
 
 function showMatchError(
-  message
+message
 ){
 
-  el("matchError").textContent =
-    message;
+el(
+"matchError"
+).textContent =
+message;
 
-  el("matchError").classList.add(
-    "show"
-  );
+el(
+"matchError"
+).classList.add(
+"show"
+);
 
 }
 
 function continueToPlayerStats(){
 
-  el("matchError").classList.remove(
-    "show"
-  );
+el(
+"matchError"
+).classList.remove(
+"show"
+);
 
-  const opponent =
-    el("opponent").value.trim();
+const opponent =
+el(
+"opponent"
+).value.trim();
 
-  const date =
-    el("matchDate").value;
+const date =
+el(
+"matchDate"
+).value;
 
-  const type =
-    el("matchType").value;
+const type =
+el(
+"matchType"
+).value;
 
-  const olympusValue =
-    el("olympusScore").value;
+const olympusValue =
+el(
+"olympusScore"
+).value;
 
-  const opponentValue =
-    el("opponentScore").value;
+const opponentValue =
+el(
+"opponentScore"
+).value;
 
-  if(
-    !opponent
-  ){
+if(
+!opponent
+){
 
-    showMatchError(
-      "Please enter an opponent."
-    );
+showMatchError(
+"Please enter an opponent."
+);
 
-    return;
-
-  }
-
-  if(
-    !date
-  ){
-
-    showMatchError(
-      "Please choose a date."
-    );
-
-    return;
-
-  }
-
-  if(
-    olympusValue === "" ||
-    opponentValue === ""
-  ){
-
-    showMatchError(
-      "Please enter both scores."
-    );
-
-    return;
-
-  }
-
-  const olympusScore =
-    Number(
-      olympusValue
-    );
-
-  const opponentScore =
-    Number(
-      opponentValue
-    );
-
-  let result =
-    "D";
-
-  if(
-    olympusScore >
-    opponentScore
-  ){
-    result =
-      "W";
-  }
-
-  if(
-    olympusScore <
-    opponentScore
-  ){
-    result =
-      "L";
-  }
-
-  pendingMatch = {
-
-    id:
-      Date.now(),
-
-    season:
-      activeSeason,
-
-    opponent,
-
-    date,
-
-    type,
-
-    olympusScore,
-
-    opponentScore,
-
-    result,
-
-    playerStats:{},
-
-    potmPlayerId:null
-
-  };
-
-  el("matchEntrySeasonStep2").textContent =
-    activeSeason;
-
-  el("matchStep1").style.display =
-    "none";
-
-  el("matchStep2").style.display =
-    "block";
-
-  el("playerStatsSubtitle").textContent =
-    `${activeSeason} · Olympus FC ${olympusScore} – ${opponentScore} ${opponent}`;
-
-  renderPlayerEntry();
+return;
 
 }
 
-function renderPlayerEntry(){
+if(
+!date
+){
 
-  el("playerEntryList").innerHTML =
-    players.map(
-      player=>`
+showMatchError(
+"Please choose a date."
+);
 
-      <div
-        class="player-entry"
-        id="entry-${player.id}"
-      >
+return;
 
-        <div class="player-entry-header">
+}
 
-          <div class="player-entry-name">
-            #${player.number}
-            ${player.name}
-          </div>
+if(
+olympusValue === "" ||
+opponentValue === ""
+){
 
-          <label class="played-toggle">
+showMatchError(
+"Please enter both scores."
+);
 
-            <input
-              id="played-${player.id}"
-              type="checkbox"
-              checked
-              onchange="togglePlayer('${player.id}')"
-            >
+return;
 
-            Played
+}
 
-          </label>
+const olympusScore =
+Number(
+olympusValue
+);
 
-        </div>
+const opponentScore =
+Number(
+opponentValue
+);
 
-        <div class="player-entry-inputs">
+let result =
+"D";
 
-          <div>
+if(
+olympusScore >
+opponentScore
+){
 
-            <div class="small-input-label">
-              Goals
-            </div>
+result =
+"W";
 
-            <input
-              id="goals-${player.id}"
-              class="small-stat-input"
-              type="number"
-              min="0"
-              value="0"
-            >
+}
 
-          </div>
+if(
+olympusScore <
+opponentScore
+){
 
-          <div>
+result =
+"L";
 
-            <div class="small-input-label">
-              Assists
-            </div>
+}
 
-            <input
-              id="assists-${player.id}"
-              class="small-stat-input"
-              type="number"
-              min="0"
-              value="0"
-            >
+const season =
+editContext
+? editContext.season
+: activeSeason;
 
-          </div>
+const existingMatch =
+editContext
+? findStoredMatch(
+editContext.season,
+editContext.id
+)?.match
+: null;
 
-          <div>
+pendingMatch = {
 
-            <div class="small-input-label">
-              Rating
-            </div>
+id:
+existingMatch
+? existingMatch.id
+: Date.now(),
 
-            <input
-              id="rating-${player.id}"
-              class="small-stat-input"
-              type="number"
-              min="0"
-              max="10"
-              step="0.1"
-              placeholder="Optional"
-            >
+season,
 
-          </div>
+opponent,
 
-        </div>
+date,
 
-        <label class="potm-choice">
+type,
 
-          <input
-            id="potm-${player.id}"
-            type="radio"
-            name="potmPlayer"
-            value="${player.id}"
-          >
+olympusScore,
 
-          ⭐ Player of the Match
+opponentScore,
 
-        </label>
+result,
 
-      </div>
+playerStats:
+existingMatch
+? existingMatch.playerStats || {}
+: {},
 
-    `
-    ).join("");
+potmPlayerId:
+existingMatch
+? existingMatch.potmPlayerId || null
+: null
+
+};
+
+el(
+"matchStep1"
+).style.display =
+"none";
+
+el(
+"matchStep2"
+).style.display =
+"block";
+
+el(
+"playerStatsSubtitle"
+).textContent =
+`${season} · Olympus FC ${olympusScore} – ${opponentScore} ${opponent}`;
+
+renderPlayerEntry(
+existingMatch
+);
+
+}
+
+function renderPlayerEntry(
+existingMatch = null
+){
+
+const existingStats =
+existingMatch?.playerStats ||
+{};
+
+el(
+"playerEntryList"
+).innerHTML =
+players.map(
+player=>{
+
+const existing =
+existingStats[
+player.id
+] || {
+
+played:true,
+goals:0,
+assists:0,
+rating:null
+
+};
+
+const played =
+existing.played !== false;
+
+const potm =
+existingMatch &&
+existingMatch.potmPlayerId ===
+player.id;
+
+return `
+
+<div
+class="player-entry${played ? "" : " not-played"}"
+id="entry-${player.id}"
+>
+
+<div class="player-entry-header">
+
+<div class="player-entry-name">
+#${player.number}
+${player.name}
+</div>
+
+<label class="played-toggle">
+
+<input
+id="played-${player.id}"
+type="checkbox"
+${played ? "checked" : ""}
+onchange="togglePlayer('${player.id}')"
+>
+
+Played
+
+</label>
+
+</div>
+
+<div class="player-entry-inputs">
+
+<div>
+
+<div class="small-input-label">
+Goals
+</div>
+
+<input
+id="goals-${player.id}"
+class="small-stat-input"
+type="number"
+min="0"
+value="${Number(existing.goals || 0)}"
+${played ? "" : "disabled"}
+>
+
+</div>
+
+<div>
+
+<div class="small-input-label">
+Assists
+</div>
+
+<input
+id="assists-${player.id}"
+class="small-stat-input"
+type="number"
+min="0"
+value="${Number(existing.assists || 0)}"
+${played ? "" : "disabled"}
+>
+
+</div>
+
+<div>
+
+<div class="small-input-label">
+Rating
+</div>
+
+<input
+id="rating-${player.id}"
+class="small-stat-input"
+type="number"
+min="0"
+max="10"
+step="0.1"
+value="${
+existing.rating === null ||
+existing.rating === undefined
+? ""
+: existing.rating
+}"
+placeholder="Optional"
+${played ? "" : "disabled"}
+>
+
+</div>
+
+</div>
+
+<label class="potm-choice">
+
+<input
+id="potm-${player.id}"
+type="radio"
+name="potmPlayer"
+value="${player.id}"
+${potm ? "checked" : ""}
+${played ? "" : "disabled"}
+>
+
+⭐ Player of the Match
+
+</label>
+
+</div>
+
+`;
+
+}
+).join("");
 
 }
 
 function togglePlayer(
-  playerId
+playerId
 ){
 
-  const played =
-    el(
-      "played-" +
-      playerId
-    ).checked;
+const played =
+el(
+"played-" +
+playerId
+).checked;
 
-  const entry =
-    el(
-      "entry-" +
-      playerId
-    );
+[
+"goals-",
+"assists-",
+"rating-",
+"potm-"
+].forEach(
+prefix=>{
 
-  [
-    "goals-",
-    "assists-",
-    "rating-",
-    "potm-"
-  ].forEach(
-    prefix=>{
+const control =
+el(
+prefix +
+playerId
+);
 
-      const control =
-        el(
-          prefix +
-          playerId
-        );
+if(
+control
+){
 
-      if(control){
-        control.disabled =
-          !played;
-      }
-
-    }
-  );
-
-  if(played){
-
-    entry.classList.remove(
-      "not-played"
-    );
-
-  }else{
-
-    entry.classList.add(
-      "not-played"
-    );
-
-  }
+control.disabled =
+!played;
 
 }
 
-function backToMatchDetails(){
+}
+);
 
-  el("matchStep2").style.display =
-    "none";
+el(
+"entry-" +
+playerId
+).classList.toggle(
+"not-played",
+!played
+);
 
-  el("matchStep1").style.display =
-    "block";
+if(
+!played &&
+el(
+"potm-" +
+playerId
+).checked
+){
+
+el(
+"potm-" +
+playerId
+).checked =
+false;
+
+}
+
+}
+
+function backToMatchDetailsForm(){
+
+el(
+"matchStep2"
+).style.display =
+"none";
+
+el(
+"matchStep1"
+).style.display =
+"block";
 
 }
 
 function finishMatch(){
 
-  if(
-    !pendingMatch
-  ){
-    return;
-  }
+if(
+!pendingMatch
+){
+return;
+}
 
-  el("playerError").classList.remove(
-    "show"
-  );
+el(
+"playerError"
+).classList.remove(
+"show"
+);
 
-  const playerStats =
-    {};
+const playerStats =
+{};
 
-  let playerGoalTotal =
-    0;
+let playerGoalTotal =
+0;
 
-  for(
-    const player
-    of players
-  ){
+for(
+const player
+of players
+){
 
-    const played =
-      el(
-        "played-" +
-        player.id
-      ).checked;
+const played =
+el(
+"played-" +
+player.id
+).checked;
 
-    const goals =
-      played
-        ? Number(
-            el(
-              "goals-" +
-              player.id
-            ).value
-          ) || 0
-        : 0;
+const goals =
+played
+? Number(
+el(
+"goals-" +
+player.id
+).value
+) || 0
+: 0;
 
-    const assists =
-      played
-        ? Number(
-            el(
-              "assists-" +
-              player.id
-            ).value
-          ) || 0
-        : 0;
+const assists =
+played
+? Number(
+el(
+"assists-" +
+player.id
+).value
+) || 0
+: 0;
 
-    const ratingText =
-      played
-        ? el(
-            "rating-" +
-            player.id
-          ).value
-        : "";
+const ratingText =
+played
+? el(
+"rating-" +
+player.id
+).value
+: "";
 
-    const rating =
-      ratingText === ""
-        ? null
-        : Number(
-            ratingText
-          );
+const rating =
+ratingText === ""
+? null
+: Number(
+ratingText
+);
 
-    if(
-      rating !== null &&
-      (
-        rating < 0 ||
-        rating > 10
-      )
-    ){
+if(
+rating !== null &&
+(
+rating < 0 ||
+rating > 10
+)
+){
 
-      el("playerError").textContent =
-        player.name +
-        "'s rating must be between 0 and 10.";
+el(
+"playerError"
+).textContent =
+player.name +
+"'s rating must be between 0 and 10.";
 
-      el("playerError").classList.add(
-        "show"
-      );
+el(
+"playerError"
+).classList.add(
+"show"
+);
 
-      return;
+return;
 
-    }
+}
 
-    playerGoalTotal +=
-      goals;
+playerGoalTotal +=
+goals;
 
-    playerStats[
-      player.id
-    ] = {
+playerStats[
+player.id
+] = {
 
-      played,
+played,
 
-      goals,
+goals,
 
-      assists,
+assists,
 
-      rating
+rating
 
-    };
+};
 
-  }
+}
 
-  if(
-    playerGoalTotal >
-    pendingMatch.olympusScore
-  ){
+if(
+playerGoalTotal >
+pendingMatch.olympusScore
+){
 
-    el("playerError").textContent =
-      "Player goals cannot exceed Olympus FC's score.";
+el(
+"playerError"
+).textContent =
+"Player goals cannot exceed Olympus FC's score.";
 
-    el("playerError").classList.add(
-      "show"
-    );
+el(
+"playerError"
+).classList.add(
+"show"
+);
 
-    return;
+return;
 
-  }
+}
 
-  const potm =
-    document.querySelector(
-      'input[name="potmPlayer"]:checked'
-    );
+const potm =
+document.querySelector(
+'input[name="potmPlayer"]:checked'
+);
 
-  pendingMatch.playerStats =
-    playerStats;
+pendingMatch.playerStats =
+playerStats;
 
-  pendingMatch.potmPlayerId =
-    potm
-      ? potm.value
-      : null;
+pendingMatch.potmPlayerId =
+potm
+? potm.value
+: null;
 
-  seasonData[
-    activeSeason
-  ].matches.unshift(
-    pendingMatch
-  );
+const wasEditing =
+Boolean(
+editContext
+);
 
-  saveSeasonData();
+const savedSeason =
+editContext
+? editContext.season
+: activeSeason;
 
-  closeMatchForm();
+const savedId =
+pendingMatch.id;
 
-  renderEverything();
+if(
+wasEditing
+){
+
+const stored =
+findStoredMatch(
+editContext.season,
+editContext.id
+);
+
+if(
+stored
+){
+
+seasonData[
+editContext.season
+].matches[
+stored.index
+] = {
+
+...pendingMatch,
+
+season:
+editContext.season
+
+};
+
+}
+
+}else{
+
+seasonData[
+activeSeason
+].matches.unshift(
+pendingMatch
+);
+
+}
+
+saveSeasonData();
+
+el(
+"matchModal"
+).classList.remove(
+"open"
+);
+
+document.body.style.overflow =
+"";
+
+pendingMatch =
+null;
+
+editContext =
+null;
+
+renderEverything();
+
+if(
+wasEditing &&
+selectedMatchRef
+){
+
+selectedMatchRef = {
+
+season:
+savedSeason,
+
+id:
+savedId
+
+};
+
+renderMatchDetails();
+
+}
 
 }
 
@@ -3917,77 +4719,77 @@ function finishMatch(){
 
 function calculateClubStats(){
 
-  const matches =
-    currentMatches();
+const matches =
+currentMatches();
 
-  const played =
-    matches.length;
+const played =
+matches.length;
 
-  const wins =
-    matches.filter(
-      match=>
-        match.result === "W"
-    ).length;
+const wins =
+matches.filter(
+match=>
+match.result === "W"
+).length;
 
-  const draws =
-    matches.filter(
-      match=>
-        match.result === "D"
-    ).length;
+const draws =
+matches.filter(
+match=>
+match.result === "D"
+).length;
 
-  const losses =
-    matches.filter(
-      match=>
-        match.result === "L"
-    ).length;
+const losses =
+matches.filter(
+match=>
+match.result === "L"
+).length;
 
-  const goalsFor =
-    matches.reduce(
-      (total,match)=>
-        total +
-        Number(
-          match.olympusScore || 0
-        ),
-      0
-    );
+const goalsFor =
+matches.reduce(
+(total,match)=>
+total +
+Number(
+match.olympusScore || 0
+),
+0
+);
 
-  const goalsAgainst =
-    matches.reduce(
-      (total,match)=>
-        total +
-        Number(
-          match.opponentScore || 0
-        ),
-      0
-    );
+const goalsAgainst =
+matches.reduce(
+(total,match)=>
+total +
+Number(
+match.opponentScore || 0
+),
+0
+);
 
-  const winRate =
-    played === 0
-      ? 0
-      : Math.round(
-          (
-            wins /
-            played
-          ) * 100
-        );
+const winRate =
+played === 0
+? 0
+: Math.round(
+(
+wins /
+played
+) * 100
+);
 
-  return {
+return {
 
-    played,
+played,
 
-    wins,
+wins,
 
-    draws,
+draws,
 
-    losses,
+losses,
 
-    goalsFor,
+goalsFor,
 
-    goalsAgainst,
+goalsAgainst,
 
-    winRate
+winRate
 
-  };
+};
 
 }
 
@@ -3997,232 +4799,204 @@ function calculateClubStats(){
 
 function blankPlayerTotal(){
 
-  return {
+return {
 
-    appearances:0,
+appearances:0,
 
-    goals:0,
+goals:0,
 
-    assists:0,
+assists:0,
 
-    contributions:0,
+contributions:0,
 
-    ratingSum:0,
+ratingSum:0,
 
-    ratedAppearances:0,
+ratedAppearances:0,
 
-    averageRating:null,
+averageRating:null,
 
-    potm:0
+potm:0
 
-  };
+};
 
 }
 
 function addFC26Baseline(
-  totals
+totals
 ){
 
-  players.forEach(
-    player=>{
+players.forEach(
+player=>{
 
-      const base =
-        FC26_BASELINE[
-          player.id
-        ];
+const base =
+FC26_BASELINE[
+player.id
+];
 
-      if(
-        !base
-      ){
-        return;
-      }
+const stat =
+totals[
+player.id
+];
 
-      totals[
-        player.id
-      ].appearances +=
-        base.appearances;
+stat.appearances +=
+base.appearances;
 
-      totals[
-        player.id
-      ].goals +=
-        base.goals;
+stat.goals +=
+base.goals;
 
-      totals[
-        player.id
-      ].assists +=
-        base.assists;
+stat.assists +=
+base.assists;
 
-      totals[
-        player.id
-      ].potm +=
-        base.potm;
+stat.potm +=
+base.potm;
 
-      if(
-        base.averageRating !== null &&
-        base.averageRating !== undefined
-      ){
+stat.ratingSum +=
+base.averageRating *
+base.appearances;
 
-        totals[
-          player.id
-        ].ratingSum +=
-          base.averageRating *
-          base.appearances;
+stat.ratedAppearances +=
+base.appearances;
 
-        totals[
-          player.id
-        ].ratedAppearances +=
-          base.appearances;
-
-      }
-
-    }
-  );
+}
+);
 
 }
 
 function calculatePlayerStats(){
 
-  const totals =
-    {};
+const totals =
+{};
 
-  players.forEach(
-    player=>{
+players.forEach(
+player=>{
 
-      totals[
-        player.id
-      ] =
-        blankPlayerTotal();
+totals[
+player.id
+] =
+blankPlayerTotal();
 
-    }
-  );
+}
+);
 
-  if(
-    activeSeason === "FC26" ||
-    activeSeason === "ALL_TIME"
-  ){
+if(
+activeSeason === "FC26" ||
+activeSeason === "ALL_TIME"
+){
 
-    addFC26Baseline(
-      totals
-    );
+addFC26Baseline(
+totals
+);
 
-  }
+}
 
-  const matches =
-    currentMatches();
+currentMatches().forEach(
+match=>{
 
-  matches.forEach(
-    match=>{
+if(
+match.potmPlayerId &&
+totals[
+match.potmPlayerId
+]
+){
 
-      if(
-        match.potmPlayerId &&
-        totals[
-          match.potmPlayerId
-        ]
-      ){
+totals[
+match.potmPlayerId
+].potm++;
 
-        totals[
-          match.potmPlayerId
-        ].potm++;
+}
 
-      }
+if(
+!match.playerStats
+){
+return;
+}
 
-      if(
-        !match.playerStats
-      ){
-        return;
-      }
+players.forEach(
+player=>{
 
-      players.forEach(
-        player=>{
+const stat =
+match.playerStats[
+player.id
+];
 
-          const stat =
-            match.playerStats[
-              player.id
-            ];
+if(
+!stat ||
+!stat.played
+){
+return;
+}
 
-          if(
-            !stat ||
-            !stat.played
-          ){
-            return;
-          }
+const total =
+totals[
+player.id
+];
 
-          totals[
-            player.id
-          ].appearances++;
+total.appearances++;
 
-          totals[
-            player.id
-          ].goals +=
-            Number(
-              stat.goals || 0
-            );
+total.goals +=
+Number(
+stat.goals || 0
+);
 
-          totals[
-            player.id
-          ].assists +=
-            Number(
-              stat.assists || 0
-            );
+total.assists +=
+Number(
+stat.assists || 0
+);
 
-          if(
-            stat.rating !== null &&
-            stat.rating !== undefined &&
-            stat.rating !== ""
-          ){
+if(
+stat.rating !== null &&
+stat.rating !== undefined &&
+stat.rating !== ""
+){
 
-            const rating =
-              Number(
-                stat.rating
-              );
+const rating =
+Number(
+stat.rating
+);
 
-            if(
-              Number.isFinite(
-                rating
-              )
-            ){
+if(
+Number.isFinite(
+rating
+)
+){
 
-              totals[
-                player.id
-              ].ratingSum +=
-                rating;
+total.ratingSum +=
+rating;
 
-              totals[
-                player.id
-              ].ratedAppearances++;
+total.ratedAppearances++;
 
-            }
+}
 
-          }
+}
 
-        }
-      );
+}
+);
 
-    }
-  );
+}
+);
 
-  players.forEach(
-    player=>{
+players.forEach(
+player=>{
 
-      const stat =
-        totals[
-          player.id
-        ];
+const stat =
+totals[
+player.id
+];
 
-      stat.contributions =
-        stat.goals +
-        stat.assists;
+stat.contributions =
+stat.goals +
+stat.assists;
 
-      stat.averageRating =
-        stat.ratedAppearances === 0
-          ? null
-          : stat.ratingSum /
-            stat.ratedAppearances;
+stat.averageRating =
+stat.ratedAppearances
+? stat.ratingSum /
+stat.ratedAppearances
+: null;
 
-    }
-  );
+}
+);
 
-  return totals;
+return totals;
 
 }
 
@@ -4232,184 +5006,227 @@ function calculatePlayerStats(){
 
 function renderHome(){
 
-  const club =
-    calculateClubStats();
+const club =
+calculateClubStats();
 
-  const totals =
-    calculatePlayerStats();
+const totals =
+calculatePlayerStats();
 
-  if(
-    activeSeason === "FC26"
-  ){
+if(
+activeSeason === "FC26"
+){
 
-    el("seasonCardTitle").textContent =
-      "FC26 Season";
+el(
+"seasonCardTitle"
+).textContent =
+"FC26 Season";
 
-    el("seasonCardText").textContent =
-      "The climb to the summit continues.";
+el(
+"seasonCardText"
+).textContent =
+"The climb to the summit continues.";
 
-    el("historicalNote").textContent =
-      "FC26 player career totals include the historical snapshot imported from the Olympus FC database. New FC26 matches are added on top.";
+el(
+"historicalNote"
+).textContent =
+"FC26 player career totals include the historical snapshot imported from the Olympus FC database. New FC26 matches are added on top.";
 
-  }else if(
-    activeSeason === "FC27"
-  ){
+}else if(
+activeSeason === "FC27"
+){
 
-    el("seasonCardTitle").textContent =
-      "FC27 Season";
+el(
+"seasonCardTitle"
+).textContent =
+"FC27 Season";
 
-    el("seasonCardText").textContent =
-      "A new climb begins.";
+el(
+"seasonCardText"
+).textContent =
+"A new climb begins.";
 
-    el("historicalNote").textContent =
-      "FC27 begins from zero. Every match and player performance you enter will build this season automatically.";
+el(
+"historicalNote"
+).textContent =
+"FC27 begins from zero. Every match and player performance you enter will build this season automatically.";
 
-  }else{
+}else{
 
-    el("seasonCardTitle").textContent =
-      "Olympus FC · All Time";
+el(
+"seasonCardTitle"
+).textContent =
+"Olympus FC · All Time";
 
-    el("seasonCardText").textContent =
-      "Every era. One club.";
+el(
+"seasonCardText"
+).textContent =
+"Every era. One club.";
 
-    el("historicalNote").textContent =
-      "All Time combines the imported FC26 totals with all FC26 and FC27 matches recorded in the tracker.";
+el(
+"historicalNote"
+).textContent =
+"All Time combines the imported FC26 totals with all FC26 and FC27 matches recorded in the tracker.";
 
-  }
+}
 
-  el("homeMatches").textContent =
-    club.played;
+el(
+"homeMatches"
+).textContent =
+club.played;
 
-  el("homeWins").textContent =
-    club.wins;
+el(
+"homeWins"
+).textContent =
+club.wins;
 
-  el("homeGoals").textContent =
-    club.goalsFor;
+el(
+"homeGoals"
+).textContent =
+club.goalsFor;
 
-  el("homeWinRate").textContent =
-    club.winRate +
-    "%";
+el(
+"homeWinRate"
+).textContent =
+club.winRate +
+"%";
 
-  el("recordWins").textContent =
-    club.wins;
+el(
+"recordWins"
+).textContent =
+club.wins;
 
-  el("recordDraws").textContent =
-    club.draws;
+el(
+"recordDraws"
+).textContent =
+club.draws;
 
-  el("recordLosses").textContent =
-    club.losses;
+el(
+"recordLosses"
+).textContent =
+club.losses;
 
-  el("recordGF").textContent =
-    club.goalsFor;
+el(
+"recordGF"
+).textContent =
+club.goalsFor;
 
-  el("recordGA").textContent =
-    club.goalsAgainst;
+el(
+"recordGA"
+).textContent =
+club.goalsAgainst;
 
-  const gd =
-    club.goalsFor -
-    club.goalsAgainst;
+const gd =
+club.goalsFor -
+club.goalsAgainst;
 
-  el("recordGD").textContent =
-    gd > 0
-      ? "+" + gd
-      : gd;
+el(
+"recordGD"
+).textContent =
+gd > 0
+? "+" + gd
+: gd;
 
-  const recent =
-    currentMatches()
-      .slice(
-        0,
-        5
-      );
+const recent =
+currentMatches().slice(
+0,
+5
+);
 
-  let formHTML =
-    "";
+let formHTML =
+"";
 
-  recent.forEach(
-    match=>{
+recent.forEach(
+match=>{
 
-      const cls =
-        match.result === "W"
-          ? "form-w"
-          : match.result === "L"
-            ? "form-l"
-            : "form-d";
+const className =
+match.result === "W"
+? "form-w"
+: match.result === "L"
+? "form-l"
+: "form-d";
 
-      formHTML +=
-        `
-          <div class="form-pill ${cls}">
-            ${match.result}
-          </div>
-        `;
+formHTML += `
+<div class="form-pill ${className}">
+${match.result}
+</div>
+`;
 
-    }
-  );
+}
+);
 
-  for(
-    let i =
-      recent.length;
-    i < 5;
-    i++
-  ){
+for(
+let i =
+recent.length;
+i < 5;
+i++
+){
 
-    formHTML +=
-      `
-        <div class="form-pill form-empty">
-          —
-        </div>
-      `;
+formHTML += `
+<div class="form-pill form-empty">
+—
+</div>
+`;
 
-  }
+}
 
-  el("formRow").innerHTML =
-    formHTML;
+el(
+"formRow"
+).innerHTML =
+formHTML;
 
-  const scorer =
-    [...players]
-      .sort(
-        (a,b)=>
-          totals[
-            b.id
-          ].goals -
-          totals[
-            a.id
-          ].goals
-      )[0];
+const scorer =
+[...players].sort(
+(a,b)=>
+totals[
+b.id
+].goals -
+totals[
+a.id
+].goals
+)[0];
 
-  const assister =
-    [...players]
-      .sort(
-        (a,b)=>
-          totals[
-            b.id
-          ].assists -
-          totals[
-            a.id
-          ].assists
-      )[0];
+const assister =
+[...players].sort(
+(a,b)=>
+totals[
+b.id
+].assists -
+totals[
+a.id
+].assists
+)[0];
 
-  el("topScorerGoals").textContent =
-    totals[
-      scorer.id
-    ].goals;
+el(
+"topScorerGoals"
+).textContent =
+totals[
+scorer.id
+].goals;
 
-  el("topScorerName").textContent =
-    totals[
-      scorer.id
-    ].goals
-      ? scorer.name
-      : "No goals yet";
+el(
+"topScorerName"
+).textContent =
+totals[
+scorer.id
+].goals
+? scorer.name
+: "No goals yet";
 
-  el("topAssisterAssists").textContent =
-    totals[
-      assister.id
-    ].assists;
+el(
+"topAssisterAssists"
+).textContent =
+totals[
+assister.id
+].assists;
 
-  el("topAssisterName").textContent =
-    totals[
-      assister.id
-    ].assists
-      ? assister.name
-      : "No assists yet";
+el(
+"topAssisterName"
+).textContent =
+totals[
+assister.id
+].assists
+? assister.name
+: "No assists yet";
 
 }
 
@@ -4419,100 +5236,102 @@ function renderHome(){
 
 function renderSquad(){
 
-  const totals =
-    calculatePlayerStats();
+const totals =
+calculatePlayerStats();
 
-  el("squadList").innerHTML =
-    players.map(
-      player=>{
+el(
+"squadList"
+).innerHTML =
+players.map(
+player=>{
 
-        const stat =
-          totals[
-            player.id
-          ];
+const stat =
+totals[
+player.id
+];
 
-        return `
+return `
 
-        <div class="player-card">
+<div class="player-card">
 
-          <div class="player-main">
+<div class="player-main">
 
-            <div class="number">
-              ${player.number}
-            </div>
+<div class="number">
+${player.number}
+</div>
 
-            <div>
+<div>
 
-              <div class="player-name">
-                ${player.name}
-              </div>
+<div class="player-name">
+${player.name}
+</div>
 
-              <div class="player-meta">
-                ${player.position}
-                ·
-                ${player.nation}
-              </div>
+<div class="player-meta">
+${player.position}
+·
+${player.nation}
+</div>
 
-              ${
-                player.captain
-                  ? `
-                      <span class="captain">
-                        DUAL CAPTAIN
-                      </span>
-                    `
-                  : ""
-              }
+${
+player.captain
+? `
+<span class="captain">
+DUAL CAPTAIN
+</span>
+`
+: ""
+}
 
-            </div>
+</div>
 
-          </div>
+</div>
 
-          <div class="player-mini-stats">
+<div class="player-mini-stats">
 
-            <div class="mini-stat">
-              <div class="mini-number">
-                ${stat.appearances}
-              </div>
-              <div class="mini-label">
-                APP
-              </div>
-            </div>
+<div class="mini-stat">
+<div class="mini-number">
+${stat.appearances}
+</div>
+<div class="mini-label">
+APP
+</div>
+</div>
 
-            <div class="mini-stat">
-              <div class="mini-number">
-                ${stat.goals}
-              </div>
-              <div class="mini-label">
-                GOALS
-              </div>
-            </div>
+<div class="mini-stat">
+<div class="mini-number">
+${stat.goals}
+</div>
+<div class="mini-label">
+GOALS
+</div>
+</div>
 
-            <div class="mini-stat">
-              <div class="mini-number">
-                ${stat.assists}
-              </div>
-              <div class="mini-label">
-                ASSISTS
-              </div>
-            </div>
+<div class="mini-stat">
+<div class="mini-number">
+${stat.assists}
+</div>
+<div class="mini-label">
+ASSISTS
+</div>
+</div>
 
-            <div class="mini-stat">
-              <div class="mini-number">
-                ${stat.potm}
-              </div>
-              <div class="mini-label">
-                POTM
-              </div>
-            </div>
+<div class="mini-stat">
+<div class="mini-number">
+${stat.potm}
+</div>
+<div class="mini-label">
+POTM
+</div>
+</div>
 
-          </div>
+</div>
 
-        </div>
+</div>
 
-        `;
+`;
 
-      }
-    ).join("");
+}
+).join("");
 
 }
 
@@ -4522,142 +5341,165 @@ function renderSquad(){
 
 function renderMatches(){
 
-  const matches =
-    currentMatches();
+const matches =
+currentMatches();
 
-  const club =
-    calculateClubStats();
+const club =
+calculateClubStats();
 
-  el("matchesPlayed").textContent =
-    club.played;
+el(
+"matchesPlayed"
+).textContent =
+club.played;
 
-  el("matchesWins").textContent =
-    club.wins;
+el(
+"matchesWins"
+).textContent =
+club.wins;
 
-  el("matchesGoals").textContent =
-    club.goalsFor;
+el(
+"matchesGoals"
+).textContent =
+club.goalsFor;
 
-  if(
-    activeSeason === "ALL_TIME"
-  ){
+el(
+"addMatchButton"
+).style.display =
+activeSeason === "ALL_TIME"
+? "none"
+: "block";
 
-    el("addMatchButton").style.display =
-      "none";
+el(
+"allTimeMatchMessage"
+).style.display =
+activeSeason === "ALL_TIME"
+? "block"
+: "none";
 
-    el("allTimeMatchMessage").style.display =
-      "block";
+if(
+matches.length === 0
+){
 
-  }else{
+el(
+"matchHistory"
+).innerHTML = `
 
-    el("addMatchButton").style.display =
-      "block";
+<div class="empty-matches">
 
-    el("allTimeMatchMessage").style.display =
-      "none";
+<div class="empty-title">
+No matches recorded
+</div>
 
-  }
+<div class="empty-text">
 
-  if(
-    matches.length === 0
-  ){
+${
+activeSeason === "FC26"
+? "Historical FC26 player totals are already imported. Individual match history will appear here as you enter results."
+: "Your match history will appear here once matches are added."
+}
 
-    el("matchHistory").innerHTML =
-      `
+</div>
 
-      <div class="empty-matches">
+</div>
 
-        <div class="empty-title">
-          No matches recorded
-        </div>
+`;
 
-        <div class="empty-text">
+return;
 
-          ${
-            activeSeason === "FC26"
-              ? "Historical FC26 player totals are already imported. Individual match history will appear here as you enter results."
-              : "Your match history will appear here once matches are added."
-          }
+}
 
-        </div>
+el(
+"matchHistory"
+).innerHTML =
+matches.map(
+match=>{
 
-      </div>
+const season =
+sourceSeason(
+match
+);
 
-      `;
+const resultClass =
+match.result === "W"
+? "result-win"
+: match.result === "L"
+? "result-loss"
+: "result-draw";
 
-    return;
+const resultText =
+match.result === "W"
+? "WIN"
+: match.result === "L"
+? "LOSS"
+: "DRAW";
 
-  }
+return `
 
-  el("matchHistory").innerHTML =
-    matches.map(
-      match=>{
+<div
+class="match-card"
+onclick="openMatchDetails('${season}','${match.id}')"
+>
 
-        const resultClass =
-          match.result === "W"
-            ? "result-win"
-            : match.result === "L"
-              ? "result-loss"
-              : "result-draw";
+<div class="match-card-top">
 
-        const resultText =
-          match.result === "W"
-            ? "WIN"
-            : match.result === "L"
-              ? "LOSS"
-              : "DRAW";
+<div>
 
-        return `
+<div class="match-opponent">
+vs ${match.opponent}
+</div>
 
-        <div class="match-card">
+<div class="match-date">
+${formatDate(match.date)}
+</div>
 
-          <div class="match-card-top">
+${
+activeSeason === "ALL_TIME"
+? `
+<div class="match-season">
+${season}
+</div>
+`
+: ""
+}
 
-            <div>
+</div>
 
-              <div class="match-opponent">
-                vs ${match.opponent}
-              </div>
+<div class="result-badge ${resultClass}">
+${resultText}
+</div>
 
-              <div class="match-date">
-                ${formatDate(match.date)}
-              </div>
+</div>
 
-              ${
-                activeSeason === "ALL_TIME"
-                  ? `
-                      <div class="match-season">
-                        ${match.season || "FC26"}
-                      </div>
-                    `
-                  : ""
-              }
+<div class="scoreline">
+Olympus FC
+${match.olympusScore}
+–
+${match.opponentScore}
+${match.opponent}
+</div>
 
-            </div>
+<div class="match-type">
+${match.type}
+</div>
 
-            <div class="result-badge ${resultClass}">
-              ${resultText}
-            </div>
+<div class="match-tap">
 
-          </div>
+<span>
+Tap for match details
+</span>
 
-          <div class="scoreline">
-            Olympus FC
-            ${match.olympusScore}
-            –
-            ${match.opponentScore}
-            ${match.opponent}
-          </div>
+<span>
+›
+</span>
 
-          <div class="match-type">
-            ${match.type}
-          </div>
+</div>
 
-        </div>
+</div>
 
-        `;
+`;
 
-      }
-    ).join("");
+}
+).join("");
 
 }
 
@@ -4667,155 +5509,149 @@ function renderMatches(){
 
 function renderStatsPage(){
 
-  const totals =
-    calculatePlayerStats();
+const totals =
+calculatePlayerStats();
 
-  const sorted =
-    [...players]
-      .sort(
-        (a,b)=>{
+const sorted =
+[...players].sort(
+(a,b)=>{
 
-          const difference =
-            totals[
-              b.id
-            ].contributions -
-            totals[
-              a.id
-            ].contributions;
+const contributions =
+totals[
+b.id
+].contributions -
+totals[
+a.id
+].contributions;
 
-          if(
-            difference !== 0
-          ){
-            return difference;
-          }
+if(
+contributions !== 0
+){
 
-          return (
-            totals[
-              b.id
-            ].goals -
-            totals[
-              a.id
-            ].goals
-          );
+return contributions;
 
-        }
-      );
+}
 
-  el("statsLeaderboard").innerHTML =
-    sorted.map(
-      (
-        player,
-        index
-      )=>{
+return totals[
+b.id
+].goals -
+totals[
+a.id
+].goals;
 
-        const stat =
-          totals[
-            player.id
-          ];
+}
+);
 
-        return `
+el(
+"statsLeaderboard"
+).innerHTML =
+sorted.map(
+(player,index)=>{
 
-        <div class="stats-card">
+const stat =
+totals[
+player.id
+];
 
-          <div class="stats-player-top">
+return `
 
-            <div class="stats-player-left">
+<div class="stats-card">
 
-              <div class="rank-circle">
-                ${index+1}
-              </div>
+<div class="stats-player-left">
 
-              <div>
+<div class="rank-circle">
+${index + 1}
+</div>
 
-                <div class="stats-player-name">
-                  ${player.name}
-                </div>
+<div>
 
-                <div class="stats-player-meta">
-                  #${player.number}
-                  ·
-                  ${player.position}
-                </div>
+<div class="stats-player-name">
+${player.name}
+</div>
 
-              </div>
+<div class="stats-player-meta">
+#${player.number}
+·
+${player.position}
+</div>
 
-            </div>
+</div>
 
-          </div>
+</div>
 
-          <div class="stats-row">
+<div class="stats-row">
 
-            <div class="stats-box">
-              <div class="stats-box-number">
-                ${stat.goals}
-              </div>
-              <div class="stats-box-label">
-                GOALS
-              </div>
-            </div>
+<div class="stats-box">
+<div class="stats-box-number">
+${stat.goals}
+</div>
+<div class="stats-box-label">
+GOALS
+</div>
+</div>
 
-            <div class="stats-box">
-              <div class="stats-box-number">
-                ${stat.assists}
-              </div>
-              <div class="stats-box-label">
-                ASSISTS
-              </div>
-            </div>
+<div class="stats-box">
+<div class="stats-box-number">
+${stat.assists}
+</div>
+<div class="stats-box-label">
+ASSISTS
+</div>
+</div>
 
-            <div class="stats-box">
-              <div class="stats-box-number">
-                ${stat.contributions}
-              </div>
-              <div class="stats-box-label">
-                G/A
-              </div>
-            </div>
+<div class="stats-box">
+<div class="stats-box-number">
+${stat.contributions}
+</div>
+<div class="stats-box-label">
+G/A
+</div>
+</div>
 
-            <div class="stats-box">
-              <div class="stats-box-number">
-                ${stat.appearances}
-              </div>
-              <div class="stats-box-label">
-                APP
-              </div>
-            </div>
+<div class="stats-box">
+<div class="stats-box-number">
+${stat.appearances}
+</div>
+<div class="stats-box-label">
+APP
+</div>
+</div>
 
-            <div class="stats-box">
+<div class="stats-box">
 
-              <div class="stats-box-number">
+<div class="stats-box-number">
 
-                ${
-                  stat.averageRating === null
-                    ? "—"
-                    : stat.averageRating.toFixed(2)
-                }
+${
+stat.averageRating === null
+? "—"
+: stat.averageRating.toFixed(2)
+}
 
-              </div>
+</div>
 
-              <div class="stats-box-label">
-                AVG
-              </div>
+<div class="stats-box-label">
+AVG
+</div>
 
-            </div>
+</div>
 
-            <div class="stats-box">
-              <div class="stats-box-number">
-                ${stat.potm}
-              </div>
-              <div class="stats-box-label">
-                POTM
-              </div>
-            </div>
+<div class="stats-box">
+<div class="stats-box-number">
+${stat.potm}
+</div>
+<div class="stats-box-label">
+POTM
+</div>
+</div>
 
-          </div>
+</div>
 
-        </div>
+</div>
 
-        `;
+`;
 
-      }
-    ).join("");
+}
+).join("");
 
 }
 
@@ -4825,98 +5661,68 @@ function renderStatsPage(){
 
 function renderMorePage(){
 
-  const club =
-    calculateClubStats();
+const club =
+calculateClubStats();
 
-  el("morePlayed").textContent =
-    club.played;
+el(
+"morePlayed"
+).textContent =
+club.played;
 
-  el("moreWins").textContent =
-    club.wins;
+el(
+"moreWins"
+).textContent =
+club.wins;
 
-  el("moreDraws").textContent =
-    club.draws;
+el(
+"moreDraws"
+).textContent =
+club.draws;
 
-  el("moreLosses").textContent =
-    club.losses;
+el(
+"moreLosses"
+).textContent =
+club.losses;
 
-  el("moreGF").textContent =
-    club.goalsFor;
+el(
+"moreGF"
+).textContent =
+club.goalsFor;
 
-  el("moreGA").textContent =
-    club.goalsAgainst;
+el(
+"moreGA"
+).textContent =
+club.goalsAgainst;
 
-  if(
-    activeSeason === "ALL_TIME"
-  ){
+if(
+activeSeason === "ALL_TIME"
+){
 
-    el("resetSeasonButton").classList.add(
-      "disabled"
-    );
+el(
+"resetSeasonButton"
+).classList.add(
+"disabled"
+);
 
-    el("resetSeasonTitle").textContent =
-      "Select FC26 or FC27 to Reset";
+el(
+"resetSeasonTitle"
+).textContent =
+"Select FC26 or FC27 to Reset";
 
-  }else{
+}else{
 
-    el("resetSeasonButton").classList.remove(
-      "disabled"
-    );
+el(
+"resetSeasonButton"
+).classList.remove(
+"disabled"
+);
 
-    el("resetSeasonTitle").textContent =
-      `Reset Logged ${activeSeason} Data`;
-
-  }
-
-}
-
-/* ========================================
-   RECORDS NAVIGATION
-======================================== */
-
-function openRecordsPage(){
-
-  renderRecordsPage();
-
-  document
-    .querySelectorAll(
-      ".page"
-    )
-    .forEach(
-      page=>{
-        page.classList.remove(
-          "active"
-        );
-      }
-    );
-
-  el("records").classList.add(
-    "active"
-  );
-
-  el("bottomNav").classList.add(
-    "hidden"
-  );
-
-  window.scrollTo(0,0);
+el(
+"resetSeasonTitle"
+).textContent =
+`Reset Logged ${activeSeason} Data`;
 
 }
-
-function closeRecordsPage(){
-
-  el("records").classList.remove(
-    "active"
-  );
-
-  el("more").classList.add(
-    "active"
-  );
-
-  el("bottomNav").classList.remove(
-    "hidden"
-  );
-
-  window.scrollTo(0,0);
 
 }
 
@@ -4924,742 +5730,787 @@ function closeRecordsPage(){
    RECORDS PAGE
 ======================================== */
 
+function openRecordsPage(){
+
+renderRecordsPage();
+
+document
+.querySelectorAll(
+".page"
+)
+.forEach(
+page=>{
+
+page.classList.remove(
+"active"
+);
+
+}
+);
+
+el(
+"records"
+).classList.add(
+"active"
+);
+
+el(
+"bottomNav"
+).classList.add(
+"hidden"
+);
+
+window.scrollTo(
+0,
+0
+);
+
+}
+
+function closeRecordsPage(){
+
+el(
+"records"
+).classList.remove(
+"active"
+);
+
+el(
+"more"
+).classList.add(
+"active"
+);
+
+el(
+"bottomNav"
+).classList.remove(
+"hidden"
+);
+
+window.scrollTo(
+0,
+0
+);
+
+}
+
 function renderRecordsPage(){
 
-  const totals =
-    calculatePlayerStats();
-
-  function highestPlayers(
-    field
-  ){
-
-    const values =
-      players.map(
-        player=>
-          totals[
-            player.id
-          ][field]
-      );
-
-    const max =
-      Math.max(
-        ...values
-      );
-
-    return players.filter(
-      player=>
-        totals[
-          player.id
-        ][field] ===
-        max
-    );
-
-  }
-
-  const leaderDefinitions = [
-
-    {
-      title:"Top Goalscorer",
-      icon:"⚽",
-      field:"goals"
-    },
-
-    {
-      title:"Most Assists",
-      icon:"🎯",
-      field:"assists"
-    },
-
-    {
-      title:"Most Goal Contributions",
-      icon:"👑",
-      field:"contributions"
-    },
-
-    {
-      title:"Most POTM Awards",
-      icon:"⭐",
-      field:"potm"
-    },
-
-    {
-      title:"Most Appearances",
-      icon:"👕",
-      field:"appearances"
-    }
-
-  ];
-
-  let leadersHTML =
-    "";
-
-  leaderDefinitions.forEach(
-    def=>{
-
-      const holders =
-        highestPlayers(
-          def.field
-        );
-
-      const value =
-        totals[
-          holders[0].id
-        ][def.field];
-
-      leadersHTML += `
-
-        <div class="award-card gold">
-
-          <div class="award-label">
-            ${def.icon}
-            ${def.title}
-          </div>
-
-          <div class="award-main">
-
-            <div class="award-player">
-
-              ${
-                holders
-                  .map(
-                    player=>
-                      `#${player.number} ${player.name}`
-                  )
-                  .join(
-                    " / "
-                  )
-              }
+const totals =
+calculatePlayerStats();
+
+function highestPlayers(
+field
+){
+
+const max =
+Math.max(
+...players.map(
+player=>
+totals[
+player.id
+][field]
+)
+);
+
+return players.filter(
+player=>
+totals[
+player.id
+][field] === max
+);
+
+}
+
+const definitions = [
+
+[
+"Top Goalscorer",
+"⚽",
+"goals"
+],
+
+[
+"Most Assists",
+"🎯",
+"assists"
+],
+
+[
+"Most Goal Contributions",
+"👑",
+"contributions"
+],
+
+[
+"Most POTM Awards",
+"⭐",
+"potm"
+],
+
+[
+"Most Appearances",
+"👕",
+"appearances"
+]
+
+];
+
+let leadersHTML =
+"";
+
+definitions.forEach(
+definition=>{
+
+const [
+title,
+icon,
+field
+] =
+definition;
+
+const holders =
+highestPlayers(
+field
+);
+
+const value =
+totals[
+holders[0].id
+][field];
+
+leadersHTML += `
+
+<div class="award-card gold">
+
+<div class="award-label">
+${icon}
+${title}
+</div>
+
+<div class="award-main">
+
+<div class="award-player">
+
+${
+holders.map(
+player=>
+`#${player.number} ${player.name}`
+).join(
+" / "
+)
+}
 
-            </div>
+</div>
 
-            <div class="award-value">
-              ${value}
-            </div>
-
-          </div>
+<div class="award-value">
+${value}
+</div>
 
-        </div>
+</div>
 
-      `;
+</div>
 
-    }
-  );
+`;
 
-  const ratedPlayers =
-    players.filter(
-      player=>
-        totals[
-          player.id
-        ].averageRating !==
-        null
-    );
-
-  if(
-    ratedPlayers.length
-  ){
-
-    const bestRating =
-      Math.max(
-        ...ratedPlayers.map(
-          player=>
-            totals[
-              player.id
-            ].averageRating
-        )
-      );
-
-    const holders =
-      ratedPlayers.filter(
-        player=>
-          Math.abs(
-            totals[
-              player.id
-            ].averageRating -
-            bestRating
-          ) < 0.0001
-      );
-
-    leadersHTML += `
-
-      <div class="award-card gold">
-
-        <div class="award-label">
-          📈 Highest Average Rating
-        </div>
-
-        <div class="award-main">
-
-          <div class="award-player">
-
-            ${
-              holders
-                .map(
-                  player=>
-                    `#${player.number} ${player.name}`
-                )
-                .join(
-                  " / "
-                )
-            }
-
-          </div>
-
-          <div class="award-value">
-            ${bestRating.toFixed(2)}
-          </div>
-
-        </div>
-
-      </div>
-
-    `;
-
-  }
-
-  el("playerLeaderRecords").innerHTML =
-    leadersHTML;
-
-  const matches =
-    currentMatches();
-
-  const singleGoals = [];
-  const singleAssists = [];
-  const singleGA = [];
-  const singleRating = [];
+}
+);
 
-  matches.forEach(
-    match=>{
-
-      if(
-        !match.playerStats
-      ){
-        return;
-      }
+const ratedPlayers =
+players.filter(
+player=>
+totals[
+player.id
+].averageRating !== null
+);
 
-      players.forEach(
-        player=>{
+if(
+ratedPlayers.length
+){
 
-          const stat =
-            match.playerStats[
-              player.id
-            ];
-
-          if(
-            !stat ||
-            !stat.played
-          ){
-            return;
-          }
+const bestRating =
+Math.max(
+...ratedPlayers.map(
+player=>
+totals[
+player.id
+].averageRating
+)
+);
+
+const holders =
+ratedPlayers.filter(
+player=>
+Math.abs(
+totals[
+player.id
+].averageRating -
+bestRating
+) < .0001
+);
+
+leadersHTML += `
+
+<div class="award-card gold">
+
+<div class="award-label">
+📈 Highest Average Rating
+</div>
+
+<div class="award-main">
+
+<div class="award-player">
+
+${
+holders.map(
+player=>
+`#${player.number} ${player.name}`
+).join(
+" / "
+)
+}
+
+</div>
+
+<div class="award-value">
+${bestRating.toFixed(2)}
+</div>
+
+</div>
+
+</div>
 
-          const goals =
-            Number(
-              stat.goals || 0
-            );
+`;
+
+}
 
-          const assists =
-            Number(
-              stat.assists || 0
-            );
+el(
+"playerLeaderRecords"
+).innerHTML =
+leadersHTML;
 
-          singleGoals.push({
-            player,
-            match,
-            value:goals
-          });
+const matches =
+currentMatches();
 
-          singleAssists.push({
-            player,
-            match,
-            value:assists
-          });
-
-          singleGA.push({
-            player,
-            match,
-            value:
-              goals +
-              assists
-          });
+const goals =
+[];
+
+const assists =
+[];
 
-          if(
-            stat.rating !== null &&
-            stat.rating !== undefined &&
-            stat.rating !== ""
-          ){
+const goalContributions =
+[];
 
-            singleRating.push({
+const ratings =
+[];
 
-              player,
+matches.forEach(
+match=>{
 
-              match,
-
-              value:
-                Number(
-                  stat.rating
-                )
-
-            });
-
-          }
+if(
+!match.playerStats
+){
+return;
+}
 
-        }
-      );
+players.forEach(
+player=>{
 
-    }
-  );
+const stat =
+match.playerStats[
+player.id
+];
 
-  function renderSingleRecord(
-    title,
-    records,
-    display
-  ){
+if(
+!stat ||
+!stat.played
+){
+return;
+}
 
-    if(
-      !records.length
-    ){
+const playerGoals =
+Number(
+stat.goals || 0
+);
 
-      return `
+const playerAssists =
+Number(
+stat.assists || 0
+);
 
-        <div class="single-record-card">
+goals.push({
+player,
+match,
+value:playerGoals
+});
 
-          <div class="single-record-title">
-            ${title}
-          </div>
+assists.push({
+player,
+match,
+value:playerAssists
+});
 
-          <div class="single-record-name">
-            No logged record yet
-          </div>
+goalContributions.push({
+player,
+match,
+value:
+playerGoals +
+playerAssists
+});
 
-        </div>
+if(
+stat.rating !== null &&
+stat.rating !== undefined &&
+stat.rating !== ""
+){
 
-      `;
+ratings.push({
 
-    }
+player,
 
-    const max =
-      Math.max(
-        ...records.map(
-          record=>
-            record.value
-        )
-      );
+match,
 
-    const holders =
-      records.filter(
-        record=>
-          record.value === max
-      );
+value:
+Number(
+stat.rating
+)
 
-    const first =
-      holders[0];
+});
 
-    return `
+}
 
-      <div class="single-record-card">
+}
+);
 
-        <div class="single-record-title">
-          ${title}
-        </div>
+}
+);
 
-        <div class="single-record-name">
+function renderSingleRecord(
+title,
+records,
+display
+){
 
-          ${
-            holders
-              .map(
-                record=>
-                  `#${record.player.number} ${record.player.name}`
-              )
-              .join(
-                " / "
-              )
-          }
+if(
+!records.length
+){
 
-        </div>
-
-        <div class="single-record-value">
-          ${display(max)}
-        </div>
-
-        <div class="single-record-meta">
-
-          vs ${first.match.opponent}
-          ·
-          ${formatDate(first.match.date)}
+return `
 
-          ${
-            activeSeason === "ALL_TIME"
-              ? " · " +
-                (
-                  first.match.season ||
-                  "FC26"
-                )
-              : ""
-          }
+<div class="single-record-card">
 
-        </div>
+<div class="single-record-title">
+${title}
+</div>
 
-      </div>
-
-    `;
+<div class="single-record-name">
+No logged record yet
+</div>
 
-  }
-
-  el("singleMatchRecords").innerHTML =
-
-    renderSingleRecord(
-      "Most Goals in One Logged Match",
-      singleGoals,
-      value=>
-        `${value} goals`
-    )
+</div>
 
-    +
+`;
 
-    renderSingleRecord(
-      "Most Assists in One Logged Match",
-      singleAssists,
-      value=>
-        `${value} assists`
-    )
-
-    +
-
-    renderSingleRecord(
-      "Most Goal Contributions in One Logged Match",
-      singleGA,
-      value=>
-        `${value} G/A`
-    )
+}
 
-    +
-
-    renderSingleRecord(
-      "Highest Logged Match Rating",
-      singleRating,
-      value=>
-        value.toFixed(1)
-    );
-
-  let biggestWin =
-    null;
-
-  let biggestDefeat =
-    null;
-
-  let mostGoalsMatch =
-    null;
-
-  matches.forEach(
-    match=>{
-
-      const gf =
-        Number(
-          match.olympusScore ||
-          0
-        );
-
-      const ga =
-        Number(
-          match.opponentScore ||
-          0
-        );
-
-      if(
-        match.result === "W"
-      ){
-
-        const margin =
-          gf -
-          ga;
+const max =
+Math.max(
+...records.map(
+record=>
+record.value
+)
+);
 
-        if(
-          !biggestWin ||
-          margin >
-          biggestWin.margin
-        ){
+const holders =
+records.filter(
+record=>
+record.value === max
+);
 
-          biggestWin = {
-            match,
-            margin
-          };
+const first =
+holders[0];
 
-        }
+return `
 
-      }
+<div class="single-record-card">
 
-      if(
-        match.result === "L"
-      ){
+<div class="single-record-title">
+${title}
+</div>
 
-        const margin =
-          ga -
-          gf;
+<div class="single-record-name">
 
-        if(
-          !biggestDefeat ||
-          margin >
-          biggestDefeat.margin
-        ){
+${
+holders.map(
+record=>
+`#${record.player.number} ${record.player.name}`
+).join(
+" / "
+)
+}
 
-          biggestDefeat = {
-            match,
-            margin
-          };
+</div>
 
-        }
+<div class="single-record-value">
+${display(max)}
+</div>
 
-      }
+<div class="single-record-meta">
 
-      if(
-        !mostGoalsMatch ||
-        gf >
-        Number(
-          mostGoalsMatch.olympusScore ||
-          0
-        )
-      ){
+vs
+${first.match.opponent}
+·
+${formatDate(first.match.date)}
 
-        mostGoalsMatch =
-          match;
+${
+activeSeason === "ALL_TIME"
+? " · " +
+sourceSeason(
+first.match
+)
+: ""
+}
 
-      }
+</div>
 
-    }
-  );
+</div>
 
-  const chronological =
-    [...matches]
-      .sort(
-        (a,b)=>
-          Number(
-            a.id || 0
-          ) -
-          Number(
-            b.id || 0
-          )
-      );
+`;
 
-  let longestWin =
-    0;
+}
 
-  let currentWin =
-    0;
+el(
+"singleMatchRecords"
+).innerHTML =
 
-  let longestUnbeaten =
-    0;
+renderSingleRecord(
+"Most Goals in One Logged Match",
+goals,
+value=>
+`${value} goals`
+)
 
-  let currentUnbeaten =
-    0;
++
 
-  chronological.forEach(
-    match=>{
+renderSingleRecord(
+"Most Assists in One Logged Match",
+assists,
+value=>
+`${value} assists`
+)
 
-      if(
-        match.result === "W"
-      ){
++
 
-        currentWin++;
+renderSingleRecord(
+"Most Goal Contributions in One Logged Match",
+goalContributions,
+value=>
+`${value} G/A`
+)
 
-        longestWin =
-          Math.max(
-            longestWin,
-            currentWin
-          );
++
 
-      }else{
+renderSingleRecord(
+"Highest Logged Match Rating",
+ratings,
+value=>
+value.toFixed(1)
+);
 
-        currentWin =
-          0;
+let biggestWin =
+null;
 
-      }
+let biggestDefeat =
+null;
 
-      if(
-        match.result !== "L"
-      ){
+let mostGoals =
+null;
 
-        currentUnbeaten++;
+matches.forEach(
+match=>{
 
-        longestUnbeaten =
-          Math.max(
-            longestUnbeaten,
-            currentUnbeaten
-          );
+const gf =
+Number(
+match.olympusScore || 0
+);
 
-      }else{
+const ga =
+Number(
+match.opponentScore || 0
+);
 
-        currentUnbeaten =
-          0;
+if(
+match.result === "W"
+){
 
-      }
+const margin =
+gf - ga;
 
-    }
-  );
+if(
+!biggestWin ||
+margin >
+biggestWin.margin
+){
 
-  let clubHTML =
-    "";
+biggestWin = {
 
-  if(
-    biggestWin
-  ){
+match,
 
-    const match =
-      biggestWin.match;
+margin
 
-    clubHTML += `
+};
 
-      <div class="club-record-card">
+}
 
-        <div class="club-record-name">
-          🏆 Biggest Logged Win
-        </div>
+}
 
-        <div class="club-record-value">
-          Olympus FC
-          ${match.olympusScore}
-          –
-          ${match.opponentScore}
-          ${match.opponent}
-        </div>
+if(
+match.result === "L"
+){
 
-        <div class="club-record-meta">
-          ${formatDate(match.date)}
-        </div>
+const margin =
+ga - gf;
 
-      </div>
+if(
+!biggestDefeat ||
+margin >
+biggestDefeat.margin
+){
 
-    `;
+biggestDefeat = {
 
-  }else{
+match,
 
-    clubHTML += `
+margin
 
-      <div class="club-record-card">
+};
 
-        <div class="club-record-name">
-          🏆 Biggest Logged Win
-        </div>
+}
 
-        <div class="club-record-value">
-          No logged wins yet
-        </div>
+}
 
-      </div>
+if(
+!mostGoals ||
+gf >
+Number(
+mostGoals.olympusScore || 0
+)
+){
 
-    `;
+mostGoals =
+match;
 
-  }
+}
 
-  if(
-    biggestDefeat
-  ){
+}
+);
 
-    const match =
-      biggestDefeat.match;
+const chronological =
+[...matches].sort(
+(a,b)=>
+Number(a.id || 0) -
+Number(b.id || 0)
+);
 
-    clubHTML += `
+let longestWin =
+0;
 
-      <div class="club-record-card">
+let currentWin =
+0;
 
-        <div class="club-record-name">
-          📉 Biggest Logged Defeat
-        </div>
+let longestUnbeaten =
+0;
 
-        <div class="club-record-value">
-          Olympus FC
-          ${match.olympusScore}
-          –
-          ${match.opponentScore}
-          ${match.opponent}
-        </div>
+let currentUnbeaten =
+0;
 
-        <div class="club-record-meta">
-          ${formatDate(match.date)}
-        </div>
+chronological.forEach(
+match=>{
 
-      </div>
+if(
+match.result === "W"
+){
 
-    `;
+currentWin++;
 
-  }else{
+longestWin =
+Math.max(
+longestWin,
+currentWin
+);
 
-    clubHTML += `
+}else{
 
-      <div class="club-record-card">
+currentWin =
+0;
 
-        <div class="club-record-name">
-          📉 Biggest Logged Defeat
-        </div>
+}
 
-        <div class="club-record-value">
-          No logged defeats yet
-        </div>
+if(
+match.result !== "L"
+){
 
-      </div>
+currentUnbeaten++;
 
-    `;
+longestUnbeaten =
+Math.max(
+longestUnbeaten,
+currentUnbeaten
+);
 
-  }
+}else{
 
-  clubHTML += `
+currentUnbeaten =
+0;
 
-    <div class="club-record-card">
+}
 
-      <div class="club-record-name">
-        🔥 Longest Logged Winning Streak
-      </div>
+}
+);
 
-      <div class="club-record-value">
-        ${longestWin} matches
-      </div>
+let clubHTML =
+biggestWin
+? `
 
-    </div>
+<div class="club-record-card">
 
-    <div class="club-record-card">
+<div class="club-record-name">
+🏆 Biggest Logged Win
+</div>
 
-      <div class="club-record-name">
-        🛡️ Longest Logged Unbeaten Streak
-      </div>
+<div class="club-record-value">
+Olympus FC
+${biggestWin.match.olympusScore}
+–
+${biggestWin.match.opponentScore}
+${biggestWin.match.opponent}
+</div>
 
-      <div class="club-record-value">
-        ${longestUnbeaten} matches
-      </div>
+<div class="club-record-meta">
+${formatDate(biggestWin.match.date)}
+</div>
 
-    </div>
+</div>
 
-  `;
+`
+: `
 
-  if(
-    mostGoalsMatch
-  ){
+<div class="club-record-card">
 
-    clubHTML += `
+<div class="club-record-name">
+🏆 Biggest Logged Win
+</div>
 
-      <div class="club-record-card">
+<div class="club-record-value">
+No logged wins yet
+</div>
 
-        <div class="club-record-name">
-          ⚽ Most Goals in One Logged Match
-        </div>
+</div>
 
-        <div class="club-record-value">
-          ${mostGoalsMatch.olympusScore} goals
-        </div>
+`;
 
-        <div class="club-record-meta">
+clubHTML +=
+biggestDefeat
+? `
 
-          vs ${mostGoalsMatch.opponent}
-          ·
-          ${formatDate(mostGoalsMatch.date)}
+<div class="club-record-card">
 
-        </div>
+<div class="club-record-name">
+📉 Biggest Logged Defeat
+</div>
 
-      </div>
+<div class="club-record-value">
+Olympus FC
+${biggestDefeat.match.olympusScore}
+–
+${biggestDefeat.match.opponentScore}
+${biggestDefeat.match.opponent}
+</div>
 
-    `;
+<div class="club-record-meta">
+${formatDate(biggestDefeat.match.date)}
+</div>
 
-  }
+</div>
 
-  el("clubRecords").innerHTML =
-    clubHTML;
+`
+: `
+
+<div class="club-record-card">
+
+<div class="club-record-name">
+📉 Biggest Logged Defeat
+</div>
+
+<div class="club-record-value">
+No logged defeats yet
+</div>
+
+</div>
+
+`;
+
+clubHTML += `
+
+<div class="club-record-card">
+
+<div class="club-record-name">
+🔥 Longest Logged Winning Streak
+</div>
+
+<div class="club-record-value">
+${longestWin} matches
+</div>
+
+</div>
+
+<div class="club-record-card">
+
+<div class="club-record-name">
+🛡️ Longest Logged Unbeaten Streak
+</div>
+
+<div class="club-record-value">
+${longestUnbeaten} matches
+</div>
+
+</div>
+
+`;
+
+if(
+mostGoals
+){
+
+clubHTML += `
+
+<div class="club-record-card">
+
+<div class="club-record-name">
+⚽ Most Goals in One Logged Match
+</div>
+
+<div class="club-record-value">
+${mostGoals.olympusScore} goals
+</div>
+
+<div class="club-record-meta">
+vs
+${mostGoals.opponent}
+·
+${formatDate(mostGoals.date)}
+</div>
+
+</div>
+
+`;
+
+}
+
+el(
+"clubRecords"
+).innerHTML =
+clubHTML;
 
 }
 
@@ -5669,541 +6520,908 @@ function renderRecordsPage(){
 
 function openComparePage(){
 
-  populateComparisonSelectors();
+populateComparisonSelectors();
 
-  renderComparison();
+renderComparison();
 
-  document
-    .querySelectorAll(
-      ".page"
-    )
-    .forEach(
-      page=>{
-        page.classList.remove(
-          "active"
-        );
-      }
-    );
+document
+.querySelectorAll(
+".page"
+)
+.forEach(
+page=>{
 
-  el("compare").classList.add(
-    "active"
-  );
+page.classList.remove(
+"active"
+);
 
-  el("bottomNav").classList.add(
-    "hidden"
-  );
+}
+);
 
-  window.scrollTo(0,0);
+el(
+"compare"
+).classList.add(
+"active"
+);
+
+el(
+"bottomNav"
+).classList.add(
+"hidden"
+);
+
+window.scrollTo(
+0,
+0
+);
 
 }
 
 function closeComparePage(){
 
-  el("compare").classList.remove(
-    "active"
-  );
+el(
+"compare"
+).classList.remove(
+"active"
+);
 
-  el("more").classList.add(
-    "active"
-  );
+el(
+"more"
+).classList.add(
+"active"
+);
 
-  el("bottomNav").classList.remove(
-    "hidden"
-  );
+el(
+"bottomNav"
+).classList.remove(
+"hidden"
+);
 
-  window.scrollTo(0,0);
+window.scrollTo(
+0,
+0
+);
 
 }
 
 function populateComparisonSelectors(){
 
-  const options =
-    players.map(
-      player=>`
-        <option value="${player.id}">
-          #${player.number} ${player.name}
-        </option>
-      `
-    ).join("");
+const options =
+players.map(
+player=>`
 
-  el("comparePlayer1").innerHTML =
-    options;
+<option value="${player.id}">
+#${player.number}
+${player.name}
+</option>
 
-  el("comparePlayer2").innerHTML =
-    options;
+`
+).join("");
 
-  el("comparePlayer1").value =
-    comparisonPlayer1;
+el(
+"comparePlayer1"
+).innerHTML =
+options;
 
-  el("comparePlayer2").value =
-    comparisonPlayer2;
+el(
+"comparePlayer2"
+).innerHTML =
+options;
+
+el(
+"comparePlayer1"
+).value =
+comparisonPlayer1;
+
+el(
+"comparePlayer2"
+).value =
+comparisonPlayer2;
 
 }
 
 function comparisonPlayerChanged(
-  side
+side
 ){
 
-  const leftSelect =
-    el("comparePlayer1");
+const leftSelect =
+el(
+"comparePlayer1"
+);
 
-  const rightSelect =
-    el("comparePlayer2");
+const rightSelect =
+el(
+"comparePlayer2"
+);
 
-  if(
-    side === "left"
-  ){
+if(
+side === "left"
+){
 
-    comparisonPlayer1 =
-      leftSelect.value;
+comparisonPlayer1 =
+leftSelect.value;
 
-    if(
-      comparisonPlayer1 ===
-      rightSelect.value
-    ){
+if(
+comparisonPlayer1 ===
+rightSelect.value
+){
 
-      const alternative =
-        players.find(
-          player=>
-            player.id !==
-            comparisonPlayer1
-        );
+comparisonPlayer2 =
+players.find(
+player=>
+player.id !==
+comparisonPlayer1
+).id;
 
-      comparisonPlayer2 =
-        alternative.id;
+rightSelect.value =
+comparisonPlayer2;
 
-      rightSelect.value =
-        comparisonPlayer2;
+}else{
 
-    }else{
+comparisonPlayer2 =
+rightSelect.value;
 
-      comparisonPlayer2 =
-        rightSelect.value;
+}
 
-    }
+}else{
 
-  }else{
+comparisonPlayer2 =
+rightSelect.value;
 
-    comparisonPlayer2 =
-      rightSelect.value;
+if(
+comparisonPlayer2 ===
+leftSelect.value
+){
 
-    if(
-      comparisonPlayer2 ===
-      leftSelect.value
-    ){
+comparisonPlayer1 =
+players.find(
+player=>
+player.id !==
+comparisonPlayer2
+).id;
 
-      const alternative =
-        players.find(
-          player=>
-            player.id !==
-            comparisonPlayer2
-        );
+leftSelect.value =
+comparisonPlayer1;
 
-      comparisonPlayer1 =
-        alternative.id;
+}else{
 
-      leftSelect.value =
-        comparisonPlayer1;
+comparisonPlayer1 =
+leftSelect.value;
 
-    }else{
+}
 
-      comparisonPlayer1 =
-        leftSelect.value;
+}
 
-    }
-
-  }
-
-  renderComparison();
+renderComparison();
 
 }
 
 function safePerGame(
-  total,
-  appearances
+total,
+appearances
 ){
 
-  if(
-    appearances === 0
-  ){
-    return 0;
-  }
-
-  return (
-    total /
-    appearances
-  );
+return appearances
+? total /
+appearances
+: 0;
 
 }
 
-function formatComparisonNumber(
-  value,
-  decimals = 0
+function comparisonFormat(
+value,
+decimals = 0
 ){
 
-  if(
-    value === null ||
-    value === undefined
-  ){
-    return "—";
-  }
+if(
+value === null ||
+value === undefined
+){
 
-  if(
-    decimals === 0
-  ){
-    return String(
-      value
-    );
-  }
+return "—";
 
-  return Number(
-    value
-  ).toFixed(
-    decimals
-  );
+}
+
+return decimals
+? Number(value).toFixed(decimals)
+: String(value);
 
 }
 
 function renderComparison(){
 
-  const totals =
-    calculatePlayerStats();
+const totals =
+calculatePlayerStats();
 
-  const leftPlayer =
-    getPlayer(
-      comparisonPlayer1
-    );
+const leftPlayer =
+getPlayer(
+comparisonPlayer1
+);
 
-  const rightPlayer =
-    getPlayer(
-      comparisonPlayer2
-    );
+const rightPlayer =
+getPlayer(
+comparisonPlayer2
+);
 
-  if(
-    !leftPlayer ||
-    !rightPlayer
-  ){
-    return;
-  }
+const left =
+totals[
+leftPlayer.id
+];
 
-  const left =
-    totals[
-      leftPlayer.id
-    ];
+const right =
+totals[
+rightPlayer.id
+];
 
-  const right =
-    totals[
-      rightPlayer.id
-    ];
+el(
+"compareSeasonValue"
+).textContent =
+seasonLabel(
+activeSeason
+);
 
-  el("compareSeasonValue").textContent =
-    seasonLabel(
-      activeSeason
-    );
+el(
+"compareSubtitle"
+).textContent =
+"Olympus FC · " +
+seasonLabel(
+activeSeason
+);
 
-  el("compareSubtitle").textContent =
-    "Olympus FC · " +
-    seasonLabel(
-      activeSeason
-    );
+el(
+"compareLeftNumber"
+).textContent =
+leftPlayer.number;
 
-  el("compareLeftNumber").textContent =
-    leftPlayer.number;
+el(
+"compareLeftName"
+).textContent =
+leftPlayer.name;
 
-  el("compareLeftName").textContent =
-    leftPlayer.name;
+el(
+"compareLeftMeta"
+).textContent =
+`${leftPlayer.position} · ${leftPlayer.nation}`;
 
-  el("compareLeftMeta").textContent =
-    `${leftPlayer.position} · ${leftPlayer.nation}`;
+el(
+"compareRightNumber"
+).textContent =
+rightPlayer.number;
 
-  el("compareRightNumber").textContent =
-    rightPlayer.number;
+el(
+"compareRightName"
+).textContent =
+rightPlayer.name;
 
-  el("compareRightName").textContent =
-    rightPlayer.name;
+el(
+"compareRightMeta"
+).textContent =
+`${rightPlayer.position} · ${rightPlayer.nation}`;
 
-  el("compareRightMeta").textContent =
-    `${rightPlayer.position} · ${rightPlayer.nation}`;
+const categories = [
 
-  const leftGoalsPerGame =
-    safePerGame(
-      left.goals,
-      left.appearances
-    );
+{
+name:"Appearances",
+leftValue:left.appearances,
+rightValue:right.appearances,
+leftDisplay:left.appearances,
+rightDisplay:right.appearances
+},
 
-  const rightGoalsPerGame =
-    safePerGame(
-      right.goals,
-      right.appearances
-    );
+{
+name:"Goals",
+leftValue:left.goals,
+rightValue:right.goals,
+leftDisplay:left.goals,
+rightDisplay:right.goals
+},
 
-  const leftAssistsPerGame =
-    safePerGame(
-      left.assists,
-      left.appearances
-    );
+{
+name:"Assists",
+leftValue:left.assists,
+rightValue:right.assists,
+leftDisplay:left.assists,
+rightDisplay:right.assists
+},
 
-  const rightAssistsPerGame =
-    safePerGame(
-      right.assists,
-      right.appearances
-    );
+{
+name:"Goal Contributions",
+leftValue:left.contributions,
+rightValue:right.contributions,
+leftDisplay:left.contributions,
+rightDisplay:right.contributions
+},
 
-  const leftGAPerGame =
-    safePerGame(
-      left.contributions,
-      left.appearances
-    );
+{
+name:"Goals Per Game",
+leftValue:
+safePerGame(
+left.goals,
+left.appearances
+),
+rightValue:
+safePerGame(
+right.goals,
+right.appearances
+),
+leftDisplay:
+comparisonFormat(
+safePerGame(
+left.goals,
+left.appearances
+),
+2
+),
+rightDisplay:
+comparisonFormat(
+safePerGame(
+right.goals,
+right.appearances
+),
+2
+)
+},
 
-  const rightGAPerGame =
-    safePerGame(
-      right.contributions,
-      right.appearances
-    );
+{
+name:"Assists Per Game",
+leftValue:
+safePerGame(
+left.assists,
+left.appearances
+),
+rightValue:
+safePerGame(
+right.assists,
+right.appearances
+),
+leftDisplay:
+comparisonFormat(
+safePerGame(
+left.assists,
+left.appearances
+),
+2
+),
+rightDisplay:
+comparisonFormat(
+safePerGame(
+right.assists,
+right.appearances
+),
+2
+)
+},
 
-  const categories = [
+{
+name:"G/A Per Game",
+leftValue:
+safePerGame(
+left.contributions,
+left.appearances
+),
+rightValue:
+safePerGame(
+right.contributions,
+right.appearances
+),
+leftDisplay:
+comparisonFormat(
+safePerGame(
+left.contributions,
+left.appearances
+),
+2
+),
+rightDisplay:
+comparisonFormat(
+safePerGame(
+right.contributions,
+right.appearances
+),
+2
+)
+},
 
-    {
-      name:"Appearances",
-      leftValue:left.appearances,
-      rightValue:right.appearances,
-      leftDisplay:
-        formatComparisonNumber(
-          left.appearances
-        ),
-      rightDisplay:
-        formatComparisonNumber(
-          right.appearances
-        )
-    },
+{
+name:"Average Rating",
+leftValue:
+left.averageRating === null
+? -1
+: left.averageRating,
+rightValue:
+right.averageRating === null
+? -1
+: right.averageRating,
+leftDisplay:
+left.averageRating === null
+? "—"
+: left.averageRating.toFixed(2),
+rightDisplay:
+right.averageRating === null
+? "—"
+: right.averageRating.toFixed(2)
+},
 
-    {
-      name:"Goals",
-      leftValue:left.goals,
-      rightValue:right.goals,
-      leftDisplay:
-        formatComparisonNumber(
-          left.goals
-        ),
-      rightDisplay:
-        formatComparisonNumber(
-          right.goals
-        )
-    },
+{
+name:"POTM Awards",
+leftValue:left.potm,
+rightValue:right.potm,
+leftDisplay:left.potm,
+rightDisplay:right.potm
+}
 
-    {
-      name:"Assists",
-      leftValue:left.assists,
-      rightValue:right.assists,
-      leftDisplay:
-        formatComparisonNumber(
-          left.assists
-        ),
-      rightDisplay:
-        formatComparisonNumber(
-          right.assists
-        )
-    },
+];
 
-    {
-      name:"Goal Contributions",
-      leftValue:left.contributions,
-      rightValue:right.contributions,
-      leftDisplay:
-        formatComparisonNumber(
-          left.contributions
-        ),
-      rightDisplay:
-        formatComparisonNumber(
-          right.contributions
-        )
-    },
+let leftWins =
+0;
 
-    {
-      name:"Goals Per Game",
-      leftValue:leftGoalsPerGame,
-      rightValue:rightGoalsPerGame,
-      leftDisplay:
-        formatComparisonNumber(
-          leftGoalsPerGame,
-          2
-        ),
-      rightDisplay:
-        formatComparisonNumber(
-          rightGoalsPerGame,
-          2
-        )
-    },
+let rightWins =
+0;
 
-    {
-      name:"Assists Per Game",
-      leftValue:leftAssistsPerGame,
-      rightValue:rightAssistsPerGame,
-      leftDisplay:
-        formatComparisonNumber(
-          leftAssistsPerGame,
-          2
-        ),
-      rightDisplay:
-        formatComparisonNumber(
-          rightAssistsPerGame,
-          2
-        )
-    },
+let ties =
+0;
 
-    {
-      name:"G/A Per Game",
-      leftValue:leftGAPerGame,
-      rightValue:rightGAPerGame,
-      leftDisplay:
-        formatComparisonNumber(
-          leftGAPerGame,
-          2
-        ),
-      rightDisplay:
-        formatComparisonNumber(
-          rightGAPerGame,
-          2
-        )
-    },
+el(
+"comparisonTable"
+).innerHTML =
+categories.map(
+category=>{
 
-    {
-      name:"Average Rating",
-      leftValue:
-        left.averageRating === null
-          ? -1
-          : left.averageRating,
-      rightValue:
-        right.averageRating === null
-          ? -1
-          : right.averageRating,
-      leftDisplay:
-        left.averageRating === null
-          ? "—"
-          : left.averageRating.toFixed(2),
-      rightDisplay:
-        right.averageRating === null
-          ? "—"
-          : right.averageRating.toFixed(2)
-    },
+let leftClass =
+"";
 
-    {
-      name:"POTM Awards",
-      leftValue:left.potm,
-      rightValue:right.potm,
-      leftDisplay:
-        formatComparisonNumber(
-          left.potm
-        ),
-      rightDisplay:
-        formatComparisonNumber(
-          right.potm
-        )
-    }
+let rightClass =
+"";
 
-  ];
+if(
+category.leftValue >
+category.rightValue
+){
 
-  let leftWins =
-    0;
+leftClass =
+"winner";
 
-  let rightWins =
-    0;
+leftWins++;
 
-  let ties =
-    0;
+}else if(
+category.rightValue >
+category.leftValue
+){
 
-  el("comparisonTable").innerHTML =
-    categories.map(
-      category=>{
+rightClass =
+"winner";
 
-        let leftClass =
-          "";
+rightWins++;
 
-        let rightClass =
-          "";
+}else{
 
-        if(
-          category.leftValue >
-          category.rightValue
-        ){
+ties++;
 
-          leftClass =
-            "winner";
+}
 
-          leftWins++;
+return `
 
-        }else if(
-          category.rightValue >
-          category.leftValue
-        ){
+<div class="compare-row">
 
-          rightClass =
-            "winner";
+<div class="compare-stat-value ${leftClass}">
+${category.leftDisplay}
+</div>
 
-          rightWins++;
+<div class="compare-stat-name">
+${category.name}
+</div>
 
-        }else{
+<div class="compare-stat-value ${rightClass}">
+${category.rightDisplay}
+</div>
 
-          leftClass =
-            "tie";
+</div>
 
-          rightClass =
-            "tie";
+`;
 
-          ties++;
+}
+).join("");
 
-        }
+if(
+leftWins >
+rightWins
+){
 
-        return `
+el(
+"compareSummaryResult"
+).textContent =
+`${leftPlayer.name} leads ${leftWins}–${rightWins}`;
 
-          <div class="compare-row">
+}else if(
+rightWins >
+leftWins
+){
 
-            <div class="compare-stat-value ${leftClass}">
-              ${category.leftDisplay}
-            </div>
+el(
+"compareSummaryResult"
+).textContent =
+`${rightPlayer.name} leads ${rightWins}–${leftWins}`;
 
-            <div class="compare-stat-name">
-              ${category.name}
-            </div>
+}else{
 
-            <div class="compare-stat-value ${rightClass}">
-              ${category.rightDisplay}
-            </div>
+el(
+"compareSummaryResult"
+).textContent =
+`${leftWins}–${rightWins} Draw`;
 
-          </div>
+}
 
-        `;
+el(
+"compareSummarySub"
+).textContent =
+ties === 1
+? "1 category is tied."
+: `${ties} categories are tied.`;
 
-      }
-    ).join("");
+}
 
-  if(
-    leftWins >
-    rightWins
-  ){
+/* ========================================
+   MATCH DETAILS
+======================================== */
 
-    el("compareSummaryResult").textContent =
-      `${leftPlayer.name} leads ${leftWins}–${rightWins}`;
+function openMatchDetails(
+season,
+id
+){
 
-  }else if(
-    rightWins >
-    leftWins
-  ){
+selectedMatchRef = {
 
-    el("compareSummaryResult").textContent =
-      `${rightPlayer.name} leads ${rightWins}–${leftWins}`;
+season,
 
-  }else{
+id
 
-    el("compareSummaryResult").textContent =
-      `${leftWins}–${rightWins} Draw`;
+};
 
-  }
+renderMatchDetails();
 
-  el("compareSummarySub").textContent =
-    ties === 1
-      ? "1 category is tied."
-      : `${ties} categories are tied.`;
+document
+.querySelectorAll(
+".page"
+)
+.forEach(
+page=>{
+
+page.classList.remove(
+"active"
+);
+
+}
+);
+
+el(
+"matchDetail"
+).classList.add(
+"active"
+);
+
+el(
+"bottomNav"
+).classList.add(
+"hidden"
+);
+
+window.scrollTo(
+0,
+0
+);
+
+}
+
+function renderMatchDetails(){
+
+if(
+!selectedMatchRef
+){
+return;
+}
+
+const stored =
+findStoredMatch(
+selectedMatchRef.season,
+selectedMatchRef.id
+);
+
+if(
+!stored
+){
+
+closeMatchDetails();
+
+return;
+
+}
+
+const match =
+stored.match;
+
+const resultText =
+match.result === "W"
+? "WIN"
+: match.result === "L"
+? "LOSS"
+: "DRAW";
+
+const resultClass =
+match.result === "W"
+? "result-win"
+: match.result === "L"
+? "result-loss"
+: "result-draw";
+
+el(
+"matchDetailSubtitle"
+).textContent =
+`${selectedMatchRef.season} · ${formatDate(match.date)} · ${match.type}`;
+
+el(
+"matchDetailHero"
+).innerHTML = `
+
+<div
+class="result-badge ${resultClass}"
+style="display:inline-block"
+>
+${resultText}
+</div>
+
+<div class="match-detail-score">
+Olympus FC
+${match.olympusScore}
+–
+${match.opponentScore}
+${match.opponent}
+</div>
+
+<div class="match-detail-meta">
+${selectedMatchRef.season}
+·
+${formatDate(match.date)}
+·
+${match.type}
+</div>
+
+`;
+
+const playedPlayers =
+players.filter(
+player=>
+match.playerStats?.[
+player.id
+]?.played
+);
+
+if(
+playedPlayers.length === 0
+){
+
+el(
+"matchDetailPlayers"
+).innerHTML = `
+
+<div class="detail-none">
+No player performance data was recorded for this match.
+</div>
+
+`;
+
+return;
+
+}
+
+el(
+"matchDetailPlayers"
+).innerHTML =
+playedPlayers.map(
+player=>{
+
+const stat =
+match.playerStats[
+player.id
+];
+
+const isPotm =
+match.potmPlayerId ===
+player.id;
+
+const rating =
+stat.rating === null ||
+stat.rating === undefined ||
+stat.rating === ""
+? "—"
+: Number(
+stat.rating
+).toFixed(1);
+
+return `
+
+<div class="detail-player">
+
+<div class="detail-player-top">
+
+<div class="detail-player-name">
+#${player.number}
+${player.name}
+</div>
+
+${
+isPotm
+? `
+<div class="detail-potm">
+⭐ POTM
+</div>
+`
+: ""
+}
+
+</div>
+
+<div class="detail-stat-grid">
+
+<div class="detail-stat">
+
+<div class="detail-stat-value">
+${Number(stat.goals || 0)}
+</div>
+
+<div class="detail-stat-label">
+GOALS
+</div>
+
+</div>
+
+<div class="detail-stat">
+
+<div class="detail-stat-value">
+${Number(stat.assists || 0)}
+</div>
+
+<div class="detail-stat-label">
+ASSISTS
+</div>
+
+</div>
+
+<div class="detail-stat">
+
+<div class="detail-stat-value">
+${rating}
+</div>
+
+<div class="detail-stat-label">
+RATING
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}
+).join("");
+
+}
+
+function closeMatchDetails(){
+
+el(
+"matchDetail"
+).classList.remove(
+"active"
+);
+
+el(
+"matches"
+).classList.add(
+"active"
+);
+
+el(
+"bottomNav"
+).classList.remove(
+"hidden"
+);
+
+document
+.querySelectorAll(
+".nav-item"
+)
+.forEach(
+(item,index)=>{
+
+item.classList.toggle(
+"active",
+index === 2
+);
+
+}
+);
+
+renderMatches();
+
+window.scrollTo(
+0,
+0
+);
+
+}
+
+function editSelectedMatch(){
+
+if(
+!selectedMatchRef
+){
+return;
+}
+
+openMatchForEdit(
+selectedMatchRef.season,
+selectedMatchRef.id
+);
+
+}
+
+function deleteSelectedMatch(){
+
+if(
+!selectedMatchRef
+){
+return;
+}
+
+const stored =
+findStoredMatch(
+selectedMatchRef.season,
+selectedMatchRef.id
+);
+
+if(
+!stored
+){
+return;
+}
+
+const match =
+stored.match;
+
+if(
+!confirm(
+`Delete the match against ${match.opponent}?`
+)
+){
+return;
+}
+
+if(
+!confirm(
+"This permanently removes this logged match and its player stats. Continue?"
+)
+){
+return;
+}
+
+seasonData[
+selectedMatchRef.season
+].matches.splice(
+stored.index,
+1
+);
+
+saveSeasonData();
+
+selectedMatchRef =
+null;
+
+renderEverything();
+
+closeMatchDetails();
 
 }
 
@@ -6213,237 +7431,242 @@ function renderComparison(){
 
 function exportBackup(){
 
-  const backup = {
+const backup = {
 
-    app:
-      "Olympus FC Stats Tracker",
+app:
+"Olympus FC Stats Tracker",
 
-    version:
-      2,
+version:
+2,
 
-    createdAt:
-      new Date().toISOString(),
+createdAt:
+new Date().toISOString(),
 
-    activeSeason,
+activeSeason,
 
-    historicalFC26:
-      FC26_BASELINE,
+historicalFC26:
+FC26_BASELINE,
 
-    seasons:
-      seasonData
+seasons:
+seasonData
 
-  };
+};
 
-  const blob =
-    new Blob(
-      [
-        JSON.stringify(
-          backup,
-          null,
-          2
-        )
-      ],
-      {
-        type:
-          "application/json"
-      }
-    );
+const blob =
+new Blob(
+[
+JSON.stringify(
+backup,
+null,
+2
+)
+],
+{
+type:
+"application/json"
+}
+);
 
-  const url =
-    URL.createObjectURL(
-      blob
-    );
+const url =
+URL.createObjectURL(
+blob
+);
 
-  const link =
-    document.createElement(
-      "a"
-    );
+const link =
+document.createElement(
+"a"
+);
 
-  link.href =
-    url;
+link.href =
+url;
 
-  link.download =
-    "Olympus-FC-Full-Backup.json";
+link.download =
+"Olympus-FC-Full-Backup.json";
 
-  document.body.appendChild(
-    link
-  );
+document.body.appendChild(
+link
+);
 
-  link.click();
+link.click();
 
-  link.remove();
+link.remove();
 
-  setTimeout(
-    ()=>{
-      URL.revokeObjectURL(
-        url
-      );
-    },
-    1000
-  );
+setTimeout(
+()=>{
+
+URL.revokeObjectURL(
+url
+);
+
+},
+1000
+);
 
 }
 
 function chooseBackupFile(){
 
-  el("backupFileInput").click();
+el(
+"backupFileInput"
+).click();
 
 }
 
 function restoreBackup(
-  event
+event
 ){
 
-  const file =
-    event.target.files[0];
+const file =
+event.target.files[
+0
+];
 
-  if(
-    !file
-  ){
-    return;
-  }
+if(
+!file
+){
+return;
+}
 
-  const reader =
-    new FileReader();
+const reader =
+new FileReader();
 
-  reader.onload =
-    function(e){
+reader.onload =
+function(e){
 
-      try{
+try{
 
-        const backup =
-          JSON.parse(
-            e.target.result
-          );
+const backup =
+JSON.parse(
+e.target.result
+);
 
-        if(
-          backup &&
-          backup.seasons &&
-          backup.seasons.FC26 &&
-          backup.seasons.FC27
-        ){
+if(
+backup &&
+backup.seasons &&
+backup.seasons.FC26 &&
+backup.seasons.FC27
+){
 
-          if(
-            !confirm(
-              "Restore this Olympus FC backup? Current logged data will be replaced."
-            )
-          ){
-            return;
-          }
+if(
+!confirm(
+"Restore this Olympus FC backup? Current logged data will be replaced."
+)
+){
+return;
+}
 
-          seasonData =
-            backup.seasons;
+seasonData =
+backup.seasons;
 
-          if(
-            [
-              "FC26",
-              "FC27",
-              "ALL_TIME"
-            ].includes(
-              backup.activeSeason
-            )
-          ){
+if(
+[
+"FC26",
+"FC27",
+"ALL_TIME"
+].includes(
+backup.activeSeason
+)
+){
 
-            activeSeason =
-              backup.activeSeason;
+activeSeason =
+backup.activeSeason;
 
-          }
+}
 
-          saveSeasonData();
+saveSeasonData();
 
-          localStorage.setItem(
-            ACTIVE_SEASON_KEY,
-            activeSeason
-          );
+localStorage.setItem(
+ACTIVE_SEASON_KEY,
+activeSeason
+);
 
-          syncSeasonSelectors();
+renderEverything();
 
-          renderEverything();
+alert(
+"Olympus FC backup restored."
+);
 
-          alert(
-            "Olympus FC backup restored."
-          );
+return;
 
-          return;
+}
 
-        }
+if(
+backup &&
+Array.isArray(
+backup.matches
+)
+){
 
-        if(
-          backup &&
-          Array.isArray(
-            backup.matches
-          )
-        ){
+if(
+!confirm(
+"This is an older Olympus FC backup. Import its matches into FC26?"
+)
+){
+return;
+}
 
-          if(
-            !confirm(
-              "This is an older Olympus FC backup. Import its matches into FC26?"
-            )
-          ){
-            return;
-          }
+seasonData.FC26.matches =
+backup.matches.map(
+match=>({
 
-          seasonData.FC26.matches =
-            backup.matches.map(
-              match=>({
-                ...match,
-                season:"FC26"
-              })
-            );
+...match,
 
-          if(
-            divisions.includes(
-              backup.division
-            )
-          ){
+season:"FC26"
 
-            seasonData.FC26.division =
-              backup.division;
+})
+);
 
-          }
+if(
+divisions.includes(
+backup.division
+)
+){
 
-          saveSeasonData();
+seasonData.FC26.division =
+backup.division;
 
-          activeSeason =
-            "FC26";
+}
 
-          localStorage.setItem(
-            ACTIVE_SEASON_KEY,
-            activeSeason
-          );
+saveSeasonData();
 
-          syncSeasonSelectors();
+activeSeason =
+"FC26";
 
-          renderEverything();
+localStorage.setItem(
+ACTIVE_SEASON_KEY,
+activeSeason
+);
 
-          alert(
-            "Old backup imported into FC26."
-          );
+renderEverything();
 
-          return;
+alert(
+"Old backup imported into FC26."
+);
 
-        }
+return;
 
-        alert(
-          "That does not appear to be a valid Olympus FC backup."
-        );
+}
 
-      }catch{
+alert(
+"That does not appear to be a valid Olympus FC backup."
+);
 
-        alert(
-          "The backup could not be read."
-        );
+}catch{
 
-      }
+alert(
+"The backup could not be read."
+);
 
-    };
+}
 
-  reader.readAsText(
-    file
-  );
+};
 
-  event.target.value =
-    "";
+reader.readAsText(
+file
+);
+
+event.target.value =
+"";
 
 }
 
@@ -6453,51 +7676,51 @@ function restoreBackup(
 
 function resetSeasonData(){
 
-  if(
-    activeSeason === "ALL_TIME"
-  ){
-    return;
-  }
+if(
+activeSeason === "ALL_TIME"
+){
+return;
+}
 
-  if(
-    !confirm(
-      `Delete every ${activeSeason} match logged in this tracker?`
-    )
-  ){
-    return;
-  }
+if(
+!confirm(
+`Delete every ${activeSeason} match logged in this tracker?`
+)
+){
+return;
+}
 
-  if(
-    !confirm(
-      activeSeason === "FC26"
-        ? "The imported FC26 historical player totals will NOT be deleted. Continue?"
-        : "Are you sure you want to reset FC27?"
-    )
-  ){
-    return;
-  }
+if(
+!confirm(
+activeSeason === "FC26"
+? "The imported FC26 historical player totals will NOT be deleted. Continue?"
+: "Are you sure you want to reset FC27?"
+)
+){
+return;
+}
 
-  seasonData[
-    activeSeason
-  ].matches =
-    [];
+seasonData[
+activeSeason
+].matches =
+[];
 
-  seasonData[
-    activeSeason
-  ].division =
-    "Division 5";
+seasonData[
+activeSeason
+].division =
+"Division 5";
 
-  saveSeasonData();
+saveSeasonData();
 
-  renderEverything();
+renderEverything();
 
-  showPage(
-    "home",
-    document
-      .querySelectorAll(
-        ".nav-item"
-      )[0]
-  );
+showPage(
+"home",
+document
+.querySelectorAll(
+".nav-item"
+)[0]
+);
 
 }
 
@@ -6507,19 +7730,19 @@ function resetSeasonData(){
 
 function renderEverything(){
 
-  syncSeasonSelectors();
+syncSeasonSelectors();
 
-  renderDivision();
+renderDivision();
 
-  renderHome();
+renderHome();
 
-  renderSquad();
+renderSquad();
 
-  renderMatches();
+renderMatches();
 
-  renderStatsPage();
+renderStatsPage();
 
-  renderMorePage();
+renderMorePage();
 
 }
 
