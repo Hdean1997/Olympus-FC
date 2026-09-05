@@ -524,6 +524,14 @@ h1{
 .matchday-title{margin-top:5px;font-size:22px;font-weight:bold;}
 .matchday-sub{margin-top:6px;color:#9aa9bc;font-size:12px;line-height:1.45;}
 .matchday-live-squad{margin-top:7px;color:#9aa9bc;font-size:12px;line-height:1.45;}
+.matchday-squad-details{margin-top:8px;border:1px solid #29425f;border-radius:12px;background:#0a1625;overflow:hidden;}
+.matchday-squad-details summary{list-style:none;cursor:pointer;padding:11px 12px;color:#c9d2df;font-size:12px;font-weight:bold;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.matchday-squad-details summary::-webkit-details-marker{display:none;}
+.matchday-squad-details summary::after{content:"⌄";color:#6f9dff;font-size:16px;line-height:1;}
+.matchday-squad-details[open] summary::after{content:"⌃";}
+.matchday-squad-list{padding:0 12px 10px;color:#9aa9bc;font-size:11px;line-height:1.8;}
+.matchday-squad-list div{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #1f334b;padding:7px 0;}
+.matchday-squad-list strong{color:#dbe4ef;font-weight:600;}
 .matchday-timer{margin-top:13px;padding:10px 12px;border-radius:12px;background:#0a1625;border:1px solid #29425f;display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .matchday-timer-label{color:#8fa0b6;font-size:10px;font-weight:bold;letter-spacing:.5px;}
 .matchday-timer-value{font-size:17px;font-weight:bold;font-variant-numeric:tabular-nums;}
@@ -3395,19 +3403,24 @@ function matchdaySummaryHTML(session,compact=false){
     const p = players.find(x => x.id === item.playerKey);
     return escapeHTML(item.position || p?.position || "");
   }).filter(Boolean);
-  const fullSquad = session.players.map(item => {
+  const squadRows = session.players.map(item => {
     const p=players.find(x=>x.id===item.playerKey);
-    return p ? `${p.name} · ${escapeHTML(item.position || p.position)}` : "";
-  }).filter(Boolean).join("  •  ") || "No squad recorded";
+    if(!p) return "";
+    return `<div><strong>${escapeHTML(p.name)}</strong><span>${escapeHTML(item.position || p.position || "—")}</span></div>`;
+  }).filter(Boolean).join("");
   const compactSquad = session.players.length
-    ? `${session.players.length}-player squad${squadPositions.length ? ` · ${squadPositions.join(" · ")}` : ""}`
+    ? `👥 ${session.players.length} Players · Matchday Squad`
     : "No squad recorded";
+  const squadDetails = session.players.length
+    ? `<details class="matchday-squad-details"><summary>View squad & positions</summary><div class="matchday-squad-list">${squadRows}</div></details>`
+    : "";
   const duration = matchdayDurationMs(session);
   return `
     <div class="matchday-card ${session.status === "active" ? "live" : ""}">
       <div class="matchday-eyebrow">${session.status === "active" ? "🔴 MATCHDAY LIVE" : "MATCHDAY REPORT"}</div>
       <div class="matchday-title">${formatDate(session.sessionDate)}</div>
-      <div class="matchday-sub">${compact && session.status === "active" ? compactSquad : fullSquad}</div>
+      <div class="matchday-sub">${compactSquad}</div>
+      ${!compact && session.status === "ended" ? squadDetails : ""}
       ${session.status === "active" ? `<div class="matchday-timer"><span class="matchday-timer-label">⏱ SESSION TIME</span><span class="matchday-timer-value" data-matchday-timer="${session.id}">${formatSessionDuration(duration,true)}</span></div>` : `<div class="matchday-duration">⏱ Session duration — ${formatSessionDuration(duration,false)}</div>`}
       <div class="matchday-grid">
         <div class="matchday-stat"><div class="matchday-stat-value">${st.matches.length}</div><div class="matchday-stat-label">MATCHES</div></div>
