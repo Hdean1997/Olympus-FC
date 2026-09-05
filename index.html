@@ -2747,11 +2747,11 @@ const players = [
 ];
 
 const FC26_BASELINE = {
-  tyrone:{appearances:60,goals:20,assists:33,averageRating:8.4,potm:7},
-  baganor:{appearances:60,goals:25,assists:60,averageRating:8.5,potm:12},
-  deano:{appearances:60,goals:95,assists:34,averageRating:8.5,potm:21},
-  kenny:{appearances:46,goals:49,assists:39,averageRating:8.2,potm:5},
-  juanny:{appearances:11,goals:2,assists:2,averageRating:6.7,potm:0}
+  tyrone:{appearances:60,goals:20,assists:33,averageRating:8.4,potm:7,passes:630,passCompletion:89},
+  baganor:{appearances:60,goals:25,assists:60,averageRating:8.5,potm:12,passes:556,passCompletion:80},
+  deano:{appearances:60,goals:95,assists:34,averageRating:8.5,potm:21,passes:429,passCompletion:90},
+  kenny:{appearances:46,goals:49,assists:39,averageRating:8.2,potm:5,passes:404,passCompletion:89},
+  juanny:{appearances:11,goals:2,assists:2,averageRating:6.7,potm:0,passes:null,passCompletion:null}
 };
 
 const divisions = [
@@ -4221,6 +4221,18 @@ function renderStatsPage(){
             <div class="stats-box-label">POTM</div>
           </div>
 
+          ${activeSeason === "FC26" ? `
+            <div class="stats-box">
+              <div class="stats-box-number">${FC26_BASELINE[player.id].passes ?? "—"}</div>
+              <div class="stats-box-label">PASSES</div>
+            </div>
+
+            <div class="stats-box">
+              <div class="stats-box-number">${FC26_BASELINE[player.id].passCompletion === null ? "—" : FC26_BASELINE[player.id].passCompletion + "%"}</div>
+              <div class="stats-box-label">PASS %</div>
+            </div>
+          ` : ""}
+
         </div>
 
         <div class="profile-tap">
@@ -4359,6 +4371,18 @@ function renderPlayerProfile(){
       <div class="profile-stat-value">${stat.potm}</div>
       <div class="profile-stat-label">POTM</div>
     </div>
+
+    ${activeSeason === "FC26" ? `
+      <div class="profile-stat-card">
+        <div class="profile-stat-value">${FC26_BASELINE[player.id].passes ?? "—"}</div>
+        <div class="profile-stat-label">PASSES COMPLETED</div>
+      </div>
+
+      <div class="profile-stat-card">
+        <div class="profile-stat-value">${FC26_BASELINE[player.id].passCompletion === null ? "—" : FC26_BASELINE[player.id].passCompletion + "%"}</div>
+        <div class="profile-stat-label">PASS COMPLETION</div>
+      </div>
+    ` : ""}
   `;
 
   const performances = currentMatches()
