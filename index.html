@@ -48,13 +48,12 @@ button {
   display: block;
 }
 
-
 /* HOME */
 
 .top {
   text-align: center;
   padding: 28px 20px 18px;
-  background: linear-gradient(180deg, #0b1c31, #07111f);
+  background: linear-gradient(180deg,#0b1c31,#07111f);
 }
 
 .badge {
@@ -154,7 +153,6 @@ h1 {
   font-weight: bold;
 }
 
-
 /* HEADERS */
 
 .page-header {
@@ -171,7 +169,6 @@ h1 {
   color: #9aa9bc;
 }
 
-
 /* SQUAD */
 
 .player-card {
@@ -181,10 +178,6 @@ h1 {
   background: #101d2e;
   border: 1px solid #1c314c;
   cursor: pointer;
-}
-
-.player-card:active {
-  transform: scale(.99);
 }
 
 .player-main {
@@ -254,7 +247,6 @@ h1 {
   font-size: 9px;
   margin-top: 3px;
 }
-
 
 /* MATCHES */
 
@@ -390,7 +382,12 @@ h1 {
   border-top: 1px solid #25384f;
   color: #bdc8d6;
   font-size: 12px;
-  line-height: 1.6;
+  line-height: 1.8;
+}
+
+.potm-line {
+  color: #e8bd4b;
+  font-weight: bold;
 }
 
 .delete-match {
@@ -401,7 +398,6 @@ h1 {
   background: transparent;
   color: #e27c83;
 }
-
 
 /* LEADERBOARD */
 
@@ -462,7 +458,7 @@ h1 {
 
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
+  grid-template-columns: repeat(3,1fr);
   gap: 7px;
   margin-top: 14px;
 }
@@ -484,7 +480,6 @@ h1 {
   font-size: 9px;
   color: #8392a6;
 }
-
 
 /* PLAYER PROFILE */
 
@@ -601,6 +596,7 @@ h1 {
 .profile-match-top {
   display: flex;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .profile-match-name {
@@ -616,6 +612,7 @@ h1 {
 .profile-match-contribution {
   color: #e8bd4b;
   font-weight: bold;
+  text-align: right;
 }
 
 .no-profile-matches {
@@ -626,7 +623,6 @@ h1 {
   background: #101d2e;
   border-radius: 14px;
 }
-
 
 /* MODAL */
 
@@ -755,7 +751,6 @@ h1 {
   display: block;
 }
 
-
 /* PLAYER MATCH ENTRY */
 
 .player-entry {
@@ -770,6 +765,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
 }
 
 .player-entry-name {
@@ -791,8 +787,8 @@ h1 {
 
 .player-entry-inputs {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: repeat(3,1fr);
+  gap: 8px;
   margin-top: 12px;
 }
 
@@ -805,7 +801,7 @@ h1 {
 .small-stat-input {
   width: 100%;
   height: 44px;
-  padding: 10px;
+  padding: 8px;
   color: white;
   background: #07111f;
   border: 1px solid #29425f;
@@ -813,10 +809,24 @@ h1 {
   font-size: 16px;
 }
 
+.potm-choice {
+  margin-top: 13px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #e8bd4b;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.potm-choice input {
+  width: 20px;
+  height: 20px;
+}
+
 .player-entry.not-played {
   opacity: .45;
 }
-
 
 /* NAV */
 
@@ -861,11 +871,9 @@ h1 {
 </style>
 </head>
 
-
 <body>
 
 <div class="app">
-
 
 <!-- HOME -->
 
@@ -965,6 +973,44 @@ h1 {
 
     </div>
 
+
+    <div class="leader">
+
+      <div>
+        <div id="bestRatingName" class="leader-name">
+          No ratings yet
+        </div>
+
+        <div class="leader-detail">
+          Best Average Rating
+        </div>
+      </div>
+
+      <div id="bestRatingValue" class="leader-value">
+        —
+      </div>
+
+    </div>
+
+
+    <div class="leader">
+
+      <div>
+        <div id="potmLeaderName" class="leader-name">
+          No POTM awards yet
+        </div>
+
+        <div class="leader-detail">
+          Most Player of the Match
+        </div>
+      </div>
+
+      <div id="potmLeaderValue" class="leader-value">
+        0
+      </div>
+
+    </div>
+
   </div>
 
 </div>
@@ -993,7 +1039,6 @@ h1 {
     <p>Olympus FC · FC27</p>
   </div>
 
-
   <div class="matches-summary">
 
     <div class="match-summary-box">
@@ -1013,14 +1058,12 @@ h1 {
 
   </div>
 
-
   <button
     class="add-match-button"
     onclick="openMatchForm()"
   >
     + Add Match
   </button>
-
 
   <div class="match-list-title">
     Match History
@@ -1036,13 +1079,8 @@ h1 {
 <div id="stats" class="page">
 
   <div class="page-header">
-
     <h2>Player Stats</h2>
-
-    <p>
-      Olympus FC · FC27
-    </p>
-
+    <p>Olympus FC · FC27</p>
   </div>
 
   <div class="leaderboard-title">
@@ -1054,19 +1092,16 @@ h1 {
 </div>
 
 
-<!-- PLAYER PROFILE -->
+<!-- PROFILE -->
 
 <div id="profile" class="page">
-
   <div id="playerProfile"></div>
+</div>
 
 </div>
 
 
-</div>
-
-
-<!-- NAVIGATION -->
+<!-- NAV -->
 
 <div id="bottomNav" class="nav">
 
@@ -1078,7 +1113,6 @@ h1 {
     Home
   </div>
 
-
   <div
     class="nav-item"
     onclick="showPage('squad',this)"
@@ -1086,7 +1120,6 @@ h1 {
     <span class="nav-icon">♟</span>
     Squad
   </div>
-
 
   <div
     class="nav-item"
@@ -1096,7 +1129,6 @@ h1 {
     Matches
   </div>
 
-
   <div
     class="nav-item"
     onclick="showPage('stats',this)"
@@ -1105,21 +1137,15 @@ h1 {
     Stats
   </div>
 
-
   <div class="nav-item">
-
-    <span class="nav-icon">
-      •••
-    </span>
-
+    <span class="nav-icon">•••</span>
     More
-
   </div>
 
 </div>
 
 
-<!-- ADD MATCH MODAL -->
+<!-- MATCH MODAL -->
 
 <div id="matchModal" class="modal">
 
@@ -1185,21 +1211,10 @@ h1 {
           class="form-control"
         >
 
-          <option value="League">
-            League
-          </option>
-
-          <option value="Promotion">
-            Promotion
-          </option>
-
-          <option value="Playoffs">
-            Playoffs
-          </option>
-
-          <option value="Friendly">
-            Friendly
-          </option>
+          <option value="League">League</option>
+          <option value="Promotion">Promotion</option>
+          <option value="Playoffs">Playoffs</option>
+          <option value="Friendly">Friendly</option>
 
         </select>
 
@@ -1331,8 +1346,6 @@ h1 {
 
 <script>
 
-/* PLAYERS */
-
 const players = [
 
   {
@@ -1392,15 +1405,18 @@ try {
 
   matches =
     JSON.parse(
-      localStorage.getItem(
-        "olympusFCMatches"
-      )
+      localStorage.getItem("olympusFCMatches")
     ) || [];
 
 } catch {
 
   matches = [];
 
+}
+
+
+function el(id) {
+  return document.getElementById(id);
 }
 
 
@@ -1411,21 +1427,17 @@ function showPage(pageId, navItem) {
   document
     .querySelectorAll(".page")
     .forEach(
-      page =>
-        page.classList.remove("active")
+      page => page.classList.remove("active")
     );
 
 
-  document
-    .getElementById(pageId)
-    .classList.add("active");
+  el(pageId).classList.add("active");
 
 
   document
     .querySelectorAll(".nav-item")
     .forEach(
-      item =>
-        item.classList.remove("active")
+      item => item.classList.remove("active")
     );
 
 
@@ -1434,8 +1446,7 @@ function showPage(pageId, navItem) {
   }
 
 
-  document
-    .getElementById("bottomNav")
+  el("bottomNav")
     .classList.remove("hidden");
 
 
@@ -1467,37 +1478,28 @@ function localDate() {
 }
 
 
-/* OPEN MATCH */
+/* MATCH FORM */
 
 function openMatchForm() {
 
   pendingMatch = null;
 
-  document
-    .getElementById("matchStep1")
-    .style.display =
-      "block";
+  el("matchStep1").style.display =
+    "block";
 
-  document
-    .getElementById("matchStep2")
-    .style.display =
-      "none";
+  el("matchStep2").style.display =
+    "none";
 
-  document
-    .getElementById("matchError")
+  el("matchError")
     .classList.remove("show");
 
-  document
-    .getElementById("playerError")
+  el("playerError")
     .classList.remove("show");
 
-  document
-    .getElementById("matchDate")
-    .value =
-      localDate();
+  el("matchDate").value =
+    localDate();
 
-  document
-    .getElementById("matchModal")
+  el("matchModal")
     .classList.add("open");
 
   document.body.style.overflow =
@@ -1508,8 +1510,7 @@ function openMatchForm() {
 
 function closeMatchForm() {
 
-  document
-    .getElementById("matchModal")
+  el("matchModal")
     .classList.remove("open");
 
   document.body.style.overflow =
@@ -1522,10 +1523,10 @@ function closeMatchForm() {
 
 function resetMatchForm() {
 
-  document.getElementById("opponent").value = "";
-  document.getElementById("olympusScore").value = "";
-  document.getElementById("opponentScore").value = "";
-  document.getElementById("matchType").value = "League";
+  el("opponent").value = "";
+  el("olympusScore").value = "";
+  el("opponentScore").value = "";
+  el("matchType").value = "League";
 
   pendingMatch = null;
 
@@ -1534,13 +1535,11 @@ function resetMatchForm() {
 
 function showMatchError(message) {
 
-  const error =
-    document.getElementById("matchError");
-
-  error.textContent =
+  el("matchError").textContent =
     message;
 
-  error.classList.add("show");
+  el("matchError")
+    .classList.add("show");
 
 }
 
@@ -1550,48 +1549,56 @@ function showMatchError(message) {
 function continueToPlayerStats() {
 
   const opponent =
-    document
-      .getElementById("opponent")
+    el("opponent")
       .value
       .trim();
 
   const date =
-    document
-      .getElementById("matchDate")
-      .value;
+    el("matchDate").value;
 
   const type =
-    document
-      .getElementById("matchType")
-      .value;
+    el("matchType").value;
 
   const olympusValue =
-    document
-      .getElementById("olympusScore")
-      .value;
+    el("olympusScore").value;
 
   const opponentValue =
-    document
-      .getElementById("opponentScore")
-      .value;
+    el("opponentScore").value;
 
 
   if (!opponent) {
-    showMatchError("Please enter an opponent.");
+
+    showMatchError(
+      "Please enter an opponent."
+    );
+
     return;
+
   }
 
+
   if (!date) {
-    showMatchError("Please select a date.");
+
+    showMatchError(
+      "Please select a date."
+    );
+
     return;
+
   }
+
 
   if (
     olympusValue === "" ||
     opponentValue === ""
   ) {
-    showMatchError("Please enter both scores.");
+
+    showMatchError(
+      "Please enter both scores."
+    );
+
     return;
+
   }
 
 
@@ -1604,9 +1611,11 @@ function continueToPlayerStats() {
 
   let result = "D";
 
+
   if (olympusScore > opponentScore) {
     result = "W";
   }
+
 
   if (olympusScore < opponentScore) {
     result = "L";
@@ -1632,19 +1641,14 @@ function continueToPlayerStats() {
   };
 
 
-  document
-    .getElementById("matchStep1")
-    .style.display =
-      "none";
+  el("matchStep1").style.display =
+    "none";
 
-  document
-    .getElementById("matchStep2")
-    .style.display =
-      "block";
+  el("matchStep2").style.display =
+    "block";
 
 
-  document
-    .getElementById("playerStatsSubtitle")
+  el("playerStatsSubtitle")
     .textContent =
       `Olympus FC ${olympusScore} – ${opponentScore} ${opponent}`;
 
@@ -1658,11 +1662,8 @@ function continueToPlayerStats() {
 
 function renderPlayerEntry() {
 
-  const container =
-    document.getElementById("playerEntryList");
+  el("playerEntryList").innerHTML =
 
-
-  container.innerHTML =
     players.map(
       player => `
 
@@ -1706,6 +1707,7 @@ function renderPlayerEntry() {
                 id="goals-${player.id}"
                 class="small-stat-input"
                 type="number"
+                inputmode="numeric"
                 min="0"
                 value="0"
               >
@@ -1723,13 +1725,48 @@ function renderPlayerEntry() {
                 id="assists-${player.id}"
                 class="small-stat-input"
                 type="number"
+                inputmode="numeric"
                 min="0"
                 value="0"
               >
 
             </div>
 
+
+            <div>
+
+              <div class="small-input-label">
+                Rating
+              </div>
+
+              <input
+                id="rating-${player.id}"
+                class="small-stat-input"
+                type="number"
+                inputmode="decimal"
+                min="0"
+                max="10"
+                step="0.1"
+                placeholder="0.0"
+              >
+
+            </div>
+
           </div>
+
+
+          <label class="potm-choice">
+
+            <input
+              id="potm-${player.id}"
+              type="radio"
+              name="potmPlayer"
+              value="${player.id}"
+            >
+
+            ⭐ Player of the Match
+
+          </label>
 
         </div>
 
@@ -1742,47 +1779,56 @@ function renderPlayerEntry() {
 function togglePlayer(playerId) {
 
   const played =
-    document
-      .getElementById(
-        "played-" + playerId
-      )
+    el("played-" + playerId)
       .checked;
 
+
   const entry =
-    document
-      .getElementById(
-        "entry-" + playerId
-      );
+    el("entry-" + playerId);
 
   const goals =
-    document
-      .getElementById(
-        "goals-" + playerId
-      );
+    el("goals-" + playerId);
 
   const assists =
-    document
-      .getElementById(
-        "assists-" + playerId
-      );
+    el("assists-" + playerId);
+
+  const rating =
+    el("rating-" + playerId);
+
+  const potm =
+    el("potm-" + playerId);
 
 
   if (played) {
 
-    entry.classList.remove("not-played");
+    entry.classList.remove(
+      "not-played"
+    );
 
     goals.disabled = false;
     assists.disabled = false;
+    rating.disabled = false;
+    potm.disabled = false;
 
   } else {
 
-    entry.classList.add("not-played");
+    entry.classList.add(
+      "not-played"
+    );
 
     goals.value = 0;
     assists.value = 0;
+    rating.value = "";
 
     goals.disabled = true;
     assists.disabled = true;
+    rating.disabled = true;
+
+    if (potm.checked) {
+      potm.checked = false;
+    }
+
+    potm.disabled = true;
 
   }
 
@@ -1791,18 +1837,16 @@ function togglePlayer(playerId) {
 
 function backToMatchDetails() {
 
-  document
-    .getElementById("matchStep2")
-    .style.display =
-      "none";
+  el("matchStep2").style.display =
+    "none";
 
-  document
-    .getElementById("matchStep1")
-    .style.display =
-      "block";
+  el("matchStep1").style.display =
+    "block";
 
 }
 
+
+/* FINISH MATCH */
 
 function finishMatch() {
 
@@ -1811,61 +1855,131 @@ function finishMatch() {
   }
 
 
+  el("playerError")
+    .classList.remove("show");
+
+
   const playerStats = {};
 
   let playerGoalTotal = 0;
 
-
-  players.forEach(
-    player => {
-
-      const played =
-        document
-          .getElementById(
-            "played-" + player.id
-          )
-          .checked;
+  let playerAssistTotal = 0;
 
 
-      const goals =
-        played
-          ? Number(
-              document
-                .getElementById(
-                  "goals-" + player.id
-                )
-                .value
-            ) || 0
-          : 0;
+  const selectedPotm =
+    document.querySelector(
+      'input[name="potmPlayer"]:checked'
+    );
 
 
-      const assists =
-        played
-          ? Number(
-              document
-                .getElementById(
-                  "assists-" + player.id
-                )
-                .value
-            ) || 0
-          : 0;
+  const potmPlayerId =
+    selectedPotm
+      ? selectedPotm.value
+      : null;
 
 
-      playerGoalTotal += goals;
+  for (const player of players) {
+
+    const played =
+      el("played-" + player.id)
+        .checked;
 
 
-      playerStats[player.id] = {
+    const goals =
+      played
+        ? Number(
+            el("goals-" + player.id)
+              .value
+          ) || 0
+        : 0;
 
-        played,
 
-        goals,
+    const assists =
+      played
+        ? Number(
+            el("assists-" + player.id)
+              .value
+          ) || 0
+        : 0;
 
-        assists
 
-      };
+    const ratingRaw =
+      played
+        ? el("rating-" + player.id)
+            .value
+        : "";
+
+
+    if (
+      played &&
+      ratingRaw === ""
+    ) {
+
+      showPlayerError(
+        `Please enter a rating for ${player.name}.`
+      );
+
+      return;
 
     }
-  );
+
+
+    const rating =
+      played
+        ? Number(ratingRaw)
+        : null;
+
+
+    if (
+      played &&
+      (
+        !Number.isFinite(rating) ||
+        rating < 0 ||
+        rating > 10
+      )
+    ) {
+
+      showPlayerError(
+        `${player.name}'s rating must be between 0 and 10.`
+      );
+
+      return;
+
+    }
+
+
+    if (
+      goals < 0 ||
+      assists < 0
+    ) {
+
+      showPlayerError(
+        "Goals and assists cannot be negative."
+      );
+
+      return;
+
+    }
+
+
+    playerGoalTotal += goals;
+
+    playerAssistTotal += assists;
+
+
+    playerStats[player.id] = {
+
+      played,
+
+      goals,
+
+      assists,
+
+      rating
+
+    };
+
+  }
 
 
   if (
@@ -1873,16 +1987,47 @@ function finishMatch() {
     pendingMatch.olympusScore
   ) {
 
-    const error =
-      document
-        .getElementById("playerError");
-
-    error.textContent =
-      "Player goals add up to more than Olympus FC scored.";
-
-    error.classList.add("show");
+    showPlayerError(
+      "Player goals add up to more than Olympus FC scored."
+    );
 
     return;
+
+  }
+
+
+  if (
+    playerAssistTotal >
+    pendingMatch.olympusScore
+  ) {
+
+    showPlayerError(
+      "Player assists add up to more than Olympus FC scored."
+    );
+
+    return;
+
+  }
+
+
+  if (potmPlayerId) {
+
+    const potmStats =
+      playerStats[potmPlayerId];
+
+
+    if (
+      !potmStats ||
+      !potmStats.played
+    ) {
+
+      showPlayerError(
+        "Player of the Match must have played."
+      );
+
+      return;
+
+    }
 
   }
 
@@ -1891,7 +2036,13 @@ function finishMatch() {
     playerStats;
 
 
-  matches.unshift(pendingMatch);
+  pendingMatch.potmPlayerId =
+    potmPlayerId;
+
+
+  matches.unshift(
+    pendingMatch
+  );
 
 
   saveMatches();
@@ -1903,7 +2054,18 @@ function finishMatch() {
 }
 
 
-/* SAVE */
+function showPlayerError(message) {
+
+  el("playerError").textContent =
+    message;
+
+  el("playerError")
+    .classList.add("show");
+
+}
+
+
+/* STORAGE */
 
 function saveMatches() {
 
@@ -1938,7 +2100,7 @@ function deleteMatch(id) {
 }
 
 
-/* CLUB STATS */
+/* CLUB TOTALS */
 
 function calculateClubStats() {
 
@@ -1957,7 +2119,9 @@ function calculateClubStats() {
     matches.reduce(
       (total,match) =>
         total +
-        Number(match.olympusScore || 0),
+        Number(
+          match.olympusScore || 0
+        ),
       0
     );
 
@@ -2003,7 +2167,15 @@ function calculatePlayerStats() {
 
         assists: 0,
 
-        contributions: 0
+        contributions: 0,
+
+        ratingSum: 0,
+
+        ratedAppearances: 0,
+
+        averageRating: null,
+
+        potm: 0
 
       };
 
@@ -2014,6 +2186,23 @@ function calculatePlayerStats() {
   matches.forEach(
     match => {
 
+      if (match.potmPlayerId) {
+
+        if (
+          totals[
+            match.potmPlayerId
+          ]
+        ) {
+
+          totals[
+            match.potmPlayerId
+          ].potm++;
+
+        }
+
+      }
+
+
       if (!match.playerStats) {
         return;
       }
@@ -2023,7 +2212,9 @@ function calculatePlayerStats() {
         player => {
 
           const stat =
-            match.playerStats[player.id];
+            match.playerStats[
+              player.id
+            ];
 
 
           if (!stat) {
@@ -2041,12 +2232,44 @@ function calculatePlayerStats() {
 
           totals[player.id]
             .goals +=
-              Number(stat.goals || 0);
+              Number(
+                stat.goals || 0
+              );
 
 
           totals[player.id]
             .assists +=
-              Number(stat.assists || 0);
+              Number(
+                stat.assists || 0
+              );
+
+
+          if (
+            stat.played &&
+            stat.rating !== undefined &&
+            stat.rating !== null &&
+            stat.rating !== ""
+          ) {
+
+            const rating =
+              Number(stat.rating);
+
+
+            if (
+              Number.isFinite(rating)
+            ) {
+
+              totals[player.id]
+                .ratingSum +=
+                  rating;
+
+
+              totals[player.id]
+                .ratedAppearances++;
+
+            }
+
+          }
 
         }
       );
@@ -2058,12 +2281,20 @@ function calculatePlayerStats() {
   players.forEach(
     player => {
 
-      totals[player.id]
-        .contributions =
+      const stat =
+        totals[player.id];
 
-          totals[player.id].goals +
 
-          totals[player.id].assists;
+      stat.contributions =
+        stat.goals +
+        stat.assists;
+
+
+      stat.averageRating =
+        stat.ratedAppearances === 0
+          ? null
+          : stat.ratingSum /
+            stat.ratedAppearances;
 
     }
   );
@@ -2085,60 +2316,141 @@ function renderHome() {
     calculatePlayerStats();
 
 
-  homeMatches.textContent =
+  el("homeMatches").textContent =
     club.played;
 
-  homeWins.textContent =
+  el("homeWins").textContent =
     club.wins;
 
-  homeGoals.textContent =
+  el("homeGoals").textContent =
     club.goals;
 
-  homeWinRate.textContent =
+  el("homeWinRate").textContent =
     club.winRate + "%";
 
 
-  const scorers =
+  const scorer =
     [...players].sort(
       (a,b) =>
         totals[b.id].goals -
         totals[a.id].goals
-    );
+    )[0];
 
 
-  const assisters =
+  const assister =
     [...players].sort(
       (a,b) =>
         totals[b.id].assists -
         totals[a.id].assists
-    );
+    )[0];
 
 
-  const scorer =
-    scorers[0];
-
-  const assister =
-    assisters[0];
+  el("topScorerGoals")
+    .textContent =
+      totals[scorer.id].goals;
 
 
-  topScorerGoals.textContent =
-    totals[scorer.id].goals;
+  el("topScorerName")
+    .textContent =
+      totals[scorer.id].goals === 0
+        ? "No goals yet"
+        : scorer.name;
 
 
-  topScorerName.textContent =
-    totals[scorer.id].goals === 0
-      ? "No goals yet"
-      : scorer.name;
+  el("topAssisterAssists")
+    .textContent =
+      totals[assister.id].assists;
 
 
-  topAssisterAssists.textContent =
-    totals[assister.id].assists;
+  el("topAssisterName")
+    .textContent =
+      totals[assister.id].assists === 0
+        ? "No assists yet"
+        : assister.name;
 
 
-  topAssisterName.textContent =
-    totals[assister.id].assists === 0
-      ? "No assists yet"
-      : assister.name;
+  const ratedPlayers =
+    players
+      .filter(
+        player =>
+          totals[player.id]
+            .ratedAppearances > 0
+      )
+      .sort(
+        (a,b) =>
+          totals[b.id].averageRating -
+          totals[a.id].averageRating
+      );
+
+
+  if (ratedPlayers.length === 0) {
+
+    el("bestRatingName")
+      .textContent =
+        "No ratings yet";
+
+
+    el("bestRatingValue")
+      .textContent =
+        "—";
+
+  } else {
+
+    const best =
+      ratedPlayers[0];
+
+
+    el("bestRatingName")
+      .textContent =
+        best.name;
+
+
+    el("bestRatingValue")
+      .textContent =
+        totals[best.id]
+          .averageRating
+          .toFixed(2);
+
+  }
+
+
+  const potmPlayers =
+    [...players]
+      .sort(
+        (a,b) =>
+          totals[b.id].potm -
+          totals[a.id].potm
+      );
+
+
+  const potmLeader =
+    potmPlayers[0];
+
+
+  if (
+    totals[
+      potmLeader.id
+    ].potm === 0
+  ) {
+
+    el("potmLeaderName")
+      .textContent =
+        "No POTM awards yet";
+
+  } else {
+
+    el("potmLeaderName")
+      .textContent =
+        potmLeader.name;
+
+  }
+
+
+  el("potmLeaderValue")
+    .textContent =
+      totals[
+        potmLeader.id
+      ].potm;
 
 }
 
@@ -2151,7 +2463,8 @@ function renderSquad() {
     calculatePlayerStats();
 
 
-  squadList.innerHTML =
+  el("squadList").innerHTML =
+
     players.map(
       player => {
 
@@ -2222,20 +2535,24 @@ function renderSquad() {
 
               <div class="mini-stat">
                 <div class="mini-number">
-                  ${stat.assists}
+                  ${
+                    stat.averageRating === null
+                      ? "—"
+                      : stat.averageRating.toFixed(1)
+                  }
                 </div>
                 <div class="mini-label">
-                  ASSISTS
+                  AVG
                 </div>
               </div>
 
 
               <div class="mini-stat">
                 <div class="mini-number">
-                  ${stat.contributions}
+                  ${stat.potm}
                 </div>
                 <div class="mini-label">
-                  G/A
+                  POTM
                 </div>
               </div>
 
@@ -2251,19 +2568,22 @@ function renderSquad() {
 }
 
 
-/* MATCHES */
+/* ESCAPE */
 
 function escapeHTML(text) {
 
   const div =
     document.createElement("div");
 
-  div.textContent = text;
+  div.textContent =
+    text;
 
   return div.innerHTML;
 
 }
 
+
+/* MATCH HISTORY */
 
 function renderMatches() {
 
@@ -2271,19 +2591,19 @@ function renderMatches() {
     calculateClubStats();
 
 
-  matchesPlayed.textContent =
+  el("matchesPlayed").textContent =
     club.played;
 
-  matchesWins.textContent =
+  el("matchesWins").textContent =
     club.wins;
 
-  matchesGoals.textContent =
+  el("matchesGoals").textContent =
     club.goals;
 
 
   if (matches.length === 0) {
 
-    matchHistory.innerHTML = `
+    el("matchHistory").innerHTML = `
 
       <div class="empty-matches">
 
@@ -2309,7 +2629,8 @@ function renderMatches() {
   }
 
 
-  matchHistory.innerHTML =
+  el("matchHistory").innerHTML =
+
     matches.map(
       match => {
 
@@ -2321,24 +2642,14 @@ function renderMatches() {
 
 
         if (match.result === "W") {
-
-          resultClass =
-            "result-win";
-
-          resultText =
-            "WIN";
-
+          resultClass = "result-win";
+          resultText = "WIN";
         }
 
 
         if (match.result === "L") {
-
-          resultClass =
-            "result-loss";
-
-          resultText =
-            "LOSS";
-
+          resultClass = "result-loss";
+          resultText = "LOSS";
         }
 
 
@@ -2356,76 +2667,95 @@ function renderMatches() {
           );
 
 
-        let performanceText = "";
+        const lines = [];
 
 
         if (match.playerStats) {
 
-          const performers =
-            players
-              .map(
-                player => {
+          players.forEach(
+            player => {
 
-                  const stat =
-                    match.playerStats[
-                      player.id
-                    ];
+              const stat =
+                match.playerStats[
+                  player.id
+                ];
 
 
-                  if (!stat) {
-                    return null;
-                  }
+              if (!stat || !stat.played) {
+                return;
+              }
 
 
-                  const goals =
-                    Number(stat.goals || 0);
-
-                  const assists =
-                    Number(stat.assists || 0);
+              const parts = [];
 
 
-                  if (
-                    goals === 0 &&
-                    assists === 0
-                  ) {
-                    return null;
-                  }
+              if (stat.goals) {
+                parts.push(
+                  stat.goals + "G"
+                );
+              }
 
 
-                  const parts = [];
+              if (stat.assists) {
+                parts.push(
+                  stat.assists + "A"
+                );
+              }
 
 
-                  if (goals) {
-                    parts.push(goals + "G");
-                  }
+              if (
+                stat.rating !== undefined &&
+                stat.rating !== null &&
+                stat.rating !== ""
+              ) {
 
-                  if (assists) {
-                    parts.push(assists + "A");
-                  }
+                parts.push(
+                  Number(
+                    stat.rating
+                  ).toFixed(1)
+                );
 
-
-                  return (
-                    player.name +
-                    " " +
-                    parts.join(" ")
-                  );
-
-                }
-              )
-              .filter(Boolean);
+              }
 
 
-          if (performers.length) {
+              if (
+                match.potmPlayerId ===
+                player.id
+              ) {
 
-            performanceText = `
+                parts.push("⭐ POTM");
 
-              <div class="match-player-summary">
-                ${performers.join("<br>")}
-              </div>
+              }
 
-            `;
 
-          }
+              if (parts.length) {
+
+                lines.push(
+                  player.name +
+                  " " +
+                  parts.join(" · ")
+                );
+
+              }
+
+            }
+          );
+
+        }
+
+
+        let performanceText = "";
+
+
+        if (lines.length) {
+
+          performanceText = `
+
+            <div class="match-player-summary">
+              ${lines.join("<br>")}
+            </div>
+
+          `;
 
         }
 
@@ -2491,7 +2821,7 @@ function renderMatches() {
 }
 
 
-/* STATS LEADERBOARD */
+/* STATS */
 
 function renderStatsPage() {
 
@@ -2504,48 +2834,50 @@ function renderStatsPage() {
       .sort(
         (a,b) => {
 
-          const gaDifference =
+          const ga =
+            totals[b.id]
+              .contributions -
+            totals[a.id]
+              .contributions;
 
-            totals[b.id].contributions -
 
-            totals[a.id].contributions;
-
-
-          if (gaDifference !== 0) {
-            return gaDifference;
+          if (ga !== 0) {
+            return ga;
           }
 
 
-          const goalDifference =
-
+          const goals =
             totals[b.id].goals -
-
             totals[a.id].goals;
 
 
-          if (goalDifference !== 0) {
-            return goalDifference;
+          if (goals !== 0) {
+            return goals;
           }
 
 
           return (
-
             totals[b.id].assists -
-
             totals[a.id].assists
-
           );
 
         }
       );
 
 
-  statsLeaderboard.innerHTML =
+  el("statsLeaderboard").innerHTML =
+
     sorted.map(
       (player,index) => {
 
         const stat =
           totals[player.id];
+
+
+        const avg =
+          stat.averageRating === null
+            ? "—"
+            : stat.averageRating.toFixed(2);
 
 
         return `
@@ -2571,9 +2903,7 @@ function renderStatsPage() {
                   </div>
 
                   <div class="stats-player-meta">
-                    #${player.number}
-                    ·
-                    ${player.position}
+                    #${player.number} · ${player.position}
                   </div>
 
                 </div>
@@ -2589,16 +2919,6 @@ function renderStatsPage() {
 
 
             <div class="stats-row">
-
-              <div class="stats-box">
-                <div class="stats-box-number">
-                  ${stat.appearances}
-                </div>
-                <div class="stats-box-label">
-                  APP
-                </div>
-              </div>
-
 
               <div class="stats-box">
                 <div class="stats-box-number">
@@ -2629,6 +2949,36 @@ function renderStatsPage() {
                 </div>
               </div>
 
+
+              <div class="stats-box">
+                <div class="stats-box-number">
+                  ${stat.appearances}
+                </div>
+                <div class="stats-box-label">
+                  APP
+                </div>
+              </div>
+
+
+              <div class="stats-box">
+                <div class="stats-box-number">
+                  ${avg}
+                </div>
+                <div class="stats-box-label">
+                  AVG
+                </div>
+              </div>
+
+
+              <div class="stats-box">
+                <div class="stats-box-number">
+                  ${stat.potm}
+                </div>
+                <div class="stats-box-label">
+                  POTM
+                </div>
+              </div>
+
             </div>
 
           </div>
@@ -2641,7 +2991,7 @@ function renderStatsPage() {
 }
 
 
-/* PLAYER PROFILE */
+/* PROFILE */
 
 function openPlayerProfile(
   playerId,
@@ -2699,19 +3049,28 @@ function openPlayerProfile(
         ).toFixed(2);
 
 
+  const averageRating =
+    stat.averageRating === null
+      ? "—"
+      : stat.averageRating
+          .toFixed(2);
+
+
   const playerMatches =
-    matches
-      .filter(
-        match => {
+    matches.filter(
+      match =>
 
-          return (
-            match.playerStats &&
-            match.playerStats[player.id] &&
-            match.playerStats[player.id].played
-          );
+        match.playerStats &&
 
-        }
-      );
+        match.playerStats[
+          player.id
+        ] &&
+
+        match.playerStats[
+          player.id
+        ].played
+
+    );
 
 
   let recentHTML = "";
@@ -2730,16 +3089,19 @@ function openPlayerProfile(
   } else {
 
     recentHTML =
+
       playerMatches
         .slice(0,5)
         .map(
           match => {
 
             const matchStat =
-              match.playerStats[player.id];
+              match.playerStats[
+                player.id
+              ];
 
 
-            const displayDate =
+            const date =
               new Date(
                 match.date +
                 "T12:00:00"
@@ -2753,36 +3115,54 @@ function openPlayerProfile(
               );
 
 
-            let contribution =
-              "No G/A";
+            const bits = [];
+
+
+            if (matchStat.goals) {
+              bits.push(
+                matchStat.goals +
+                "G"
+              );
+            }
+
+
+            if (matchStat.assists) {
+              bits.push(
+                matchStat.assists +
+                "A"
+              );
+            }
 
 
             if (
-              matchStat.goals ||
-              matchStat.assists
+              matchStat.rating !== undefined &&
+              matchStat.rating !== null
             ) {
 
-              const bits = [];
-
-
-              if (matchStat.goals) {
-                bits.push(
-                  matchStat.goals + "G"
-                );
-              }
-
-
-              if (matchStat.assists) {
-                bits.push(
-                  matchStat.assists + "A"
-                );
-              }
-
-
-              contribution =
-                bits.join(" ");
+              bits.push(
+                "⭐ " +
+                Number(
+                  matchStat.rating
+                ).toFixed(1)
+              );
 
             }
+
+
+            if (
+              match.potmPlayerId ===
+              player.id
+            ) {
+
+              bits.push("POTM");
+
+            }
+
+
+            const contribution =
+              bits.length
+                ? bits.join(" · ")
+                : "No G/A";
 
 
             return `
@@ -2798,7 +3178,7 @@ function openPlayerProfile(
                     </div>
 
                     <div class="profile-match-date">
-                      ${displayDate}
+                      ${date}
                       ·
                       ${match.olympusScore}-${match.opponentScore}
                     </div>
@@ -2823,7 +3203,7 @@ function openPlayerProfile(
   }
 
 
-  playerProfile.innerHTML = `
+  el("playerProfile").innerHTML = `
 
     <div class="profile-top">
 
@@ -2849,11 +3229,7 @@ function openPlayerProfile(
           </h2>
 
           <div class="profile-meta">
-
-            ${player.position}
-            ·
-            ${player.nation}
-
+            ${player.position} · ${player.nation}
           </div>
 
 
@@ -2877,54 +3253,62 @@ function openPlayerProfile(
     <div class="profile-grid">
 
       <div class="profile-stat">
-
         <div class="profile-stat-big">
           ${stat.appearances}
         </div>
-
         <div class="profile-stat-name">
           Appearances
         </div>
-
       </div>
 
 
       <div class="profile-stat">
-
         <div class="profile-stat-big">
           ${stat.contributions}
         </div>
-
         <div class="profile-stat-name">
           Goal Contributions
         </div>
-
       </div>
 
 
       <div class="profile-stat">
-
         <div class="profile-stat-big">
           ${stat.goals}
         </div>
-
         <div class="profile-stat-name">
           Goals
         </div>
-
       </div>
 
 
       <div class="profile-stat">
-
         <div class="profile-stat-big">
           ${stat.assists}
         </div>
-
         <div class="profile-stat-name">
           Assists
         </div>
+      </div>
 
+
+      <div class="profile-stat">
+        <div class="profile-stat-big">
+          ${averageRating}
+        </div>
+        <div class="profile-stat-name">
+          Average Rating
+        </div>
+      </div>
+
+
+      <div class="profile-stat">
+        <div class="profile-stat-big">
+          ${stat.potm}
+        </div>
+        <div class="profile-stat-name">
+          POTM Awards
+        </div>
       </div>
 
     </div>
@@ -2933,41 +3317,32 @@ function openPlayerProfile(
     <div class="profile-secondary">
 
       <div class="secondary-row">
-
         <div class="secondary-name">
           Goals per game
         </div>
-
         <div class="secondary-value">
           ${goalsPerGame}
         </div>
-
       </div>
 
 
       <div class="secondary-row">
-
         <div class="secondary-name">
           Assists per game
         </div>
-
         <div class="secondary-value">
           ${assistsPerGame}
         </div>
-
       </div>
 
 
       <div class="secondary-row">
-
         <div class="secondary-name">
           G/A per game
         </div>
-
         <div class="secondary-value">
           ${gaPerGame}
         </div>
-
       </div>
 
     </div>
@@ -2991,13 +3366,11 @@ function openPlayerProfile(
     );
 
 
-  document
-    .getElementById("profile")
+  el("profile")
     .classList.add("active");
 
 
-  document
-    .getElementById("bottomNav")
+  el("bottomNav")
     .classList.add("hidden");
 
 
@@ -3008,18 +3381,15 @@ function openPlayerProfile(
 
 function closePlayerProfile() {
 
-  document
-    .getElementById("profile")
+  el("profile")
     .classList.remove("active");
 
 
-  document
-    .getElementById(profileReturnPage)
+  el(profileReturnPage)
     .classList.add("active");
 
 
-  document
-    .getElementById("bottomNav")
+  el("bottomNav")
     .classList.remove("hidden");
 
 
