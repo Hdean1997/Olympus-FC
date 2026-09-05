@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 
 <meta
@@ -23,8 +24,10 @@ body {
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
+
   background: #07111f;
   color: white;
+
   font-family: Arial, sans-serif;
 }
 
@@ -40,7 +43,12 @@ button {
 
 .app {
   min-height: 100vh;
-  padding-bottom: calc(165px + env(safe-area-inset-bottom));
+
+  padding-bottom:
+    calc(
+      165px +
+      env(safe-area-inset-bottom)
+    );
 }
 
 .page {
@@ -52,93 +60,492 @@ button {
 }
 
 
-/* HOME */
+
+/* =========================
+GENERAL
+========================= */
+
+.card {
+  background: #101d2e;
+
+  border:
+    1px solid #1c314c;
+
+  border-radius: 18px;
+}
+
+.page-header {
+  padding:
+    38px
+    20px
+    18px;
+}
+
+.page-header h2 {
+  margin: 0;
+
+  font-size: 32px;
+}
+
+.page-header p {
+  margin:
+    7px
+    0
+    0;
+
+  color: #9aa9bc;
+}
+
+
+
+/* =========================
+HOME
+========================= */
 
 .top {
   text-align: center;
-  padding: 28px 20px 18px;
-  background: linear-gradient(180deg,#0b1c31,#07111f);
+
+  padding:
+    28px
+    20px
+    18px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #0b1c31,
+      #07111f
+    );
 }
 
 .badge {
   width: 145px;
   height: 145px;
+
   object-fit: cover;
+
   border-radius: 50%;
+
   margin-bottom: 14px;
-  box-shadow: 0 0 30px rgba(37,116,255,.2);
+
+  box-shadow:
+    0 0 30px
+    rgba(37,116,255,.2);
 }
 
 h1 {
   margin: 0;
+
   font-size: 34px;
 }
 
 .subtitle {
   margin-top: 8px;
+
   color: #9aa9bc;
 }
 
+
+
+/* DIVISION */
+
+.division-card {
+  margin:
+    16px
+    16px
+    12px;
+
+  padding: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #12243d,
+      #101d2e
+    );
+
+  border:
+    1px solid #284a76;
+
+  border-radius: 20px;
+}
+
+.division-top {
+  display: flex;
+
+  justify-content:
+    space-between;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.division-small {
+  color: #8fa0b7;
+
+  font-size: 12px;
+
+  text-transform: uppercase;
+
+  letter-spacing: .8px;
+}
+
+.division-name {
+  margin-top: 5px;
+
+  font-size: 29px;
+
+  font-weight: bold;
+
+  color: #e8bd4b;
+}
+
+.change-division {
+  border:
+    1px solid #315d9d;
+
+  background: transparent;
+
+  color: #75a4ff;
+
+  padding:
+    9px
+    11px;
+
+  border-radius: 9px;
+
+  font-size: 12px;
+
+  font-weight: bold;
+}
+
+.division-path {
+  display: flex;
+
+  align-items: center;
+
+  justify-content:
+    space-between;
+
+  gap: 5px;
+
+  margin-top: 22px;
+}
+
+.division-step {
+  flex: 1;
+
+  min-width: 0;
+
+  height: 6px;
+
+  border-radius: 20px;
+
+  background: #253449;
+}
+
+.division-step.complete {
+  background: #326eff;
+}
+
+.division-step.current {
+  background: #e8bd4b;
+}
+
+.division-labels {
+  display: flex;
+
+  justify-content:
+    space-between;
+
+  margin-top: 8px;
+
+  color: #708098;
+
+  font-size: 9px;
+}
+
+
+
+/* SEASON */
+
 .season-card {
-  margin: 16px;
+  margin:
+    12px
+    16px;
+
   padding: 18px;
+
   border-radius: 18px;
+
   background: #101d2e;
-  border: 1px solid #1c314c;
+
+  border:
+    1px solid #1c314c;
 }
 
 .season-card h2 {
-  margin: 0 0 6px;
+  margin:
+    0
+    0
+    6px;
 }
 
 .season-card p {
   margin: 0;
+
   color: #9aa9bc;
 }
 
+
+
+/* HOME STATS */
+
 .stats-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+
+  grid-template-columns:
+    1fr 1fr;
+
   gap: 12px;
-  padding: 0 16px;
+
+  padding:
+    0
+    16px;
 }
 
 .stat {
-  padding: 18px 12px;
+  padding:
+    18px
+    12px;
+
   text-align: center;
+
   border-radius: 16px;
+
   background: #101d2e;
-  border: 1px solid #1c314c;
+
+  border:
+    1px solid #1c314c;
 }
 
 .stat-number {
   font-size: 28px;
+
   font-weight: bold;
 }
 
 .stat-label {
   margin-top: 5px;
-  font-size: 13px;
+
   color: #9aa9bc;
+
+  font-size: 13px;
 }
 
+
+
+/* RECORD */
+
+.record-section {
+  padding:
+    24px
+    16px
+    0;
+}
+
+.record-title {
+  margin:
+    0
+    0
+    12px;
+
+  font-size: 21px;
+}
+
+.record-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap: 8px;
+}
+
+.record-mini {
+  padding:
+    14px
+    7px;
+
+  text-align: center;
+
+  background: #101d2e;
+
+  border:
+    1px solid #1c314c;
+
+  border-radius: 13px;
+}
+
+.record-number {
+  font-size: 20px;
+
+  font-weight: bold;
+}
+
+.record-label {
+  color: #8392a6;
+
+  margin-top: 4px;
+
+  font-size: 9px;
+}
+
+
+
+/* FORM */
+
+.form-card {
+  margin-top: 12px;
+
+  padding: 16px;
+
+  background: #101d2e;
+
+  border:
+    1px solid #1c314c;
+
+  border-radius: 16px;
+}
+
+.form-heading {
+  color: #9aa9bc;
+
+  margin-bottom: 11px;
+
+  font-size: 12px;
+}
+
+.form-row {
+  display: flex;
+
+  gap: 7px;
+}
+
+.form-pill {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-size: 13px;
+
+  font-weight: bold;
+}
+
+.form-w {
+  background: #1f8f55;
+}
+
+.form-d {
+  background: #a77a20;
+}
+
+.form-l {
+  background: #b83e46;
+}
+
+.form-empty {
+  background: #1c2b3d;
+
+  color: #63748a;
+}
+
+
+
+/* BIG RECORDS */
+
+.big-records {
+  margin-top: 12px;
+}
+
+.big-record-row {
+  display: flex;
+
+  justify-content:
+    space-between;
+
+  gap: 15px;
+
+  padding:
+    14px
+    0;
+
+  border-bottom:
+    1px solid #25384f;
+}
+
+.big-record-row:last-child {
+  border: 0;
+}
+
+.big-record-name {
+  color: #9aa9bc;
+
+  font-size: 13px;
+}
+
+.big-record-value {
+  text-align: right;
+
+  font-weight: bold;
+
+  font-size: 13px;
+}
+
+
+
+/* CLUB LEADERS */
+
 .section {
-  padding: 22px 16px 0;
+  padding:
+    24px
+    16px
+    0;
 }
 
 .section h3 {
-  margin: 0 0 12px;
+  margin:
+    0
+    0
+    12px;
 }
 
 .leader {
   display: flex;
-  justify-content: space-between;
+
+  justify-content:
+    space-between;
+
   align-items: center;
+
   padding: 15px;
+
   margin-bottom: 10px;
+
   border-radius: 14px;
+
   background: #101d2e;
-  border: 1px solid #1c314c;
+
+  border:
+    1px solid #1c314c;
 }
 
 .leader-name {
@@ -147,165 +554,248 @@ h1 {
 
 .leader-detail {
   margin-top: 3px;
+
   color: #9aa9bc;
+
   font-size: 13px;
 }
 
 .leader-value {
   color: #e8bd4b;
+
   font-size: 22px;
+
   font-weight: bold;
 }
 
 
-/* PAGE HEADER */
 
-.page-header {
-  padding: 38px 20px 18px;
-}
-
-.page-header h2 {
-  margin: 0;
-  font-size: 32px;
-}
-
-.page-header p {
-  margin: 7px 0 0;
-  color: #9aa9bc;
-}
-
-
-/* SQUAD */
+/* =========================
+SQUAD
+========================= */
 
 .player-card {
-  margin: 12px 16px;
+  margin:
+    12px
+    16px;
+
   padding: 18px;
+
   border-radius: 18px;
+
   background: #101d2e;
-  border: 1px solid #1c314c;
+
+  border:
+    1px solid #1c314c;
 }
 
 .player-main {
   display: flex;
+
   align-items: center;
+
   gap: 14px;
 }
 
 .number {
   width: 58px;
   height: 58px;
+
   flex-shrink: 0;
+
   border-radius: 50%;
+
   background: #0b2547;
-  border: 1px solid #3269bb;
+
+  border:
+    1px solid #3269bb;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   color: #e8bd4b;
+
   font-size: 21px;
+
   font-weight: bold;
 }
 
 .player-name {
   font-size: 18px;
+
   font-weight: bold;
 }
 
 .player-meta {
   margin-top: 5px;
+
   color: #9aa9bc;
+
   font-size: 13px;
 }
 
 .captain {
   display: inline-block;
+
   margin-top: 7px;
-  padding: 5px 9px;
+
+  padding:
+    5px
+    9px;
+
   border-radius: 7px;
+
   background: #e8bd4b;
+
   color: #07111f;
+
   font-size: 11px;
+
   font-weight: bold;
 }
 
 .player-mini-stats {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
+
+  grid-template-columns:
+    repeat(4,1fr);
+
   gap: 8px;
+
   margin-top: 16px;
 }
 
 .mini-stat {
   text-align: center;
-  padding: 10px 4px;
+
+  padding:
+    10px
+    4px;
+
   border-radius: 10px;
+
   background: #0b1625;
 }
 
 .mini-number {
   font-weight: bold;
+
   font-size: 16px;
 }
 
 .mini-label {
   margin-top: 3px;
+
   color: #8392a6;
+
   font-size: 9px;
 }
 
 
-/* MATCHES */
+
+/* =========================
+MATCHES
+========================= */
 
 .matches-summary {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
+
+  grid-template-columns:
+    repeat(3,1fr);
+
   gap: 10px;
-  margin: 0 16px 18px;
+
+  margin:
+    0
+    16px
+    18px;
 }
 
 .match-summary-box {
-  padding: 15px 8px;
+  padding:
+    15px
+    8px;
+
   text-align: center;
+
   border-radius: 15px;
+
   background: #101d2e;
-  border: 1px solid #1c314c;
+
+  border:
+    1px solid #1c314c;
 }
 
 .match-summary-number {
   font-size: 23px;
+
   font-weight: bold;
 }
 
 .match-summary-label {
   margin-top: 5px;
-  font-size: 11px;
+
   color: #9aa9bc;
+
+  font-size: 11px;
 }
 
 .add-match-button {
   display: block;
-  width: calc(100% - 32px);
-  margin: 0 16px 20px;
+
+  width:
+    calc(
+      100% - 32px
+    );
+
+  margin:
+    0
+    16px
+    20px;
+
   padding: 16px;
+
   border: 0;
+
   border-radius: 14px;
+
   background: #326eff;
+
   color: white;
+
   font-size: 16px;
+
   font-weight: bold;
 }
 
 .match-list-title {
-  margin: 26px 16px 12px;
+  margin:
+    26px
+    16px
+    12px;
+
   font-size: 20px;
 }
 
 .empty-matches {
-  margin: 0 16px;
-  padding: 35px 20px;
+  margin:
+    0
+    16px;
+
+  padding:
+    35px
+    20px;
+
   text-align: center;
-  border: 1px dashed #29425f;
+
+  border:
+    1px dashed #29425f;
+
   border-radius: 18px;
+
   background: #0d1928;
 }
 
@@ -315,22 +805,34 @@ h1 {
 
 .empty-title {
   margin-top: 12px;
+
   font-size: 19px;
+
   font-weight: bold;
 }
 
 .empty-text {
   margin-top: 8px;
+
   color: #9aa9bc;
+
   line-height: 1.5;
 }
 
 .match-card {
-  margin: 0 16px 12px;
+  margin:
+    0
+    16px
+    12px;
+
   padding: 18px;
+
   border-radius: 18px;
+
   background: #101d2e;
-  border: 1px solid #1c314c;
+
+  border:
+    1px solid #1c314c;
 }
 
 .match-card-click {
@@ -339,26 +841,38 @@ h1 {
 
 .match-card-top {
   display: flex;
-  justify-content: space-between;
+
+  justify-content:
+    space-between;
+
   gap: 10px;
 }
 
 .match-opponent {
   font-size: 18px;
+
   font-weight: bold;
 }
 
 .match-date {
   margin-top: 4px;
+
   color: #9aa9bc;
+
   font-size: 12px;
 }
 
 .result-badge {
   height: fit-content;
-  padding: 5px 9px;
+
+  padding:
+    5px
+    9px;
+
   border-radius: 7px;
+
   font-size: 12px;
+
   font-weight: bold;
 }
 
@@ -376,56 +890,97 @@ h1 {
 
 .scoreline {
   margin-top: 18px;
+
   font-size: 21px;
+
   font-weight: bold;
 }
 
 .match-type {
   margin-top: 8px;
+
   color: #9aa9bc;
+
   font-size: 13px;
 }
 
 .match-preview-summary {
   margin-top: 14px;
+
   color: #bdc8d6;
+
   font-size: 12px;
+
   line-height: 1.6;
 }
 
 .view-match {
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid #25384f;
-  color: #6e9cff;
-  font-weight: bold;
   display: flex;
-  justify-content: space-between;
+
+  justify-content:
+    space-between;
+
+  margin-top: 16px;
+
+  padding-top: 14px;
+
+  border-top:
+    1px solid #25384f;
+
+  color: #6e9cff;
+
+  font-weight: bold;
 }
 
 
-/* MATCH DETAIL */
+
+/* =========================
+MATCH DETAIL
+========================= */
 
 .detail-top {
-  padding: 30px 20px 10px;
-  background: linear-gradient(180deg,#0d213a,#07111f);
+  padding:
+    30px
+    20px
+    10px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #0d213a,
+      #07111f
+    );
 }
 
 .detail-back {
   border: 0;
+
   background: transparent;
+
   color: #6e9cff;
+
   padding: 0;
+
   margin-bottom: 24px;
+
   font-size: 15px;
 }
 
 .detail-result-card {
-  margin: 10px 16px 18px;
+  margin:
+    10px
+    16px
+    18px;
+
   padding: 22px;
+
   border-radius: 20px;
+
   background: #101d2e;
-  border: 1px solid #1c314c;
+
+  border:
+    1px solid #1c314c;
+
   text-align: center;
 }
 
@@ -435,33 +990,50 @@ h1 {
 
 .detail-score {
   font-size: 34px;
+
   font-weight: bold;
+
   line-height: 1.2;
 }
 
 .detail-opponent {
   margin-top: 8px;
+
   color: #9aa9bc;
+
   font-size: 18px;
 }
 
 .detail-meta-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+
+  grid-template-columns:
+    1fr 1fr;
+
   gap: 10px;
-  margin: 0 16px 22px;
+
+  margin:
+    0
+    16px
+    22px;
 }
 
 .detail-meta-box {
   padding: 14px;
+
   border-radius: 14px;
+
   background: #101d2e;
-  border: 1px solid #1c314c;
+
+  border:
+    1px solid #1c314c;
 }
 
 .detail-meta-label {
   color: #8392a6;
+
   font-size: 11px;
+
   margin-bottom: 5px;
 }
 
@@ -470,16 +1042,28 @@ h1 {
 }
 
 .detail-section-title {
-  margin: 26px 16px 12px;
+  margin:
+    26px
+    16px
+    12px;
+
   font-size: 21px;
 }
 
 .detail-player {
-  margin: 0 16px 12px;
+  margin:
+    0
+    16px
+    12px;
+
   padding: 16px;
+
   border-radius: 16px;
+
   background: #101d2e;
-  border: 1px solid #1c314c;
+
+  border:
+    1px solid #1c314c;
 }
 
 .detail-player.potm-player {
@@ -488,246 +1072,384 @@ h1 {
 
 .detail-player-top {
   display: flex;
-  justify-content: space-between;
+
+  justify-content:
+    space-between;
+
   align-items: center;
 }
 
 .detail-player-name {
   font-size: 17px;
+
   font-weight: bold;
 }
 
 .detail-player-meta {
-  color: #8392a6;
-  font-size: 11px;
   margin-top: 4px;
+
+  color: #8392a6;
+
+  font-size: 11px;
 }
 
 .detail-potm {
   color: #e8bd4b;
+
   font-size: 12px;
+
   font-weight: bold;
 }
 
 .detail-player-stats {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
+
+  grid-template-columns:
+    repeat(3,1fr);
+
   gap: 8px;
+
   margin-top: 14px;
 }
 
 .detail-player-stat {
-  padding: 12px 5px;
+  padding:
+    12px
+    5px;
+
   text-align: center;
+
   background: #0b1625;
+
   border-radius: 10px;
 }
 
 .detail-player-stat-number {
   font-size: 18px;
+
   font-weight: bold;
 }
 
 .detail-player-stat-label {
   margin-top: 3px;
+
   color: #8392a6;
+
   font-size: 9px;
 }
 
 .detail-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+
+  grid-template-columns:
+    1fr 1fr;
+
   gap: 10px;
-  margin: 24px 16px;
+
+  margin:
+    24px
+    16px;
 }
 
 .detail-edit,
 .detail-delete {
   min-height: 52px;
+
   border-radius: 12px;
+
   font-weight: bold;
 }
 
 .detail-edit {
   background: transparent;
-  border: 1px solid #315d9d;
+
+  border:
+    1px solid #315d9d;
+
   color: #75a4ff;
 }
 
 .detail-delete {
   background: transparent;
-  border: 1px solid #69333a;
+
+  border:
+    1px solid #69333a;
+
   color: #e27c83;
 }
 
 
-/* STATS */
+
+/* =========================
+STATS
+========================= */
 
 .leaderboard-title {
-  margin: 0 16px 12px;
+  margin:
+    0
+    16px
+    12px;
+
   color: #9aa9bc;
+
   font-size: 14px;
 }
 
 .stats-card {
-  margin: 0 16px 12px;
+  margin:
+    0
+    16px
+    12px;
+
   padding: 16px;
+
   border-radius: 16px;
+
   background: #101d2e;
-  border: 1px solid #1c314c;
+
+  border:
+    1px solid #1c314c;
 }
 
 .stats-player-top {
   display: flex;
+
   align-items: center;
-  justify-content: space-between;
+
+  justify-content:
+    space-between;
 }
 
 .stats-player-left {
   display: flex;
+
   align-items: center;
+
   gap: 12px;
 }
 
 .rank-circle {
   width: 40px;
   height: 40px;
+
   border-radius: 50%;
+
   background: #0b2547;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   color: #e8bd4b;
+
   font-weight: bold;
 }
 
 .stats-player-name {
   font-size: 17px;
+
   font-weight: bold;
 }
 
 .stats-player-meta {
   margin-top: 3px;
+
   color: #8392a6;
+
   font-size: 11px;
 }
 
 .chevron {
   color: #5d7089;
+
   font-size: 22px;
 }
 
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
+
+  grid-template-columns:
+    repeat(3,1fr);
+
   gap: 7px;
+
   margin-top: 14px;
 }
 
 .stats-box {
-  padding: 10px 3px;
+  padding:
+    10px
+    3px;
+
   text-align: center;
+
   background: #0b1625;
+
   border-radius: 10px;
 }
 
 .stats-box-number {
   font-size: 18px;
+
   font-weight: bold;
 }
 
 .stats-box-label {
   margin-top: 3px;
-  font-size: 9px;
+
   color: #8392a6;
+
+  font-size: 9px;
 }
 
 
-/* PROFILE */
+
+/* =========================
+PROFILE
+========================= */
 
 .profile-top {
-  padding: 30px 20px 10px;
-  background: linear-gradient(180deg,#0d213a,#07111f);
+  padding:
+    30px
+    20px
+    10px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #0d213a,
+      #07111f
+    );
 }
 
 .back-button {
   border: 0;
+
   background: transparent;
+
   color: #6e9cff;
+
   padding: 0;
+
   margin-bottom: 25px;
+
   font-size: 15px;
 }
 
 .profile-identity {
   display: flex;
+
   align-items: center;
+
   gap: 16px;
 }
 
 .profile-number {
   width: 78px;
   height: 78px;
+
   border-radius: 50%;
+
   background: #0b2547;
-  border: 2px solid #3269bb;
+
+  border:
+    2px solid #3269bb;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   color: #e8bd4b;
+
   font-size: 27px;
+
   font-weight: bold;
 }
 
 .profile-name {
   margin: 0;
+
   font-size: 27px;
 }
 
 .profile-meta {
   margin-top: 7px;
+
   color: #9aa9bc;
 }
 
 .profile-grid {
   display: grid;
-  grid-template-columns: repeat(2,1fr);
+
+  grid-template-columns:
+    repeat(2,1fr);
+
   gap: 12px;
-  margin: 22px 16px;
+
+  margin:
+    22px
+    16px;
 }
 
 .profile-stat {
   padding: 18px;
+
   text-align: center;
+
   border-radius: 16px;
+
   background: #101d2e;
-  border: 1px solid #1c314c;
+
+  border:
+    1px solid #1c314c;
 }
 
 .profile-stat-big {
   font-size: 29px;
+
   font-weight: bold;
 }
 
 .profile-stat-name {
   margin-top: 5px;
+
   color: #9aa9bc;
+
   font-size: 12px;
 }
 
 .profile-secondary {
-  margin: 0 16px 22px;
+  margin:
+    0
+    16px
+    22px;
+
   padding: 16px;
+
   border-radius: 16px;
+
   background: #101d2e;
-  border: 1px solid #1c314c;
+
+  border:
+    1px solid #1c314c;
 }
 
 .secondary-row {
   display: flex;
-  justify-content: space-between;
-  padding: 11px 0;
-  border-bottom: 1px solid #26384d;
+
+  justify-content:
+    space-between;
+
+  padding:
+    11px
+    0;
+
+  border-bottom:
+    1px solid #26384d;
 }
 
 .secondary-row:last-child {
@@ -743,21 +1465,36 @@ h1 {
 }
 
 .profile-section-title {
-  margin: 0 16px 12px;
+  margin:
+    0
+    16px
+    12px;
+
   font-size: 20px;
 }
 
 .profile-match {
-  margin: 0 16px 10px;
+  margin:
+    0
+    16px
+    10px;
+
   padding: 14px;
+
   border-radius: 14px;
+
   background: #101d2e;
-  border: 1px solid #1c314c;
+
+  border:
+    1px solid #1c314c;
 }
 
 .profile-match-top {
   display: flex;
-  justify-content: space-between;
+
+  justify-content:
+    space-between;
+
   gap: 12px;
 }
 
@@ -767,37 +1504,65 @@ h1 {
 
 .profile-match-date {
   margin-top: 4px;
+
   color: #8392a6;
+
   font-size: 11px;
 }
 
 .profile-match-contribution {
   color: #e8bd4b;
+
   font-weight: bold;
+
   text-align: right;
 }
 
 .no-profile-matches {
-  margin: 0 16px;
+  margin:
+    0
+    16px;
+
   padding: 20px;
+
   text-align: center;
+
   color: #8392a6;
+
   background: #101d2e;
+
   border-radius: 14px;
 }
 
 
-/* MODAL */
+
+/* =========================
+MODALS
+========================= */
 
 .modal {
   display: none;
+
   position: fixed;
+
   inset: 0;
+
   z-index: 500;
+
   overflow-y: auto;
+
   overflow-x: hidden;
-  background: rgba(3,9,17,.94);
-  padding: 20px 16px calc(60px + env(safe-area-inset-bottom));
+
+  background:
+    rgba(3,9,17,.94);
+
+  padding:
+    20px
+    16px
+    calc(
+      60px +
+      env(safe-area-inset-bottom)
+    );
 }
 
 .modal.open {
@@ -806,78 +1571,130 @@ h1 {
 
 .modal-card {
   width: 100%;
+
   max-width: 520px;
+
   min-width: 0;
-  margin: 25px auto;
+
+  margin:
+    25px
+    auto;
+
   padding: 22px;
+
   overflow: hidden;
+
   border-radius: 20px;
+
   background: #101d2e;
-  border: 1px solid #29425f;
+
+  border:
+    1px solid #29425f;
+}
+
+.small-modal-card {
+  margin-top: 130px;
 }
 
 .modal-title {
   font-size: 27px;
+
   font-weight: bold;
 }
 
 .modal-subtitle {
-  margin: 5px 0 25px;
+  margin:
+    5px
+    0
+    25px;
+
   color: #9aa9bc;
 }
 
 .step-indicator {
   margin-bottom: 20px;
+
   color: #5f8eff;
+
   font-size: 12px;
+
   font-weight: bold;
 }
 
 .form-group {
   width: 100%;
+
   max-width: 100%;
+
   min-width: 0;
+
   overflow: hidden;
+
   margin-bottom: 18px;
 }
 
 .form-label {
   display: block;
+
   margin-bottom: 8px;
+
   color: #c9d2df;
+
   font-size: 13px;
+
   font-weight: bold;
 }
 
 .form-control {
   display: block;
+
   width: 100%;
+
   max-width: 100%;
+
   min-width: 0;
+
   height: 52px;
-  padding: 12px 14px;
-  border: 1px solid #29425f;
+
+  padding:
+    12px
+    14px;
+
+  border:
+    1px solid #29425f;
+
   border-radius: 12px;
+
   background: #07111f;
+
   color: white;
+
   font-size: 16px;
 }
 
 .date-wrapper {
   width: 100%;
+
   max-width: 100%;
+
   min-width: 0;
+
   overflow: hidden;
 }
 
 input[type="date"].form-control {
   display: block;
+
   width: 100% !important;
+
   max-width: 100% !important;
+
   min-width: 0 !important;
-  box-sizing: border-box;
+
   appearance: none;
+
   -webkit-appearance: none;
+
   text-align: left;
 }
 
@@ -887,55 +1704,86 @@ input[type="date"]::-webkit-date-and-time-value {
 
 .score-inputs {
   display: grid;
-  grid-template-columns: minmax(0,1fr) 35px minmax(0,1fr);
+
+  grid-template-columns:
+    minmax(0,1fr)
+    35px
+    minmax(0,1fr);
+
   gap: 8px;
+
   align-items: end;
+
   width: 100%;
-  min-width: 0;
 }
 
 .score-divider {
   text-align: center;
+
   padding-bottom: 15px;
+
   color: #9aa9bc;
+
   font-size: 22px;
+
   font-weight: bold;
 }
 
 .form-buttons {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+
+  grid-template-columns:
+    1fr 1fr;
+
   gap: 10px;
+
   margin-top: 24px;
 }
 
 .cancel-button,
 .save-button {
   min-height: 54px;
+
   border-radius: 12px;
+
   font-weight: bold;
+
   font-size: 15px;
 }
 
 .cancel-button {
-  border: 1px solid #29425f;
+  border:
+    1px solid #29425f;
+
   background: #17263a;
+
   color: white;
 }
 
 .save-button {
   border: 0;
+
   background: #326eff;
+
   color: white;
 }
 
 .form-error {
   display: none;
-  margin: 12px 0 0;
+
+  margin:
+    12px
+    0
+    0;
+
   padding: 11px;
+
   border-radius: 9px;
+
   background: #4b2026;
+
   color: #ffb4ba;
+
   font-size: 13px;
 }
 
@@ -944,20 +1792,30 @@ input[type="date"]::-webkit-date-and-time-value {
 }
 
 
+
 /* PLAYER ENTRY */
 
 .player-entry {
   margin-bottom: 12px;
+
   padding: 14px;
+
   border-radius: 14px;
+
   background: #0b1625;
-  border: 1px solid #243b58;
+
+  border:
+    1px solid #243b58;
 }
 
 .player-entry-header {
   display: flex;
+
   align-items: center;
-  justify-content: space-between;
+
+  justify-content:
+    space-between;
+
   gap: 10px;
 }
 
@@ -967,54 +1825,81 @@ input[type="date"]::-webkit-date-and-time-value {
 
 .played-toggle {
   display: flex;
+
   gap: 6px;
+
   align-items: center;
+
   color: #9aa9bc;
+
   font-size: 12px;
 }
 
 .played-toggle input {
   width: 20px;
+
   height: 20px;
 }
 
 .player-entry-inputs {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
+
+  grid-template-columns:
+    repeat(3,1fr);
+
   gap: 8px;
+
   margin-top: 12px;
 }
 
 .small-input-label {
   margin-bottom: 5px;
+
   color: #9aa9bc;
+
   font-size: 11px;
 }
 
 .small-stat-input {
   width: 100%;
+
   min-width: 0;
+
   height: 44px;
+
   padding: 8px;
+
   color: white;
+
   background: #07111f;
-  border: 1px solid #29425f;
+
+  border:
+    1px solid #29425f;
+
   border-radius: 9px;
+
   font-size: 16px;
 }
 
 .potm-choice {
   margin-top: 13px;
+
   display: flex;
+
   align-items: center;
+
   gap: 9px;
+
   color: #e8bd4b;
+
   font-size: 13px;
+
   font-weight: bold;
 }
 
 .potm-choice input {
   width: 20px;
+
   height: 20px;
 }
 
@@ -1023,21 +1908,38 @@ input[type="date"]::-webkit-date-and-time-value {
 }
 
 
-/* NAV */
+
+/* =========================
+NAV
+========================= */
 
 .nav {
   position: fixed;
+
   left: 0;
   right: 0;
   bottom: 0;
+
   z-index: 100;
+
   min-height: 82px;
+
   padding-top: 9px;
-  padding-bottom: calc(8px + env(safe-area-inset-bottom));
+
+  padding-bottom:
+    calc(
+      8px +
+      env(safe-area-inset-bottom)
+    );
+
   display: flex;
+
   align-items: flex-start;
+
   background: #0b1625;
-  border-top: 1px solid #1c314c;
+
+  border-top:
+    1px solid #1c314c;
 }
 
 .nav.hidden {
@@ -1046,33 +1948,49 @@ input[type="date"]::-webkit-date-and-time-value {
 
 .nav-item {
   width: 20%;
+
   text-align: center;
+
   color: #8392a6;
+
   font-size: 12px;
 }
 
 .nav-icon {
   display: block;
+
   min-height: 30px;
+
   margin-bottom: 3px;
+
   font-size: 23px;
 }
 
 .nav-item.active {
   color: #3c78ff;
+
   font-weight: bold;
 }
 
 </style>
+
 </head>
+
 
 <body>
 
+
 <div class="app">
 
-<!-- HOME -->
 
-<div id="home" class="page active">
+<!-- =====================
+HOME
+===================== -->
+
+<div
+  id="home"
+  class="page active"
+>
 
   <div class="top">
 
@@ -1082,7 +2000,9 @@ input[type="date"]::-webkit-date-and-time-value {
       alt="Olympus FC Badge"
     >
 
-    <h1>OLYMPUS FC</h1>
+    <h1>
+      OLYMPUS FC
+    </h1>
 
     <div class="subtitle">
       Pro Clubs Stats Tracker
@@ -1091,9 +2011,65 @@ input[type="date"]::-webkit-date-and-time-value {
   </div>
 
 
+
+  <!-- DIVISION -->
+
+  <div class="division-card">
+
+    <div class="division-top">
+
+      <div>
+
+        <div class="division-small">
+          Current Division
+        </div>
+
+        <div
+          id="currentDivision"
+          class="division-name"
+        >
+          Division 5
+        </div>
+
+      </div>
+
+
+      <button
+        class="change-division"
+        onclick="openDivisionModal()"
+      >
+        Change
+      </button>
+
+    </div>
+
+
+    <div
+      id="divisionPath"
+      class="division-path"
+    ></div>
+
+
+    <div class="division-labels">
+
+      <span>D5</span>
+      <span>D4</span>
+      <span>D3</span>
+      <span>D2</span>
+      <span>D1</span>
+      <span>ELITE</span>
+
+    </div>
+
+  </div>
+
+
+
   <div class="season-card">
 
-    <h2>FC27 Season</h2>
+    <h2>
+      FC27 Season
+    </h2>
 
     <p>
       The climb to the summit begins here.
@@ -1102,65 +2078,389 @@ input[type="date"]::-webkit-date-and-time-value {
   </div>
 
 
+
   <div class="stats-grid">
 
     <div class="stat">
-      <div id="homeMatches" class="stat-number">0</div>
-      <div class="stat-label">Matches</div>
+
+      <div
+        id="homeMatches"
+        class="stat-number"
+      >
+        0
+      </div>
+
+      <div class="stat-label">
+        Matches
+      </div>
+
     </div>
 
-    <div class="stat">
-      <div id="homeWins" class="stat-number">0</div>
-      <div class="stat-label">Wins</div>
-    </div>
 
     <div class="stat">
-      <div id="homeGoals" class="stat-number">0</div>
-      <div class="stat-label">Goals</div>
+
+      <div
+        id="homeWins"
+        class="stat-number"
+      >
+        0
+      </div>
+
+      <div class="stat-label">
+        Wins
+      </div>
+
     </div>
 
+
     <div class="stat">
-      <div id="homeWinRate" class="stat-number">0%</div>
-      <div class="stat-label">Win Rate</div>
+
+      <div
+        id="homeGoals"
+        class="stat-number"
+      >
+        0
+      </div>
+
+      <div class="stat-label">
+        Goals
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div
+        id="homeWinRate"
+        class="stat-number"
+      >
+        0%
+      </div>
+
+      <div class="stat-label">
+        Win Rate
+      </div>
+
     </div>
 
   </div>
 
 
+
+  <!-- SEASON RECORD -->
+
+  <div class="record-section">
+
+    <h3 class="record-title">
+      Season Record
+    </h3>
+
+
+    <div class="record-grid">
+
+      <div class="record-mini">
+
+        <div
+          id="recordWins"
+          class="record-number"
+        >
+          0
+        </div>
+
+        <div class="record-label">
+          WINS
+        </div>
+
+      </div>
+
+
+      <div class="record-mini">
+
+        <div
+          id="recordDraws"
+          class="record-number"
+        >
+          0
+        </div>
+
+        <div class="record-label">
+          DRAWS
+        </div>
+
+      </div>
+
+
+      <div class="record-mini">
+
+        <div
+          id="recordLosses"
+          class="record-number"
+        >
+          0
+        </div>
+
+        <div class="record-label">
+          LOSSES
+        </div>
+
+      </div>
+
+
+      <div class="record-mini">
+
+        <div
+          id="recordGF"
+          class="record-number"
+        >
+          0
+        </div>
+
+        <div class="record-label">
+          GF
+        </div>
+
+      </div>
+
+
+      <div class="record-mini">
+
+        <div
+          id="recordGA"
+          class="record-number"
+        >
+          0
+        </div>
+
+        <div class="record-label">
+          GA
+        </div>
+
+      </div>
+
+
+      <div class="record-mini">
+
+        <div
+          id="recordGD"
+          class="record-number"
+        >
+          0
+        </div>
+
+        <div class="record-label">
+          GD
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="form-card">
+
+      <div class="form-heading">
+        LAST 5
+      </div>
+
+      <div
+        id="formRow"
+        class="form-row"
+      ></div>
+
+    </div>
+
+
+
+    <div class="form-card big-records">
+
+      <div class="big-record-row">
+
+        <div class="big-record-name">
+          Current win streak
+        </div>
+
+        <div
+          id="currentWinStreak"
+          class="big-record-value"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="big-record-row">
+
+        <div class="big-record-name">
+          Longest win streak
+        </div>
+
+        <div
+          id="longestWinStreak"
+          class="big-record-value"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="big-record-row">
+
+        <div class="big-record-name">
+          Biggest win
+        </div>
+
+        <div
+          id="biggestWin"
+          class="big-record-value"
+        >
+          —
+        </div>
+
+      </div>
+
+
+      <div class="big-record-row">
+
+        <div class="big-record-name">
+          Biggest defeat
+        </div>
+
+        <div
+          id="biggestLoss"
+          class="big-record-value"
+        >
+          —
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- LEADERS -->
+
   <div class="section">
 
-    <h3>Club Leaders</h3>
+    <h3>
+      Club Leaders
+    </h3>
+
 
     <div class="leader">
+
       <div>
-        <div id="topScorerName" class="leader-name">No goals yet</div>
-        <div class="leader-detail">Top Goalscorer</div>
+
+        <div
+          id="topScorerName"
+          class="leader-name"
+        >
+          No goals yet
+        </div>
+
+        <div class="leader-detail">
+          Top Goalscorer
+        </div>
+
       </div>
-      <div id="topScorerGoals" class="leader-value">0</div>
+
+      <div
+        id="topScorerGoals"
+        class="leader-value"
+      >
+        0
+      </div>
+
     </div>
 
-    <div class="leader">
-      <div>
-        <div id="topAssisterName" class="leader-name">No assists yet</div>
-        <div class="leader-detail">Top Assists</div>
-      </div>
-      <div id="topAssisterAssists" class="leader-value">0</div>
-    </div>
+
 
     <div class="leader">
+
       <div>
-        <div id="bestRatingName" class="leader-name">No ratings yet</div>
-        <div class="leader-detail">Best Average Rating</div>
+
+        <div
+          id="topAssisterName"
+          class="leader-name"
+        >
+          No assists yet
+        </div>
+
+        <div class="leader-detail">
+          Top Assists
+        </div>
+
       </div>
-      <div id="bestRatingValue" class="leader-value">—</div>
+
+      <div
+        id="topAssisterAssists"
+        class="leader-value"
+      >
+        0
+      </div>
+
     </div>
 
+
+
     <div class="leader">
+
       <div>
-        <div id="potmLeaderName" class="leader-name">No POTM awards yet</div>
-        <div class="leader-detail">Most Player of the Match</div>
+
+        <div
+          id="bestRatingName"
+          class="leader-name"
+        >
+          No ratings yet
+        </div>
+
+        <div class="leader-detail">
+          Best Average Rating
+        </div>
+
       </div>
-      <div id="potmLeaderValue" class="leader-value">0</div>
+
+      <div
+        id="bestRatingValue"
+        class="leader-value"
+      >
+        —
+      </div>
+
+    </div>
+
+
+
+    <div class="leader">
+
+      <div>
+
+        <div
+          id="potmLeaderName"
+          class="leader-name"
+        >
+          No POTM awards yet
+        </div>
+
+        <div class="leader-detail">
+          Most Player of the Match
+        </div>
+
+      </div>
+
+      <div
+        id="potmLeaderValue"
+        class="leader-value"
+      >
+        0
+      </div>
+
     </div>
 
   </div>
@@ -1168,13 +2468,26 @@ input[type="date"]::-webkit-date-and-time-value {
 </div>
 
 
-<!-- SQUAD -->
 
-<div id="squad" class="page">
+<!-- =====================
+SQUAD
+===================== -->
+
+<div
+  id="squad"
+  class="page"
+>
 
   <div class="page-header">
-    <h2>Squad</h2>
-    <p>Olympus FC · FC27</p>
+
+    <h2>
+      Squad
+    </h2>
+
+    <p>
+      Olympus FC · FC27
+    </p>
+
   </div>
 
   <div id="squadList"></div>
@@ -1182,31 +2495,76 @@ input[type="date"]::-webkit-date-and-time-value {
 </div>
 
 
-<!-- MATCHES -->
 
-<div id="matches" class="page">
+<!-- =====================
+MATCHES
+===================== -->
+
+<div
+  id="matches"
+  class="page"
+>
 
   <div class="page-header">
-    <h2>Matches</h2>
-    <p>Olympus FC · FC27</p>
+
+    <h2>
+      Matches
+    </h2>
+
+    <p>
+      Olympus FC · FC27
+    </p>
+
   </div>
 
 
   <div class="matches-summary">
 
     <div class="match-summary-box">
-      <div id="matchesPlayed" class="match-summary-number">0</div>
-      <div class="match-summary-label">Played</div>
+
+      <div
+        id="matchesPlayed"
+        class="match-summary-number"
+      >
+        0
+      </div>
+
+      <div class="match-summary-label">
+        Played
+      </div>
+
     </div>
 
-    <div class="match-summary-box">
-      <div id="matchesWins" class="match-summary-number">0</div>
-      <div class="match-summary-label">Wins</div>
-    </div>
 
     <div class="match-summary-box">
-      <div id="matchesGoals" class="match-summary-number">0</div>
-      <div class="match-summary-label">Goals</div>
+
+      <div
+        id="matchesWins"
+        class="match-summary-number"
+      >
+        0
+      </div>
+
+      <div class="match-summary-label">
+        Wins
+      </div>
+
+    </div>
+
+
+    <div class="match-summary-box">
+
+      <div
+        id="matchesGoals"
+        class="match-summary-number"
+      >
+        0
+      </div>
+
+      <div class="match-summary-label">
+        Goals
+      </div>
+
     </div>
 
   </div>
@@ -1230,20 +2588,39 @@ input[type="date"]::-webkit-date-and-time-value {
 </div>
 
 
+
 <!-- MATCH DETAIL -->
 
-<div id="matchDetail" class="page">
+<div
+  id="matchDetail"
+  class="page"
+>
+
   <div id="matchDetailContent"></div>
+
 </div>
 
 
-<!-- STATS -->
 
-<div id="stats" class="page">
+<!-- =====================
+STATS
+===================== -->
+
+<div
+  id="stats"
+  class="page"
+>
 
   <div class="page-header">
-    <h2>Player Stats</h2>
-    <p>Olympus FC · FC27</p>
+
+    <h2>
+      Player Stats
+    </h2>
+
+    <p>
+      Olympus FC · FC27
+    </p>
+
   </div>
 
   <div class="leaderboard-title">
@@ -1255,55 +2632,200 @@ input[type="date"]::-webkit-date-and-time-value {
 </div>
 
 
+
 <!-- PROFILE -->
 
-<div id="profile" class="page">
+<div
+  id="profile"
+  class="page"
+>
+
   <div id="playerProfile"></div>
-</div>
 
 </div>
 
 
-<!-- NAV -->
+</div>
 
-<div id="bottomNav" class="nav">
 
-  <div class="nav-item active" onclick="showPage('home',this)">
-    <span class="nav-icon">⌂</span>
+
+<!-- =====================
+NAV
+===================== -->
+
+<div
+  id="bottomNav"
+  class="nav"
+>
+
+  <div
+    class="nav-item active"
+    onclick="showPage('home',this)"
+  >
+
+    <span class="nav-icon">
+      ⌂
+    </span>
+
     Home
+
   </div>
 
-  <div class="nav-item" onclick="showPage('squad',this)">
-    <span class="nav-icon">♟</span>
+
+  <div
+    class="nav-item"
+    onclick="showPage('squad',this)"
+  >
+
+    <span class="nav-icon">
+      ♟
+    </span>
+
     Squad
+
   </div>
 
-  <div class="nav-item" onclick="showPage('matches',this)">
-    <span class="nav-icon">⚽</span>
+
+  <div
+    class="nav-item"
+    onclick="showPage('matches',this)"
+  >
+
+    <span class="nav-icon">
+      ⚽
+    </span>
+
     Matches
+
   </div>
 
-  <div class="nav-item" onclick="showPage('stats',this)">
-    <span class="nav-icon">▥</span>
+
+  <div
+    class="nav-item"
+    onclick="showPage('stats',this)"
+  >
+
+    <span class="nav-icon">
+      ▥
+    </span>
+
     Stats
+
   </div>
+
 
   <div class="nav-item">
-    <span class="nav-icon">•••</span>
+
+    <span class="nav-icon">
+      •••
+    </span>
+
     More
+
   </div>
 
 </div>
 
 
-<!-- MATCH MODAL -->
 
-<div id="matchModal" class="modal">
+<!-- =====================
+DIVISION MODAL
+===================== -->
+
+<div
+  id="divisionModal"
+  class="modal"
+>
+
+  <div
+    class="modal-card small-modal-card"
+  >
+
+    <div class="modal-title">
+      Club Division
+    </div>
+
+    <div class="modal-subtitle">
+      Update Olympus FC's current division.
+    </div>
+
+
+    <div class="form-group">
+
+      <label class="form-label">
+        Current Division
+      </label>
+
+      <select
+        id="divisionSelect"
+        class="form-control"
+      >
+
+        <option value="Division 5">
+          Division 5
+        </option>
+
+        <option value="Division 4">
+          Division 4
+        </option>
+
+        <option value="Division 3">
+          Division 3
+        </option>
+
+        <option value="Division 2">
+          Division 2
+        </option>
+
+        <option value="Division 1">
+          Division 1
+        </option>
+
+        <option value="Elite">
+          Elite
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="form-buttons">
+
+      <button
+        class="cancel-button"
+        onclick="closeDivisionModal()"
+      >
+        Cancel
+      </button>
+
+
+      <button
+        class="save-button"
+        onclick="saveDivision()"
+      >
+        Save Division
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<!-- =====================
+MATCH MODAL
+===================== -->
+
+<div
+  id="matchModal"
+  class="modal"
+>
 
 <div class="modal-card">
 
-
-<!-- STEP 1 -->
 
 <div id="matchStep1">
 
@@ -1311,11 +2833,19 @@ input[type="date"]::-webkit-date-and-time-value {
     STEP 1 OF 2
   </div>
 
-  <div id="matchModalTitle" class="modal-title">
+
+  <div
+    id="matchModalTitle"
+    class="modal-title"
+  >
     Add Match
   </div>
 
-  <div id="matchModalSubtitle" class="modal-subtitle">
+
+  <div
+    id="matchModalSubtitle"
+    class="modal-subtitle"
+  >
     Enter your Olympus FC result.
   </div>
 
@@ -1336,11 +2866,13 @@ input[type="date"]::-webkit-date-and-time-value {
   </div>
 
 
+
   <div class="form-group">
 
     <label class="form-label">
       Date
     </label>
+
 
     <div class="date-wrapper">
 
@@ -1355,22 +2887,39 @@ input[type="date"]::-webkit-date-and-time-value {
   </div>
 
 
+
   <div class="form-group">
 
     <label class="form-label">
       Match Type
     </label>
 
-    <select id="matchType" class="form-control">
 
-      <option value="League">League</option>
-      <option value="Promotion">Promotion</option>
-      <option value="Playoffs">Playoffs</option>
-      <option value="Friendly">Friendly</option>
+    <select
+      id="matchType"
+      class="form-control"
+    >
+
+      <option value="League">
+        League
+      </option>
+
+      <option value="Promotion">
+        Promotion
+      </option>
+
+      <option value="Playoffs">
+        Playoffs
+      </option>
+
+      <option value="Friendly">
+        Friendly
+      </option>
 
     </select>
 
   </div>
+
 
 
   <div class="score-inputs">
@@ -1416,7 +2965,10 @@ input[type="date"]::-webkit-date-and-time-value {
   </div>
 
 
-  <div id="matchError" class="form-error"></div>
+  <div
+    id="matchError"
+    class="form-error"
+  ></div>
 
 
   <div class="form-buttons">
@@ -1427,6 +2979,7 @@ input[type="date"]::-webkit-date-and-time-value {
     >
       Cancel
     </button>
+
 
     <button
       class="save-button"
@@ -1440,26 +2993,35 @@ input[type="date"]::-webkit-date-and-time-value {
 </div>
 
 
-<!-- STEP 2 -->
 
-<div id="matchStep2" style="display:none;">
+<div
+  id="matchStep2"
+  style="display:none;"
+>
 
   <div class="step-indicator">
     STEP 2 OF 2
   </div>
 
+
   <div class="modal-title">
     Player Stats
   </div>
+
 
   <div
     id="playerStatsSubtitle"
     class="modal-subtitle"
   ></div>
 
+
   <div id="playerEntryList"></div>
 
-  <div id="playerError" class="form-error"></div>
+
+  <div
+    id="playerError"
+    class="form-error"
+  ></div>
 
 
   <div class="form-buttons">
@@ -1470,6 +3032,7 @@ input[type="date"]::-webkit-date-and-time-value {
     >
       Back
     </button>
+
 
     <button
       id="finishMatchButton"
@@ -1483,11 +3046,19 @@ input[type="date"]::-webkit-date-and-time-value {
 
 </div>
 
+
 </div>
+
 </div>
+
 
 
 <script>
+
+
+/* =========================
+PLAYERS
+========================= */
 
 const players = [
 
@@ -1539,22 +3110,54 @@ const players = [
 ];
 
 
+
+const divisions = [
+
+  "Division 5",
+
+  "Division 4",
+
+  "Division 3",
+
+  "Division 2",
+
+  "Division 1",
+
+  "Elite"
+
+];
+
+
+
 let matches = [];
 
 let pendingMatch = null;
 
 let editingMatchId = null;
 
-let profileReturnPage = "squad";
+let profileReturnPage =
+  "squad";
 
-let currentDetailMatchId = null;
+let currentDetailMatchId =
+  null;
+
+
+
+let currentDivision =
+  localStorage.getItem(
+    "olympusFCDivision"
+  ) ||
+  "Division 5";
+
 
 
 try {
 
   matches =
     JSON.parse(
-      localStorage.getItem("olympusFCMatches")
+      localStorage.getItem(
+        "olympusFCMatches"
+      )
     ) || [];
 
 } catch {
@@ -1564,111 +3167,32 @@ try {
 }
 
 
+
 function el(id) {
-  return document.getElementById(id);
+
+  return document
+    .getElementById(id);
+
 }
 
 
-/* NAVIGATION */
 
-function showPage(pageId, navItem) {
+/* =========================
+DIVISION
+========================= */
 
-  document
-    .querySelectorAll(".page")
-    .forEach(
-      page => page.classList.remove("active")
+function openDivisionModal() {
+
+  el("divisionSelect")
+    .value =
+      currentDivision;
+
+
+  el("divisionModal")
+    .classList.add(
+      "open"
     );
 
-
-  el(pageId).classList.add("active");
-
-
-  document
-    .querySelectorAll(".nav-item")
-    .forEach(
-      item => item.classList.remove("active")
-    );
-
-
-  if (navItem) {
-    navItem.classList.add("active");
-  }
-
-
-  el("bottomNav").classList.remove("hidden");
-
-  window.scrollTo(0,0);
-
-}
-
-
-/* DATE */
-
-function localDate() {
-
-  const now = new Date();
-
-  const year = now.getFullYear();
-
-  const month =
-    String(now.getMonth() + 1)
-      .padStart(2,"0");
-
-  const day =
-    String(now.getDate())
-      .padStart(2,"0");
-
-  return `${year}-${month}-${day}`;
-
-}
-
-
-function formatDate(dateString) {
-
-  return new Date(
-    dateString + "T12:00:00"
-  )
-  .toLocaleDateString(
-    "en-GB",
-    {
-      day: "numeric",
-      month: "short",
-      year: "numeric"
-    }
-  );
-
-}
-
-
-/* NEW MATCH */
-
-function openMatchForm() {
-
-  editingMatchId = null;
-
-  pendingMatch = null;
-
-  resetMatchForm();
-
-  el("matchModalTitle").textContent =
-    "Add Match";
-
-  el("matchModalSubtitle").textContent =
-    "Enter your Olympus FC result.";
-
-  el("finishMatchButton").textContent =
-    "Finish Match";
-
-  el("matchStep1").style.display =
-    "block";
-
-  el("matchStep2").style.display =
-    "none";
-
-  el("matchDate").value =
-    localDate();
-
-  el("matchModal").classList.add("open");
 
   document.body.style.overflow =
     "hidden";
@@ -1676,22 +3200,337 @@ function openMatchForm() {
 }
 
 
-/* EDIT MATCH */
 
-function editMatch(matchId) {
+function closeDivisionModal() {
+
+  el("divisionModal")
+    .classList.remove(
+      "open"
+    );
+
+
+  document.body.style.overflow =
+    "";
+
+}
+
+
+
+function saveDivision() {
+
+  currentDivision =
+    el("divisionSelect")
+      .value;
+
+
+  localStorage.setItem(
+
+    "olympusFCDivision",
+
+    currentDivision
+
+  );
+
+
+  closeDivisionModal();
+
+
+  renderDivision();
+
+}
+
+
+
+function renderDivision() {
+
+  el("currentDivision")
+    .textContent =
+      currentDivision;
+
+
+  const currentIndex =
+    divisions.indexOf(
+      currentDivision
+    );
+
+
+  el("divisionPath")
+    .innerHTML =
+
+      divisions
+        .map(
+          (
+            division,
+            index
+          ) => {
+
+            let className =
+              "division-step";
+
+
+            if (
+              index <
+              currentIndex
+            ) {
+
+              className +=
+                " complete";
+
+            }
+
+
+            if (
+              index ===
+              currentIndex
+            ) {
+
+              className +=
+                " current";
+
+            }
+
+
+            return `
+
+              <div
+                class="${className}"
+              ></div>
+
+            `;
+
+          }
+        )
+        .join("");
+
+}
+
+
+
+/* =========================
+NAVIGATION
+========================= */
+
+function showPage(
+  pageId,
+  navItem
+) {
+
+  document
+    .querySelectorAll(
+      ".page"
+    )
+    .forEach(
+      page =>
+        page.classList.remove(
+          "active"
+        )
+    );
+
+
+  el(pageId)
+    .classList.add(
+      "active"
+    );
+
+
+  document
+    .querySelectorAll(
+      ".nav-item"
+    )
+    .forEach(
+      item =>
+        item.classList.remove(
+          "active"
+        )
+    );
+
+
+  if (navItem) {
+
+    navItem.classList.add(
+      "active"
+    );
+
+  }
+
+
+  el("bottomNav")
+    .classList.remove(
+      "hidden"
+    );
+
+
+  window.scrollTo(
+    0,
+    0
+  );
+
+}
+
+
+
+/* =========================
+DATES
+========================= */
+
+function localDate() {
+
+  const now =
+    new Date();
+
+
+  const year =
+    now.getFullYear();
+
+
+  const month =
+    String(
+      now.getMonth() + 1
+    )
+    .padStart(
+      2,
+      "0"
+    );
+
+
+  const day =
+    String(
+      now.getDate()
+    )
+    .padStart(
+      2,
+      "0"
+    );
+
+
+  return (
+    year +
+    "-" +
+    month +
+    "-" +
+    day
+  );
+
+}
+
+
+
+function formatDate(
+  dateString
+) {
+
+  return new Date(
+
+    dateString +
+    "T12:00:00"
+
+  )
+  .toLocaleDateString(
+
+    "en-GB",
+
+    {
+
+      day:
+        "numeric",
+
+      month:
+        "short",
+
+      year:
+        "numeric"
+
+    }
+
+  );
+
+}
+
+
+
+/* =========================
+MATCH FORM
+========================= */
+
+function openMatchForm() {
+
+  editingMatchId =
+    null;
+
+
+  pendingMatch =
+    null;
+
+
+  resetMatchForm();
+
+
+  el("matchModalTitle")
+    .textContent =
+      "Add Match";
+
+
+  el("matchModalSubtitle")
+    .textContent =
+      "Enter your Olympus FC result.";
+
+
+  el("finishMatchButton")
+    .textContent =
+      "Finish Match";
+
+
+  el("matchStep1")
+    .style.display =
+      "block";
+
+
+  el("matchStep2")
+    .style.display =
+      "none";
+
+
+  el("matchDate")
+    .value =
+      localDate();
+
+
+  el("matchModal")
+    .classList.add(
+      "open"
+    );
+
+
+  document.body.style.overflow =
+    "hidden";
+
+}
+
+
+
+/* EDIT */
+
+function editMatch(
+  matchId
+) {
 
   const match =
     matches.find(
-      item => item.id === matchId
+      item =>
+        item.id ===
+        matchId
     );
 
 
   if (!match) {
+
     return;
+
   }
 
 
-  editingMatchId = matchId;
+  editingMatchId =
+    matchId;
 
 
   pendingMatch = {
@@ -1700,50 +3539,79 @@ function editMatch(matchId) {
 
     playerStats:
       match.playerStats
+
         ? JSON.parse(
-            JSON.stringify(match.playerStats)
+            JSON.stringify(
+              match.playerStats
+            )
           )
+
         : {}
 
   };
 
 
-  el("matchModalTitle").textContent =
-    "Edit Match";
-
-  el("matchModalSubtitle").textContent =
-    "Update this Olympus FC result.";
-
-  el("finishMatchButton").textContent =
-    "Save Changes";
+  el("matchModalTitle")
+    .textContent =
+      "Edit Match";
 
 
-  el("opponent").value =
-    match.opponent || "";
+  el("matchModalSubtitle")
+    .textContent =
+      "Update this Olympus FC result.";
 
-  el("matchDate").value =
-    match.date || localDate();
 
-  el("matchType").value =
-    match.type || "League";
+  el("finishMatchButton")
+    .textContent =
+      "Save Changes";
 
-  el("olympusScore").value =
-    match.olympusScore;
 
-  el("opponentScore").value =
-    match.opponentScore;
+  el("opponent")
+    .value =
+      match.opponent ||
+      "";
+
+
+  el("matchDate")
+    .value =
+      match.date ||
+      localDate();
+
+
+  el("matchType")
+    .value =
+      match.type ||
+      "League";
+
+
+  el("olympusScore")
+    .value =
+      match.olympusScore;
+
+
+  el("opponentScore")
+    .value =
+      match.opponentScore;
 
 
   clearErrors();
 
 
-  el("matchStep1").style.display =
-    "block";
+  el("matchStep1")
+    .style.display =
+      "block";
 
-  el("matchStep2").style.display =
-    "none";
 
-  el("matchModal").classList.add("open");
+  el("matchStep2")
+    .style.display =
+      "none";
+
+
+  el("matchModal")
+    .classList.add(
+      "open"
+    );
+
 
   document.body.style.overflow =
     "hidden";
@@ -1751,57 +3619,97 @@ function editMatch(matchId) {
 }
 
 
-/* CLOSE FORM */
+
+/* CLOSE */
 
 function closeMatchForm() {
 
-  el("matchModal").classList.remove("open");
+  el("matchModal")
+    .classList.remove(
+      "open"
+    );
 
-  document.body.style.overflow = "";
+
+  document.body.style.overflow =
+    "";
+
 
   resetMatchForm();
 
-  editingMatchId = null;
 
-  pendingMatch = null;
+  editingMatchId =
+    null;
+
+
+  pendingMatch =
+    null;
 
 }
 
 
+
 function resetMatchForm() {
 
-  el("opponent").value = "";
+  el("opponent").value =
+    "";
 
-  el("olympusScore").value = "";
 
-  el("opponentScore").value = "";
+  el("olympusScore").value =
+    "";
 
-  el("matchType").value = "League";
+
+  el("opponentScore").value =
+    "";
+
+
+  el("matchType").value =
+    "League";
+
 
   clearErrors();
 
 }
 
 
+
 function clearErrors() {
 
-  el("matchError").classList.remove("show");
+  el("matchError")
+    .classList.remove(
+      "show"
+    );
 
-  el("playerError").classList.remove("show");
 
-}
-
-
-function showMatchError(message) {
-
-  el("matchError").textContent = message;
-
-  el("matchError").classList.add("show");
+  el("playerError")
+    .classList.remove(
+      "show"
+    );
 
 }
 
 
-/* STEP 1 */
+
+function showMatchError(
+  message
+) {
+
+  el("matchError")
+    .textContent =
+      message;
+
+
+  el("matchError")
+    .classList.add(
+      "show"
+    );
+
+}
+
+
+
+/* =========================
+STEP 1
+========================= */
 
 function continueToPlayerStats() {
 
@@ -1809,19 +3717,29 @@ function continueToPlayerStats() {
 
 
   const opponent =
-    el("opponent").value.trim();
+    el("opponent")
+      .value
+      .trim();
+
 
   const date =
-    el("matchDate").value;
+    el("matchDate")
+      .value;
+
 
   const type =
-    el("matchType").value;
+    el("matchType")
+      .value;
+
 
   const olympusValue =
-    el("olympusScore").value;
+    el("olympusScore")
+      .value;
+
 
   const opponentValue =
-    el("opponentScore").value;
+    el("opponentScore")
+      .value;
 
 
   if (!opponent) {
@@ -1861,10 +3779,15 @@ function continueToPlayerStats() {
 
 
   const olympusScore =
-    Number(olympusValue);
+    Number(
+      olympusValue
+    );
+
 
   const opponentScore =
-    Number(opponentValue);
+    Number(
+      opponentValue
+    );
 
 
   if (
@@ -1881,29 +3804,48 @@ function continueToPlayerStats() {
   }
 
 
-  let result = "D";
+  let result =
+    "D";
 
 
-  if (olympusScore > opponentScore) {
-    result = "W";
+  if (
+    olympusScore >
+    opponentScore
+  ) {
+
+    result =
+      "W";
+
   }
 
 
-  if (olympusScore < opponentScore) {
-    result = "L";
+  if (
+    olympusScore <
+    opponentScore
+  ) {
+
+    result =
+      "L";
+
   }
 
 
   const existingStats =
     pendingMatch &&
     pendingMatch.playerStats
-      ? pendingMatch.playerStats
+
+      ? pendingMatch
+          .playerStats
+
       : {};
 
 
   const existingPotm =
     pendingMatch
-      ? pendingMatch.potmPlayerId
+
+      ? pendingMatch
+          .potmPlayerId
+
       : null;
 
 
@@ -1934,15 +3876,25 @@ function continueToPlayerStats() {
   };
 
 
-  el("matchStep1").style.display =
-    "none";
-
-  el("matchStep2").style.display =
-    "block";
+  el("matchStep1")
+    .style.display =
+      "none";
 
 
-  el("playerStatsSubtitle").textContent =
-    `Olympus FC ${olympusScore} – ${opponentScore} ${opponent}`;
+  el("matchStep2")
+    .style.display =
+      "block";
+
+
+  el("playerStatsSubtitle")
+    .textContent =
+
+      "Olympus FC " +
+      olympusScore +
+      " – " +
+      opponentScore +
+      " " +
+      opponent;
 
 
   renderPlayerEntry();
@@ -1950,292 +3902,416 @@ function continueToPlayerStats() {
 }
 
 
-/* PLAYER ENTRY */
+
+/* =========================
+PLAYER ENTRY
+========================= */
 
 function renderPlayerEntry() {
 
   const oldStats =
-    pendingMatch.playerStats || {};
+    pendingMatch.playerStats ||
+    {};
+
 
   const oldPotm =
-    pendingMatch.potmPlayerId || null;
+    pendingMatch.potmPlayerId ||
+    null;
 
 
-  el("playerEntryList").innerHTML =
+  el("playerEntryList")
+    .innerHTML =
 
-    players.map(
-      player => {
+      players.map(
+        player => {
 
-        const saved =
-          oldStats[player.id] || {};
-
-
-        const played =
-          saved.played !== undefined
-            ? saved.played
-            : true;
+          const saved =
+            oldStats[
+              player.id
+            ] || {};
 
 
-        const goals =
-          Number(saved.goals || 0);
+          const played =
+            saved.played !==
+            undefined
+
+              ? saved.played
+
+              : true;
 
 
-        const assists =
-          Number(saved.assists || 0);
+          const goals =
+            Number(
+              saved.goals ||
+              0
+            );
 
 
-        const rating =
-          saved.rating !== undefined &&
-          saved.rating !== null
-            ? saved.rating
-            : "";
+          const assists =
+            Number(
+              saved.assists ||
+              0
+            );
 
 
-        const potmChecked =
-          oldPotm === player.id;
+          const rating =
+            saved.rating !==
+              undefined &&
+            saved.rating !==
+              null
+
+              ? saved.rating
+
+              : "";
 
 
-        return `
+          const potmChecked =
+            oldPotm ===
+            player.id;
 
-        <div
-          class="player-entry ${played ? "" : "not-played"}"
-          id="entry-${player.id}"
-        >
 
-          <div class="player-entry-header">
+          return `
 
-            <div class="player-entry-name">
-              #${player.number} ${player.name}
+          <div
+            class="
+              player-entry
+              ${played ? "" : "not-played"}
+            "
+            id="entry-${player.id}"
+          >
+
+            <div class="player-entry-header">
+
+              <div class="player-entry-name">
+
+                #${player.number}
+                ${player.name}
+
+              </div>
+
+
+              <label class="played-toggle">
+
+                <input
+                  id="played-${player.id}"
+                  type="checkbox"
+                  ${played ? "checked" : ""}
+                  onchange="
+                    togglePlayer(
+                      '${player.id}'
+                    )
+                  "
+                >
+
+                Played
+
+              </label>
+
             </div>
 
 
-            <label class="played-toggle">
+            <div class="player-entry-inputs">
+
+              <div>
+
+                <div class="small-input-label">
+                  Goals
+                </div>
+
+                <input
+                  id="goals-${player.id}"
+                  class="small-stat-input"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  value="${goals}"
+                  ${played ? "" : "disabled"}
+                >
+
+              </div>
+
+
+              <div>
+
+                <div class="small-input-label">
+                  Assists
+                </div>
+
+                <input
+                  id="assists-${player.id}"
+                  class="small-stat-input"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  value="${assists}"
+                  ${played ? "" : "disabled"}
+                >
+
+              </div>
+
+
+              <div>
+
+                <div class="small-input-label">
+                  Rating
+                </div>
+
+                <input
+                  id="rating-${player.id}"
+                  class="small-stat-input"
+                  type="number"
+                  inputmode="decimal"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  value="${rating}"
+                  placeholder="Optional"
+                  ${played ? "" : "disabled"}
+                >
+
+              </div>
+
+            </div>
+
+
+            <label class="potm-choice">
 
               <input
-                id="played-${player.id}"
-                type="checkbox"
-                ${played ? "checked" : ""}
-                onchange="togglePlayer('${player.id}')"
+                id="potm-${player.id}"
+                type="radio"
+                name="potmPlayer"
+                value="${player.id}"
+                ${potmChecked ? "checked" : ""}
+                ${played ? "" : "disabled"}
               >
 
-              Played
+              ⭐ Player of the Match
 
             </label>
 
           </div>
 
+        `;
 
-          <div class="player-entry-inputs">
+        }
 
-            <div>
-
-              <div class="small-input-label">
-                Goals
-              </div>
-
-              <input
-                id="goals-${player.id}"
-                class="small-stat-input"
-                type="number"
-                inputmode="numeric"
-                min="0"
-                value="${goals}"
-                ${played ? "" : "disabled"}
-              >
-
-            </div>
-
-
-            <div>
-
-              <div class="small-input-label">
-                Assists
-              </div>
-
-              <input
-                id="assists-${player.id}"
-                class="small-stat-input"
-                type="number"
-                inputmode="numeric"
-                min="0"
-                value="${assists}"
-                ${played ? "" : "disabled"}
-              >
-
-            </div>
-
-
-            <div>
-
-              <div class="small-input-label">
-                Rating
-              </div>
-
-              <input
-                id="rating-${player.id}"
-                class="small-stat-input"
-                type="number"
-                inputmode="decimal"
-                min="0"
-                max="10"
-                step="0.1"
-                value="${rating}"
-                placeholder="Optional"
-                ${played ? "" : "disabled"}
-              >
-
-            </div>
-
-          </div>
-
-
-          <label class="potm-choice">
-
-            <input
-              id="potm-${player.id}"
-              type="radio"
-              name="potmPlayer"
-              value="${player.id}"
-              ${potmChecked ? "checked" : ""}
-              ${played ? "" : "disabled"}
-            >
-
-            ⭐ Player of the Match
-
-          </label>
-
-        </div>
-
-      `;
-
-      }
-
-    ).join("");
+      ).join("");
 
 }
 
 
-/* PLAYED */
 
-function togglePlayer(playerId) {
+/* TOGGLE */
+
+function togglePlayer(
+  playerId
+) {
 
   const played =
-    el("played-" + playerId).checked;
+    el(
+      "played-" +
+      playerId
+    ).checked;
 
 
   const entry =
-    el("entry-" + playerId);
+    el(
+      "entry-" +
+      playerId
+    );
+
 
   const goals =
-    el("goals-" + playerId);
+    el(
+      "goals-" +
+      playerId
+    );
+
 
   const assists =
-    el("assists-" + playerId);
+    el(
+      "assists-" +
+      playerId
+    );
+
 
   const rating =
-    el("rating-" + playerId);
+    el(
+      "rating-" +
+      playerId
+    );
+
 
   const potm =
-    el("potm-" + playerId);
+    el(
+      "potm-" +
+      playerId
+    );
 
 
   if (played) {
 
-    entry.classList.remove("not-played");
+    entry
+      .classList.remove(
+        "not-played"
+      );
 
-    goals.disabled = false;
 
-    assists.disabled = false;
+    goals.disabled =
+      false;
 
-    rating.disabled = false;
 
-    potm.disabled = false;
+    assists.disabled =
+      false;
+
+
+    rating.disabled =
+      false;
+
+
+    potm.disabled =
+      false;
 
   } else {
 
-    entry.classList.add("not-played");
+    entry
+      .classList.add(
+        "not-played"
+      );
 
-    goals.value = 0;
 
-    assists.value = 0;
+    goals.value =
+      0;
 
-    rating.value = "";
 
-    goals.disabled = true;
+    assists.value =
+      0;
 
-    assists.disabled = true;
 
-    rating.disabled = true;
+    rating.value =
+      "";
 
-    if (potm.checked) {
-      potm.checked = false;
+
+    goals.disabled =
+      true;
+
+
+    assists.disabled =
+      true;
+
+
+    rating.disabled =
+      true;
+
+
+    if (
+      potm.checked
+    ) {
+
+      potm.checked =
+        false;
+
     }
 
-    potm.disabled = true;
+
+    potm.disabled =
+      true;
 
   }
 
 }
 
 
-/* BACK */
+
+/* =========================
+STEP 2 DRAFT
+========================= */
 
 function backToMatchDetails() {
 
   saveStep2Draft();
 
-  el("matchStep2").style.display =
-    "none";
 
-  el("matchStep1").style.display =
-    "block";
+  el("matchStep2")
+    .style.display =
+      "none";
+
+
+  el("matchStep1")
+    .style.display =
+      "block";
 
 }
 
 
-/* SAVE DRAFT */
 
 function saveStep2Draft() {
 
   if (!pendingMatch) {
+
     return;
+
   }
 
 
-  const playerStats = {};
+  const playerStats =
+    {};
 
 
   players.forEach(
     player => {
 
       const played =
-        el("played-" + player.id).checked;
+        el(
+          "played-" +
+          player.id
+        ).checked;
 
 
-      playerStats[player.id] = {
+      playerStats[
+        player.id
+      ] = {
 
         played,
 
         goals:
           played
+
             ? Number(
-                el("goals-" + player.id).value
+                el(
+                  "goals-" +
+                  player.id
+                ).value
               ) || 0
+
             : 0,
 
         assists:
           played
+
             ? Number(
-                el("assists-" + player.id).value
+                el(
+                  "assists-" +
+                  player.id
+                ).value
               ) || 0
+
             : 0,
 
         rating:
           played &&
-          el("rating-" + player.id).value !== ""
+          el(
+            "rating-" +
+            player.id
+          ).value !== ""
+
             ? Number(
-                el("rating-" + player.id).value
+                el(
+                  "rating-" +
+                  player.id
+                ).value
               )
+
             : null
 
       };
@@ -2245,9 +4321,10 @@ function saveStep2Draft() {
 
 
   const selectedPotm =
-    document.querySelector(
-      'input[name="potmPlayer"]:checked'
-    );
+    document
+      .querySelector(
+        'input[name="potmPlayer"]:checked'
+      );
 
 
   pendingMatch.playerStats =
@@ -2256,29 +4333,41 @@ function saveStep2Draft() {
 
   pendingMatch.potmPlayerId =
     selectedPotm
+
       ? selectedPotm.value
+
       : null;
 
 }
 
 
-/* FINISH */
+
+/* =========================
+SAVE MATCH
+========================= */
 
 function finishMatch() {
 
   if (!pendingMatch) {
+
     return;
+
   }
 
 
   clearErrors();
 
 
-  const playerStats = {};
+  const playerStats =
+    {};
 
-  let playerGoalTotal = 0;
 
-  let playerAssistTotal = 0;
+  let playerGoalTotal =
+    0;
+
+
+  let playerAssistTotal =
+    0;
 
 
   const selectedPotm =
@@ -2289,55 +4378,89 @@ function finishMatch() {
 
   const potmPlayerId =
     selectedPotm
+
       ? selectedPotm.value
+
       : null;
 
 
-  for (const player of players) {
+
+  for (
+    const player
+    of players
+  ) {
 
     const played =
-      el("played-" + player.id).checked;
+      el(
+        "played-" +
+        player.id
+      ).checked;
 
 
     const goals =
       played
+
         ? Number(
-            el("goals-" + player.id).value
+            el(
+              "goals-" +
+              player.id
+            ).value
           ) || 0
+
         : 0;
 
 
     const assists =
       played
+
         ? Number(
-            el("assists-" + player.id).value
+            el(
+              "assists-" +
+              player.id
+            ).value
           ) || 0
+
         : 0;
 
 
     const ratingText =
       played
-        ? el("rating-" + player.id).value
+
+        ? el(
+            "rating-" +
+            player.id
+          ).value
+
         : "";
 
 
-    let rating = null;
+    let rating =
+      null;
 
 
-    if (ratingText !== "") {
+    if (
+      ratingText !== ""
+    ) {
 
       rating =
-        Number(ratingText);
+        Number(
+          ratingText
+        );
 
 
       if (
-        !Number.isFinite(rating) ||
+        !Number.isFinite(
+          rating
+        ) ||
         rating < 0 ||
         rating > 10
       ) {
 
         showPlayerError(
-          `${player.name}'s rating must be between 0 and 10.`
+
+          player.name +
+          "'s rating must be between 0 and 10."
+
         );
 
         return;
@@ -2361,12 +4484,17 @@ function finishMatch() {
     }
 
 
-    playerGoalTotal += goals;
+    playerGoalTotal +=
+      goals;
 
-    playerAssistTotal += assists;
+
+    playerAssistTotal +=
+      assists;
 
 
-    playerStats[player.id] = {
+    playerStats[
+      player.id
+    ] = {
 
       played,
 
@@ -2379,6 +4507,7 @@ function finishMatch() {
     };
 
   }
+
 
 
   if (
@@ -2395,6 +4524,7 @@ function finishMatch() {
   }
 
 
+
   if (
     playerAssistTotal >
     pendingMatch.olympusScore
@@ -2409,11 +4539,16 @@ function finishMatch() {
   }
 
 
+
   if (potmPlayerId) {
 
     if (
-      !playerStats[potmPlayerId] ||
-      !playerStats[potmPlayerId].played
+      !playerStats[
+        potmPlayerId
+      ] ||
+      !playerStats[
+        potmPlayerId
+      ].played
     ) {
 
       showPlayerError(
@@ -2439,16 +4574,22 @@ function finishMatch() {
     pendingMatch.id;
 
 
-  if (editingMatchId) {
+
+  if (
+    editingMatchId
+  ) {
 
     const index =
       matches.findIndex(
         match =>
-          match.id === editingMatchId
+          match.id ===
+          editingMatchId
       );
 
 
-    if (index !== -1) {
+    if (
+      index !== -1
+    ) {
 
       matches[index] =
         pendingMatch;
@@ -2466,7 +4607,9 @@ function finishMatch() {
 
   saveMatches();
 
+
   closeMatchForm();
+
 
   renderEverything();
 
@@ -2485,19 +4628,28 @@ function finishMatch() {
 }
 
 
-function showPlayerError(message) {
 
-  el("playerError").textContent =
-    message;
+function showPlayerError(
+  message
+) {
 
-  el("playerError").classList.add(
-    "show"
-  );
+  el("playerError")
+    .textContent =
+      message;
+
+
+  el("playerError")
+    .classList.add(
+      "show"
+    );
 
 }
 
 
-/* STORAGE */
+
+/* =========================
+STORAGE
+========================= */
 
 function saveMatches() {
 
@@ -2505,16 +4657,23 @@ function saveMatches() {
 
     "olympusFCMatches",
 
-    JSON.stringify(matches)
+    JSON.stringify(
+      matches
+    )
 
   );
 
 }
 
 
-/* DELETE */
 
-function deleteMatch(id) {
+/* =========================
+DELETE
+========================= */
+
+function deleteMatch(
+  id
+) {
 
   if (
     !confirm(
@@ -2529,17 +4688,20 @@ function deleteMatch(id) {
 
   matches =
     matches.filter(
-      match => match.id !== id
+      match =>
+        match.id !== id
     );
 
 
   saveMatches();
 
+
   renderEverything();
 
 
   if (
-    currentDetailMatchId === id
+    currentDetailMatchId ===
+    id
   ) {
 
     closeMatchDetail();
@@ -2549,7 +4711,10 @@ function deleteMatch(id) {
 }
 
 
-/* CLUB TOTALS */
+
+/* =========================
+CLUB STATS
+========================= */
 
 function calculateClubStats() {
 
@@ -2559,34 +4724,101 @@ function calculateClubStats() {
 
   const wins =
     matches.filter(
-      match => match.result === "W"
+      match =>
+        match.result ===
+        "W"
     ).length;
 
 
-  const goals =
+  const draws =
+    matches.filter(
+      match =>
+        match.result ===
+        "D"
+    ).length;
+
+
+  const losses =
+    matches.filter(
+      match =>
+        match.result ===
+        "L"
+    ).length;
+
+
+  const goalsFor =
     matches.reduce(
-      (total,match) =>
+
+      (
+        total,
+        match
+      ) =>
+
         total +
         Number(
-          match.olympusScore || 0
+          match.olympusScore ||
+          0
         ),
+
       0
+
     );
+
+
+  const goalsAgainst =
+    matches.reduce(
+
+      (
+        total,
+        match
+      ) =>
+
+        total +
+        Number(
+          match.opponentScore ||
+          0
+        ),
+
+      0
+
+    );
+
+
+  const goalDifference =
+    goalsFor -
+    goalsAgainst;
 
 
   const winRate =
     played === 0
+
       ? 0
+
       : Math.round(
-          (wins / played) * 100
+          (
+            wins /
+            played
+          ) *
+          100
         );
 
 
   return {
 
     played,
+
     wins,
-    goals,
+
+    draws,
+
+    losses,
+
+    goalsFor,
+
+    goalsAgainst,
+
+    goalDifference,
+
     winRate
 
   };
@@ -2594,33 +4826,236 @@ function calculateClubStats() {
 }
 
 
-/* PLAYER TOTALS */
+
+/* =========================
+RECORDS
+========================= */
+
+function calculateRecords() {
+
+  const chronological =
+    [...matches]
+      .reverse();
+
+
+  let currentStreak =
+    0;
+
+
+  for (
+    let i =
+      chronological.length - 1;
+
+    i >= 0;
+
+    i--
+  ) {
+
+    if (
+      chronological[i].result ===
+      "W"
+    ) {
+
+      currentStreak++;
+
+    } else {
+
+      break;
+
+    }
+
+  }
+
+
+
+  let longestStreak =
+    0;
+
+
+  let running =
+    0;
+
+
+  chronological.forEach(
+    match => {
+
+      if (
+        match.result ===
+        "W"
+      ) {
+
+        running++;
+
+
+        longestStreak =
+          Math.max(
+            longestStreak,
+            running
+          );
+
+      } else {
+
+        running =
+          0;
+
+      }
+
+    }
+  );
+
+
+
+  const wins =
+    matches.filter(
+      match =>
+        match.result ===
+        "W"
+    );
+
+
+  const losses =
+    matches.filter(
+      match =>
+        match.result ===
+        "L"
+    );
+
+
+
+  let biggestWin =
+    null;
+
+
+  wins.forEach(
+    match => {
+
+      const margin =
+
+        Number(
+          match.olympusScore
+        ) -
+
+        Number(
+          match.opponentScore
+        );
+
+
+      if (
+        !biggestWin ||
+        margin >
+        biggestWin.margin
+      ) {
+
+        biggestWin = {
+
+          margin,
+
+          match
+
+        };
+
+      }
+
+    }
+  );
+
+
+
+  let biggestLoss =
+    null;
+
+
+  losses.forEach(
+    match => {
+
+      const margin =
+
+        Number(
+          match.opponentScore
+        ) -
+
+        Number(
+          match.olympusScore
+        );
+
+
+      if (
+        !biggestLoss ||
+        margin >
+        biggestLoss.margin
+      ) {
+
+        biggestLoss = {
+
+          margin,
+
+          match
+
+        };
+
+      }
+
+    }
+  );
+
+
+
+  return {
+
+    currentStreak,
+
+    longestStreak,
+
+    biggestWin,
+
+    biggestLoss
+
+  };
+
+}
+
+
+
+/* =========================
+PLAYER STATS
+========================= */
 
 function calculatePlayerStats() {
 
-  const totals = {};
+  const totals =
+    {};
 
 
   players.forEach(
     player => {
 
-      totals[player.id] = {
+      totals[
+        player.id
+      ] = {
 
-        appearances: 0,
+        appearances:
+          0,
 
-        goals: 0,
+        goals:
+          0,
 
-        assists: 0,
+        assists:
+          0,
 
-        contributions: 0,
+        contributions:
+          0,
 
-        ratingSum: 0,
+        ratingSum:
+          0,
 
-        ratedAppearances: 0,
+        ratedAppearances:
+          0,
 
-        averageRating: null,
+        averageRating:
+          null,
 
-        potm: 0
+        potm:
+          0
 
       };
 
@@ -2628,12 +5063,15 @@ function calculatePlayerStats() {
   );
 
 
+
   matches.forEach(
     match => {
 
       if (
         match.potmPlayerId &&
-        totals[match.potmPlayerId]
+        totals[
+          match.potmPlayerId
+        ]
       ) {
 
         totals[
@@ -2643,8 +5081,12 @@ function calculatePlayerStats() {
       }
 
 
-      if (!match.playerStats) {
+      if (
+        !match.playerStats
+      ) {
+
         return;
+
       }
 
 
@@ -2658,11 +5100,15 @@ function calculatePlayerStats() {
 
 
           if (!stat) {
+
             return;
+
           }
 
 
-          if (stat.played) {
+          if (
+            stat.played
+          ) {
 
             totals[
               player.id
@@ -2674,28 +5120,41 @@ function calculatePlayerStats() {
           totals[
             player.id
           ].goals +=
-            Number(stat.goals || 0);
+            Number(
+              stat.goals ||
+              0
+            );
 
 
           totals[
             player.id
           ].assists +=
-            Number(stat.assists || 0);
+            Number(
+              stat.assists ||
+              0
+            );
 
 
           if (
             stat.played &&
-            stat.rating !== undefined &&
-            stat.rating !== null &&
-            stat.rating !== ""
+            stat.rating !==
+              undefined &&
+            stat.rating !==
+              null &&
+            stat.rating !==
+              ""
           ) {
 
             const rating =
-              Number(stat.rating);
+              Number(
+                stat.rating
+              );
 
 
             if (
-              Number.isFinite(rating)
+              Number.isFinite(
+                rating
+              )
             ) {
 
               totals[
@@ -2719,21 +5178,29 @@ function calculatePlayerStats() {
   );
 
 
+
   players.forEach(
     player => {
 
       const stat =
-        totals[player.id];
+        totals[
+          player.id
+        ];
 
 
       stat.contributions =
+
         stat.goals +
         stat.assists;
 
 
       stat.averageRating =
-        stat.ratedAppearances === 0
+
+        stat.ratedAppearances ===
+        0
+
           ? null
+
           : stat.ratingSum /
             stat.ratedAppearances;
 
@@ -2746,128 +5213,432 @@ function calculatePlayerStats() {
 }
 
 
-/* HOME */
+
+/* =========================
+HOME
+========================= */
 
 function renderHome() {
 
   const club =
     calculateClubStats();
 
+
+  const records =
+    calculateRecords();
+
+
   const totals =
     calculatePlayerStats();
 
 
-  el("homeMatches").textContent =
-    club.played;
 
-  el("homeWins").textContent =
-    club.wins;
+  el("homeMatches")
+    .textContent =
+      club.played;
 
-  el("homeGoals").textContent =
-    club.goals;
 
-  el("homeWinRate").textContent =
-    club.winRate + "%";
+  el("homeWins")
+    .textContent =
+      club.wins;
 
+
+  el("homeGoals")
+    .textContent =
+      club.goalsFor;
+
+
+  el("homeWinRate")
+    .textContent =
+      club.winRate +
+      "%";
+
+
+
+  el("recordWins")
+    .textContent =
+      club.wins;
+
+
+  el("recordDraws")
+    .textContent =
+      club.draws;
+
+
+  el("recordLosses")
+    .textContent =
+      club.losses;
+
+
+  el("recordGF")
+    .textContent =
+      club.goalsFor;
+
+
+  el("recordGA")
+    .textContent =
+      club.goalsAgainst;
+
+
+  el("recordGD")
+    .textContent =
+
+      club.goalDifference > 0
+
+        ? "+" +
+          club.goalDifference
+
+        : club.goalDifference;
+
+
+
+  /* FORM */
+
+  const recent =
+    matches.slice(
+      0,
+      5
+    );
+
+
+  let formHTML =
+    "";
+
+
+  recent.forEach(
+    match => {
+
+      let formClass =
+        "form-d";
+
+
+      if (
+        match.result ===
+        "W"
+      ) {
+
+        formClass =
+          "form-w";
+
+      }
+
+
+      if (
+        match.result ===
+        "L"
+      ) {
+
+        formClass =
+          "form-l";
+
+      }
+
+
+      formHTML += `
+
+        <div
+          class="
+            form-pill
+            ${formClass}
+          "
+        >
+
+          ${match.result}
+
+        </div>
+
+      `;
+
+    }
+  );
+
+
+  for (
+    let i =
+      recent.length;
+
+    i < 5;
+
+    i++
+  ) {
+
+    formHTML += `
+
+      <div
+        class="
+          form-pill
+          form-empty
+        "
+      >
+        —
+      </div>
+
+    `;
+
+  }
+
+
+  el("formRow")
+    .innerHTML =
+      formHTML;
+
+
+
+  el("currentWinStreak")
+    .textContent =
+      records.currentStreak;
+
+
+  el("longestWinStreak")
+    .textContent =
+      records.longestStreak;
+
+
+
+  if (
+    records.biggestWin
+  ) {
+
+    const m =
+      records.biggestWin.match;
+
+
+    el("biggestWin")
+      .textContent =
+
+        m.olympusScore +
+        "-" +
+        m.opponentScore +
+        " vs " +
+        m.opponent;
+
+  } else {
+
+    el("biggestWin")
+      .textContent =
+        "—";
+
+  }
+
+
+
+  if (
+    records.biggestLoss
+  ) {
+
+    const m =
+      records.biggestLoss.match;
+
+
+    el("biggestLoss")
+      .textContent =
+
+        m.olympusScore +
+        "-" +
+        m.opponentScore +
+        " vs " +
+        m.opponent;
+
+  } else {
+
+    el("biggestLoss")
+      .textContent =
+        "—";
+
+  }
+
+
+
+  /* LEADERS */
 
   const scorer =
     [...players]
       .sort(
-        (a,b) =>
-          totals[b.id].goals -
-          totals[a.id].goals
+        (
+          a,
+          b
+        ) =>
+
+          totals[
+            b.id
+          ].goals -
+
+          totals[
+            a.id
+          ].goals
+
       )[0];
+
 
 
   const assister =
     [...players]
       .sort(
-        (a,b) =>
-          totals[b.id].assists -
-          totals[a.id].assists
+        (
+          a,
+          b
+        ) =>
+
+          totals[
+            b.id
+          ].assists -
+
+          totals[
+            a.id
+          ].assists
+
       )[0];
 
 
-  el("topScorerGoals").textContent =
-    totals[scorer.id].goals;
+
+  el("topScorerGoals")
+    .textContent =
+      totals[
+        scorer.id
+      ].goals;
 
 
-  el("topScorerName").textContent =
-    totals[scorer.id].goals === 0
-      ? "No goals yet"
-      : scorer.name;
+  el("topScorerName")
+    .textContent =
+
+      totals[
+        scorer.id
+      ].goals === 0
+
+        ? "No goals yet"
+
+        : scorer.name;
 
 
-  el("topAssisterAssists").textContent =
-    totals[assister.id].assists;
+
+  el("topAssisterAssists")
+    .textContent =
+      totals[
+        assister.id
+      ].assists;
 
 
-  el("topAssisterName").textContent =
-    totals[assister.id].assists === 0
-      ? "No assists yet"
-      : assister.name;
+  el("topAssisterName")
+    .textContent =
+
+      totals[
+        assister.id
+      ].assists === 0
+
+        ? "No assists yet"
+
+        : assister.name;
+
 
 
   const rated =
     players
       .filter(
         player =>
-          totals[player.id]
-            .ratedAppearances > 0
+
+          totals[
+            player.id
+          ].ratedAppearances >
+          0
       )
       .sort(
-        (a,b) =>
-          totals[b.id].averageRating -
-          totals[a.id].averageRating
+        (
+          a,
+          b
+        ) =>
+
+          totals[
+            b.id
+          ].averageRating -
+
+          totals[
+            a.id
+          ].averageRating
       );
 
 
-  if (rated.length === 0) {
 
-    el("bestRatingName").textContent =
-      "No ratings yet";
+  if (
+    rated.length === 0
+  ) {
 
-    el("bestRatingValue").textContent =
-      "—";
+    el("bestRatingName")
+      .textContent =
+        "No ratings yet";
+
+
+    el("bestRatingValue")
+      .textContent =
+        "—";
 
   } else {
 
     const best =
       rated[0];
 
-    el("bestRatingName").textContent =
-      best.name;
 
-    el("bestRatingValue").textContent =
-      totals[
-        best.id
-      ].averageRating.toFixed(2);
+    el("bestRatingName")
+      .textContent =
+        best.name;
+
+
+    el("bestRatingValue")
+      .textContent =
+
+        totals[
+          best.id
+        ].averageRating
+         .toFixed(2);
 
   }
+
 
 
   const potm =
     [...players]
       .sort(
-        (a,b) =>
-          totals[b.id].potm -
-          totals[a.id].potm
+        (
+          a,
+          b
+        ) =>
+
+          totals[
+            b.id
+          ].potm -
+
+          totals[
+            a.id
+          ].potm
+
       )[0];
 
 
-  el("potmLeaderValue").textContent =
-    totals[potm.id].potm;
+
+  el("potmLeaderValue")
+    .textContent =
+      totals[
+        potm.id
+      ].potm;
 
 
-  el("potmLeaderName").textContent =
-    totals[potm.id].potm === 0
-      ? "No POTM awards yet"
-      : potm.name;
+  el("potmLeaderName")
+    .textContent =
+
+      totals[
+        potm.id
+      ].potm === 0
+
+        ? "No POTM awards yet"
+
+        : potm.name;
 
 }
 
 
-/* SQUAD */
+
+/* =========================
+SQUAD
+========================= */
 
 function renderSquad() {
 
@@ -2875,127 +5646,186 @@ function renderSquad() {
     calculatePlayerStats();
 
 
-  el("squadList").innerHTML =
+  el("squadList")
+    .innerHTML =
 
-    players.map(
-      player => {
+      players.map(
+        player => {
 
-        const stat =
-          totals[player.id];
-
-
-        return `
-
-        <div
-          class="player-card"
-          onclick="openPlayerProfile('${player.id}','squad')"
-        >
-
-          <div class="player-main">
-
-            <div class="number">
-              ${player.number}
-            </div>
+          const stat =
+            totals[
+              player.id
+            ];
 
 
-            <div>
+          return `
 
-              <div class="player-name">
-                ${player.name}
+          <div
+            class="player-card"
+            onclick="
+              openPlayerProfile(
+                '${player.id}',
+                'squad'
+              )
+            "
+          >
+
+            <div class="player-main">
+
+              <div class="number">
+
+                ${player.number}
+
               </div>
 
 
-              <div class="player-meta">
-                ${player.position} · ${player.nation}
-              </div>
+              <div>
+
+                <div class="player-name">
+
+                  ${player.name}
+
+                </div>
 
 
-              ${
-                player.captain
-                  ? `
-                    <span class="captain">
-                      DUAL CAPTAIN
-                    </span>
-                  `
-                  : ""
-              }
+                <div class="player-meta">
 
-            </div>
+                  ${player.position}
+                  ·
+                  ${player.nation}
 
-          </div>
+                </div>
 
 
-          <div class="player-mini-stats">
-
-            <div class="mini-stat">
-              <div class="mini-number">
-                ${stat.appearances}
-              </div>
-              <div class="mini-label">
-                APP
-              </div>
-            </div>
-
-            <div class="mini-stat">
-              <div class="mini-number">
-                ${stat.goals}
-              </div>
-              <div class="mini-label">
-                GOALS
-              </div>
-            </div>
-
-            <div class="mini-stat">
-              <div class="mini-number">
                 ${
-                  stat.averageRating === null
-                    ? "—"
-                    : stat.averageRating.toFixed(1)
+                  player.captain
+
+                    ? `
+
+                      <span class="captain">
+                        DUAL CAPTAIN
+                      </span>
+
+                    `
+
+                    : ""
                 }
+
               </div>
-              <div class="mini-label">
-                AVG
-              </div>
+
             </div>
 
-            <div class="mini-stat">
-              <div class="mini-number">
-                ${stat.potm}
+
+            <div class="player-mini-stats">
+
+              <div class="mini-stat">
+
+                <div class="mini-number">
+
+                  ${stat.appearances}
+
+                </div>
+
+                <div class="mini-label">
+                  APP
+                </div>
+
               </div>
-              <div class="mini-label">
-                POTM
+
+
+              <div class="mini-stat">
+
+                <div class="mini-number">
+
+                  ${stat.goals}
+
+                </div>
+
+                <div class="mini-label">
+                  GOALS
+                </div>
+
               </div>
+
+
+              <div class="mini-stat">
+
+                <div class="mini-number">
+
+                  ${
+                    stat.averageRating ===
+                    null
+
+                      ? "—"
+
+                      : stat.averageRating
+                          .toFixed(1)
+                  }
+
+                </div>
+
+                <div class="mini-label">
+                  AVG
+                </div>
+
+              </div>
+
+
+              <div class="mini-stat">
+
+                <div class="mini-number">
+
+                  ${stat.potm}
+
+                </div>
+
+                <div class="mini-label">
+                  POTM
+                </div>
+
+              </div>
+
             </div>
 
           </div>
 
-        </div>
+        `;
 
-      `;
+        }
 
-      }
-
-    ).join("");
+      ).join("");
 
 }
 
 
-/* SAFE TEXT */
 
-function escapeHTML(text) {
+/* =========================
+SAFE TEXT
+========================= */
+
+function escapeHTML(
+  text
+) {
 
   const div =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
+
 
   div.textContent =
     text;
+
 
   return div.innerHTML;
 
 }
 
 
-/* MATCH LIST */
+
+/* =========================
+MATCHES
+========================= */
 
 function renderMatches() {
 
@@ -3003,19 +5833,28 @@ function renderMatches() {
     calculateClubStats();
 
 
-  el("matchesPlayed").textContent =
-    club.played;
-
-  el("matchesWins").textContent =
-    club.wins;
-
-  el("matchesGoals").textContent =
-    club.goals;
+  el("matchesPlayed")
+    .textContent =
+      club.played;
 
 
-  if (matches.length === 0) {
+  el("matchesWins")
+    .textContent =
+      club.wins;
 
-    el("matchHistory").innerHTML = `
+
+  el("matchesGoals")
+    .textContent =
+      club.goalsFor;
+
+
+
+  if (
+    matches.length === 0
+  ) {
+
+    el("matchHistory")
+      .innerHTML = `
 
       <div class="empty-matches">
 
@@ -3028,205 +5867,293 @@ function renderMatches() {
         </div>
 
         <div class="empty-text">
-          Your FC27 match history will appear here
-          once you start adding results.
+
+          Your FC27 match history
+          will appear here once
+          you start adding results.
+
         </div>
 
       </div>
 
     `;
 
+
     return;
 
   }
 
 
-  el("matchHistory").innerHTML =
 
-    matches.map(
-      match => {
+  el("matchHistory")
+    .innerHTML =
 
-        let resultClass =
-          "result-draw";
+      matches.map(
+        match => {
 
-        let resultText =
-          "DRAW";
-
-
-        if (match.result === "W") {
-
-          resultClass =
-            "result-win";
-
-          resultText =
-            "WIN";
-
-        }
+          let resultClass =
+            "result-draw";
 
 
-        if (match.result === "L") {
-
-          resultClass =
-            "result-loss";
-
-          resultText =
-            "LOSS";
-
-        }
+          let resultText =
+            "DRAW";
 
 
-        let preview =
-          "Tap to see full player stats";
+          if (
+            match.result ===
+            "W"
+          ) {
+
+            resultClass =
+              "result-win";
 
 
-        if (match.playerStats) {
-
-          const contributors =
-            players
-              .filter(
-                player => {
-
-                  const stat =
-                    match.playerStats[
-                      player.id
-                    ];
-
-                  return (
-                    stat &&
-                    stat.played &&
-                    (
-                      Number(stat.goals || 0) > 0 ||
-                      Number(stat.assists || 0) > 0
-                    )
-                  );
-
-                }
-              )
-              .slice(0,2)
-              .map(
-                player => {
-
-                  const stat =
-                    match.playerStats[
-                      player.id
-                    ];
-
-                  return (
-                    player.name +
-                    " " +
-                    (
-                      Number(stat.goals || 0) > 0
-                        ? stat.goals + "G "
-                        : ""
-                    ) +
-                    (
-                      Number(stat.assists || 0) > 0
-                        ? stat.assists + "A"
-                        : ""
-                    )
-                  ).trim();
-
-                }
-              );
-
-
-          if (contributors.length) {
-
-            preview =
-              contributors.join(" · ");
+            resultText =
+              "WIN";
 
           }
 
+
+          if (
+            match.result ===
+            "L"
+          ) {
+
+            resultClass =
+              "result-loss";
+
+
+            resultText =
+              "LOSS";
+
+          }
+
+
+
+          let preview =
+            "Tap to see full player stats";
+
+
+
+          if (
+            match.playerStats
+          ) {
+
+            const contributors =
+
+              players
+                .filter(
+                  player => {
+
+                    const stat =
+                      match.playerStats[
+                        player.id
+                      ];
+
+
+                    return (
+
+                      stat &&
+
+                      stat.played &&
+
+                      (
+                        Number(
+                          stat.goals ||
+                          0
+                        ) > 0
+                        ||
+                        Number(
+                          stat.assists ||
+                          0
+                        ) > 0
+                      )
+
+                    );
+
+                  }
+                )
+                .slice(
+                  0,
+                  2
+                )
+                .map(
+                  player => {
+
+                    const stat =
+                      match.playerStats[
+                        player.id
+                      ];
+
+
+                    return (
+
+                      player.name +
+                      " " +
+
+                      (
+                        Number(
+                          stat.goals ||
+                          0
+                        ) > 0
+
+                          ? stat.goals +
+                            "G "
+
+                          : ""
+                      ) +
+
+                      (
+                        Number(
+                          stat.assists ||
+                          0
+                        ) > 0
+
+                          ? stat.assists +
+                            "A"
+
+                          : ""
+                      )
+
+                    ).trim();
+
+                  }
+                );
+
+
+
+            if (
+              contributors.length
+            ) {
+
+              preview =
+                contributors.join(
+                  " · "
+                );
+
+            }
+
+          }
+
+
+
+          return `
+
+          <div
+            class="
+              match-card
+              match-card-click
+            "
+            onclick="
+              openMatchDetail(
+                ${match.id}
+              )
+            "
+          >
+
+            <div class="match-card-top">
+
+              <div>
+
+                <div class="match-opponent">
+
+                  vs
+                  ${escapeHTML(match.opponent)}
+
+                </div>
+
+                <div class="match-date">
+
+                  ${formatDate(match.date)}
+
+                </div>
+
+              </div>
+
+
+              <div
+                class="
+                  result-badge
+                  ${resultClass}
+                "
+              >
+
+                ${resultText}
+
+              </div>
+
+            </div>
+
+
+            <div class="scoreline">
+
+              Olympus FC
+              ${match.olympusScore}
+              –
+              ${match.opponentScore}
+              ${escapeHTML(match.opponent)}
+
+            </div>
+
+
+            <div class="match-type">
+
+              ${escapeHTML(match.type)}
+
+            </div>
+
+
+            <div class="match-preview-summary">
+
+              ${preview}
+
+            </div>
+
+
+            <div class="view-match">
+
+              <span>
+                View Match
+              </span>
+
+              <span>
+                ›
+              </span>
+
+            </div>
+
+          </div>
+
+        `;
+
         }
 
-
-        return `
-
-        <div
-          class="match-card match-card-click"
-          onclick="openMatchDetail(${match.id})"
-        >
-
-          <div class="match-card-top">
-
-            <div>
-
-              <div class="match-opponent">
-                vs ${escapeHTML(match.opponent)}
-              </div>
-
-              <div class="match-date">
-                ${formatDate(match.date)}
-              </div>
-
-            </div>
-
-
-            <div
-              class="result-badge ${resultClass}"
-            >
-              ${resultText}
-            </div>
-
-          </div>
-
-
-          <div class="scoreline">
-
-            Olympus FC
-            ${match.olympusScore}
-            –
-            ${match.opponentScore}
-            ${escapeHTML(match.opponent)}
-
-          </div>
-
-
-          <div class="match-type">
-            ${escapeHTML(match.type)}
-          </div>
-
-
-          <div class="match-preview-summary">
-            ${preview}
-          </div>
-
-
-          <div class="view-match">
-
-            <span>
-              View Match
-            </span>
-
-            <span>
-              ›
-            </span>
-
-          </div>
-
-        </div>
-
-      `;
-
-      }
-
-    ).join("");
+      ).join("");
 
 }
 
 
-/* MATCH DETAIL */
 
-function openMatchDetail(matchId) {
+/* =========================
+MATCH DETAIL
+========================= */
+
+function openMatchDetail(
+  matchId
+) {
 
   const match =
     matches.find(
-      item => item.id === matchId
+      item =>
+        item.id ===
+        matchId
     );
 
 
   if (!match) {
+
     return;
+
   }
 
 
@@ -3234,17 +6161,23 @@ function openMatchDetail(matchId) {
     matchId;
 
 
+
   let resultClass =
     "result-draw";
+
 
   let resultText =
     "DRAW";
 
 
-  if (match.result === "W") {
+  if (
+    match.result ===
+    "W"
+  ) {
 
     resultClass =
       "result-win";
+
 
     resultText =
       "WIN";
@@ -3252,10 +6185,14 @@ function openMatchDetail(matchId) {
   }
 
 
-  if (match.result === "L") {
+  if (
+    match.result ===
+    "L"
+  ) {
 
     resultClass =
       "result-loss";
+
 
     resultText =
       "LOSS";
@@ -3263,25 +6200,40 @@ function openMatchDetail(matchId) {
   }
 
 
+
   const playedPlayers =
     players.filter(
       player => {
 
         const stat =
-          match.playerStats &&
-          match.playerStats[player.id];
 
-        return stat && stat.played;
+          match.playerStats &&
+          match.playerStats[
+            player.id
+          ];
+
+
+        return (
+
+          stat &&
+          stat.played
+
+        );
 
       }
     );
+
 
 
   let playerHTML =
     "";
 
 
-  if (playedPlayers.length === 0) {
+
+  if (
+    playedPlayers.length ===
+    0
+  ) {
 
     playerHTML = `
 
@@ -3289,10 +6241,6 @@ function openMatchDetail(matchId) {
 
         <div class="empty-title">
           No player stats recorded
-        </div>
-
-        <div class="empty-text">
-          This match was created before player statistics were added.
         </div>
 
       </div>
@@ -3318,19 +6266,29 @@ function openMatchDetail(matchId) {
 
 
           const rating =
-            stat.rating === null ||
-            stat.rating === undefined ||
-            stat.rating === ""
+
+            stat.rating ===
+              null ||
+            stat.rating ===
+              undefined ||
+            stat.rating ===
+              ""
+
               ? "—"
+
               : Number(
                   stat.rating
                 ).toFixed(1);
 
 
+
           return `
 
           <div
-            class="detail-player ${isPotm ? "potm-player" : ""}"
+            class="
+              detail-player
+              ${isPotm ? "potm-player" : ""}
+            "
           >
 
             <div class="detail-player-top">
@@ -3338,11 +6296,18 @@ function openMatchDetail(matchId) {
               <div>
 
                 <div class="detail-player-name">
-                  #${player.number} ${player.name}
+
+                  #${player.number}
+                  ${player.name}
+
                 </div>
 
                 <div class="detail-player-meta">
-                  ${player.position} · ${player.nation}
+
+                  ${player.position}
+                  ·
+                  ${player.nation}
+
                 </div>
 
               </div>
@@ -3350,11 +6315,17 @@ function openMatchDetail(matchId) {
 
               ${
                 isPotm
+
                   ? `
+
                     <div class="detail-potm">
+
                       ⭐ POTM
+
                     </div>
+
                   `
+
                   : ""
               }
 
@@ -3366,7 +6337,9 @@ function openMatchDetail(matchId) {
               <div class="detail-player-stat">
 
                 <div class="detail-player-stat-number">
+
                   ${Number(stat.goals || 0)}
+
                 </div>
 
                 <div class="detail-player-stat-label">
@@ -3379,7 +6352,9 @@ function openMatchDetail(matchId) {
               <div class="detail-player-stat">
 
                 <div class="detail-player-stat-number">
+
                   ${Number(stat.assists || 0)}
+
                 </div>
 
                 <div class="detail-player-stat-label">
@@ -3392,7 +6367,9 @@ function openMatchDetail(matchId) {
               <div class="detail-player-stat">
 
                 <div class="detail-player-stat-number">
+
                   ${rating}
+
                 </div>
 
                 <div class="detail-player-stat-label">
@@ -3414,7 +6391,9 @@ function openMatchDetail(matchId) {
   }
 
 
-  el("matchDetailContent").innerHTML = `
+
+  el("matchDetailContent")
+    .innerHTML = `
 
     <div class="detail-top">
 
@@ -3422,10 +6401,16 @@ function openMatchDetail(matchId) {
         class="detail-back"
         onclick="closeMatchDetail()"
       >
+
         ‹ Back to Matches
+
       </button>
 
-      <div class="page-header" style="padding:0;">
+
+      <div
+        class="page-header"
+        style="padding:0;"
+      >
 
         <h2>
           Match Detail
@@ -3440,28 +6425,43 @@ function openMatchDetail(matchId) {
     </div>
 
 
+
     <div class="detail-result-card">
 
       <div class="detail-result-label">
 
-        <span class="result-badge ${resultClass}">
+        <span
+          class="
+            result-badge
+            ${resultClass}
+          "
+        >
+
           ${resultText}
+
         </span>
 
       </div>
 
 
       <div class="detail-score">
-        Olympus FC ${match.olympusScore}
-        – ${match.opponentScore}
+
+        Olympus FC
+        ${match.olympusScore}
+        –
+        ${match.opponentScore}
+
       </div>
 
 
       <div class="detail-opponent">
+
         ${escapeHTML(match.opponent)}
+
       </div>
 
     </div>
+
 
 
     <div class="detail-meta-grid">
@@ -3473,7 +6473,9 @@ function openMatchDetail(matchId) {
         </div>
 
         <div class="detail-meta-value">
+
           ${formatDate(match.date)}
+
         </div>
 
       </div>
@@ -3486,7 +6488,9 @@ function openMatchDetail(matchId) {
         </div>
 
         <div class="detail-meta-value">
+
           ${escapeHTML(match.type)}
+
         </div>
 
       </div>
@@ -3494,19 +6498,27 @@ function openMatchDetail(matchId) {
     </div>
 
 
+
     <div class="detail-section-title">
+
       Player Performances
+
     </div>
 
 
     ${playerHTML}
 
 
+
     <div class="detail-actions">
 
       <button
         class="detail-edit"
-        onclick="editMatch(${match.id})"
+        onclick="
+          editMatch(
+            ${match.id}
+          )
+        "
       >
         Edit Match
       </button>
@@ -3514,7 +6526,11 @@ function openMatchDetail(matchId) {
 
       <button
         class="detail-delete"
-        onclick="deleteMatch(${match.id})"
+        onclick="
+          deleteMatch(
+            ${match.id}
+          )
+        "
       >
         Delete Match
       </button>
@@ -3524,25 +6540,38 @@ function openMatchDetail(matchId) {
   `;
 
 
+
   document
-    .querySelectorAll(".page")
+    .querySelectorAll(
+      ".page"
+    )
     .forEach(
       page =>
-        page.classList.remove("active")
+        page.classList.remove(
+          "active"
+        )
     );
 
 
   el("matchDetail")
-    .classList.add("active");
+    .classList.add(
+      "active"
+    );
 
 
   el("bottomNav")
-    .classList.add("hidden");
+    .classList.add(
+      "hidden"
+    );
 
 
-  window.scrollTo(0,0);
+  window.scrollTo(
+    0,
+    0
+  );
 
 }
+
 
 
 function closeMatchDetail() {
@@ -3552,22 +6581,32 @@ function closeMatchDetail() {
 
 
   el("matchDetail")
-    .classList.remove("active");
+    .classList.remove(
+      "active"
+    );
 
 
   el("matches")
-    .classList.add("active");
+    .classList.add(
+      "active"
+    );
 
 
   el("bottomNav")
-    .classList.remove("hidden");
+    .classList.remove(
+      "hidden"
+    );
 
 
   document
-    .querySelectorAll(".nav-item")
+    .querySelectorAll(
+      ".nav-item"
+    )
     .forEach(
       item =>
-        item.classList.remove("active")
+        item.classList.remove(
+          "active"
+        )
     );
 
 
@@ -3577,20 +6616,30 @@ function closeMatchDetail() {
     );
 
 
-  if (navItems[2]) {
+  if (
+    navItems[2]
+  ) {
 
     navItems[2]
-      .classList.add("active");
+      .classList.add(
+        "active"
+      );
 
   }
 
 
-  window.scrollTo(0,0);
+  window.scrollTo(
+    0,
+    0
+  );
 
 }
 
 
-/* STATS */
+
+/* =========================
+STATS PAGE
+========================= */
 
 function renderStatsPage() {
 
@@ -3601,160 +6650,255 @@ function renderStatsPage() {
   const sorted =
     [...players]
       .sort(
-        (a,b) => {
+        (
+          a,
+          b
+        ) => {
 
           const ga =
-            totals[b.id].contributions -
-            totals[a.id].contributions;
+
+            totals[
+              b.id
+            ].contributions -
+
+            totals[
+              a.id
+            ].contributions;
 
 
-          if (ga !== 0) {
+          if (
+            ga !== 0
+          ) {
+
             return ga;
+
           }
 
 
           const goals =
-            totals[b.id].goals -
-            totals[a.id].goals;
+
+            totals[
+              b.id
+            ].goals -
+
+            totals[
+              a.id
+            ].goals;
 
 
-          if (goals !== 0) {
+          if (
+            goals !== 0
+          ) {
+
             return goals;
+
           }
 
 
           return (
-            totals[b.id].assists -
-            totals[a.id].assists
+
+            totals[
+              b.id
+            ].assists -
+
+            totals[
+              a.id
+            ].assists
+
           );
 
         }
       );
 
 
-  el("statsLeaderboard").innerHTML =
 
-    sorted.map(
-      (player,index) => {
+  el("statsLeaderboard")
+    .innerHTML =
 
-        const stat =
-          totals[player.id];
+      sorted.map(
+        (
+          player,
+          index
+        ) => {
+
+          const stat =
+            totals[
+              player.id
+            ];
 
 
-        const avg =
-          stat.averageRating === null
-            ? "—"
-            : stat.averageRating.toFixed(2);
+          const avg =
+
+            stat.averageRating ===
+            null
+
+              ? "—"
+
+              : stat.averageRating
+                  .toFixed(2);
 
 
-        return `
 
-        <div
-          class="stats-card"
-          onclick="openPlayerProfile('${player.id}','stats')"
-        >
+          return `
 
-          <div class="stats-player-top">
+          <div
+            class="stats-card"
+            onclick="
+              openPlayerProfile(
+                '${player.id}',
+                'stats'
+              )
+            "
+          >
 
-            <div class="stats-player-left">
+            <div class="stats-player-top">
 
-              <div class="rank-circle">
-                ${index + 1}
+              <div class="stats-player-left">
+
+                <div class="rank-circle">
+
+                  ${index + 1}
+
+                </div>
+
+
+                <div>
+
+                  <div class="stats-player-name">
+
+                    ${player.name}
+
+                  </div>
+
+                  <div class="stats-player-meta">
+
+                    #${player.number}
+                    ·
+                    ${player.position}
+
+                  </div>
+
+                </div>
+
               </div>
 
 
-              <div>
-
-                <div class="stats-player-name">
-                  ${player.name}
-                </div>
-
-                <div class="stats-player-meta">
-                  #${player.number} · ${player.position}
-                </div>
-
+              <div class="chevron">
+                ›
               </div>
 
             </div>
 
 
-            <div class="chevron">
-              ›
+
+            <div class="stats-row">
+
+              <div class="stats-box">
+
+                <div class="stats-box-number">
+
+                  ${stat.goals}
+
+                </div>
+
+                <div class="stats-box-label">
+                  GOALS
+                </div>
+
+              </div>
+
+
+              <div class="stats-box">
+
+                <div class="stats-box-number">
+
+                  ${stat.assists}
+
+                </div>
+
+                <div class="stats-box-label">
+                  ASSISTS
+                </div>
+
+              </div>
+
+
+              <div class="stats-box">
+
+                <div class="stats-box-number">
+
+                  ${stat.contributions}
+
+                </div>
+
+                <div class="stats-box-label">
+                  G/A
+                </div>
+
+              </div>
+
+
+              <div class="stats-box">
+
+                <div class="stats-box-number">
+
+                  ${stat.appearances}
+
+                </div>
+
+                <div class="stats-box-label">
+                  APP
+                </div>
+
+              </div>
+
+
+              <div class="stats-box">
+
+                <div class="stats-box-number">
+
+                  ${avg}
+
+                </div>
+
+                <div class="stats-box-label">
+                  AVG
+                </div>
+
+              </div>
+
+
+              <div class="stats-box">
+
+                <div class="stats-box-number">
+
+                  ${stat.potm}
+
+                </div>
+
+                <div class="stats-box-label">
+                  POTM
+                </div>
+
+              </div>
+
             </div>
 
           </div>
 
+        `;
 
-          <div class="stats-row">
+        }
 
-            <div class="stats-box">
-              <div class="stats-box-number">
-                ${stat.goals}
-              </div>
-              <div class="stats-box-label">
-                GOALS
-              </div>
-            </div>
-
-            <div class="stats-box">
-              <div class="stats-box-number">
-                ${stat.assists}
-              </div>
-              <div class="stats-box-label">
-                ASSISTS
-              </div>
-            </div>
-
-            <div class="stats-box">
-              <div class="stats-box-number">
-                ${stat.contributions}
-              </div>
-              <div class="stats-box-label">
-                G/A
-              </div>
-            </div>
-
-            <div class="stats-box">
-              <div class="stats-box-number">
-                ${stat.appearances}
-              </div>
-              <div class="stats-box-label">
-                APP
-              </div>
-            </div>
-
-            <div class="stats-box">
-              <div class="stats-box-number">
-                ${avg}
-              </div>
-              <div class="stats-box-label">
-                AVG
-              </div>
-            </div>
-
-            <div class="stats-box">
-              <div class="stats-box-number">
-                ${stat.potm}
-              </div>
-              <div class="stats-box-label">
-                POTM
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-
-      `;
-
-      }
-
-    ).join("");
+      ).join("");
 
 }
 
 
-/* PROFILE */
+
+/* =========================
+PLAYER PROFILE
+========================= */
 
 function openPlayerProfile(
   playerId,
@@ -3762,18 +6906,22 @@ function openPlayerProfile(
 ) {
 
   profileReturnPage =
-    returnPage || "squad";
+    returnPage ||
+    "squad";
 
 
   const player =
     players.find(
       player =>
-        player.id === playerId
+        player.id ===
+        playerId
     );
 
 
   if (!player) {
+
     return;
+
   }
 
 
@@ -3782,12 +6930,17 @@ function openPlayerProfile(
 
 
   const stat =
-    totals[player.id];
+    totals[
+      player.id
+    ];
 
 
   const goalsPerGame =
+
     stat.appearances === 0
+
       ? "0.00"
+
       : (
           stat.goals /
           stat.appearances
@@ -3795,8 +6948,11 @@ function openPlayerProfile(
 
 
   const assistsPerGame =
+
     stat.appearances === 0
+
       ? "0.00"
+
       : (
           stat.assists /
           stat.appearances
@@ -3804,8 +6960,11 @@ function openPlayerProfile(
 
 
   const gaPerGame =
+
     stat.appearances === 0
+
       ? "0.00"
+
       : (
           stat.contributions /
           stat.appearances
@@ -3813,9 +6972,15 @@ function openPlayerProfile(
 
 
   const averageRating =
-    stat.averageRating === null
+
+    stat.averageRating ===
+    null
+
       ? "—"
-      : stat.averageRating.toFixed(2);
+
+      : stat.averageRating
+          .toFixed(2);
+
 
 
   const playerMatches =
@@ -3835,15 +7000,23 @@ function openPlayerProfile(
     );
 
 
-  let recentHTML = "";
+
+  let recentHTML =
+    "";
 
 
-  if (playerMatches.length === 0) {
+
+  if (
+    playerMatches.length ===
+    0
+  ) {
 
     recentHTML = `
 
       <div class="no-profile-matches">
+
         No appearances recorded yet.
+
       </div>
 
     `;
@@ -3853,7 +7026,10 @@ function openPlayerProfile(
     recentHTML =
 
       playerMatches
-        .slice(0,5)
+        .slice(
+          0,
+          5
+        )
         .map(
           match => {
 
@@ -3863,10 +7039,13 @@ function openPlayerProfile(
               ];
 
 
-            const bits = [];
+            const bits =
+              [];
 
 
-            if (matchStat.goals) {
+            if (
+              matchStat.goals
+            ) {
 
               bits.push(
                 matchStat.goals +
@@ -3876,7 +7055,9 @@ function openPlayerProfile(
             }
 
 
-            if (matchStat.assists) {
+            if (
+              matchStat.assists
+            ) {
 
               bits.push(
                 matchStat.assists +
@@ -3887,15 +7068,20 @@ function openPlayerProfile(
 
 
             if (
-              matchStat.rating !== undefined &&
-              matchStat.rating !== null
+              matchStat.rating !==
+                undefined &&
+              matchStat.rating !==
+                null
             ) {
 
               bits.push(
+
                 "⭐ " +
+
                 Number(
                   matchStat.rating
                 ).toFixed(1)
+
               );
 
             }
@@ -3906,22 +7092,34 @@ function openPlayerProfile(
               player.id
             ) {
 
-              bits.push("POTM");
+              bits.push(
+                "POTM"
+              );
 
             }
 
 
             const performance =
+
               bits.length
-                ? bits.join(" · ")
+
+                ? bits.join(
+                    " · "
+                  )
+
                 : "No G/A";
+
 
 
             return `
 
             <div
               class="profile-match"
-              onclick="openMatchDetail(${match.id})"
+              onclick="
+                openMatchDetail(
+                  ${match.id}
+                )
+              "
             >
 
               <div class="profile-match-top">
@@ -3929,20 +7127,27 @@ function openPlayerProfile(
                 <div>
 
                   <div class="profile-match-name">
-                    vs ${escapeHTML(match.opponent)}
+
+                    vs
+                    ${escapeHTML(match.opponent)}
+
                   </div>
 
                   <div class="profile-match-date">
+
                     ${formatDate(match.date)}
                     ·
                     ${match.olympusScore}-${match.opponentScore}
+
                   </div>
 
                 </div>
 
 
                 <div class="profile-match-contribution">
+
                   ${performance}
+
                 </div>
 
               </div>
@@ -3958,7 +7163,9 @@ function openPlayerProfile(
   }
 
 
-  el("playerProfile").innerHTML = `
+
+  el("playerProfile")
+    .innerHTML = `
 
     <div class="profile-top">
 
@@ -3966,34 +7173,51 @@ function openPlayerProfile(
         class="back-button"
         onclick="closePlayerProfile()"
       >
+
         ‹ Back
+
       </button>
 
 
       <div class="profile-identity">
 
         <div class="profile-number">
+
           ${player.number}
+
         </div>
 
 
         <div>
 
           <h2 class="profile-name">
+
             ${player.name}
+
           </h2>
 
           <div class="profile-meta">
-            ${player.position} · ${player.nation}
+
+            ${player.position}
+            ·
+            ${player.nation}
+
           </div>
+
 
           ${
             player.captain
+
               ? `
+
                 <span class="captain">
+
                   DUAL CAPTAIN
+
                 </span>
+
               `
+
               : ""
           }
 
@@ -4004,99 +7228,156 @@ function openPlayerProfile(
     </div>
 
 
+
     <div class="profile-grid">
 
       <div class="profile-stat">
+
         <div class="profile-stat-big">
+
           ${stat.appearances}
+
         </div>
+
         <div class="profile-stat-name">
           Appearances
         </div>
+
       </div>
 
+
       <div class="profile-stat">
+
         <div class="profile-stat-big">
+
           ${stat.contributions}
+
         </div>
+
         <div class="profile-stat-name">
           Goal Contributions
         </div>
+
       </div>
 
+
       <div class="profile-stat">
+
         <div class="profile-stat-big">
+
           ${stat.goals}
+
         </div>
+
         <div class="profile-stat-name">
           Goals
         </div>
+
       </div>
 
+
       <div class="profile-stat">
+
         <div class="profile-stat-big">
+
           ${stat.assists}
+
         </div>
+
         <div class="profile-stat-name">
           Assists
         </div>
+
       </div>
 
+
       <div class="profile-stat">
+
         <div class="profile-stat-big">
+
           ${averageRating}
+
         </div>
+
         <div class="profile-stat-name">
           Average Rating
         </div>
+
       </div>
 
+
       <div class="profile-stat">
+
         <div class="profile-stat-big">
+
           ${stat.potm}
+
         </div>
+
         <div class="profile-stat-name">
           POTM Awards
         </div>
+
       </div>
 
     </div>
+
 
 
     <div class="profile-secondary">
 
       <div class="secondary-row">
+
         <div class="secondary-name">
           Goals per game
         </div>
+
         <div class="secondary-value">
+
           ${goalsPerGame}
+
         </div>
+
       </div>
 
+
       <div class="secondary-row">
+
         <div class="secondary-name">
           Assists per game
         </div>
+
         <div class="secondary-value">
+
           ${assistsPerGame}
+
         </div>
+
       </div>
 
+
       <div class="secondary-row">
+
         <div class="secondary-name">
           G/A per game
         </div>
+
         <div class="secondary-value">
+
           ${gaPerGame}
+
         </div>
+
       </div>
 
     </div>
 
 
+
     <div class="profile-section-title">
+
       Recent Matches
+
     </div>
 
 
@@ -4105,39 +7386,76 @@ function openPlayerProfile(
   `;
 
 
+
   document
-    .querySelectorAll(".page")
+    .querySelectorAll(
+      ".page"
+    )
     .forEach(
       page =>
-        page.classList.remove("active")
+        page.classList.remove(
+          "active"
+        )
     );
 
 
-  el("profile").classList.add("active");
+  el("profile")
+    .classList.add(
+      "active"
+    );
 
-  el("bottomNav").classList.add("hidden");
 
-  window.scrollTo(0,0);
+  el("bottomNav")
+    .classList.add(
+      "hidden"
+    );
+
+
+  window.scrollTo(
+    0,
+    0
+  );
 
 }
+
 
 
 function closePlayerProfile() {
 
-  el("profile").classList.remove("active");
+  el("profile")
+    .classList.remove(
+      "active"
+    );
 
-  el(profileReturnPage).classList.add("active");
 
-  el("bottomNav").classList.remove("hidden");
+  el(profileReturnPage)
+    .classList.add(
+      "active"
+    );
 
-  window.scrollTo(0,0);
+
+  el("bottomNav")
+    .classList.remove(
+      "hidden"
+    );
+
+
+  window.scrollTo(
+    0,
+    0
+  );
 
 }
 
 
-/* RENDER */
+
+/* =========================
+RENDER ALL
+========================= */
 
 function renderEverything() {
+
+  renderDivision();
 
   renderHome();
 
@@ -4152,7 +7470,9 @@ function renderEverything() {
 
 renderEverything();
 
+
 </script>
 
 </body>
+
 </html>
