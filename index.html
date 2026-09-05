@@ -820,17 +820,26 @@ h1 {
   letter-spacing: .5px;
 }
 
+/* UPDATED MOBILE-FRIENDLY RECORD LAYOUT */
+
 .award-main {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 15px;
+  gap: 14px;
   margin-top: 10px;
 }
 
+.award-main > div:first-child {
+  min-width: 0;
+}
+
 .award-player {
-  font-size: 19px;
+  font-size: 18px;
   font-weight: bold;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 
 .award-meta {
@@ -841,9 +850,31 @@ h1 {
 
 .award-value {
   flex-shrink: 0;
+  align-self: center;
   color: #e8bd4b;
   font-size: 25px;
   font-weight: bold;
+  text-align: right;
+}
+
+@media (max-width: 430px) {
+
+  .award-card {
+    padding: 15px;
+  }
+
+  .award-main {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .award-player {
+    font-size: 17px;
+  }
+
+  .award-value {
+    font-size: 23px;
+  }
 }
 
 .single-record-card {
@@ -1374,7 +1405,7 @@ input[type="date"]::-webkit-date-and-time-value {
 
       <div class="info-row">
         <div class="info-label">Stadium</div>
-        <div class="info-value">The Summit</div>
+        <div class="info-value">Mount Olympus</div>
       </div>
 
       <div class="info-row">
@@ -2719,8 +2750,6 @@ function renderRecordsPage(){
 
   const totals = calculatePlayerStats();
 
-  /* PLAYER LEADERS */
-
   function highestPlayers(field){
 
     const max =
@@ -2749,32 +2778,27 @@ function renderRecordsPage(){
     {
       title:"Top Goalscorer",
       icon:"⚽",
-      field:"goals",
-      suffix:" goals"
+      field:"goals"
     },
     {
       title:"Most Assists",
       icon:"🎯",
-      field:"assists",
-      suffix:" assists"
+      field:"assists"
     },
     {
       title:"Most Goal Contributions",
       icon:"👑",
-      field:"contributions",
-      suffix:" G/A"
+      field:"contributions"
     },
     {
       title:"Most POTM Awards",
       icon:"⭐",
-      field:"potm",
-      suffix:" awards"
+      field:"potm"
     },
     {
       title:"Most Appearances",
       icon:"👕",
-      field:"appearances",
-      suffix:" apps"
+      field:"appearances"
     }
   ];
 
@@ -2890,8 +2914,6 @@ function renderRecordsPage(){
   }
 
   el("playerLeaderRecords").innerHTML = leadersHTML;
-
-  /* SINGLE MATCH RECORDS */
 
   const singleGoals = [];
   const singleAssists = [];
@@ -3038,8 +3060,6 @@ function renderRecordsPage(){
       singleRating,
       value=>value.toFixed(1)
     );
-
-  /* CLUB RECORDS */
 
   let biggestWin = null;
   let biggestDefeat = null;
