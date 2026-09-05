@@ -5592,21 +5592,11 @@ async function loadRemoteData(){
       });
     });
 
-    const remoteMatchCount = remoteData.FC26.matches.length + remoteData.FC27.matches.length;
-    const localMatchCount = seasonData.FC26.matches.length + seasonData.FC27.matches.length;
-
-    if(remoteMatchCount > 0 || localMatchCount === 0){
-      seasonData = remoteData;
-      saveSeasonData();
-    }else{
-      // Keep existing local data until the admin explicitly uploads it.
-      ["FC26","FC27"].forEach(name => {
-        const row = (seasons || []).find(item => item.name === name);
-        if(row && divisions.includes(row.division) && seasonData[name].matches.length === 0){
-          seasonData[name].division = row.division;
-        }
-      });
-    }
+    // Supabase is now the source of truth for live Olympus FC data.
+    // Always replace the browser cache with the current online state, even when
+    // the online match list is empty (for example after the admin deletes the last match).
+    seasonData = remoteData;
+    saveSeasonData();
 
     remoteReady = true;
     setOnlineStatus("Connected","#67d894");
