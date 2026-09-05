@@ -3708,6 +3708,22 @@ function blankPlayerTotal(){
   };
 }
 
+function completedPassesPerGame(stat){
+  if(stat.passes === null || stat.passes === undefined || !stat.appearances) return null;
+  return stat.passes / stat.appearances;
+}
+
+function estimatedPassAttempts(stat){
+  if(stat.passes === null || stat.passes === undefined || !stat.passCompletion) return null;
+  return stat.passes / (stat.passCompletion / 100);
+}
+
+function estimatedPassAttemptsPerGame(stat){
+  const attempts = estimatedPassAttempts(stat);
+  if(attempts === null || !stat.appearances) return null;
+  return attempts / stat.appearances;
+}
+
 function addFC26Baseline(totals){
 
   players.forEach(player => {
@@ -4235,6 +4251,11 @@ function renderStatsPage(){
               <div class="stats-box-number">${FC26_BASELINE[player.id].passCompletion === null ? "—" : FC26_BASELINE[player.id].passCompletion + "%"}</div>
               <div class="stats-box-label">PASS %</div>
             </div>
+
+            <div class="stats-box">
+              <div class="stats-box-number">${completedPassesPerGame(stat) === null ? "—" : completedPassesPerGame(stat).toFixed(1)}</div>
+              <div class="stats-box-label">COMP PASSES / GAME</div>
+            </div>
           ` : ""}
 
         </div>
@@ -4385,6 +4406,22 @@ function renderPlayerProfile(){
       <div class="profile-stat-card">
         <div class="profile-stat-value">${FC26_BASELINE[player.id].passCompletion === null ? "—" : FC26_BASELINE[player.id].passCompletion + "%"}</div>
         <div class="profile-stat-label">PASS COMPLETION</div>
+      </div>
+
+
+      <div class="profile-stat-card">
+        <div class="profile-stat-value">${completedPassesPerGame(stat) === null ? "—" : completedPassesPerGame(stat).toFixed(1)}</div>
+        <div class="profile-stat-label">COMPLETED PASSES / GAME</div>
+      </div>
+
+      <div class="profile-stat-card">
+        <div class="profile-stat-value">${estimatedPassAttempts(stat) === null ? "—" : Math.round(estimatedPassAttempts(stat))}</div>
+        <div class="profile-stat-label">EST. PASSES ATTEMPTED</div>
+      </div>
+
+      <div class="profile-stat-card">
+        <div class="profile-stat-value">${estimatedPassAttemptsPerGame(stat) === null ? "—" : estimatedPassAttemptsPerGame(stat).toFixed(1)}</div>
+        <div class="profile-stat-label">EST. ATTEMPTS / GAME</div>
       </div>
     ` : ""}
   `;
@@ -4694,6 +4731,25 @@ function renderRecordsPage(){
             ${completionHolders.map(player => `#${player.number} ${player.name}`).join(" / ")}
           </div>
           <div class="award-value">${bestPassCompletion}%</div>
+        </div>
+      </div>
+    `;
+
+    const bestCompletedPerGame = Math.max(...passingPlayers.map(player => completedPassesPerGame(totals[player.id])));
+    const completedPerGameHolders = passingPlayers.filter(player =>
+      Math.abs(completedPassesPerGame(totals[player.id]) - bestCompletedPerGame) < .0001
+    );
+
+    leadersHTML += `
+      <div class="award-card gold">
+        <div class="award-label">
+          🧠 Most Completed Passes Per Game
+        </div>
+        <div class="award-main">
+          <div class="award-player">
+            ${completedPerGameHolders.map(player => `#${player.number} ${player.name}`).join(" / ")}
+          </div>
+          <div class="award-value">${bestCompletedPerGame.toFixed(1)}</div>
         </div>
       </div>
     `;
@@ -5090,6 +5146,27 @@ function renderComparison(){
       rightValue:right.passCompletion === null || right.passCompletion === undefined ? null : right.passCompletion,
       leftDisplay:left.passCompletion === null || left.passCompletion === undefined ? "—" : left.passCompletion + "%",
       rightDisplay:right.passCompletion === null || right.passCompletion === undefined ? "—" : right.passCompletion + "%"
+    },
+    {
+      name:"Completed Passes Per Game",
+      leftValue:completedPassesPerGame(left),
+      rightValue:completedPassesPerGame(right),
+      leftDisplay:completedPassesPerGame(left) === null ? "—" : completedPassesPerGame(left).toFixed(1),
+      rightDisplay:completedPassesPerGame(right) === null ? "—" : completedPassesPerGame(right).toFixed(1)
+    },
+    {
+      name:"Est. Passes Attempted",
+      leftValue:estimatedPassAttempts(left),
+      rightValue:estimatedPassAttempts(right),
+      leftDisplay:estimatedPassAttempts(left) === null ? "—" : Math.round(estimatedPassAttempts(left)),
+      rightDisplay:estimatedPassAttempts(right) === null ? "—" : Math.round(estimatedPassAttempts(right))
+    },
+    {
+      name:"Est. Attempts Per Game",
+      leftValue:estimatedPassAttemptsPerGame(left),
+      rightValue:estimatedPassAttemptsPerGame(right),
+      leftDisplay:estimatedPassAttemptsPerGame(left) === null ? "—" : estimatedPassAttemptsPerGame(left).toFixed(1),
+      rightDisplay:estimatedPassAttemptsPerGame(right) === null ? "—" : estimatedPassAttemptsPerGame(right).toFixed(1)
     },
     {
       name:"Average Rating",
