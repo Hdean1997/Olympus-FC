@@ -3408,7 +3408,10 @@ function matchdaySummaryHTML(session,compact=false){
     if(!p) return "";
     return `<div><strong>${escapeHTML(p.name)}</strong><span>${escapeHTML(item.position || p.position || "—")}</span></div>`;
   }).filter(Boolean).join("");
-  const compactSquad = session.players.length
+  const liveSquad = session.players.length
+    ? `${session.players.length}-player squad${squadPositions.length ? ` · ${squadPositions.join(" · ")}` : ""}`
+    : "No squad recorded";
+  const reportSquad = session.players.length
     ? `👥 ${session.players.length} Players · Matchday Squad`
     : "No squad recorded";
   const squadDetails = session.players.length
@@ -3419,7 +3422,7 @@ function matchdaySummaryHTML(session,compact=false){
     <div class="matchday-card ${session.status === "active" ? "live" : ""}">
       <div class="matchday-eyebrow">${session.status === "active" ? "🔴 MATCHDAY LIVE" : "MATCHDAY REPORT"}</div>
       <div class="matchday-title">${formatDate(session.sessionDate)}</div>
-      <div class="matchday-sub">${compactSquad}</div>
+      <div class="matchday-sub">${session.status === "active" ? liveSquad : reportSquad}</div>
       ${!compact && session.status === "ended" ? squadDetails : ""}
       ${session.status === "active" ? `<div class="matchday-timer"><span class="matchday-timer-label">⏱ SESSION TIME</span><span class="matchday-timer-value" data-matchday-timer="${session.id}">${formatSessionDuration(duration,true)}</span></div>` : `<div class="matchday-duration">⏱ Session duration — ${formatSessionDuration(duration,false)}</div>`}
       <div class="matchday-grid">
