@@ -2839,6 +2839,7 @@ let isAdmin = false;
 let isOwner = false;
 let currentClubUsername = "";
 let currentClubRole = "";
+let currentClubPlayerKey = "";
 const OWNER_UID = "dc4e457c-4b2c-413f-a6d8-b4f49c053480";
 let remoteSeasonIds = {};
 let remotePlayerIds = {};
@@ -3457,19 +3458,31 @@ function matchdayPotnHTML(session){
           : "🏅 No Player of the Night awarded")
     : `Voting in progress — ${result.votes.length}/${result.eligibleCount} votes recorded`;
 
-  const voteRows = isAdmin ? (session.players || []).map(item => {
-    const voter = players.find(p => p.id === item.playerKey);
-    if(!voter) return "";
-    const currentVote = result.votes.find(v => v.voterPlayerKey === voter.id)?.votedForPlayerKey || "";
-    const candidates = (session.players || []).map(candidateItem => players.find(p => p.id === candidateItem.playerKey)).filter(p => p && p.id !== voter.id);
-    return `<div class="matchday-potn-row">
-      <div class="matchday-potn-voter">${escapeHTML(voter.name)}'s vote</div>
-      <select class="matchday-potn-select" id="potn-vote-${session.id}-${voter.id}">
-        <option value="">Select teammate</option>
-        ${candidates.map(candidate => `<option value="${candidate.id}" ${currentVote===candidate.id?"selected":""}>${escapeHTML(candidate.name)}</option>`).join("")}
-      </select>
-    </div>`;
-  }).join("") : "";
+  const voter = players.find(p => p.id === currentClubPlayerKey);
+  const isInSquad = Boolean(voter && (session.players || []).some(item => item.playerKey === voter.id));
+  const currentVote = voter ? (result.votes.find(v => v.voterPlayerKey === voter.id)?.votedForPlayerKey || "") : "";
+  const candidates = voter
+    ? (session.players || []).map(item => players.find(p => p.id === item.playerKey)).filter(p => p && p.id !== voter.id)
+    : [];
+
+  let votingControls = "";
+  if(currentClubRole && voter && isInSquad){
+    votingControls = `<div class="matchday-potn-votes">
+      <div class="matchday-potn-row">
+        <div class="matchday-potn-voter">Your vote</div>
+        <select class="matchday-potn-select" id="potn-vote-${session.id}">
+          <option value="">Select teammate</option>
+          ${candidates.map(candidate => `<option value="${candidate.id}" ${currentVote===candidate.id?"selected":""}>${escapeHTML(candidate.name)}</option>`).join("")}
+        </select>
+      </div>
+    </div>
+    <button class="matchday-potn-save" onclick="event.stopPropagation();savePotnVote(${session.id})">${currentVote ? "Update My Vote" : "Cast My Vote"}</button>
+    <div class="matchday-potn-note">You get one vote for this Matchday and cannot vote for yourself. Other players must sign in to cast their own vote.</div>`;
+  }else if(currentClubRole && !isInSquad){
+    votingControls = `<div class="matchday-potn-note">Only players who were in this Matchday squad can vote.</div>`;
+  }else{
+    votingControls = `<div class="matchday-potn-note">Sign in with your Olympus FC player account to cast your vote.</div>`;
+  }
 
   return `<div class="matchday-potn">
     <div class="matchday-potn-head">
@@ -3477,45 +3490,54 @@ function matchdayPotnHTML(session){
       <div class="matchday-potn-progress">${result.votes.length}/${result.eligibleCount} VOTES</div>
     </div>
     <div class="matchday-potn-result">${resultText}</div>
-    ${isAdmin ? `<div class="matchday-potn-votes">${voteRows}</div>
-      <button class="matchday-potn-save" onclick="event.stopPropagation();savePotnVotes(${session.id})">Save POTN Votes</button>
-      <div class="matchday-potn-note">One vote per squad member. Players cannot vote for themselves. You can update a vote later if someone was entered incorrectly.</div>` : ""}
+    ${votingControls}
   </div>`;
 }
 
-async function savePotnVotes(sessionId){
-  if(!isAdmin) return;
+async function savePotnVote(sessionId){
+  if(!currentClubRole || !currentClubPlayerKey) return;
   const session = matchdaySessions.find(s => String(s.id) === String(sessionId));
   if(!session || session.status !== "ended") return;
+
+  const voter = players.find(p => p.id === currentClubPlayerKey);
+  if(!voter || !(session.players || []).some(item => item.playerKey === voter.id)){
+    alert("Only players who were in this Matchday squad can vote.");
+    return;
+  }
+
+  const select = el(`potn-vote-${session.id}`);
+  const votedForKey = select?.value || "";
+  if(!votedForKey){
+    alert("Choose your Player of the Night first.");
+    return;
+  }
+  if(votedForKey === voter.id){
+    alert("You cannot vote for yourself.");
+    return;
+  }
+  if(!(session.players || []).some(item => item.playerKey === votedForKey)){
+    alert("You can only vote for a player from this Matchday squad.");
+    return;
+  }
+
   try{
     await ensureRemoteLookups();
-    const rows = [];
-    for(const item of session.players || []){
-      const voter = players.find(p => p.id === item.playerKey);
-      if(!voter) continue;
-      const select = el(`potn-vote-${session.id}-${voter.id}`);
-      const votedForKey = select?.value || "";
-      if(!votedForKey) continue;
-      if(votedForKey === voter.id) throw new Error("Players cannot vote for themselves.");
-      const voterId = remotePlayerIds[voter.id];
-      const votedForId = remotePlayerIds[votedForKey];
-      if(!voterId || !votedForId) throw new Error("Player lookup failed.");
-      rows.push({session_id:Number(session.id),voter_player_id:Number(voterId),voted_for_player_id:Number(votedForId)});
-    }
-
-    if(!rows.length){
-      alert("Choose at least one Player of the Night vote first.");
-      return;
-    }
+    const voterId = remotePlayerIds[voter.id];
+    const votedForId = remotePlayerIds[votedForKey];
+    if(!voterId || !votedForId) throw new Error("Player lookup failed.");
 
     const {error} = await supabaseClient
       .from("matchday_potn_votes")
-      .upsert(rows,{onConflict:"session_id,voter_player_id"});
+      .upsert({
+        session_id:Number(session.id),
+        voter_player_id:Number(voterId),
+        voted_for_player_id:Number(votedForId)
+      },{onConflict:"session_id,voter_player_id"});
     if(error) throw error;
     await loadRemoteData();
   }catch(error){
-    console.error("Save POTN votes failed:",error);
-    alert(error?.message || "The Player of the Night votes could not be saved. Please try again.");
+    console.error("Save POTN vote failed:",error);
+    alert(error?.message || "Your Player of the Night vote could not be saved. Please try again.");
   }
 }
 
@@ -6277,16 +6299,17 @@ function updateAdminUI(){
   const access = el("adminAccessStatus");
   const uploadButton = loggedPanel?.querySelector('button[onclick="uploadLocalDataToSupabase()"]');
 
-  if(loginPanel) loginPanel.style.display = isAdmin ? "none" : "block";
-  if(loggedPanel) loggedPanel.style.display = isAdmin ? "block" : "none";
+  const isSignedClubUser = Boolean(currentClubRole);
+  if(loginPanel) loginPanel.style.display = isSignedClubUser ? "none" : "block";
+  if(loggedPanel) loggedPanel.style.display = isSignedClubUser ? "block" : "none";
 
   if(uploadButton){
     uploadButton.style.display = isOwner ? "" : "none";
   }
 
   if(access){
-    access.textContent = isOwner ? "Owner" : (isAdmin ? "Player Admin" : "Public view");
-    access.style.color = isAdmin ? "#67d894" : "#9aa9bc";
+    access.textContent = isOwner ? "Owner" : (isAdmin ? "Player Admin" : (isSignedClubUser ? "Player" : "Public view"));
+    access.style.color = isSignedClubUser ? "#67d894" : "#9aa9bc";
   }
 }
 
@@ -6538,6 +6561,7 @@ async function loadCurrentClubAccess(session){
   isOwner = false;
   currentClubUsername = "";
   currentClubRole = "";
+  currentClubPlayerKey = "";
 
   const user = session?.user;
   if(!user) return;
@@ -6560,6 +6584,7 @@ async function loadCurrentClubAccess(session){
     if(data){
       currentClubUsername = data.username || "";
       currentClubRole = data.role || currentClubRole;
+      currentClubPlayerKey = data.player_key || "";
       isAdmin = ["owner","player_admin"].includes(data.role);
       isOwner = data.role === "owner" || user.id === OWNER_UID;
     }
@@ -6592,14 +6617,16 @@ async function adminLogin(){
 
   await loadCurrentClubAccess(data.session);
 
-  if(!isAdmin){
+  if(!currentClubRole){
     await supabaseClient.auth.signOut();
-    if(message) message.textContent = "This account does not have Olympus FC editing access.";
+    if(message) message.textContent = "This account is not linked to an Olympus FC player.";
     return;
   }
 
   if(message){
-    message.textContent = isOwner ? "Owner access enabled." : "Player Admin access enabled.";
+    message.textContent = isOwner
+      ? "Owner access enabled."
+      : (isAdmin ? "Player Admin access enabled." : "Player access enabled — voting only.");
   }
   await handleAuthUI();
 }
@@ -6610,6 +6637,7 @@ async function adminLogout(){
   isOwner = false;
   currentClubUsername = "";
   currentClubRole = "";
+  currentClubPlayerKey = "";
   const message = el("adminMessage");
   if(message) message.textContent = "Logged out. The site is now read-only.";
   await handleAuthUI();
@@ -6621,7 +6649,7 @@ async function handleAuthUI(){
 
   const signed = el("adminSignedInText");
   if(signed && data?.session?.user){
-    const roleLabel = isOwner ? "Owner" : "Player Admin";
+    const roleLabel = isOwner ? "Owner" : (isAdmin ? "Player Admin" : "Player");
     const displayName = currentClubUsername || data.session.user.email || "Club user";
     signed.textContent = `Signed in as ${displayName} • ${roleLabel}`;
   }
