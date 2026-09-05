@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+
 <meta
   name="viewport"
   content="width=device-width, initial-scale=1.0, viewport-fit=cover"
@@ -32,8 +33,7 @@ select {
 }
 
 button,
-.nav-item,
-.view-match {
+.nav-item {
   cursor: pointer;
 }
 
@@ -50,14 +50,6 @@ button,
   display: block;
 }
 
-.card {
-  background: #101d2e;
-  border: 1px solid #1c314c;
-  border-radius: 18px;
-}
-
-/* HEADERS */
-
 .page-header {
   padding: 38px 20px 10px;
 }
@@ -72,7 +64,9 @@ button,
   color: #9aa9bc;
 }
 
-/* SEASON SELECTOR */
+/* ========================================
+   SEASON SELECTOR
+======================================== */
 
 .season-switcher {
   margin: 10px 16px 20px;
@@ -111,7 +105,9 @@ button,
   font-weight: bold;
 }
 
-/* HOME */
+/* ========================================
+   HOME
+======================================== */
 
 .top {
   text-align: center;
@@ -326,9 +322,17 @@ h1 {
   font-weight: bold;
 }
 
-.form-w { background: #1f8f55; }
-.form-d { background: #a77a20; }
-.form-l { background: #b83e46; }
+.form-w {
+  background: #1f8f55;
+}
+
+.form-d {
+  background: #a77a20;
+}
+
+.form-l {
+  background: #b83e46;
+}
 
 .form-empty {
   background: #1c2b3d;
@@ -370,7 +374,9 @@ h1 {
   font-weight: bold;
 }
 
-/* SQUAD */
+/* ========================================
+   SQUAD
+======================================== */
 
 .player-card {
   margin: 12px 16px;
@@ -448,7 +454,9 @@ h1 {
   font-size: 9px;
 }
 
-/* MATCHES */
+/* ========================================
+   MATCHES
+======================================== */
 
 .matches-summary {
   display: grid;
@@ -571,9 +579,17 @@ h1 {
   font-weight: bold;
 }
 
-.result-win { background: #1f8f55; }
-.result-draw { background: #a77a20; }
-.result-loss { background: #b83e46; }
+.result-win {
+  background: #1f8f55;
+}
+
+.result-draw {
+  background: #a77a20;
+}
+
+.result-loss {
+  background: #b83e46;
+}
 
 .scoreline {
   margin-top: 18px;
@@ -587,7 +603,9 @@ h1 {
   font-size: 13px;
 }
 
-/* STATS */
+/* ========================================
+   STATS
+======================================== */
 
 .leaderboard-title {
   margin: 0 16px 12px;
@@ -663,7 +681,9 @@ h1 {
   font-size: 9px;
 }
 
-/* MORE */
+/* ========================================
+   MORE
+======================================== */
 
 .more-hero {
   padding: 36px 20px 16px;
@@ -748,7 +768,7 @@ h1 {
 
 .hub-action {
   width: 100%;
-  min-height: 56px;
+  min-height: 62px;
   padding: 14px 15px;
   border: 0;
   border-bottom: 1px solid #25384f;
@@ -773,11 +793,13 @@ h1 {
   margin-top: 4px;
   color: #8392a6;
   font-size: 11px;
+  line-height: 1.4;
 }
 
 .hub-action-arrow {
   color: #6682a7;
   font-size: 20px;
+  flex-shrink: 0;
 }
 
 .hub-action.blue .hub-action-main {
@@ -797,14 +819,18 @@ h1 {
   pointer-events: none;
 }
 
-/* RECORDS */
+/* ========================================
+   RECORDS
+======================================== */
 
-.records-top {
+.records-top,
+.compare-top {
   padding: 30px 20px 12px;
   background: linear-gradient(180deg,#0d213a,#07111f);
 }
 
-.records-back {
+.records-back,
+.compare-back {
   border: 0;
   background: transparent;
   color: #6e9cff;
@@ -813,12 +839,14 @@ h1 {
   font-size: 15px;
 }
 
-.records-title {
+.records-title,
+.compare-title {
   margin: 0;
   font-size: 32px;
 }
 
-.records-subtitle {
+.records-subtitle,
+.compare-subtitle {
   margin-top: 7px;
   color: #9aa9bc;
 }
@@ -855,16 +883,19 @@ h1 {
 }
 
 .award-main {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
   margin-top: 10px;
 }
 
 .award-player {
-  font-size: 19px;
+  min-width: 0;
+  font-size: 18px;
   font-weight: bold;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .award-value {
@@ -895,6 +926,7 @@ h1 {
   margin-top: 8px;
   font-size: 18px;
   font-weight: bold;
+  overflow-wrap: anywhere;
 }
 
 .single-record-meta,
@@ -912,7 +944,204 @@ h1 {
   font-weight: bold;
 }
 
-/* MATCH ENTRY SEASON BANNER */
+/* ========================================
+   PLAYER COMPARISON
+======================================== */
+
+.compare-section {
+  padding: 18px 16px 0;
+}
+
+.compare-season-box {
+  padding: 13px 15px;
+  border-radius: 14px;
+  background: #101d2e;
+  border: 1px solid #28405f;
+  margin-bottom: 16px;
+}
+
+.compare-season-label {
+  color: #8392a6;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: .8px;
+}
+
+.compare-season-value {
+  margin-top: 4px;
+  color: #e8bd4b;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.compare-selectors {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 38px minmax(0,1fr);
+  gap: 8px;
+  align-items: end;
+  margin-bottom: 18px;
+}
+
+.compare-selector-box {
+  min-width: 0;
+}
+
+.compare-select-label {
+  margin-bottom: 7px;
+  color: #9aa9bc;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.compare-player-select {
+  width: 100%;
+  height: 48px;
+  padding: 0 8px;
+  border-radius: 11px;
+  border: 1px solid #315d9d;
+  background: #07111f;
+  color: white;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.compare-vs {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e8bd4b;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.compare-player-heads {
+  display: grid;
+  grid-template-columns: 1fr 62px 1fr;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.compare-player-head {
+  min-width: 0;
+  text-align: center;
+  padding: 14px 8px;
+  border-radius: 14px;
+  background: linear-gradient(145deg,#12243d,#101d2e);
+  border: 1px solid #284a76;
+}
+
+.compare-number {
+  width: 45px;
+  height: 45px;
+  margin: 0 auto 8px;
+  border-radius: 50%;
+  background: #0b2547;
+  border: 1px solid #3269bb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e8bd4b;
+  font-weight: bold;
+}
+
+.compare-player-name {
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.compare-player-meta {
+  margin-top: 4px;
+  color: #8392a6;
+  font-size: 10px;
+}
+
+.compare-vs-main {
+  text-align: center;
+  color: #667991;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.compare-table {
+  overflow: hidden;
+  border-radius: 17px;
+  border: 1px solid #1c314c;
+  background: #101d2e;
+}
+
+.compare-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  align-items: center;
+  min-height: 67px;
+  border-bottom: 1px solid #25384f;
+}
+
+.compare-row:last-child {
+  border-bottom: 0;
+}
+
+.compare-stat-value {
+  padding: 12px 8px;
+  text-align: center;
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.compare-stat-value.winner {
+  color: #e8bd4b;
+}
+
+.compare-stat-value.tie {
+  color: white;
+}
+
+.compare-stat-name {
+  padding: 12px 5px;
+  text-align: center;
+  color: #9aa9bc;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+.compare-summary {
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 15px;
+  background: linear-gradient(145deg,#12213a,#101d2e);
+  border: 1px solid #8d712a;
+  text-align: center;
+}
+
+.compare-summary-title {
+  color: #9aa9bc;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: .7px;
+}
+
+.compare-summary-result {
+  margin-top: 7px;
+  color: #e8bd4b;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.compare-summary-sub {
+  margin-top: 5px;
+  color: #8392a6;
+  font-size: 11px;
+}
+
+/* ========================================
+   MATCH ENTRY BANNER
+======================================== */
 
 .match-season-banner {
   margin-bottom: 22px;
@@ -936,7 +1165,9 @@ h1 {
   font-weight: bold;
 }
 
-/* MODALS */
+/* ========================================
+   MODALS
+======================================== */
 
 .modal {
   display: none;
@@ -1136,7 +1367,9 @@ input[type="date"]::-webkit-date-and-time-value {
   opacity: .45;
 }
 
-/* NAV */
+/* ========================================
+   NAV
+======================================== */
 
 .nav {
   position: fixed;
@@ -1176,6 +1409,22 @@ input[type="date"]::-webkit-date-and-time-value {
   font-weight: bold;
 }
 
+@media (max-width: 390px) {
+
+  .compare-player-name {
+    font-size: 12px;
+  }
+
+  .compare-player-select {
+    font-size: 12px;
+  }
+
+  .compare-stat-value {
+    font-size: 17px;
+  }
+
+}
+
 </style>
 </head>
 
@@ -1183,24 +1432,49 @@ input[type="date"]::-webkit-date-and-time-value {
 
 <div class="app">
 
-<!-- HOME -->
+<!-- =====================================
+     HOME
+===================================== -->
 
 <div id="home" class="page active">
 
   <div class="top">
-    <img src="Olympus FC Badge.PNG" class="badge" alt="Olympus FC Badge">
+
+    <img
+      src="Olympus FC Badge.PNG"
+      class="badge"
+      alt="Olympus FC Badge"
+    >
+
     <h1>OLYMPUS FC</h1>
-    <div class="subtitle">Pro Clubs Stats Tracker</div>
+
+    <div class="subtitle">
+      Pro Clubs Stats Tracker
+    </div>
+
   </div>
 
   <div class="season-switcher">
 
     <div>
-      <div class="season-switcher-label">VIEWING SEASON</div>
-      <div id="homeSeasonValue" class="season-switcher-value">FC26</div>
+
+      <div class="season-switcher-label">
+        VIEWING SEASON
+      </div>
+
+      <div
+        id="homeSeasonValue"
+        class="season-switcher-value"
+      >
+        FC26
+      </div>
+
     </div>
 
-    <select class="season-select season-selector" onchange="changeSeason(this.value)">
+    <select
+      class="season-select season-selector"
+      onchange="changeSeason(this.value)"
+    >
       <option value="FC26">FC26</option>
       <option value="FC27">FC27</option>
       <option value="ALL_TIME">All Time</option>
@@ -1208,22 +1482,41 @@ input[type="date"]::-webkit-date-and-time-value {
 
   </div>
 
-  <div id="divisionCard" class="division-card">
+  <div
+    id="divisionCard"
+    class="division-card"
+  >
 
     <div class="division-top">
 
       <div>
-        <div class="division-small">Current Division</div>
-        <div id="currentDivision" class="division-name">Division 5</div>
+
+        <div class="division-small">
+          Current Division
+        </div>
+
+        <div
+          id="currentDivision"
+          class="division-name"
+        >
+          Division 5
+        </div>
+
       </div>
 
-      <button class="change-division" onclick="openDivisionModal()">
+      <button
+        class="change-division"
+        onclick="openDivisionModal()"
+      >
         Change
       </button>
 
     </div>
 
-    <div id="divisionPath" class="division-path"></div>
+    <div
+      id="divisionPath"
+      class="division-path"
+    ></div>
 
     <div class="division-labels">
       <span>D5</span>
@@ -1237,39 +1530,91 @@ input[type="date"]::-webkit-date-and-time-value {
   </div>
 
   <div class="season-card">
-    <h2 id="seasonCardTitle">FC26 Season</h2>
-    <p id="seasonCardText">The climb to the summit continues.</p>
+
+    <h2 id="seasonCardTitle">
+      FC26 Season
+    </h2>
+
+    <p id="seasonCardText">
+      The climb to the summit continues.
+    </p>
+
   </div>
 
-  <div id="historicalNote" class="data-note"></div>
+  <div
+    id="historicalNote"
+    class="data-note"
+  ></div>
 
   <div class="stats-grid">
 
     <div class="stat">
-      <div id="homeMatches" class="stat-number">0</div>
-      <div class="stat-label">Logged Matches</div>
+
+      <div
+        id="homeMatches"
+        class="stat-number"
+      >
+        0
+      </div>
+
+      <div class="stat-label">
+        Logged Matches
+      </div>
+
     </div>
 
     <div class="stat">
-      <div id="homeWins" class="stat-number">0</div>
-      <div class="stat-label">Logged Wins</div>
+
+      <div
+        id="homeWins"
+        class="stat-number"
+      >
+        0
+      </div>
+
+      <div class="stat-label">
+        Logged Wins
+      </div>
+
     </div>
 
     <div class="stat">
-      <div id="homeGoals" class="stat-number">0</div>
-      <div class="stat-label">Logged Goals</div>
+
+      <div
+        id="homeGoals"
+        class="stat-number"
+      >
+        0
+      </div>
+
+      <div class="stat-label">
+        Logged Goals
+      </div>
+
     </div>
 
     <div class="stat">
-      <div id="homeWinRate" class="stat-number">0%</div>
-      <div class="stat-label">Logged Win Rate</div>
+
+      <div
+        id="homeWinRate"
+        class="stat-number"
+      >
+        0%
+      </div>
+
+      <div class="stat-label">
+        Logged Win Rate
+      </div>
+
     </div>
 
   </div>
 
   <div class="record-section">
 
-    <h3 class="record-title">Logged Season Record</h3>
+    <h3 class="record-title">
+      Logged Season Record
+    </h3>
 
     <div class="record-grid">
 
@@ -1306,8 +1651,16 @@ input[type="date"]::-webkit-date-and-time-value {
     </div>
 
     <div class="form-card">
-      <div class="form-heading">LAST 5 LOGGED MATCHES</div>
-      <div id="formRow" class="form-row"></div>
+
+      <div class="form-heading">
+        LAST 5 LOGGED MATCHES
+      </div>
+
+      <div
+        id="formRow"
+        class="form-row"
+      ></div>
+
     </div>
 
   </div>
@@ -1317,42 +1670,95 @@ input[type="date"]::-webkit-date-and-time-value {
     <h3>Player Leaders</h3>
 
     <div class="leader">
+
       <div>
-        <div id="topScorerName" class="leader-name">No goals yet</div>
-        <div class="leader-detail">Top Goalscorer</div>
+
+        <div
+          id="topScorerName"
+          class="leader-name"
+        >
+          No goals yet
+        </div>
+
+        <div class="leader-detail">
+          Top Goalscorer
+        </div>
+
       </div>
-      <div id="topScorerGoals" class="leader-value">0</div>
+
+      <div
+        id="topScorerGoals"
+        class="leader-value"
+      >
+        0
+      </div>
+
     </div>
 
     <div class="leader">
+
       <div>
-        <div id="topAssisterName" class="leader-name">No assists yet</div>
-        <div class="leader-detail">Top Assists</div>
+
+        <div
+          id="topAssisterName"
+          class="leader-name"
+        >
+          No assists yet
+        </div>
+
+        <div class="leader-detail">
+          Top Assists
+        </div>
+
       </div>
-      <div id="topAssisterAssists" class="leader-value">0</div>
+
+      <div
+        id="topAssisterAssists"
+        class="leader-value"
+      >
+        0
+      </div>
+
     </div>
 
   </div>
 
 </div>
 
-<!-- SQUAD -->
+<!-- =====================================
+     SQUAD
+===================================== -->
 
 <div id="squad" class="page">
 
   <div class="page-header">
+
     <h2>Squad</h2>
-    <p id="squadSeasonSubtitle">Olympus FC · FC26</p>
+
+    <p id="squadSeasonSubtitle">
+      Olympus FC · FC26
+    </p>
+
   </div>
 
   <div class="season-switcher">
 
     <div>
-      <div class="season-switcher-label">VIEWING SEASON</div>
-      <div class="season-switcher-value seasonText">FC26</div>
+
+      <div class="season-switcher-label">
+        VIEWING SEASON
+      </div>
+
+      <div class="season-switcher-value seasonText">
+        FC26
+      </div>
+
     </div>
 
-    <select class="season-select season-selector" onchange="changeSeason(this.value)">
+    <select
+      class="season-select season-selector"
+      onchange="changeSeason(this.value)"
+    >
       <option value="FC26">FC26</option>
       <option value="FC27">FC27</option>
       <option value="ALL_TIME">All Time</option>
@@ -1364,23 +1770,40 @@ input[type="date"]::-webkit-date-and-time-value {
 
 </div>
 
-<!-- MATCHES -->
+<!-- =====================================
+     MATCHES
+===================================== -->
 
 <div id="matches" class="page">
 
   <div class="page-header">
+
     <h2>Matches</h2>
-    <p id="matchesSeasonSubtitle">Olympus FC · FC26</p>
+
+    <p id="matchesSeasonSubtitle">
+      Olympus FC · FC26
+    </p>
+
   </div>
 
   <div class="season-switcher">
 
     <div>
-      <div class="season-switcher-label">VIEWING SEASON</div>
-      <div class="season-switcher-value seasonText">FC26</div>
+
+      <div class="season-switcher-label">
+        VIEWING SEASON
+      </div>
+
+      <div class="season-switcher-value seasonText">
+        FC26
+      </div>
+
     </div>
 
-    <select class="season-select season-selector" onchange="changeSeason(this.value)">
+    <select
+      class="season-select season-selector"
+      onchange="changeSeason(this.value)"
+    >
       <option value="FC26">FC26</option>
       <option value="FC27">FC27</option>
       <option value="ALL_TIME">All Time</option>
@@ -1391,53 +1814,110 @@ input[type="date"]::-webkit-date-and-time-value {
   <div class="matches-summary">
 
     <div class="match-summary-box">
-      <div id="matchesPlayed" class="match-summary-number">0</div>
-      <div class="match-summary-label">Logged</div>
+
+      <div
+        id="matchesPlayed"
+        class="match-summary-number"
+      >
+        0
+      </div>
+
+      <div class="match-summary-label">
+        Logged
+      </div>
+
     </div>
 
     <div class="match-summary-box">
-      <div id="matchesWins" class="match-summary-number">0</div>
-      <div class="match-summary-label">Wins</div>
+
+      <div
+        id="matchesWins"
+        class="match-summary-number"
+      >
+        0
+      </div>
+
+      <div class="match-summary-label">
+        Wins
+      </div>
+
     </div>
 
     <div class="match-summary-box">
-      <div id="matchesGoals" class="match-summary-number">0</div>
-      <div class="match-summary-label">Goals</div>
+
+      <div
+        id="matchesGoals"
+        class="match-summary-number"
+      >
+        0
+      </div>
+
+      <div class="match-summary-label">
+        Goals
+      </div>
+
     </div>
 
   </div>
 
-  <button id="addMatchButton" class="add-match-button" onclick="openMatchForm()">
+  <button
+    id="addMatchButton"
+    class="add-match-button"
+    onclick="openMatchForm()"
+  >
     + Add Match
   </button>
 
-  <div id="allTimeMatchMessage" class="all-time-message">
-    All Time combines FC26 and FC27. To add a new match, select the season the match belongs to first.
+  <div
+    id="allTimeMatchMessage"
+    class="all-time-message"
+  >
+    All Time combines FC26 and FC27. To add a new match,
+    select the season the match belongs to first.
   </div>
 
-  <div class="match-list-title">Recorded Match History</div>
+  <div class="match-list-title">
+    Recorded Match History
+  </div>
 
   <div id="matchHistory"></div>
 
 </div>
 
-<!-- STATS -->
+<!-- =====================================
+     STATS
+===================================== -->
 
 <div id="stats" class="page">
 
   <div class="page-header">
+
     <h2>Player Stats</h2>
-    <p id="statsSeasonSubtitle">Olympus FC · FC26</p>
+
+    <p id="statsSeasonSubtitle">
+      Olympus FC · FC26
+    </p>
+
   </div>
 
   <div class="season-switcher">
 
     <div>
-      <div class="season-switcher-label">VIEWING SEASON</div>
-      <div class="season-switcher-value seasonText">FC26</div>
+
+      <div class="season-switcher-label">
+        VIEWING SEASON
+      </div>
+
+      <div class="season-switcher-value seasonText">
+        FC26
+      </div>
+
     </div>
 
-    <select class="season-select season-selector" onchange="changeSeason(this.value)">
+    <select
+      class="season-select season-selector"
+      onchange="changeSeason(this.value)"
+    >
       <option value="FC26">FC26</option>
       <option value="FC27">FC27</option>
       <option value="ALL_TIME">All Time</option>
@@ -1445,29 +1925,48 @@ input[type="date"]::-webkit-date-and-time-value {
 
   </div>
 
-  <div class="leaderboard-title">Ranked by goal contributions</div>
+  <div class="leaderboard-title">
+    Ranked by goal contributions
+  </div>
 
   <div id="statsLeaderboard"></div>
 
 </div>
 
-<!-- MORE -->
+<!-- =====================================
+     MORE
+===================================== -->
 
 <div id="more" class="page">
 
   <div class="more-hero">
+
     <h2>Club Hub</h2>
-    <p id="moreSeasonSubtitle">Olympus FC · FC26</p>
+
+    <p id="moreSeasonSubtitle">
+      Olympus FC · FC26
+    </p>
+
   </div>
 
   <div class="season-switcher">
 
     <div>
-      <div class="season-switcher-label">VIEWING SEASON</div>
-      <div class="season-switcher-value seasonText">FC26</div>
+
+      <div class="season-switcher-label">
+        VIEWING SEASON
+      </div>
+
+      <div class="season-switcher-value seasonText">
+        FC26
+      </div>
+
     </div>
 
-    <select class="season-select season-selector" onchange="changeSeason(this.value)">
+    <select
+      class="season-select season-selector"
+      onchange="changeSeason(this.value)"
+    >
       <option value="FC26">FC26</option>
       <option value="FC27">FC27</option>
       <option value="ALL_TIME">All Time</option>
@@ -1477,28 +1976,64 @@ input[type="date"]::-webkit-date-and-time-value {
 
   <div class="hub-section">
 
-    <div class="hub-heading">CLUB INFORMATION</div>
+    <div class="hub-heading">
+      CLUB INFORMATION
+    </div>
 
     <div class="hub-card">
 
       <div class="info-row">
-        <div class="info-label">Club</div>
-        <div class="info-value">Olympus FC</div>
+
+        <div class="info-label">
+          Club
+        </div>
+
+        <div class="info-value">
+          Olympus FC
+        </div>
+
       </div>
 
       <div class="info-row">
-        <div class="info-label">Stadium</div>
-        <div class="info-value">Mount Olympus</div>
+
+        <div class="info-label">
+          Stadium
+        </div>
+
+        <div class="info-value">
+          Mount Olympus
+        </div>
+
       </div>
 
       <div class="info-row">
-        <div class="info-label">Season</div>
-        <div id="moreSeason" class="info-value">FC26</div>
+
+        <div class="info-label">
+          Season
+        </div>
+
+        <div
+          id="moreSeason"
+          class="info-value"
+        >
+          FC26
+        </div>
+
       </div>
 
       <div class="info-row">
-        <div class="info-label">Current Division</div>
-        <div id="moreDivision" class="info-value">Division 5</div>
+
+        <div class="info-label">
+          Current Division
+        </div>
+
+        <div
+          id="moreDivision"
+          class="info-value"
+        >
+          Division 5
+        </div>
+
       </div>
 
     </div>
@@ -1507,7 +2042,9 @@ input[type="date"]::-webkit-date-and-time-value {
 
   <div class="hub-section">
 
-    <div class="hub-heading">LOGGED MATCH RECORD</div>
+    <div class="hub-heading">
+      LOGGED MATCH RECORD
+    </div>
 
     <div class="hub-record-grid">
 
@@ -1547,20 +2084,55 @@ input[type="date"]::-webkit-date-and-time-value {
 
   <div class="hub-section">
 
-    <div class="hub-heading">OLYMPUS FC</div>
+    <div class="hub-heading">
+      OLYMPUS FC
+    </div>
 
     <div class="hub-card">
 
-      <button class="hub-action gold" onclick="openRecordsPage()">
+      <button
+        class="hub-action gold"
+        onclick="openRecordsPage()"
+      >
 
         <div>
-          <div class="hub-action-main">🏆 Records & Awards</div>
+
+          <div class="hub-action-main">
+            🏆 Records & Awards
+          </div>
+
           <div class="hub-action-sub">
             Player leaders and recorded match records
           </div>
+
         </div>
 
-        <div class="hub-action-arrow">›</div>
+        <div class="hub-action-arrow">
+          ›
+        </div>
+
+      </button>
+
+      <button
+        class="hub-action blue"
+        onclick="openComparePage()"
+      >
+
+        <div>
+
+          <div class="hub-action-main">
+            ⚖️ Player Comparison
+          </div>
+
+          <div class="hub-action-sub">
+            Compare any two Olympus FC players side-by-side
+          </div>
+
+        </div>
+
+        <div class="hub-action-arrow">
+          ›
+        </div>
 
       </button>
 
@@ -1568,18 +2140,38 @@ input[type="date"]::-webkit-date-and-time-value {
 
   </div>
 
-  <div id="seasonSettingsSection" class="hub-section">
+  <div
+    id="seasonSettingsSection"
+    class="hub-section"
+  >
 
-    <div class="hub-heading">SEASON SETTINGS</div>
+    <div class="hub-heading">
+      SEASON SETTINGS
+    </div>
 
     <div class="hub-card">
 
-      <button class="hub-action blue" onclick="openDivisionModal()">
+      <button
+        class="hub-action blue"
+        onclick="openDivisionModal()"
+      >
+
         <div>
-          <div class="hub-action-main">Change Division</div>
-          <div class="hub-action-sub">Update this season's current division</div>
+
+          <div class="hub-action-main">
+            Change Division
+          </div>
+
+          <div class="hub-action-sub">
+            Update this season's current division
+          </div>
+
         </div>
-        <div class="hub-action-arrow">›</div>
+
+        <div class="hub-action-arrow">
+          ›
+        </div>
+
       </button>
 
     </div>
@@ -1588,45 +2180,82 @@ input[type="date"]::-webkit-date-and-time-value {
 
   <div class="hub-section">
 
-    <div class="hub-heading">DATA & BACKUP</div>
+    <div class="hub-heading">
+      DATA & BACKUP
+    </div>
 
     <div class="hub-card">
 
-      <button class="hub-action blue" onclick="exportBackup()">
+      <button
+        class="hub-action blue"
+        onclick="exportBackup()"
+      >
 
         <div>
-          <div class="hub-action-main">Export Full Backup</div>
-          <div class="hub-action-sub">Save FC26 and FC27 data together</div>
+
+          <div class="hub-action-main">
+            Export Full Backup
+          </div>
+
+          <div class="hub-action-sub">
+            Save FC26 and FC27 data together
+          </div>
+
         </div>
 
-        <div class="hub-action-arrow">↓</div>
+        <div class="hub-action-arrow">
+          ↓
+        </div>
 
       </button>
 
-      <button class="hub-action blue" onclick="chooseBackupFile()">
+      <button
+        class="hub-action blue"
+        onclick="chooseBackupFile()"
+      >
 
         <div>
-          <div class="hub-action-main">Restore Backup</div>
-          <div class="hub-action-sub">Restore your Olympus FC tracker data</div>
+
+          <div class="hub-action-main">
+            Restore Backup
+          </div>
+
+          <div class="hub-action-sub">
+            Restore your Olympus FC tracker data
+          </div>
+
         </div>
 
-        <div class="hub-action-arrow">↑</div>
+        <div class="hub-action-arrow">
+          ↑
+        </div>
 
       </button>
 
-      <button id="resetSeasonButton" class="hub-action danger" onclick="resetSeasonData()">
+      <button
+        id="resetSeasonButton"
+        class="hub-action danger"
+        onclick="resetSeasonData()"
+      >
 
         <div>
-          <div id="resetSeasonTitle" class="hub-action-main">
+
+          <div
+            id="resetSeasonTitle"
+            class="hub-action-main"
+          >
             Reset Logged FC26 Data
           </div>
 
           <div class="hub-action-sub">
             Historical imported totals are kept safe
           </div>
+
         </div>
 
-        <div class="hub-action-arrow">›</div>
+        <div class="hub-action-arrow">
+          ›
+        </div>
 
       </button>
 
@@ -1644,19 +2273,29 @@ input[type="date"]::-webkit-date-and-time-value {
 
 </div>
 
-<!-- RECORDS -->
+<!-- =====================================
+     RECORDS
+===================================== -->
 
 <div id="records" class="page">
 
   <div class="records-top">
 
-    <button class="records-back" onclick="closeRecordsPage()">
+    <button
+      class="records-back"
+      onclick="closeRecordsPage()"
+    >
       ‹ Back to More
     </button>
 
-    <h2 class="records-title">Records & Awards</h2>
+    <h2 class="records-title">
+      Records & Awards
+    </h2>
 
-    <div id="recordsSubtitle" class="records-subtitle">
+    <div
+      id="recordsSubtitle"
+      class="records-subtitle"
+    >
       Olympus FC · FC26
     </div>
 
@@ -1694,56 +2333,257 @@ input[type="date"]::-webkit-date-and-time-value {
 
 </div>
 
+<!-- =====================================
+     PLAYER COMPARISON
+===================================== -->
+
+<div id="compare" class="page">
+
+  <div class="compare-top">
+
+    <button
+      class="compare-back"
+      onclick="closeComparePage()"
+    >
+      ‹ Back to More
+    </button>
+
+    <h2 class="compare-title">
+      Player Comparison
+    </h2>
+
+    <div
+      id="compareSubtitle"
+      class="compare-subtitle"
+    >
+      Olympus FC · FC26
+    </div>
+
+  </div>
+
+  <div class="compare-section">
+
+    <div class="compare-season-box">
+
+      <div class="compare-season-label">
+        COMPARING STATS FROM
+      </div>
+
+      <div
+        id="compareSeasonValue"
+        class="compare-season-value"
+      >
+        FC26
+      </div>
+
+    </div>
+
+    <div class="compare-selectors">
+
+      <div class="compare-selector-box">
+
+        <div class="compare-select-label">
+          PLAYER 1
+        </div>
+
+        <select
+          id="comparePlayer1"
+          class="compare-player-select"
+          onchange="comparisonPlayerChanged('left')"
+        ></select>
+
+      </div>
+
+      <div class="compare-vs">
+        VS
+      </div>
+
+      <div class="compare-selector-box">
+
+        <div class="compare-select-label">
+          PLAYER 2
+        </div>
+
+        <select
+          id="comparePlayer2"
+          class="compare-player-select"
+          onchange="comparisonPlayerChanged('right')"
+        ></select>
+
+      </div>
+
+    </div>
+
+    <div class="compare-player-heads">
+
+      <div class="compare-player-head">
+
+        <div
+          id="compareLeftNumber"
+          class="compare-number"
+        >
+          40
+        </div>
+
+        <div
+          id="compareLeftName"
+          class="compare-player-name"
+        >
+          Tyrone Dean
+        </div>
+
+        <div
+          id="compareLeftMeta"
+          class="compare-player-meta"
+        >
+          CM · England
+        </div>
+
+      </div>
+
+      <div class="compare-vs-main">
+        VS
+      </div>
+
+      <div class="compare-player-head">
+
+        <div
+          id="compareRightNumber"
+          class="compare-number"
+        >
+          78
+        </div>
+
+        <div
+          id="compareRightName"
+          class="compare-player-name"
+        >
+          Baganor Jamba
+        </div>
+
+        <div
+          id="compareRightMeta"
+          class="compare-player-meta"
+        >
+          CM · DR Congo
+        </div>
+
+      </div>
+
+    </div>
+
+    <div
+      id="comparisonTable"
+      class="compare-table"
+    ></div>
+
+    <div class="compare-summary">
+
+      <div class="compare-summary-title">
+        CATEGORY SCORE
+      </div>
+
+      <div
+        id="compareSummaryResult"
+        class="compare-summary-result"
+      ></div>
+
+      <div
+        id="compareSummarySub"
+        class="compare-summary-sub"
+      ></div>
+
+    </div>
+
+  </div>
+
 </div>
 
-<!-- NAV -->
+</div>
 
-<div id="bottomNav" class="nav">
+<!-- =====================================
+     NAVIGATION
+===================================== -->
 
-  <div class="nav-item active" onclick="showPage('home',this)">
+<div
+  id="bottomNav"
+  class="nav"
+>
+
+  <div
+    class="nav-item active"
+    onclick="showPage('home',this)"
+  >
     <span class="nav-icon">⌂</span>
     Home
   </div>
 
-  <div class="nav-item" onclick="showPage('squad',this)">
+  <div
+    class="nav-item"
+    onclick="showPage('squad',this)"
+  >
     <span class="nav-icon">♟</span>
     Squad
   </div>
 
-  <div class="nav-item" onclick="showPage('matches',this)">
+  <div
+    class="nav-item"
+    onclick="showPage('matches',this)"
+  >
     <span class="nav-icon">⚽</span>
     Matches
   </div>
 
-  <div class="nav-item" onclick="showPage('stats',this)">
+  <div
+    class="nav-item"
+    onclick="showPage('stats',this)"
+  >
     <span class="nav-icon">▥</span>
     Stats
   </div>
 
-  <div class="nav-item" onclick="showPage('more',this)">
+  <div
+    class="nav-item"
+    onclick="showPage('more',this)"
+  >
     <span class="nav-icon">•••</span>
     More
   </div>
 
 </div>
 
-<!-- DIVISION MODAL -->
+<!-- =====================================
+     DIVISION MODAL
+===================================== -->
 
-<div id="divisionModal" class="modal">
+<div
+  id="divisionModal"
+  class="modal"
+>
 
   <div class="modal-card small-modal-card">
 
-    <div class="modal-title">Club Division</div>
+    <div class="modal-title">
+      Club Division
+    </div>
 
-    <div id="divisionModalSubtitle" class="modal-subtitle">
+    <div
+      id="divisionModalSubtitle"
+      class="modal-subtitle"
+    >
       Update Olympus FC's division.
     </div>
 
     <div class="form-group">
 
-      <label class="form-label">Current Division</label>
+      <label class="form-label">
+        Current Division
+      </label>
 
-      <select id="divisionSelect" class="form-control">
+      <select
+        id="divisionSelect"
+        class="form-control"
+      >
         <option>Division 5</option>
         <option>Division 4</option>
         <option>Division 3</option>
@@ -1756,11 +2596,17 @@ input[type="date"]::-webkit-date-and-time-value {
 
     <div class="form-buttons">
 
-      <button class="cancel-button" onclick="closeDivisionModal()">
+      <button
+        class="cancel-button"
+        onclick="closeDivisionModal()"
+      >
         Cancel
       </button>
 
-      <button class="save-button" onclick="saveDivision()">
+      <button
+        class="save-button"
+        onclick="saveDivision()"
+      >
         Save Division
       </button>
 
@@ -1770,15 +2616,22 @@ input[type="date"]::-webkit-date-and-time-value {
 
 </div>
 
-<!-- MATCH MODAL -->
+<!-- =====================================
+     MATCH MODAL
+===================================== -->
 
-<div id="matchModal" class="modal">
+<div
+  id="matchModal"
+  class="modal"
+>
 
 <div class="modal-card">
 
 <div id="matchStep1">
 
-  <div class="step-indicator">STEP 1 OF 2</div>
+  <div class="step-indicator">
+    STEP 1 OF 2
+  </div>
 
   <div class="match-season-banner">
 
@@ -1786,33 +2639,64 @@ input[type="date"]::-webkit-date-and-time-value {
       ADDING MATCH TO
     </div>
 
-    <div id="matchEntrySeason" class="match-season-banner-value">
+    <div
+      id="matchEntrySeason"
+      class="match-season-banner-value"
+    >
       FC26
     </div>
 
   </div>
 
-  <div class="modal-title">Add Match</div>
+  <div class="modal-title">
+    Add Match
+  </div>
 
-  <div id="addMatchSubtitle" class="modal-subtitle">
+  <div
+    id="addMatchSubtitle"
+    class="modal-subtitle"
+  >
     Enter your Olympus FC result.
   </div>
 
   <div class="form-group">
-    <label class="form-label">Opponent</label>
-    <input id="opponent" class="form-control" placeholder="e.g. Test FC">
+
+    <label class="form-label">
+      Opponent
+    </label>
+
+    <input
+      id="opponent"
+      class="form-control"
+      placeholder="e.g. Test FC"
+    >
+
   </div>
 
   <div class="form-group">
-    <label class="form-label">Date</label>
-    <input id="matchDate" class="form-control" type="date">
+
+    <label class="form-label">
+      Date
+    </label>
+
+    <input
+      id="matchDate"
+      class="form-control"
+      type="date"
+    >
+
   </div>
 
   <div class="form-group">
 
-    <label class="form-label">Match Type</label>
+    <label class="form-label">
+      Match Type
+    </label>
 
-    <select id="matchType" class="form-control">
+    <select
+      id="matchType"
+      class="form-control"
+    >
       <option>League</option>
       <option>Promotion</option>
       <option>Playoffs</option>
@@ -1838,7 +2722,9 @@ input[type="date"]::-webkit-date-and-time-value {
 
     </div>
 
-    <div class="score-divider">–</div>
+    <div class="score-divider">
+      –
+    </div>
 
     <div class="form-group">
 
@@ -1857,15 +2743,24 @@ input[type="date"]::-webkit-date-and-time-value {
 
   </div>
 
-  <div id="matchError" class="form-error"></div>
+  <div
+    id="matchError"
+    class="form-error"
+  ></div>
 
   <div class="form-buttons">
 
-    <button class="cancel-button" onclick="closeMatchForm()">
+    <button
+      class="cancel-button"
+      onclick="closeMatchForm()"
+    >
       Cancel
     </button>
 
-    <button class="save-button" onclick="continueToPlayerStats()">
+    <button
+      class="save-button"
+      onclick="continueToPlayerStats()"
+    >
       Continue
     </button>
 
@@ -1873,7 +2768,10 @@ input[type="date"]::-webkit-date-and-time-value {
 
 </div>
 
-<div id="matchStep2" style="display:none">
+<div
+  id="matchStep2"
+  style="display:none"
+>
 
   <div class="step-indicator">
     STEP 2 OF 2
@@ -1885,7 +2783,10 @@ input[type="date"]::-webkit-date-and-time-value {
       ADDING MATCH TO
     </div>
 
-    <div id="matchEntrySeasonStep2" class="match-season-banner-value">
+    <div
+      id="matchEntrySeasonStep2"
+      class="match-season-banner-value"
+    >
       FC26
     </div>
 
@@ -1895,19 +2796,31 @@ input[type="date"]::-webkit-date-and-time-value {
     Player Stats
   </div>
 
-  <div id="playerStatsSubtitle" class="modal-subtitle"></div>
+  <div
+    id="playerStatsSubtitle"
+    class="modal-subtitle"
+  ></div>
 
   <div id="playerEntryList"></div>
 
-  <div id="playerError" class="form-error"></div>
+  <div
+    id="playerError"
+    class="form-error"
+  ></div>
 
   <div class="form-buttons">
 
-    <button class="cancel-button" onclick="backToMatchDetails()">
+    <button
+      class="cancel-button"
+      onclick="backToMatchDetails()"
+    >
       Back
     </button>
 
-    <button class="save-button" onclick="finishMatch()">
+    <button
+      class="save-button"
+      onclick="finishMatch()"
+    >
       Finish Match
     </button>
 
@@ -1920,9 +2833,9 @@ input[type="date"]::-webkit-date-and-time-value {
 
 <script>
 
-/* =====================================================
-   OLYMPUS FC DATA
-===================================================== */
+/* ========================================
+   PLAYERS
+======================================== */
 
 const players = [
 
@@ -1972,6 +2885,10 @@ const players = [
   }
 
 ];
+
+/* ========================================
+   FC26 HISTORICAL BASELINE
+======================================== */
 
 const FC26_BASELINE = {
 
@@ -2049,9 +2966,39 @@ if(
 
 let pendingMatch = null;
 
-/* =====================================================
+let comparisonPlayer1 = "tyrone";
+let comparisonPlayer2 = "baganor";
+
+/* ========================================
+   HELPERS
+======================================== */
+
+function el(id){
+
+  return document.getElementById(id);
+
+}
+
+function seasonLabel(season){
+
+  return season === "ALL_TIME"
+    ? "ALL TIME"
+    : season;
+
+}
+
+function getPlayer(playerId){
+
+  return players.find(
+    player =>
+      player.id === playerId
+  );
+
+}
+
+/* ========================================
    STORAGE
-===================================================== */
+======================================== */
 
 function createDefaultSeasonData(){
 
@@ -2138,8 +3085,10 @@ function loadSeasonData(){
       oldDivision
     )
   ){
+
     newData.FC26.division =
       oldDivision;
+
   }
 
   localStorage.setItem(
@@ -2148,6 +3097,7 @@ function loadSeasonData(){
   );
 
   return newData;
+
 }
 
 let seasonData =
@@ -2164,40 +3114,21 @@ function saveSeasonData(){
 
 }
 
-function el(id){
-
-  return document.getElementById(id);
-
-}
-
-function seasonLabel(season){
-
-  if(
-    season==="ALL_TIME"
-  ){
-    return "ALL TIME";
-  }
-
-  return season;
-
-}
-
 function currentMatches(){
 
   if(
-    activeSeason==="ALL_TIME"
+    activeSeason === "ALL_TIME"
   ){
 
     return [
 
       ...seasonData.FC27.matches,
-
       ...seasonData.FC26.matches
 
     ].sort(
       (a,b)=>
-        Number(b.id||0) -
-        Number(a.id||0)
+        Number(b.id || 0) -
+        Number(a.id || 0)
     );
 
   }
@@ -2208,14 +3139,13 @@ function currentMatches(){
 
 }
 
-/* =====================================================
+/* ========================================
    SEASON SWITCHING
-===================================================== */
+======================================== */
 
 function changeSeason(season){
 
-  activeSeason =
-    season;
+  activeSeason = season;
 
   localStorage.setItem(
     ACTIVE_SEASON_KEY,
@@ -2225,6 +3155,26 @@ function changeSeason(season){
   syncSeasonSelectors();
 
   renderEverything();
+
+  if(
+    el("compare").classList.contains(
+      "active"
+    )
+  ){
+
+    renderComparison();
+
+  }
+
+  if(
+    el("records").classList.contains(
+      "active"
+    )
+  ){
+
+    renderRecordsPage();
+
+  }
 
   window.scrollTo(0,0);
 
@@ -2256,54 +3206,67 @@ function syncSeasonSelectors(){
       }
     );
 
-  el("homeSeasonValue").textContent =
+  const displaySeason =
     seasonLabel(
       activeSeason
     );
 
-  const displaySeason =
-    activeSeason==="ALL_TIME"
-      ? "ALL TIME"
-      : activeSeason;
+  el(
+    "homeSeasonValue"
+  ).textContent =
+    displaySeason;
 
   el(
     "squadSeasonSubtitle"
   ).textContent =
-    "Olympus FC · "+
+    "Olympus FC · " +
     displaySeason;
 
   el(
     "matchesSeasonSubtitle"
   ).textContent =
-    "Olympus FC · "+
+    "Olympus FC · " +
     displaySeason;
 
   el(
     "statsSeasonSubtitle"
   ).textContent =
-    "Olympus FC · "+
+    "Olympus FC · " +
     displaySeason;
 
   el(
     "moreSeasonSubtitle"
   ).textContent =
-    "Olympus FC · "+
+    "Olympus FC · " +
     displaySeason;
 
   el(
     "recordsSubtitle"
   ).textContent =
-    "Olympus FC · "+
+    "Olympus FC · " +
     displaySeason;
 
-  el("moreSeason").textContent =
+  el(
+    "compareSubtitle"
+  ).textContent =
+    "Olympus FC · " +
+    displaySeason;
+
+  el(
+    "compareSeasonValue"
+  ).textContent =
+    displaySeason;
+
+  el(
+    "moreSeason"
+  ).textContent =
     displaySeason;
 
 }
 
-/* =====================================================
+/* ========================================
    NAVIGATION
-===================================================== */
+======================================== */
 
 function showPage(
   pageId,
@@ -2347,10 +3310,11 @@ function showPage(
 
   }
 
-  el("bottomNav")
-    .classList.remove(
-      "hidden"
-    );
+  el(
+    "bottomNav"
+  ).classList.remove(
+    "hidden"
+  );
 
   renderEverything();
 
@@ -2358,14 +3322,14 @@ function showPage(
 
 }
 
-/* =====================================================
+/* ========================================
    DIVISION
-===================================================== */
+======================================== */
 
 function renderDivision(){
 
   if(
-    activeSeason==="ALL_TIME"
+    activeSeason === "ALL_TIME"
   ){
 
     el(
@@ -2427,24 +3391,25 @@ function renderDivision(){
           "division-step";
 
         if(
-          index <
-          currentIndex
+          index < currentIndex
         ){
+
           className +=
             " complete";
+
         }
 
         if(
-          index ===
-          currentIndex
+          index === currentIndex
         ){
+
           className +=
             " current";
+
         }
 
         return `
-          <div class="${className}">
-          </div>
+          <div class="${className}"></div>
         `;
 
       }
@@ -2455,7 +3420,7 @@ function renderDivision(){
 function openDivisionModal(){
 
   if(
-    activeSeason==="ALL_TIME"
+    activeSeason === "ALL_TIME"
   ){
     return;
   }
@@ -2499,7 +3464,7 @@ function closeDivisionModal(){
 function saveDivision(){
 
   if(
-    activeSeason==="ALL_TIME"
+    activeSeason === "ALL_TIME"
   ){
     return;
   }
@@ -2519,9 +3484,9 @@ function saveDivision(){
 
 }
 
-/* =====================================================
-   MATCH FORM
-===================================================== */
+/* ========================================
+   DATES
+======================================== */
 
 function localDate(){
 
@@ -2562,7 +3527,7 @@ function formatDate(
   }
 
   return new Date(
-    dateString+
+    dateString +
     "T12:00:00"
   ).toLocaleDateString(
     "en-GB",
@@ -2575,10 +3540,14 @@ function formatDate(
 
 }
 
+/* ========================================
+   MATCH ENTRY
+======================================== */
+
 function openMatchForm(){
 
   if(
-    activeSeason==="ALL_TIME"
+    activeSeason === "ALL_TIME"
   ){
     return;
   }
@@ -2622,10 +3591,6 @@ function openMatchForm(){
   ).classList.remove(
     "show"
   );
-
-  /*
-    VERY CLEAR SEASON WARNING
-  */
 
   el(
     "matchEntrySeason"
@@ -2783,14 +3748,20 @@ function continueToPlayerStats(){
     olympusScore >
     opponentScore
   ){
-    result = "W";
+
+    result =
+      "W";
+
   }
 
   if(
     olympusScore <
     opponentScore
   ){
-    result = "L";
+
+    result =
+      "L";
+
   }
 
   pendingMatch = {
@@ -2958,13 +3929,13 @@ function togglePlayer(
 
   const played =
     el(
-      "played-"+
+      "played-" +
       playerId
     ).checked;
 
   const entry =
     el(
-      "entry-"+
+      "entry-" +
       playerId
     );
 
@@ -2978,23 +3949,21 @@ function togglePlayer(
 
       const control =
         el(
-          prefix+
+          prefix +
           playerId
         );
 
-      if(
-        control
-      ){
+      if(control){
+
         control.disabled =
           !played;
+
       }
 
     }
   );
 
-  if(
-    played
-  ){
+  if(played){
 
     entry.classList.remove(
       "not-played"
@@ -3051,7 +4020,7 @@ function finishMatch(){
 
     const played =
       el(
-        "played-"+
+        "played-" +
         player.id
       ).checked;
 
@@ -3059,7 +4028,7 @@ function finishMatch(){
       played
         ? Number(
             el(
-              "goals-"+
+              "goals-" +
               player.id
             ).value
           ) || 0
@@ -3069,7 +4038,7 @@ function finishMatch(){
       played
         ? Number(
             el(
-              "assists-"+
+              "assists-" +
               player.id
             ).value
           ) || 0
@@ -3078,7 +4047,7 @@ function finishMatch(){
     const ratingText =
       played
         ? el(
-            "rating-"+
+            "rating-" +
             player.id
           ).value
         : "";
@@ -3101,7 +4070,7 @@ function finishMatch(){
       el(
         "playerError"
       ).textContent =
-        player.name+
+        player.name +
         "'s rating must be between 0 and 10.";
 
       el(
@@ -3180,9 +4149,9 @@ function finishMatch(){
 
 }
 
-/* =====================================================
+/* ========================================
    CLUB STATS
-===================================================== */
+======================================== */
 
 function calculateClubStats(){
 
@@ -3194,41 +4163,44 @@ function calculateClubStats(){
 
   const wins =
     matches.filter(
-      m=>m.result==="W"
+      match=>
+        match.result === "W"
     ).length;
 
   const draws =
     matches.filter(
-      m=>m.result==="D"
+      match=>
+        match.result === "D"
     ).length;
 
   const losses =
     matches.filter(
-      m=>m.result==="L"
+      match=>
+        match.result === "L"
     ).length;
 
   const goalsFor =
     matches.reduce(
-      (total,m)=>
-        total+
+      (total,match)=>
+        total +
         Number(
-          m.olympusScore||0
+          match.olympusScore || 0
         ),
       0
     );
 
   const goalsAgainst =
     matches.reduce(
-      (total,m)=>
-        total+
+      (total,match)=>
+        total +
         Number(
-          m.opponentScore||0
+          match.opponentScore || 0
         ),
       0
     );
 
   const winRate =
-    played===0
+    played === 0
       ? 0
       : Math.round(
           (
@@ -3257,9 +4229,9 @@ function calculateClubStats(){
 
 }
 
-/* =====================================================
-   PLAYER TOTALS
-===================================================== */
+/* ========================================
+   PLAYER STATS
+======================================== */
 
 function blankPlayerTotal(){
 
@@ -3363,8 +4335,8 @@ function calculatePlayerStats(){
   );
 
   if(
-    activeSeason==="FC26" ||
-    activeSeason==="ALL_TIME"
+    activeSeason === "FC26" ||
+    activeSeason === "ALL_TIME"
   ){
 
     addFC26Baseline(
@@ -3421,14 +4393,14 @@ function calculatePlayerStats(){
             player.id
           ].goals +=
             Number(
-              stat.goals||0
+              stat.goals || 0
             );
 
           totals[
             player.id
           ].assists +=
             Number(
-              stat.assists||0
+              stat.assists || 0
             );
 
           if(
@@ -3480,7 +4452,7 @@ function calculatePlayerStats(){
         stat.assists;
 
       stat.averageRating =
-        stat.ratedAppearances===0
+        stat.ratedAppearances === 0
           ? null
           : stat.ratingSum /
             stat.ratedAppearances;
@@ -3492,9 +4464,9 @@ function calculatePlayerStats(){
 
 }
 
-/* =====================================================
+/* ========================================
    HOME
-===================================================== */
+======================================== */
 
 function renderHome(){
 
@@ -3505,7 +4477,7 @@ function renderHome(){
     calculatePlayerStats();
 
   if(
-    activeSeason==="FC26"
+    activeSeason === "FC26"
   ){
 
     el(
@@ -3520,11 +4492,11 @@ function renderHome(){
 
     el(
       "historicalNote"
-    ).innerHTML =
+    ).textContent =
       "FC26 player career totals include the historical snapshot imported from the Olympus FC database. New FC26 matches are added on top.";
 
   }else if(
-    activeSeason==="FC27"
+    activeSeason === "FC27"
   ){
 
     el(
@@ -3539,7 +4511,7 @@ function renderHome(){
 
     el(
       "historicalNote"
-    ).innerHTML =
+    ).textContent =
       "FC27 begins from zero. Every match and player performance you enter will build this season automatically.";
 
   }else{
@@ -3556,7 +4528,7 @@ function renderHome(){
 
     el(
       "historicalNote"
-    ).innerHTML =
+    ).textContent =
       "All Time combines the imported FC26 totals with all FC26 and FC27 matches recorded in the tracker.";
 
   }
@@ -3579,7 +4551,7 @@ function renderHome(){
   el(
     "homeWinRate"
   ).textContent =
-    club.winRate+
+    club.winRate +
     "%";
 
   el(
@@ -3614,8 +4586,8 @@ function renderHome(){
   el(
     "recordGD"
   ).textContent =
-    gd>0
-      ? "+"+gd
+    gd > 0
+      ? "+" + gd
       : gd;
 
   const recent =
@@ -3632,34 +4604,34 @@ function renderHome(){
     match=>{
 
       const cls =
-        match.result==="W"
+        match.result === "W"
           ? "form-w"
-          : match.result==="L"
+          : match.result === "L"
             ? "form-l"
             : "form-d";
 
       formHTML +=
         `
-        <div class="form-pill ${cls}">
-          ${match.result}
-        </div>
+          <div class="form-pill ${cls}">
+            ${match.result}
+          </div>
         `;
 
     }
   );
 
   for(
-    let i=
+    let i =
       recent.length;
-    i<5;
+    i < 5;
     i++
   ){
 
     formHTML +=
       `
-      <div class="form-pill form-empty">
-        —
-      </div>
+        <div class="form-pill form-empty">
+          —
+        </div>
       `;
 
   }
@@ -3727,9 +4699,9 @@ function renderHome(){
 
 }
 
-/* =====================================================
+/* ========================================
    SQUAD
-===================================================== */
+======================================== */
 
 function renderSquad(){
 
@@ -3772,9 +4744,9 @@ function renderSquad(){
               ${
                 player.captain
                   ? `
-                    <span class="captain">
-                      DUAL CAPTAIN
-                    </span>
+                      <span class="captain">
+                        DUAL CAPTAIN
+                      </span>
                     `
                   : ""
               }
@@ -3832,9 +4804,9 @@ function renderSquad(){
 
 }
 
-/* =====================================================
-   MATCHES
-===================================================== */
+/* ========================================
+   MATCH LIST
+======================================== */
 
 function renderMatches(){
 
@@ -3860,7 +4832,7 @@ function renderMatches(){
     club.goalsFor;
 
   if(
-    activeSeason==="ALL_TIME"
+    activeSeason === "ALL_TIME"
   ){
 
     el(
@@ -3888,7 +4860,7 @@ function renderMatches(){
   }
 
   if(
-    matches.length===0
+    matches.length === 0
   ){
 
     el(
@@ -3905,7 +4877,7 @@ function renderMatches(){
         <div class="empty-text">
 
           ${
-            activeSeason==="FC26"
+            activeSeason === "FC26"
               ? "Historical FC26 player totals are already imported. Individual match history will appear here as you enter results."
               : "Your match history will appear here once matches are added."
           }
@@ -3927,16 +4899,16 @@ function renderMatches(){
       match=>{
 
         const resultClass =
-          match.result==="W"
+          match.result === "W"
             ? "result-win"
-            : match.result==="L"
+            : match.result === "L"
               ? "result-loss"
               : "result-draw";
 
         const resultText =
-          match.result==="W"
+          match.result === "W"
             ? "WIN"
-            : match.result==="L"
+            : match.result === "L"
               ? "LOSS"
               : "DRAW";
 
@@ -3957,11 +4929,11 @@ function renderMatches(){
               </div>
 
               ${
-                activeSeason==="ALL_TIME"
+                activeSeason === "ALL_TIME"
                   ? `
-                    <div class="match-season">
-                      ${match.season || "FC26"}
-                    </div>
+                      <div class="match-season">
+                        ${match.season || "FC26"}
+                      </div>
                     `
                   : ""
               }
@@ -3995,9 +4967,9 @@ function renderMatches(){
 
 }
 
-/* =====================================================
-   STATS
-===================================================== */
+/* ========================================
+   STATS PAGE
+======================================== */
 
 function renderStatsPage(){
 
@@ -4018,9 +4990,11 @@ function renderStatsPage(){
             ].contributions;
 
           if(
-            difference!==0
+            difference !== 0
           ){
+
             return difference;
+
           }
 
           return (
@@ -4122,7 +5096,7 @@ function renderStatsPage(){
               <div class="stats-box-number">
 
                 ${
-                  stat.averageRating===null
+                  stat.averageRating === null
                     ? "—"
                     : stat.averageRating.toFixed(2)
                 }
@@ -4155,9 +5129,9 @@ function renderStatsPage(){
 
 }
 
-/* =====================================================
+/* ========================================
    MORE
-===================================================== */
+======================================== */
 
 function renderMorePage(){
 
@@ -4195,7 +5169,7 @@ function renderMorePage(){
     club.goalsAgainst;
 
   if(
-    activeSeason==="ALL_TIME"
+    activeSeason === "ALL_TIME"
   ){
 
     el(
@@ -4226,9 +5200,9 @@ function renderMorePage(){
 
 }
 
-/* =====================================================
-   RECORDS
-===================================================== */
+/* ========================================
+   RECORDS NAVIGATION
+======================================== */
 
 function openRecordsPage(){
 
@@ -4286,6 +5260,10 @@ function closeRecordsPage(){
 
 }
 
+/* ========================================
+   RECORDS PAGE
+======================================== */
+
 function renderRecordsPage(){
 
   const totals =
@@ -4312,8 +5290,7 @@ function renderRecordsPage(){
       player=>
         totals[
           player.id
-        ][field]
-        ===
+        ][field] ===
         max
     );
 
@@ -4385,8 +5362,8 @@ function renderRecordsPage(){
               ${
                 holders
                   .map(
-                    p=>
-                      `#${p.number} ${p.name}`
+                    player=>
+                      `#${player.number} ${player.name}`
                   )
                   .join(
                     " / "
@@ -4413,7 +5390,8 @@ function renderRecordsPage(){
       player=>
         totals[
           player.id
-        ].averageRating !== null
+        ].averageRating !==
+        null
     );
 
   if(
@@ -4456,8 +5434,8 @@ function renderRecordsPage(){
             ${
               holders
                 .map(
-                  p=>
-                    `#${p.number} ${p.name}`
+                  player=>
+                    `#${player.number} ${player.name}`
                 )
                 .join(
                   " / "
@@ -4486,17 +5464,10 @@ function renderRecordsPage(){
   const matches =
     currentMatches();
 
-  const singleGoals =
-    [];
-
-  const singleAssists =
-    [];
-
-  const singleGA =
-    [];
-
-  const singleRating =
-    [];
+  const singleGoals = [];
+  const singleAssists = [];
+  const singleGA = [];
+  const singleRating = [];
 
   matches.forEach(
     match=>{
@@ -4524,12 +5495,12 @@ function renderRecordsPage(){
 
           const goals =
             Number(
-              stat.goals||0
+              stat.goals || 0
             );
 
           const assists =
             Number(
-              stat.assists||0
+              stat.assists || 0
             );
 
           singleGoals.push({
@@ -4548,7 +5519,7 @@ function renderRecordsPage(){
             player,
             match,
             value:
-              goals+
+              goals +
               assists
           });
 
@@ -4610,14 +5581,15 @@ function renderRecordsPage(){
     const max =
       Math.max(
         ...records.map(
-          r=>r.value
+          record=>
+            record.value
         )
       );
 
     const holders =
       records.filter(
-        r=>
-          r.value===max
+        record=>
+          record.value === max
       );
 
     const first =
@@ -4636,8 +5608,8 @@ function renderRecordsPage(){
           ${
             holders
               .map(
-                r=>
-                  `#${r.player.number} ${r.player.name}`
+                record=>
+                  `#${record.player.number} ${record.player.name}`
               )
               .join(
                 " / "
@@ -4653,14 +5625,12 @@ function renderRecordsPage(){
         <div class="single-record-meta">
 
           vs ${first.match.opponent}
-
           ·
-
           ${formatDate(first.match.date)}
 
           ${
-            activeSeason==="ALL_TIME"
-              ? " · "+
+            activeSeason === "ALL_TIME"
+              ? " · " +
                 (
                   first.match.season ||
                   "FC26"
@@ -4728,20 +5698,23 @@ function renderRecordsPage(){
 
       const gf =
         Number(
-          match.olympusScore||0
+          match.olympusScore ||
+          0
         );
 
       const ga =
         Number(
-          match.opponentScore||0
+          match.opponentScore ||
+          0
         );
 
       if(
-        match.result==="W"
+        match.result === "W"
       ){
 
         const margin =
-          gf-ga;
+          gf -
+          ga;
 
         if(
           !biggestWin ||
@@ -4759,11 +5732,12 @@ function renderRecordsPage(){
       }
 
       if(
-        match.result==="L"
+        match.result === "L"
       ){
 
         const margin =
-          ga-gf;
+          ga -
+          gf;
 
         if(
           !biggestDefeat ||
@@ -4784,7 +5758,8 @@ function renderRecordsPage(){
         !mostGoalsMatch ||
         gf >
         Number(
-          mostGoalsMatch.olympusScore||0
+          mostGoalsMatch.olympusScore ||
+          0
         )
       ){
 
@@ -4801,10 +5776,10 @@ function renderRecordsPage(){
       .sort(
         (a,b)=>
           Number(
-            a.id||0
+            a.id || 0
           ) -
           Number(
-            b.id||0
+            b.id || 0
           )
       );
 
@@ -4824,7 +5799,7 @@ function renderRecordsPage(){
     match=>{
 
       if(
-        match.result==="W"
+        match.result === "W"
       ){
 
         currentWin++;
@@ -4843,7 +5818,7 @@ function renderRecordsPage(){
       }
 
       if(
-        match.result!=="L"
+        match.result !== "L"
       ){
 
         currentUnbeaten++;
@@ -5016,9 +5991,7 @@ function renderRecordsPage(){
         <div class="club-record-meta">
 
           vs ${mostGoalsMatch.opponent}
-
           ·
-
           ${formatDate(mostGoalsMatch.date)}
 
         </div>
@@ -5036,9 +6009,601 @@ function renderRecordsPage(){
 
 }
 
-/* =====================================================
+/* ========================================
+   PLAYER COMPARISON
+======================================== */
+
+function openComparePage(){
+
+  populateComparisonSelectors();
+
+  renderComparison();
+
+  document
+    .querySelectorAll(
+      ".page"
+    )
+    .forEach(
+      page=>{
+        page.classList.remove(
+          "active"
+        );
+      }
+    );
+
+  el(
+    "compare"
+  ).classList.add(
+    "active"
+  );
+
+  el(
+    "bottomNav"
+  ).classList.add(
+    "hidden"
+  );
+
+  window.scrollTo(0,0);
+
+}
+
+function closeComparePage(){
+
+  el(
+    "compare"
+  ).classList.remove(
+    "active"
+  );
+
+  el(
+    "more"
+  ).classList.add(
+    "active"
+  );
+
+  el(
+    "bottomNav"
+  ).classList.remove(
+    "hidden"
+  );
+
+  window.scrollTo(0,0);
+
+}
+
+function populateComparisonSelectors(){
+
+  const options =
+    players.map(
+      player=>`
+        <option value="${player.id}">
+          #${player.number} ${player.name}
+        </option>
+      `
+    ).join("");
+
+  el(
+    "comparePlayer1"
+  ).innerHTML =
+    options;
+
+  el(
+    "comparePlayer2"
+  ).innerHTML =
+    options;
+
+  el(
+    "comparePlayer1"
+  ).value =
+    comparisonPlayer1;
+
+  el(
+    "comparePlayer2"
+  ).value =
+    comparisonPlayer2;
+
+}
+
+function comparisonPlayerChanged(
+  side
+){
+
+  const leftSelect =
+    el(
+      "comparePlayer1"
+    );
+
+  const rightSelect =
+    el(
+      "comparePlayer2"
+    );
+
+  if(
+    side === "left"
+  ){
+
+    comparisonPlayer1 =
+      leftSelect.value;
+
+    if(
+      comparisonPlayer1 ===
+      rightSelect.value
+    ){
+
+      const alternative =
+        players.find(
+          player=>
+            player.id !==
+            comparisonPlayer1
+        );
+
+      comparisonPlayer2 =
+        alternative.id;
+
+      rightSelect.value =
+        comparisonPlayer2;
+
+    }else{
+
+      comparisonPlayer2 =
+        rightSelect.value;
+
+    }
+
+  }else{
+
+    comparisonPlayer2 =
+      rightSelect.value;
+
+    if(
+      comparisonPlayer2 ===
+      leftSelect.value
+    ){
+
+      const alternative =
+        players.find(
+          player=>
+            player.id !==
+            comparisonPlayer2
+        );
+
+      comparisonPlayer1 =
+        alternative.id;
+
+      leftSelect.value =
+        comparisonPlayer1;
+
+    }else{
+
+      comparisonPlayer1 =
+        leftSelect.value;
+
+    }
+
+  }
+
+  renderComparison();
+
+}
+
+function safePerGame(
+  total,
+  appearances
+){
+
+  if(
+    appearances === 0
+  ){
+    return 0;
+  }
+
+  return (
+    total /
+    appearances
+  );
+
+}
+
+function formatComparisonNumber(
+  value,
+  decimals = 0
+){
+
+  if(
+    value === null ||
+    value === undefined
+  ){
+    return "—";
+  }
+
+  if(
+    decimals === 0
+  ){
+    return String(
+      value
+    );
+  }
+
+  return Number(
+    value
+  ).toFixed(
+    decimals
+  );
+
+}
+
+function renderComparison(){
+
+  const totals =
+    calculatePlayerStats();
+
+  const leftPlayer =
+    getPlayer(
+      comparisonPlayer1
+    );
+
+  const rightPlayer =
+    getPlayer(
+      comparisonPlayer2
+    );
+
+  if(
+    !leftPlayer ||
+    !rightPlayer
+  ){
+    return;
+  }
+
+  const left =
+    totals[
+      leftPlayer.id
+    ];
+
+  const right =
+    totals[
+      rightPlayer.id
+    ];
+
+  el(
+    "compareSeasonValue"
+  ).textContent =
+    seasonLabel(
+      activeSeason
+    );
+
+  el(
+    "compareSubtitle"
+  ).textContent =
+    "Olympus FC · " +
+    seasonLabel(
+      activeSeason
+    );
+
+  el(
+    "compareLeftNumber"
+  ).textContent =
+    leftPlayer.number;
+
+  el(
+    "compareLeftName"
+  ).textContent =
+    leftPlayer.name;
+
+  el(
+    "compareLeftMeta"
+  ).textContent =
+    `${leftPlayer.position} · ${leftPlayer.nation}`;
+
+  el(
+    "compareRightNumber"
+  ).textContent =
+    rightPlayer.number;
+
+  el(
+    "compareRightName"
+  ).textContent =
+    rightPlayer.name;
+
+  el(
+    "compareRightMeta"
+  ).textContent =
+    `${rightPlayer.position} · ${rightPlayer.nation}`;
+
+  const leftGoalsPerGame =
+    safePerGame(
+      left.goals,
+      left.appearances
+    );
+
+  const rightGoalsPerGame =
+    safePerGame(
+      right.goals,
+      right.appearances
+    );
+
+  const leftAssistsPerGame =
+    safePerGame(
+      left.assists,
+      left.appearances
+    );
+
+  const rightAssistsPerGame =
+    safePerGame(
+      right.assists,
+      right.appearances
+    );
+
+  const leftGAPerGame =
+    safePerGame(
+      left.contributions,
+      left.appearances
+    );
+
+  const rightGAPerGame =
+    safePerGame(
+      right.contributions,
+      right.appearances
+    );
+
+  const categories = [
+
+    {
+      name:"Appearances",
+      leftValue:left.appearances,
+      rightValue:right.appearances,
+      leftDisplay:
+        formatComparisonNumber(
+          left.appearances
+        ),
+      rightDisplay:
+        formatComparisonNumber(
+          right.appearances
+        )
+    },
+
+    {
+      name:"Goals",
+      leftValue:left.goals,
+      rightValue:right.goals,
+      leftDisplay:
+        formatComparisonNumber(
+          left.goals
+        ),
+      rightDisplay:
+        formatComparisonNumber(
+          right.goals
+        )
+    },
+
+    {
+      name:"Assists",
+      leftValue:left.assists,
+      rightValue:right.assists,
+      leftDisplay:
+        formatComparisonNumber(
+          left.assists
+        ),
+      rightDisplay:
+        formatComparisonNumber(
+          right.assists
+        )
+    },
+
+    {
+      name:"Goal Contributions",
+      leftValue:left.contributions,
+      rightValue:right.contributions,
+      leftDisplay:
+        formatComparisonNumber(
+          left.contributions
+        ),
+      rightDisplay:
+        formatComparisonNumber(
+          right.contributions
+        )
+    },
+
+    {
+      name:"Goals Per Game",
+      leftValue:leftGoalsPerGame,
+      rightValue:rightGoalsPerGame,
+      leftDisplay:
+        formatComparisonNumber(
+          leftGoalsPerGame,
+          2
+        ),
+      rightDisplay:
+        formatComparisonNumber(
+          rightGoalsPerGame,
+          2
+        )
+    },
+
+    {
+      name:"Assists Per Game",
+      leftValue:leftAssistsPerGame,
+      rightValue:rightAssistsPerGame,
+      leftDisplay:
+        formatComparisonNumber(
+          leftAssistsPerGame,
+          2
+        ),
+      rightDisplay:
+        formatComparisonNumber(
+          rightAssistsPerGame,
+          2
+        )
+    },
+
+    {
+      name:"G/A Per Game",
+      leftValue:leftGAPerGame,
+      rightValue:rightGAPerGame,
+      leftDisplay:
+        formatComparisonNumber(
+          leftGAPerGame,
+          2
+        ),
+      rightDisplay:
+        formatComparisonNumber(
+          rightGAPerGame,
+          2
+        )
+    },
+
+    {
+      name:"Average Rating",
+      leftValue:
+        left.averageRating === null
+          ? -1
+          : left.averageRating,
+      rightValue:
+        right.averageRating === null
+          ? -1
+          : right.averageRating,
+      leftDisplay:
+        left.averageRating === null
+          ? "—"
+          : left.averageRating.toFixed(2),
+      rightDisplay:
+        right.averageRating === null
+          ? "—"
+          : right.averageRating.toFixed(2)
+    },
+
+    {
+      name:"POTM Awards",
+      leftValue:left.potm,
+      rightValue:right.potm,
+      leftDisplay:
+        formatComparisonNumber(
+          left.potm
+        ),
+      rightDisplay:
+        formatComparisonNumber(
+          right.potm
+        )
+    }
+
+  ];
+
+  let leftWins =
+    0;
+
+  let rightWins =
+    0;
+
+  let ties =
+    0;
+
+  el(
+    "comparisonTable"
+  ).innerHTML =
+    categories.map(
+      category=>{
+
+        let leftClass =
+          "";
+
+        let rightClass =
+          "";
+
+        if(
+          category.leftValue >
+          category.rightValue
+        ){
+
+          leftClass =
+            "winner";
+
+          leftWins++;
+
+        }else if(
+          category.rightValue >
+          category.leftValue
+        ){
+
+          rightClass =
+            "winner";
+
+          rightWins++;
+
+        }else{
+
+          leftClass =
+            "tie";
+
+          rightClass =
+            "tie";
+
+          ties++;
+
+        }
+
+        return `
+
+          <div class="compare-row">
+
+            <div class="compare-stat-value ${leftClass}">
+              ${category.leftDisplay}
+            </div>
+
+            <div class="compare-stat-name">
+              ${category.name}
+            </div>
+
+            <div class="compare-stat-value ${rightClass}">
+              ${category.rightDisplay}
+            </div>
+
+          </div>
+
+        `;
+
+      }
+    ).join("");
+
+  if(
+    leftWins >
+    rightWins
+  ){
+
+    el(
+      "compareSummaryResult"
+    ).textContent =
+      `${leftPlayer.name} leads ${leftWins}–${rightWins}`;
+
+  }else if(
+    rightWins >
+    leftWins
+  ){
+
+    el(
+      "compareSummaryResult"
+    ).textContent =
+      `${rightPlayer.name} leads ${rightWins}–${leftWins}`;
+
+  }else{
+
+    el(
+      "compareSummaryResult"
+    ).textContent =
+      `${leftWins}–${rightWins} Draw`;
+
+  }
+
+  el(
+    "compareSummarySub"
+  ).textContent =
+    ties === 1
+      ? "1 category is tied."
+      : `${ties} categories are tied.`;
+
+}
+
+/* ========================================
    BACKUP
-===================================================== */
+======================================== */
 
 function exportBackup(){
 
@@ -5278,14 +6843,14 @@ function restoreBackup(
 
 }
 
-/* =====================================================
+/* ========================================
    RESET
-===================================================== */
+======================================== */
 
 function resetSeasonData(){
 
   if(
-    activeSeason==="ALL_TIME"
+    activeSeason === "ALL_TIME"
   ){
     return;
   }
@@ -5300,7 +6865,7 @@ function resetSeasonData(){
 
   if(
     !confirm(
-      activeSeason==="FC26"
+      activeSeason === "FC26"
         ? "The imported FC26 historical player totals will NOT be deleted. Continue?"
         : "Are you sure you want to reset FC27?"
     )
@@ -5332,9 +6897,9 @@ function resetSeasonData(){
 
 }
 
-/* =====================================================
-   RENDER
-===================================================== */
+/* ========================================
+   RENDER EVERYTHING
+======================================== */
 
 function renderEverything(){
 
