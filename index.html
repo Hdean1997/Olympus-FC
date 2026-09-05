@@ -6,6 +6,7 @@
   name="viewport"
   content="width=device-width, initial-scale=1.0, viewport-fit=cover"
 >
+<!-- POTN UI fix v2 -->
 <title>Olympus FC</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="app-icon-192.png">
@@ -3532,6 +3533,7 @@ function matchdaySummaryHTML(session,compact=false){
     ? `<details class="matchday-squad-details"><summary>View squad & positions</summary><div class="matchday-squad-list">${squadRows}</div></details>`
     : "";
   const duration = matchdayDurationMs(session);
+  const potnSection = (!compact && session.status === "ended") ? matchdayPotnHTML(session) : "";
   return `
     <div class="matchday-card ${session.status === "active" ? "live" : ""}">
       <div class="matchday-eyebrow">${session.status === "active" ? "🔴 MATCHDAY LIVE" : "MATCHDAY REPORT"}</div>
@@ -3550,7 +3552,8 @@ function matchdaySummaryHTML(session,compact=false){
         ⚽ Top scorer — ${st.topScorer ? `${escapeHTML(st.topScorer.player.name)} (${st.topScorer.value})` : "No goals"}<br>
         🎯 Top assister — ${st.topAssister ? `${escapeHTML(st.topAssister.player.name)} (${st.topAssister.value})` : "No assists"}<br>
         ⭐ Most POTM — ${st.topPotm ? `${escapeHTML(st.topPotm.player.name)} (${st.topPotm.value})` : "No POTM"}
-      </div>${matchdayPotnHTML(session)}` : ""}
+      </div>` : ""}
+      ${potnSection}
       ${isAdmin ? `<div class="matchday-actions">
         ${session.status === "active" ? `<button class="matchday-action primary" onclick="event.stopPropagation();endMatchday(${session.id})">End Matchday</button>` : ""}
         <button class="matchday-action danger" onclick="event.stopPropagation();deleteMatchday(${session.id})">Delete Matchday</button>
