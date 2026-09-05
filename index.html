@@ -515,6 +515,40 @@ h1{
   justify-content:space-between;
 }
 
+
+/* MATCHDAY */
+.matchday-wrap{margin:0 16px 18px;}
+.matchday-card{padding:18px;border-radius:18px;background:#101d2e;border:1px solid #29425f;}
+.matchday-card.live{border-color:#326eff;box-shadow:0 0 0 1px rgba(50,110,255,.16) inset;}
+.matchday-eyebrow{color:#6f9dff;font-size:11px;font-weight:bold;letter-spacing:.8px;}
+.matchday-title{margin-top:5px;font-size:22px;font-weight:bold;}
+.matchday-sub{margin-top:6px;color:#9aa9bc;font-size:12px;line-height:1.45;}
+.matchday-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:15px;}
+.matchday-stat{padding:11px 5px;border-radius:12px;background:#07111f;text-align:center;}
+.matchday-stat-value{font-size:18px;font-weight:bold;}
+.matchday-stat-label{margin-top:3px;color:#8392a6;font-size:9px;font-weight:bold;}
+.matchday-form{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;}
+.matchday-pill{min-width:28px;padding:6px 8px;border-radius:999px;text-align:center;font-size:11px;font-weight:bold;background:#07111f;border:1px solid #29425f;}
+.matchday-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px;}
+.matchday-action{min-height:45px;border-radius:12px;border:1px solid #315d9d;background:#10233b;color:#fff;font-weight:bold;}
+.matchday-action.primary{background:#326eff;border-color:#326eff;}
+.matchday-action.danger{background:#35171d;border-color:#71303a;color:#ffadb4;}
+.matchday-start{width:100%;min-height:54px;border:0;border-radius:14px;background:#326eff;color:#fff;font-size:16px;font-weight:bold;}
+.matchday-history-title{margin:26px 16px 12px;font-size:20px;}
+.matchday-report{margin:0 16px 12px;padding:17px;border-radius:18px;background:#101d2e;border:1px solid #1c314c;}
+.matchday-report-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;}
+.matchday-report-date{font-size:17px;font-weight:bold;}
+.matchday-status{padding:5px 9px;border-radius:999px;background:#13233a;color:#9fb9df;font-size:9px;font-weight:bold;}
+.matchday-status.live{background:#163622;color:#8de6a9;}
+.matchday-report-summary{margin-top:6px;color:#9aa9bc;font-size:12px;}
+.matchday-report-leaders{margin-top:12px;padding-top:12px;border-top:1px solid #25384f;color:#c9d2df;font-size:11px;line-height:1.7;}
+.matchday-squad-row{display:grid;grid-template-columns:auto 1fr 110px;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #25384f;}
+.matchday-squad-row:last-child{border-bottom:0;}
+.matchday-player-name{font-weight:bold;font-size:13px;}
+.matchday-position{height:42px;padding:8px 10px;border:1px solid #29425f;border-radius:10px;background:#07111f;color:#fff;}
+.matchday-live-home{margin:0 16px 18px;}
+@media(max-width:390px){.matchday-grid{grid-template-columns:repeat(2,1fr)}.matchday-actions{grid-template-columns:1fr}.matchday-squad-row{grid-template-columns:auto 1fr 95px;gap:8px}}
+
 /* MATCHES */
 
 .matches-summary{
@@ -1891,6 +1925,8 @@ input[type="date"]::-webkit-date-and-time-value{
 
   <div id="historicalNote" class="data-note"></div>
 
+  <div id="homeMatchdayLive" class="matchday-live-home" style="display:none"></div>
+
   <div class="stats-grid">
     <div class="stat">
       <div id="homeMatches" class="stat-number">0</div>
@@ -2056,6 +2092,8 @@ input[type="date"]::-webkit-date-and-time-value{
     </div>
   </div>
 
+  <div id="matchdayControls" class="matchday-wrap"></div>
+
   <button id="addMatchButton" class="add-match-button" onclick="openMatchForm()">
     + Add Match
   </button>
@@ -2067,6 +2105,9 @@ input[type="date"]::-webkit-date-and-time-value{
   <div class="match-list-title">Recorded Match History</div>
 
   <div id="matchHistory"></div>
+
+  <div id="matchdayHistoryTitle" class="matchday-history-title" style="display:none">Matchday Sessions</div>
+  <div id="matchdayHistory"></div>
 </div>
 
 <!-- STATS -->
@@ -2600,6 +2641,29 @@ input[type="date"]::-webkit-date-and-time-value{
 
 </div>
 
+<!-- MATCHDAY MODAL -->
+<div id="matchdayModal" class="modal">
+  <div class="modal-card">
+    <div class="step-indicator">MATCHDAY SETUP</div>
+    <div class="modal-title">Start Matchday</div>
+    <div class="modal-subtitle">Choose tonight's squad and positions. These players will be pre-selected when you log matches.</div>
+
+    <div class="form-group">
+      <label class="form-label">Session Date</label>
+      <input id="matchdayDate" class="form-control" type="date">
+    </div>
+
+    <div class="form-label">Matchday Squad</div>
+    <div id="matchdaySquadPicker"></div>
+    <div id="matchdayError" class="form-error"></div>
+
+    <div class="form-buttons">
+      <button class="cancel-button" onclick="closeMatchdayModal()">Cancel</button>
+      <button class="save-button" onclick="startMatchday()">Start Matchday</button>
+    </div>
+  </div>
+</div>
+
 <!-- DIVISION MODAL -->
 
 <div id="divisionModal" class="modal">
@@ -2744,6 +2808,7 @@ const OWNER_UID = "dc4e457c-4b2c-413f-a6d8-b4f49c053480";
 let remoteSeasonIds = {};
 let remotePlayerIds = {};
 let remoteReady = false;
+let matchdaySessions = [];
 
 const players = [
   {id:"tyrone",name:"Tyrone Dean",number:40,position:"CM",nation:"England",captain:true},
@@ -3245,6 +3310,228 @@ function formatDate(dateString){
   );
 }
 
+/* MATCHDAY */
+
+function getActiveMatchday(season = activeSeason){
+  if(season === "ALL_TIME") return null;
+  return matchdaySessions.find(session => session.season === season && session.status === "active") || null;
+}
+
+function matchesForMatchday(sessionId){
+  const all = [
+    ...seasonData.FC26.matches,
+    ...seasonData.FC27.matches
+  ];
+  return all.filter(match => String(match.matchdaySessionId || "") === String(sessionId));
+}
+
+function calculateMatchdayStats(session){
+  const matches = matchesForMatchday(session.id);
+  const wins = matches.filter(m => m.result === "W").length;
+  const draws = matches.filter(m => m.result === "D").length;
+  const losses = matches.filter(m => m.result === "L").length;
+  const gf = matches.reduce((t,m) => t + Number(m.olympusScore || 0),0);
+  const ga = matches.reduce((t,m) => t + Number(m.opponentScore || 0),0);
+  const winRate = matches.length ? Math.round((wins / matches.length) * 100) : 0;
+  const playerTotals = {};
+  players.forEach(p => { playerTotals[p.id] = {goals:0,assists:0,potm:0}; });
+  matches.forEach(match => {
+    players.forEach(p => {
+      const st = match.playerStats?.[p.id];
+      if(st?.played){
+        playerTotals[p.id].goals += Number(st.goals || 0);
+        playerTotals[p.id].assists += Number(st.assists || 0);
+      }
+    });
+    if(match.potmPlayerId && playerTotals[match.potmPlayerId]) playerTotals[match.potmPlayerId].potm++;
+  });
+  const topBy = key => {
+    const ranked = players.map(p => ({player:p,value:playerTotals[p.id][key]})).sort((a,b) => b.value-a.value);
+    return ranked[0]?.value > 0 ? ranked[0] : null;
+  };
+  return {matches,wins,draws,losses,gf,ga,winRate,topScorer:topBy("goals"),topAssister:topBy("assists"),topPotm:topBy("potm")};
+}
+
+function matchdaySummaryHTML(session,compact=false){
+  const st = calculateMatchdayStats(session);
+  const form = [...st.matches].sort((a,b) => Number(a.id)-Number(b.id)).map(m => m.result);
+  return `
+    <div class="matchday-card ${session.status === "active" ? "live" : ""}">
+      <div class="matchday-eyebrow">${session.status === "active" ? "🔴 MATCHDAY LIVE" : "MATCHDAY REPORT"}</div>
+      <div class="matchday-title">${formatDate(session.sessionDate)}</div>
+      <div class="matchday-sub">${session.players.map(item => {
+        const p=players.find(x=>x.id===item.playerKey);
+        return p ? `${p.name} · ${escapeHTML(item.position || p.position)}` : "";
+      }).filter(Boolean).join("  •  ") || "No squad recorded"}</div>
+      <div class="matchday-grid">
+        <div class="matchday-stat"><div class="matchday-stat-value">${st.matches.length}</div><div class="matchday-stat-label">MATCHES</div></div>
+        <div class="matchday-stat"><div class="matchday-stat-value">${st.wins}W ${st.draws}D ${st.losses}L</div><div class="matchday-stat-label">RECORD</div></div>
+        <div class="matchday-stat"><div class="matchday-stat-value">${st.gf}-${st.ga}</div><div class="matchday-stat-label">GF-GA</div></div>
+        <div class="matchday-stat"><div class="matchday-stat-value">${st.winRate}%</div><div class="matchday-stat-label">WIN RATE</div></div>
+      </div>
+      ${form.length ? `<div class="matchday-form">${form.map(r=>`<span class="matchday-pill">${r}</span>`).join("")}</div>` : ""}
+      ${!compact && session.status === "ended" ? `<div class="matchday-report-leaders">
+        ${st.topScorer ? `⚽ Top scorer — ${escapeHTML(st.topScorer.player.name)} (${st.topScorer.value})<br>` : ""}
+        ${st.topAssister ? `🎯 Top assister — ${escapeHTML(st.topAssister.player.name)} (${st.topAssister.value})<br>` : ""}
+        ${st.topPotm ? `⭐ Most POTM — ${escapeHTML(st.topPotm.player.name)} (${st.topPotm.value})` : ""}
+        ${!st.topScorer && !st.topAssister && !st.topPotm ? "No player contributions recorded in this session." : ""}
+      </div>` : ""}
+      ${isAdmin ? `<div class="matchday-actions">
+        ${session.status === "active" ? `<button class="matchday-action primary" onclick="event.stopPropagation();endMatchday(${session.id})">End Matchday</button>` : ""}
+        <button class="matchday-action danger" onclick="event.stopPropagation();deleteMatchday(${session.id})">Delete Matchday</button>
+      </div>` : ""}
+    </div>`;
+}
+
+function renderMatchday(){
+  const controls = el("matchdayControls");
+  const history = el("matchdayHistory");
+  const historyTitle = el("matchdayHistoryTitle");
+  const home = el("homeMatchdayLive");
+  if(!controls || !history || !historyTitle || !home) return;
+
+  if(activeSeason === "ALL_TIME"){
+    controls.innerHTML = "";
+    history.innerHTML = "";
+    historyTitle.style.display = "none";
+    home.style.display = "none";
+    return;
+  }
+
+  const active = getActiveMatchday(activeSeason);
+  if(active){
+    controls.innerHTML = matchdaySummaryHTML(active,true);
+    home.innerHTML = matchdaySummaryHTML(active,true);
+    home.style.display = "block";
+  }else{
+    home.style.display = "none";
+    controls.innerHTML = isAdmin
+      ? `<button class="matchday-start" onclick="openMatchdayModal()">⚽ Start Matchday</button>`
+      : "";
+  }
+
+  const sessions = matchdaySessions
+    .filter(s => s.season === activeSeason && s.status === "ended")
+    .sort((a,b) => Number(b.id)-Number(a.id));
+  historyTitle.style.display = sessions.length ? "block" : "none";
+  history.innerHTML = sessions.map(session => matchdaySummaryHTML(session,false)).join("");
+}
+
+function openMatchdayModal(){
+  if(!isAdmin){ alert("Club login is required to start a Matchday."); return; }
+  if(activeSeason === "ALL_TIME") return;
+  if(getActiveMatchday(activeSeason)){ alert("A Matchday is already active for this season."); return; }
+  el("matchdayDate").value = localDate();
+  el("matchdayError").classList.remove("show");
+  const positions = ["GK","RB","CB","LB","CDM","CM","CAM","RM","LM","RW","LW","ST"];
+  el("matchdaySquadPicker").innerHTML = players.map(player => `
+    <div class="matchday-squad-row">
+      <input id="matchday-player-${player.id}" type="checkbox" checked>
+      <label class="matchday-player-name" for="matchday-player-${player.id}">#${player.number} ${escapeHTML(player.name)}</label>
+      <select id="matchday-position-${player.id}" class="matchday-position">
+        ${positions.map(pos => `<option value="${pos}" ${pos===player.position?"selected":""}>${pos}</option>`).join("")}
+      </select>
+    </div>`).join("");
+  el("matchdayModal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeMatchdayModal(){
+  el("matchdayModal").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+async function startMatchday(){
+  if(!isAdmin || activeSeason === "ALL_TIME") return;
+  const date = el("matchdayDate").value;
+  const selected = players.filter(player => el("matchday-player-"+player.id)?.checked);
+  if(!date || selected.length === 0){
+    el("matchdayError").textContent = !date ? "Choose a session date." : "Select at least one player.";
+    el("matchdayError").classList.add("show");
+    return;
+  }
+  try{
+    await ensureRemoteLookups();
+    const {data:authData} = await supabaseClient.auth.getSession();
+    const userId = authData?.session?.user?.id;
+    const seasonId = remoteSeasonIds[activeSeason];
+    if(!userId || !seasonId) throw new Error("Missing login or season");
+    const {data:sessionRow,error:sessionError} = await supabaseClient
+      .from("matchday_sessions")
+      .insert({season_id:seasonId,session_date:date,status:"active",created_by:userId})
+      .select("id")
+      .single();
+    if(sessionError) throw sessionError;
+    const squadRows = selected.map(player => ({
+      session_id:Number(sessionRow.id),
+      player_id:remotePlayerIds[player.id],
+      position:el("matchday-position-"+player.id).value
+    })).filter(row => row.player_id);
+    if(squadRows.length){
+      const {error:squadError} = await supabaseClient.from("matchday_session_players").insert(squadRows);
+      if(squadError) throw squadError;
+    }
+    closeMatchdayModal();
+    await loadRemoteData();
+  }catch(error){
+    console.error("Start Matchday failed:",error);
+    el("matchdayError").textContent = "The Matchday could not be started online. Please try again.";
+    el("matchdayError").classList.add("show");
+  }
+}
+
+async function endMatchday(sessionId){
+  if(!isAdmin) return;
+  if(!confirm("End this Matchday and create its final session report?")) return;
+  try{
+    const {error} = await supabaseClient.from("matchday_sessions")
+      .update({status:"ended",ended_at:new Date().toISOString()})
+      .eq("id",Number(sessionId));
+    if(error) throw error;
+    await loadRemoteData();
+  }catch(error){
+    console.error(error);
+    alert("The Matchday could not be ended. Please try again.");
+  }
+}
+
+async function deleteMatchday(sessionId){
+  if(!isAdmin) return;
+  const session = matchdaySessions.find(s => String(s.id) === String(sessionId));
+  const count = session ? matchesForMatchday(session.id).length : 0;
+  if(!confirm(`Delete this Matchday session? ${count ? `Its ${count} recorded match${count===1?"":"es"} and player stats will also be deleted.` : "This cannot be undone."}`)) return;
+  try{
+    const matchIds = session
+      ? matchesForMatchday(session.id).map(match => Number(match.id)).filter(Number.isFinite)
+      : [];
+
+    if(matchIds.length){
+      const {error:perfError} = await supabaseClient
+        .from("player_performances")
+        .delete()
+        .in("match_id",matchIds);
+      if(perfError) throw perfError;
+
+      const {error:matchError} = await supabaseClient
+        .from("matches")
+        .delete()
+        .in("id",matchIds);
+      if(matchError) throw matchError;
+    }
+
+    const {error} = await supabaseClient
+      .from("matchday_sessions")
+      .delete()
+      .eq("id",Number(sessionId));
+    if(error) throw error;
+
+    await loadRemoteData();
+  }catch(error){
+    console.error(error);
+    alert("The Matchday could not be deleted. Please try again.");
+  }
+}
+
 /* MATCH ENTRY */
 
 function configureMatchModal(season,isEdit){
@@ -3408,6 +3695,9 @@ function continueToPlayerStats(){
     olympusScore,
     opponentScore,
     result,
+    matchdaySessionId:existingMatch
+      ? (existingMatch.matchdaySessionId ?? null)
+      : (getActiveMatchday(season)?.id ?? null),
     playerStats:existingMatch ? existingMatch.playerStats || {} : {},
     potmPlayerId:existingMatch ? existingMatch.potmPlayerId || null : null
   };
@@ -3427,8 +3717,15 @@ function renderPlayerEntry(existingMatch = null){
 
   el("playerEntryList").innerHTML = players.map(player => {
 
+    const activeSession = !existingMatch && pendingMatch
+      ? getActiveMatchday(pendingMatch.season)
+      : null;
+    const selectedForMatchday = activeSession
+      ? activeSession.players.some(item => item.playerKey === player.id)
+      : true;
+
     const existing = existingStats[player.id] || {
-      played:true,
+      played:selectedForMatchday,
       goals:0,
       assists:0,
       rating:null
@@ -5744,7 +6041,7 @@ async function loadRemoteData(){
 
     const {data:matches,error:matchError} = await supabaseClient
       .from("matches")
-      .select("id,season_id,opponent,match_date,match_type,olympus_score,opponent_score,created_at")
+      .select("id,season_id,opponent,match_date,match_type,olympus_score,opponent_score,matchday_session_id,created_at")
       .order("id",{ascending:false});
     if(matchError) throw matchError;
 
@@ -5753,10 +6050,46 @@ async function loadRemoteData(){
       .select("id,match_id,player_id,played,goals,assists,rating,potm");
     if(perfError) throw perfError;
 
+    const {data:sessionRows,error:sessionError} = await supabaseClient
+      .from("matchday_sessions")
+      .select("id,season_id,session_date,status,created_by,started_at,ended_at")
+      .order("id",{ascending:false});
+    if(sessionError) throw sessionError;
+
+    const {data:sessionPlayerRows,error:sessionPlayerError} = await supabaseClient
+      .from("matchday_session_players")
+      .select("session_id,player_id,position");
+    if(sessionPlayerError) throw sessionPlayerError;
+
     const seasonById = {};
     (seasons || []).forEach(row => { seasonById[String(row.id)] = row.name; });
     const playerKeyById = {};
     Object.entries(remotePlayerIds).forEach(([key,id]) => { playerKeyById[String(id)] = key; });
+
+    const sessionPlayersBySession = {};
+    (sessionPlayerRows || []).forEach(row => {
+      const key = String(row.session_id);
+      if(!sessionPlayersBySession[key]) sessionPlayersBySession[key] = [];
+      const playerKey = playerKeyById[String(row.player_id)];
+      if(playerKey){
+        sessionPlayersBySession[key].push({
+          playerKey,
+          playerId:Number(row.player_id),
+          position:row.position || players.find(p => p.id === playerKey)?.position || ""
+        });
+      }
+    });
+
+    matchdaySessions = (sessionRows || []).map(row => ({
+      id:Number(row.id),
+      season:seasonById[String(row.season_id)] || "",
+      sessionDate:row.session_date || "",
+      status:row.status || "ended",
+      createdBy:row.created_by || "",
+      startedAt:row.started_at || null,
+      endedAt:row.ended_at || null,
+      players:sessionPlayersBySession[String(row.id)] || []
+    })).filter(session => session.season);
 
     const perfByMatch = {};
     (performances || []).forEach(row => {
@@ -5808,6 +6141,9 @@ async function loadRemoteData(){
         olympusScore,
         opponentScore,
         result,
+        matchdaySessionId:row.matchday_session_id === null || row.matchday_session_id === undefined
+          ? null
+          : Number(row.matchday_session_id),
         playerStats,
         potmPlayerId
       });
@@ -5863,7 +6199,8 @@ async function saveMatchToSupabase(match,season){
     match_date:match.date,
     match_type:match.type,
     olympus_score:Number(match.olympusScore || 0),
-    opponent_score:Number(match.opponentScore || 0)
+    opponent_score:Number(match.opponentScore || 0),
+    matchday_session_id:match.matchdaySessionId ?? null
   };
 
   const {error:matchError} = await supabaseClient
@@ -6085,6 +6422,7 @@ function renderEverything(){
   renderHome();
   renderSquad();
   renderMatches();
+  renderMatchday();
   renderStatsPage();
   renderMorePage();
 
