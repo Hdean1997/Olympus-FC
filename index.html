@@ -2199,18 +2199,51 @@ input[type="date"]::-webkit-date-and-time-value{
   </div>
 
   <div class="hub-section">
-    <div class="hub-heading">SUPABASE CONNECTION</div>
+    <div class="hub-heading">ONLINE DATABASE</div>
 
     <div class="hub-card">
       <div class="info-row">
         <div class="info-label">Database</div>
-        <div id="supabaseConnectionStatus" class="info-value">Not configured</div>
+        <div id="supabaseConnectionStatus" class="info-value">Connecting…</div>
       </div>
 
       <div class="info-row">
-        <div class="info-label">Players found online</div>
-        <div id="supabasePlayerCount" class="info-value">—</div>
+        <div class="info-label">Access</div>
+        <div id="adminAccessStatus" class="info-value">Public view</div>
       </div>
+    </div>
+  </div>
+
+  <div class="hub-section">
+    <div class="hub-heading">ADMIN</div>
+    <div class="hub-card" style="padding:15px">
+      <div id="adminLoginPanel">
+        <div class="form-group">
+          <label class="form-label">Admin email</label>
+          <input id="adminEmail" class="form-control" type="email" autocomplete="username" placeholder="Email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input id="adminPassword" class="form-control" type="password" autocomplete="current-password" placeholder="Password">
+        </div>
+        <button class="save-button" style="width:100%;min-height:52px" onclick="adminLogin()">Admin Login</button>
+      </div>
+
+      <div id="adminLoggedInPanel" style="display:none">
+        <div id="adminSignedInText" style="margin-bottom:12px;color:#9aa9bc;font-size:13px"></div>
+        <button class="hub-action blue" style="border:1px solid #25384f;border-radius:12px;margin-bottom:10px" onclick="uploadLocalDataToSupabase()">
+          <div>
+            <div class="hub-action-main">Upload / Replace Online Data</div>
+            <div class="hub-action-sub">Copies this device's FC26 and FC27 data to Supabase</div>
+          </div>
+          <div class="hub-action-arrow">↑</div>
+        </button>
+        <button class="hub-action" style="border:1px solid #25384f;border-radius:12px" onclick="adminLogout()">
+          <div><div class="hub-action-main">Log Out</div></div>
+          <div class="hub-action-arrow">›</div>
+        </button>
+      </div>
+      <div id="adminMessage" style="margin-top:12px;color:#9aa9bc;font-size:12px;line-height:1.45"></div>
     </div>
   </div>
 
@@ -2660,14 +2693,18 @@ input[type="date"]::-webkit-date-and-time-value{
 
 <script>
 
-/* SUPABASE CONNECTION TEST
-   Paste ONLY your publishable key below.
+/* SUPABASE ONLINE DATABASE
+   The publishable key is safe for browser use with Row Level Security enabled.
    Never put a secret/service_role key in this file.
 */
 const SUPABASE_URL = "https://jkfzgyovjximsqqlpdkr.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_lPcjKyOTOxjfSceyUUT6Mg_h-e1oATt";
 
 let supabaseClient = null;
+let isAdmin = false;
+let remoteSeasonIds = {};
+let remotePlayerIds = {};
+let remoteReady = false;
 
 const players = [
   {id:"tyrone",name:"Tyrone Dean",number:40,position:"CM",nation:"England",captain:true},
@@ -3077,6 +3114,11 @@ function renderDivision(){
 
 function openDivisionModal(){
 
+  if(!isAdmin){
+    alert("Admin login is required to change the division.");
+    return;
+  }
+
   if(activeSeason === "ALL_TIME"){
     return;
   }
@@ -3095,17 +3137,36 @@ function closeDivisionModal(){
   document.body.style.overflow = "";
 }
 
-function saveDivision(){
+async function saveDivision(){
 
-  if(activeSeason === "ALL_TIME"){
+  if(activeSeason === "ALL_TIME" || !isAdmin){
     return;
   }
 
-  seasonData[activeSeason].division = el("divisionSelect").value;
-
+  const nextDivision = el("divisionSelect").value;
+  const previousDivision = seasonData[activeSeason].division;
+  seasonData[activeSeason].division = nextDivision;
   saveSeasonData();
-  closeDivisionModal();
-  renderEverything();
+
+  try{
+    await ensureRemoteLookups();
+    const seasonId = remoteSeasonIds[activeSeason];
+    if(!seasonId) throw new Error("Season not found online");
+
+    const {error} = await supabaseClient
+      .from("seasons")
+      .update({division:nextDivision})
+      .eq("id",seasonId);
+    if(error) throw error;
+
+    closeDivisionModal();
+    renderEverything();
+  }catch(error){
+    console.error(error);
+    seasonData[activeSeason].division = previousDivision;
+    saveSeasonData();
+    alert("The division could not be saved online. Nothing was changed.");
+  }
 }
 
 /* DATES */
@@ -3164,6 +3225,11 @@ function configureMatchModal(season,isEdit){
 
 function openMatchForm(){
 
+  if(!isAdmin){
+    alert("Admin login is required to add a match.");
+    return;
+  }
+
   if(activeSeason === "ALL_TIME"){
     return;
   }
@@ -3190,6 +3256,11 @@ function openMatchForm(){
 }
 
 function openMatchForEdit(season,id){
+
+  if(!isAdmin){
+    alert("Admin login is required to edit a match.");
+    return;
+  }
 
   const found = findStoredMatch(season,id);
 
@@ -3436,7 +3507,7 @@ function backToMatchDetailsForm(){
   el("matchStep1").style.display = "block";
 }
 
-function finishMatch(){
+async function finishMatch(){
 
   if(!pendingMatch){
     return;
@@ -3500,6 +3571,15 @@ function finishMatch(){
     editContext ? editContext.season : activeSeason;
 
   const savedId = pendingMatch.id;
+
+  try{
+    await saveMatchToSupabase(pendingMatch,savedSeason);
+  }catch(error){
+    console.error("Online match save failed:",error);
+    el("playerError").textContent = "The match could not be saved online. Please try again.";
+    el("playerError").classList.add("show");
+    return;
+  }
 
   if(wasEditing){
 
@@ -4367,9 +4447,31 @@ function renderMorePage(){
 
   }else{
 
-    el("resetSeasonButton").classList.remove("disabled");
-    el("resetSeasonTitle").textContent = `Reset Logged ${activeSeason} Data`;
+    if(isAdmin){
+      el("resetSeasonButton").classList.remove("disabled");
+    }else{
+      el("resetSeasonButton").classList.add("disabled");
+    }
+    el("resetSeasonTitle").textContent = isAdmin
+      ? `Reset Logged ${activeSeason} Data`
+      : "Admin Login Required to Reset";
   }
+
+  const addButton = el("addMatchButton");
+  if(addButton){
+    addButton.style.display = activeSeason === "ALL_TIME" || !isAdmin ? "none" : "block";
+  }
+
+  document.querySelectorAll(".change-division").forEach(button => {
+    button.style.display = isAdmin ? "" : "none";
+  });
+
+  const seasonSettings = el("seasonSettingsSection");
+  if(seasonSettings && activeSeason !== "ALL_TIME"){
+    seasonSettings.style.display = isAdmin ? "block" : "none";
+  }
+
+  updateAdminUI();
 }
 
 /* RECORDS */
@@ -5104,7 +5206,12 @@ function editSelectedMatch(){
   );
 }
 
-function deleteSelectedMatch(){
+async function deleteSelectedMatch(){
+
+  if(!isAdmin){
+    alert("Admin login is required to delete a match.");
+    return;
+  }
 
   if(!selectedMatchRef){
     return;
@@ -5126,6 +5233,25 @@ function deleteSelectedMatch(){
       `Delete the match against ${match.opponent}? This cannot be undone.`
     )
   ){
+    return;
+  }
+
+  try{
+    const matchId = Number(match.id);
+    const {error:perfError} = await supabaseClient
+      .from("player_performances")
+      .delete()
+      .eq("match_id",matchId);
+    if(perfError) throw perfError;
+
+    const {error:matchError} = await supabaseClient
+      .from("matches")
+      .delete()
+      .eq("id",matchId);
+    if(matchError) throw matchError;
+  }catch(error){
+    console.error(error);
+    alert("The match could not be deleted online. Nothing was changed.");
     return;
   }
 
@@ -5278,7 +5404,12 @@ function restoreBackup(event){
 
 /* RESET */
 
-function resetSeasonData(){
+async function resetSeasonData(){
+
+  if(!isAdmin){
+    alert("Admin login is required to reset season data.");
+    return;
+  }
 
   if(activeSeason === "ALL_TIME"){
     return;
@@ -5289,6 +5420,36 @@ function resetSeasonData(){
       `Delete every ${activeSeason} match logged in this tracker?`
     )
   ){
+    return;
+  }
+
+  try{
+    await ensureRemoteLookups();
+    const seasonId = remoteSeasonIds[activeSeason];
+    const ids = seasonData[activeSeason].matches.map(match => Number(match.id));
+
+    if(ids.length){
+      const {error:perfError} = await supabaseClient
+        .from("player_performances")
+        .delete()
+        .in("match_id",ids);
+      if(perfError) throw perfError;
+    }
+
+    const {error:matchError} = await supabaseClient
+      .from("matches")
+      .delete()
+      .eq("season_id",seasonId);
+    if(matchError) throw matchError;
+
+    const {error:seasonError} = await supabaseClient
+      .from("seasons")
+      .update({division:"Division 5"})
+      .eq("id",seasonId);
+    if(seasonError) throw seasonError;
+  }catch(error){
+    console.error(error);
+    alert("The season could not be reset online. Nothing was changed.");
     return;
   }
 
@@ -5305,55 +5466,342 @@ function resetSeasonData(){
   );
 }
 
-/* SUPABASE TEST */
+/* SUPABASE ONLINE DATABASE */
 
-async function testSupabaseConnection(){
-
+function setOnlineStatus(text,color="#9aa9bc"){
   const status = el("supabaseConnectionStatus");
-  const count = el("supabasePlayerCount");
-
-  if(!status || !count){
-    return;
+  if(status){
+    status.textContent = text;
+    status.style.color = color;
   }
+}
 
-  if(
-    !window.supabase ||
-    !SUPABASE_PUBLISHABLE_KEY ||
-    SUPABASE_PUBLISHABLE_KEY.includes("PASTE_YOUR")
-  ){
-    status.textContent = "Add publishable key";
-    status.style.color = "#e8bd4b";
-    count.textContent = "—";
-    return;
+function updateAdminUI(){
+  const loginPanel = el("adminLoginPanel");
+  const loggedPanel = el("adminLoggedInPanel");
+  const access = el("adminAccessStatus");
+
+  if(loginPanel) loginPanel.style.display = isAdmin ? "none" : "block";
+  if(loggedPanel) loggedPanel.style.display = isAdmin ? "block" : "none";
+  if(access){
+    access.textContent = isAdmin ? "Admin" : "Public view";
+    access.style.color = isAdmin ? "#67d894" : "#9aa9bc";
   }
+}
 
-  status.textContent = "Connecting…";
-  status.style.color = "#9aa9bc";
-  count.textContent = "—";
+async function ensureRemoteLookups(){
+  if(!supabaseClient) throw new Error("Supabase is not connected");
+
+  const {data:seasonRows,error:seasonError} = await supabaseClient
+    .from("seasons")
+    .select("id,name,division,playoff_games");
+  if(seasonError) throw seasonError;
+
+  remoteSeasonIds = {};
+  (seasonRows || []).forEach(row => { remoteSeasonIds[row.name] = Number(row.id); });
+
+  const {data:playerRows,error:playerError} = await supabaseClient
+    .from("players")
+    .select("id,player_key");
+  if(playerError) throw playerError;
+
+  remotePlayerIds = {};
+  (playerRows || []).forEach(row => { remotePlayerIds[row.player_key] = Number(row.id); });
+}
+
+async function loadRemoteData(){
+  if(!supabaseClient) return;
 
   try{
-    supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
-    );
+    setOnlineStatus("Loading…");
+    await ensureRemoteLookups();
 
-    const {data,error} = await supabaseClient
-      .from("players")
-      .select("id");
+    const {data:seasons,error:seasonError} = await supabaseClient
+      .from("seasons")
+      .select("id,name,division,playoff_games");
+    if(seasonError) throw seasonError;
 
-    if(error){
-      throw error;
+    const {data:matches,error:matchError} = await supabaseClient
+      .from("matches")
+      .select("id,season_id,opponent,match_date,match_type,olympus_score,opponent_score,created_at")
+      .order("id",{ascending:false});
+    if(matchError) throw matchError;
+
+    const {data:performances,error:perfError} = await supabaseClient
+      .from("player_performances")
+      .select("id,match_id,player_id,played,goals,assists,rating,potm");
+    if(perfError) throw perfError;
+
+    const seasonById = {};
+    (seasons || []).forEach(row => { seasonById[String(row.id)] = row.name; });
+    const playerKeyById = {};
+    Object.entries(remotePlayerIds).forEach(([key,id]) => { playerKeyById[String(id)] = key; });
+
+    const perfByMatch = {};
+    (performances || []).forEach(row => {
+      const key = String(row.match_id);
+      if(!perfByMatch[key]) perfByMatch[key] = [];
+      perfByMatch[key].push(row);
+    });
+
+    const remoteData = createDefaultSeasonData();
+    (seasons || []).forEach(row => {
+      if(remoteData[row.name]){
+        remoteData[row.name].division = divisions.includes(row.division) ? row.division : "Division 5";
+        remoteData[row.name].playoffGames = Number(row.playoff_games || 15);
+      }
+    });
+
+    (matches || []).forEach(row => {
+      const season = seasonById[String(row.season_id)];
+      if(!remoteData[season]) return;
+
+      const playerStats = {};
+      let potmPlayerId = null;
+      players.forEach(player => {
+        playerStats[player.id] = {played:false,goals:0,assists:0,rating:null};
+      });
+
+      (perfByMatch[String(row.id)] || []).forEach(perf => {
+        const playerKey = playerKeyById[String(perf.player_id)];
+        if(!playerKey) return;
+        playerStats[playerKey] = {
+          played:Boolean(perf.played),
+          goals:Number(perf.goals || 0),
+          assists:Number(perf.assists || 0),
+          rating:perf.rating === null || perf.rating === undefined ? null : Number(perf.rating)
+        };
+        if(perf.potm) potmPlayerId = playerKey;
+      });
+
+      const olympusScore = Number(row.olympus_score || 0);
+      const opponentScore = Number(row.opponent_score || 0);
+      const result = olympusScore > opponentScore ? "W" : olympusScore < opponentScore ? "L" : "D";
+
+      remoteData[season].matches.push({
+        id:Number(row.id),
+        season,
+        opponent:row.opponent || "",
+        date:row.match_date || "",
+        type:row.match_type || "League",
+        olympusScore,
+        opponentScore,
+        result,
+        playerStats,
+        potmPlayerId
+      });
+    });
+
+    const remoteMatchCount = remoteData.FC26.matches.length + remoteData.FC27.matches.length;
+    const localMatchCount = seasonData.FC26.matches.length + seasonData.FC27.matches.length;
+
+    if(remoteMatchCount > 0 || localMatchCount === 0){
+      seasonData = remoteData;
+      saveSeasonData();
+    }else{
+      // Keep existing local data until the admin explicitly uploads it.
+      ["FC26","FC27"].forEach(name => {
+        const row = (seasons || []).find(item => item.name === name);
+        if(row && divisions.includes(row.division) && seasonData[name].matches.length === 0){
+          seasonData[name].division = row.division;
+        }
+      });
     }
 
-    status.textContent = "Connected";
-    status.style.color = "#67d894";
-    count.textContent = Array.isArray(data) ? String(data.length) : "0";
-
+    remoteReady = true;
+    setOnlineStatus("Connected","#67d894");
+    renderEverything();
   }catch(error){
-    console.error("Supabase connection test failed:",error);
-    status.textContent = "Connection failed";
-    status.style.color = "#ff9ea6";
-    count.textContent = "—";
+    console.error("Supabase load failed:",error);
+    remoteReady = false;
+    setOnlineStatus("Connection failed","#ff9ea6");
+  }
+}
+
+async function bootstrapSeasonsFromLocal(){
+  const rows = ["FC26","FC27"].map(name => ({
+    name,
+    division:seasonData[name]?.division || "Division 5",
+    playoff_games:Number(seasonData[name]?.playoffGames || 15)
+  }));
+
+  const {error} = await supabaseClient
+    .from("seasons")
+    .upsert(rows,{onConflict:"name"});
+  if(error) throw error;
+
+  await ensureRemoteLookups();
+}
+
+async function saveMatchToSupabase(match,season){
+  if(!isAdmin) throw new Error("Admin login required");
+  await bootstrapSeasonsFromLocal();
+
+  const seasonId = remoteSeasonIds[season];
+  if(!seasonId) throw new Error("Season is missing online");
+
+  const row = {
+    id:Number(match.id),
+    season_id:seasonId,
+    opponent:match.opponent,
+    match_date:match.date,
+    match_type:match.type,
+    olympus_score:Number(match.olympusScore || 0),
+    opponent_score:Number(match.opponentScore || 0)
+  };
+
+  const {error:matchError} = await supabaseClient
+    .from("matches")
+    .upsert(row,{onConflict:"id"});
+  if(matchError) throw matchError;
+
+  const {error:deleteError} = await supabaseClient
+    .from("player_performances")
+    .delete()
+    .eq("match_id",Number(match.id));
+  if(deleteError) throw deleteError;
+
+  const perfRows = players.map(player => {
+    const stat = match.playerStats?.[player.id] || {played:false,goals:0,assists:0,rating:null};
+    return {
+      match_id:Number(match.id),
+      player_id:remotePlayerIds[player.id],
+      played:Boolean(stat.played),
+      goals:Number(stat.goals || 0),
+      assists:Number(stat.assists || 0),
+      rating:stat.rating === null || stat.rating === undefined || stat.rating === "" ? null : Number(stat.rating),
+      potm:match.potmPlayerId === player.id
+    };
+  }).filter(row => row.player_id);
+
+  if(perfRows.length){
+    const {error:perfError} = await supabaseClient
+      .from("player_performances")
+      .insert(perfRows);
+    if(perfError) throw perfError;
+  }
+}
+
+async function adminLogin(){
+  const email = el("adminEmail")?.value.trim();
+  const password = el("adminPassword")?.value || "";
+  const message = el("adminMessage");
+
+  if(!email || !password){
+    if(message) message.textContent = "Enter your admin email and password.";
+    return;
+  }
+
+  if(message) message.textContent = "Signing in…";
+
+  const {data,error} = await supabaseClient.auth.signInWithPassword({email,password});
+  if(error){
+    if(message) message.textContent = "Login failed. Check your email and password.";
+    return;
+  }
+
+  isAdmin = Boolean(data.session);
+  if(message) message.textContent = isAdmin ? "Admin access enabled." : "Login failed.";
+  await handleAuthUI();
+}
+
+async function adminLogout(){
+  await supabaseClient.auth.signOut();
+  isAdmin = false;
+  const message = el("adminMessage");
+  if(message) message.textContent = "Logged out. The site is now read-only.";
+  await handleAuthUI();
+}
+
+async function handleAuthUI(){
+  const {data} = await supabaseClient.auth.getSession();
+  isAdmin = Boolean(data?.session);
+  const signed = el("adminSignedInText");
+  if(signed && data?.session?.user?.email){
+    signed.textContent = `Signed in as ${data.session.user.email}`;
+  }
+  updateAdminUI();
+  renderEverything();
+}
+
+async function uploadLocalDataToSupabase(){
+  if(!isAdmin) return;
+
+  if(!confirm("Replace the online FC26 and FC27 match data with the data currently stored on this device?")){
+    return;
+  }
+
+  const message = el("adminMessage");
+  if(message) message.textContent = "Uploading Olympus FC data…";
+
+  try{
+    await bootstrapSeasonsFromLocal();
+
+    const {data:existingMatches,error:fetchError} = await supabaseClient
+      .from("matches")
+      .select("id");
+    if(fetchError) throw fetchError;
+
+    const existingIds = (existingMatches || []).map(row => Number(row.id));
+    if(existingIds.length){
+      const {error:perfDeleteError} = await supabaseClient
+        .from("player_performances")
+        .delete()
+        .in("match_id",existingIds);
+      if(perfDeleteError) throw perfDeleteError;
+    }
+
+    const {error:matchDeleteError} = await supabaseClient
+      .from("matches")
+      .delete()
+      .gt("id",0);
+    if(matchDeleteError) throw matchDeleteError;
+
+    for(const season of ["FC26","FC27"]){
+      const {error:seasonUpdateError} = await supabaseClient
+        .from("seasons")
+        .update({
+          division:seasonData[season].division || "Division 5",
+          playoff_games:Number(seasonData[season].playoffGames || 15)
+        })
+        .eq("id",remoteSeasonIds[season]);
+      if(seasonUpdateError) throw seasonUpdateError;
+
+      for(const match of seasonData[season].matches){
+        await saveMatchToSupabase(match,season);
+      }
+    }
+
+    if(message) message.textContent = "Upload complete. Supabase now has this device's Olympus FC data.";
+    await loadRemoteData();
+  }catch(error){
+    console.error(error);
+    if(message) message.textContent = "Upload failed. Your local data and backup are still safe.";
+  }
+}
+
+async function initSupabase(){
+  if(!window.supabase){
+    setOnlineStatus("Library failed","#ff9ea6");
+    return;
+  }
+
+  try{
+    supabaseClient = window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+    const {data} = await supabaseClient.auth.getSession();
+    isAdmin = Boolean(data?.session);
+
+    supabaseClient.auth.onAuthStateChange((_event,session) => {
+      isAdmin = Boolean(session);
+      updateAdminUI();
+      renderEverything();
+    });
+
+    await loadRemoteData();
+    await handleAuthUI();
+  }catch(error){
+    console.error(error);
+    setOnlineStatus("Connection failed","#ff9ea6");
   }
 }
 
@@ -5368,10 +5816,14 @@ function renderEverything(){
   renderMatches();
   renderStatsPage();
   renderMorePage();
+
+  document.querySelectorAll(".edit-match-button,.delete-match-button").forEach(button => {
+    button.style.display = isAdmin ? "" : "none";
+  });
 }
 
 renderEverything();
-testSupabaseConnection();
+initSupabase();
 
 </script>
 
