@@ -2741,9 +2741,9 @@ let remoteReady = false;
 const players = [
   {id:"tyrone",name:"Tyrone Dean",number:40,position:"CM",nation:"England",captain:true},
   {id:"baganor",name:"Baganor Jamba",number:78,position:"CM",nation:"DR Congo",captain:true},
-  {id:"kenny",name:"Kenny Kitbag",number:26,position:"CAM",nation:"England",captain:false},
+  {id:"kenny",name:"Kenny Kitbag",number:26,position:"RM",nation:"England",captain:false},
   {id:"deano",name:"Deano",number:7,position:"ST",nation:"England",captain:false},
-  {id:"juanny",name:"Juanny P",number:23,position:"TBC",nation:"Mexico",captain:false}
+  {id:"juanny",name:"Juanny P",number:23,position:"CDM",nation:"Mexico",captain:false}
 ];
 
 const FC26_BASELINE = {
@@ -4343,7 +4343,8 @@ function renderPlayerProfile(){
 
   el("profilePlaceholder").textContent = "#" + player.number;
   el("profileName").textContent = player.name;
-  el("profileMeta").textContent = `${player.position} · ${player.nation}`;
+  const nationFlags = {"England":"🏴󠁧󠁢󠁥󠁮󠁧󠁿󠁧󠁢󠁥󠁮󠁧󠁿","DR Congo":"🇨🇩","Mexico":"🇲🇽"};
+  el("profileMeta").textContent = `${player.position} · ${nationFlags[player.nation] || ""} ${player.nation}`.replace("·  ","· ");
   el("profileSeasonPill").textContent = seasonLabel(activeSeason);
 
   el("profileCaptain").style.display =
