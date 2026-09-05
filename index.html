@@ -3702,7 +3702,9 @@ function blankPlayerTotal(){
     ratingSum:0,
     ratedAppearances:0,
     averageRating:null,
-    potm:0
+    potm:0,
+    passes:null,
+    passCompletion:null
   };
 }
 
@@ -3717,6 +3719,8 @@ function addFC26Baseline(totals){
     stat.goals += base.goals;
     stat.assists += base.assists;
     stat.potm += base.potm;
+    stat.passes = base.passes;
+    stat.passCompletion = base.passCompletion;
 
     stat.ratingSum += base.averageRating * base.appearances;
     stat.ratedAppearances += base.appearances;
@@ -4650,6 +4654,51 @@ function renderRecordsPage(){
     `;
   }
 
+  const passingPlayers = players.filter(
+    player => totals[player.id].passes !== null && totals[player.id].passes !== undefined
+  );
+
+  if(passingPlayers.length){
+    const mostPasses = Math.max(...passingPlayers.map(player => totals[player.id].passes));
+    const passHolders = passingPlayers.filter(player => totals[player.id].passes === mostPasses);
+
+    leadersHTML += `
+      <div class="award-card gold">
+        <div class="award-label">
+          🧠 Most Passes Completed
+        </div>
+        <div class="award-main">
+          <div class="award-player">
+            ${passHolders.map(player => `#${player.number} ${player.name}`).join(" / ")}
+          </div>
+          <div class="award-value">${mostPasses}</div>
+        </div>
+      </div>
+    `;
+
+    const bestPassCompletion = Math.max(...passingPlayers
+      .filter(player => totals[player.id].passCompletion !== null && totals[player.id].passCompletion !== undefined)
+      .map(player => totals[player.id].passCompletion));
+
+    const completionHolders = passingPlayers.filter(player =>
+      totals[player.id].passCompletion === bestPassCompletion
+    );
+
+    leadersHTML += `
+      <div class="award-card gold">
+        <div class="award-label">
+          🎯 Highest Pass Completion
+        </div>
+        <div class="award-main">
+          <div class="award-player">
+            ${completionHolders.map(player => `#${player.number} ${player.name}`).join(" / ")}
+          </div>
+          <div class="award-value">${bestPassCompletion}%</div>
+        </div>
+      </div>
+    `;
+  }
+
   el("playerLeaderRecords").innerHTML = leadersHTML;
 
   const matches = currentMatches();
@@ -5029,6 +5078,20 @@ function renderComparison(){
       rightDisplay:safePerGame(right.contributions,right.appearances).toFixed(2)
     },
     {
+      name:"Passes Completed",
+      leftValue:left.passes === null || left.passes === undefined ? null : left.passes,
+      rightValue:right.passes === null || right.passes === undefined ? null : right.passes,
+      leftDisplay:left.passes === null || left.passes === undefined ? "—" : left.passes,
+      rightDisplay:right.passes === null || right.passes === undefined ? "—" : right.passes
+    },
+    {
+      name:"Pass Completion",
+      leftValue:left.passCompletion === null || left.passCompletion === undefined ? null : left.passCompletion,
+      rightValue:right.passCompletion === null || right.passCompletion === undefined ? null : right.passCompletion,
+      leftDisplay:left.passCompletion === null || left.passCompletion === undefined ? "—" : left.passCompletion + "%",
+      rightDisplay:right.passCompletion === null || right.passCompletion === undefined ? "—" : right.passCompletion + "%"
+    },
+    {
       name:"Average Rating",
       leftValue:left.averageRating === null ? -1 : left.averageRating,
       rightValue:right.averageRating === null ? -1 : right.averageRating,
@@ -5053,7 +5116,9 @@ function renderComparison(){
     let leftClass = "";
     let rightClass = "";
 
-    if(category.leftValue > category.rightValue){
+    if(category.leftValue === null || category.rightValue === null){
+      // Do not score comparison categories where either player has no recorded data.
+    }else if(category.leftValue > category.rightValue){
       leftClass = "winner";
       leftWins++;
     }else if(category.rightValue > category.leftValue){
