@@ -523,6 +523,11 @@ h1{
 .matchday-eyebrow{color:#6f9dff;font-size:11px;font-weight:bold;letter-spacing:.8px;}
 .matchday-title{margin-top:5px;font-size:22px;font-weight:bold;}
 .matchday-sub{margin-top:6px;color:#9aa9bc;font-size:12px;line-height:1.45;}
+.matchday-live-squad{margin-top:7px;color:#9aa9bc;font-size:12px;line-height:1.45;}
+.matchday-timer{margin-top:13px;padding:10px 12px;border-radius:12px;background:#0a1625;border:1px solid #29425f;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.matchday-timer-label{color:#8fa0b6;font-size:10px;font-weight:bold;letter-spacing:.5px;}
+.matchday-timer-value{font-size:17px;font-weight:bold;font-variant-numeric:tabular-nums;}
+.matchday-duration{margin-top:9px;color:#9fb9df;font-size:12px;font-weight:bold;}
 .matchday-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:15px;}
 .matchday-stat{padding:11px 5px;border-radius:12px;background:#07111f;text-align:center;}
 .matchday-stat-value{font-size:18px;font-weight:bold;}
@@ -2809,6 +2814,7 @@ let remoteSeasonIds = {};
 let remotePlayerIds = {};
 let remoteReady = false;
 let matchdaySessions = [];
+let matchdayTimerInterval = setInterval(updateMatchdayTimers,1000);
 
 const players = [
   {id:"tyrone",name:"Tyrone Dean",number:40,position:"CM",nation:"England",captain:true},
@@ -3352,17 +3358,57 @@ function calculateMatchdayStats(session){
   return {matches,wins,draws,losses,gf,ga,winRate,topScorer:topBy("goals"),topAssister:topBy("assists"),topPotm:topBy("potm")};
 }
 
+function formatSessionDuration(ms,clock=false){
+  const totalSeconds = Math.max(0,Math.floor(Number(ms || 0)/1000));
+  const hours = Math.floor(totalSeconds/3600);
+  const minutes = Math.floor((totalSeconds%3600)/60);
+  const seconds = totalSeconds%60;
+  if(clock){
+    return `${String(hours).padStart(2,"0")}:${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
+  }
+  if(hours) return `${hours}h ${minutes}m`;
+  if(minutes) return `${minutes}m ${seconds}s`;
+  return `${seconds}s`;
+}
+
+function matchdayDurationMs(session){
+  if(!session?.startedAt) return 0;
+  const start = new Date(session.startedAt).getTime();
+  const end = session.status === "active" || !session.endedAt
+    ? Date.now()
+    : new Date(session.endedAt).getTime();
+  if(!Number.isFinite(start) || !Number.isFinite(end)) return 0;
+  return Math.max(0,end-start);
+}
+
+function updateMatchdayTimers(){
+  document.querySelectorAll("[data-matchday-timer]").forEach(node => {
+    const session = matchdaySessions.find(s => String(s.id) === String(node.dataset.matchdayTimer));
+    if(session) node.textContent = formatSessionDuration(matchdayDurationMs(session),true);
+  });
+}
+
 function matchdaySummaryHTML(session,compact=false){
   const st = calculateMatchdayStats(session);
   const form = [...st.matches].sort((a,b) => Number(a.id)-Number(b.id)).map(m => m.result);
+  const squadPositions = session.players.map(item => {
+    const p = players.find(x => x.id === item.playerKey);
+    return escapeHTML(item.position || p?.position || "");
+  }).filter(Boolean);
+  const fullSquad = session.players.map(item => {
+    const p=players.find(x=>x.id===item.playerKey);
+    return p ? `${p.name} · ${escapeHTML(item.position || p.position)}` : "";
+  }).filter(Boolean).join("  •  ") || "No squad recorded";
+  const compactSquad = session.players.length
+    ? `${session.players.length}-player squad${squadPositions.length ? ` · ${squadPositions.join(" · ")}` : ""}`
+    : "No squad recorded";
+  const duration = matchdayDurationMs(session);
   return `
     <div class="matchday-card ${session.status === "active" ? "live" : ""}">
       <div class="matchday-eyebrow">${session.status === "active" ? "🔴 MATCHDAY LIVE" : "MATCHDAY REPORT"}</div>
       <div class="matchday-title">${formatDate(session.sessionDate)}</div>
-      <div class="matchday-sub">${session.players.map(item => {
-        const p=players.find(x=>x.id===item.playerKey);
-        return p ? `${p.name} · ${escapeHTML(item.position || p.position)}` : "";
-      }).filter(Boolean).join("  •  ") || "No squad recorded"}</div>
+      <div class="matchday-sub">${compact && session.status === "active" ? compactSquad : fullSquad}</div>
+      ${session.status === "active" ? `<div class="matchday-timer"><span class="matchday-timer-label">⏱ SESSION TIME</span><span class="matchday-timer-value" data-matchday-timer="${session.id}">${formatSessionDuration(duration,true)}</span></div>` : `<div class="matchday-duration">⏱ Session duration — ${formatSessionDuration(duration,false)}</div>`}
       <div class="matchday-grid">
         <div class="matchday-stat"><div class="matchday-stat-value">${st.matches.length}</div><div class="matchday-stat-label">MATCHES</div></div>
         <div class="matchday-stat"><div class="matchday-stat-value">${st.wins}W ${st.draws}D ${st.losses}L</div><div class="matchday-stat-label">RECORD</div></div>
@@ -3371,10 +3417,9 @@ function matchdaySummaryHTML(session,compact=false){
       </div>
       ${form.length ? `<div class="matchday-form">${form.map(r=>`<span class="matchday-pill">${r}</span>`).join("")}</div>` : ""}
       ${!compact && session.status === "ended" ? `<div class="matchday-report-leaders">
-        ${st.topScorer ? `⚽ Top scorer — ${escapeHTML(st.topScorer.player.name)} (${st.topScorer.value})<br>` : ""}
-        ${st.topAssister ? `🎯 Top assister — ${escapeHTML(st.topAssister.player.name)} (${st.topAssister.value})<br>` : ""}
-        ${st.topPotm ? `⭐ Most POTM — ${escapeHTML(st.topPotm.player.name)} (${st.topPotm.value})` : ""}
-        ${!st.topScorer && !st.topAssister && !st.topPotm ? "No player contributions recorded in this session." : ""}
+        ⚽ Top scorer — ${st.topScorer ? `${escapeHTML(st.topScorer.player.name)} (${st.topScorer.value})` : "No goals"}<br>
+        🎯 Top assister — ${st.topAssister ? `${escapeHTML(st.topAssister.player.name)} (${st.topAssister.value})` : "No assists"}<br>
+        ⭐ Most POTM — ${st.topPotm ? `${escapeHTML(st.topPotm.player.name)} (${st.topPotm.value})` : "No POTM"}
       </div>` : ""}
       ${isAdmin ? `<div class="matchday-actions">
         ${session.status === "active" ? `<button class="matchday-action primary" onclick="event.stopPropagation();endMatchday(${session.id})">End Matchday</button>` : ""}
@@ -3415,6 +3460,7 @@ function renderMatchday(){
     .sort((a,b) => Number(b.id)-Number(a.id));
   historyTitle.style.display = sessions.length ? "block" : "none";
   history.innerHTML = sessions.map(session => matchdaySummaryHTML(session,false)).join("");
+  updateMatchdayTimers();
 }
 
 function openMatchdayModal(){
@@ -5269,6 +5315,35 @@ function renderRecordsPage(){
       <div class="club-record-value">${formStats.longestUnbeatenStreak} matches</div>
     </div>
   `;
+
+  const completedMatchdaysForRecords = matchdaySessions.filter(session =>
+    session.status === "ended" &&
+    session.startedAt &&
+    session.endedAt &&
+    (activeSeason === "ALL_TIME" || session.season === activeSeason)
+  );
+
+  if(completedMatchdaysForRecords.length){
+    const longestSession = [...completedMatchdaysForRecords].sort((a,b) =>
+      matchdayDurationMs(b) - matchdayDurationMs(a)
+    )[0];
+    clubHTML += `
+      <div class="club-record-card">
+        <div class="club-record-name">⏱️ Longest Matchday Session</div>
+        <div class="club-record-value">${formatSessionDuration(matchdayDurationMs(longestSession),false)}</div>
+        <div class="club-record-meta">
+          ${formatDate(longestSession.sessionDate)}${activeSeason === "ALL_TIME" ? " · " + longestSession.season : ""}
+        </div>
+      </div>
+    `;
+  }else{
+    clubHTML += `
+      <div class="club-record-card">
+        <div class="club-record-name">⏱️ Longest Matchday Session</div>
+        <div class="club-record-value">No completed Matchday sessions yet</div>
+      </div>
+    `;
+  }
 
   if(mostGoals){
 
