@@ -2240,18 +2240,18 @@ input[type="date"]::-webkit-date-and-time-value{
   </div>
 
   <div class="hub-section">
-    <div class="hub-heading">ADMIN</div>
+    <div class="hub-heading">CLUB ACCESS</div>
     <div class="hub-card" style="padding:15px">
       <div id="adminLoginPanel">
         <div class="form-group">
-          <label class="form-label">Admin email</label>
-          <input id="adminEmail" class="form-control" type="email" autocomplete="username" placeholder="Email">
+          <label class="form-label">Username</label>
+          <input id="adminEmail" class="form-control" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Username">
         </div>
         <div class="form-group">
           <label class="form-label">Password</label>
           <input id="adminPassword" class="form-control" type="password" autocomplete="current-password" placeholder="Password">
         </div>
-        <button class="save-button" style="width:100%;min-height:52px" onclick="adminLogin()">Admin Login</button>
+        <button class="save-button" style="width:100%;min-height:52px" onclick="adminLogin()">Sign In</button>
       </div>
 
       <div id="adminLoggedInPanel" style="display:none">
@@ -2737,6 +2737,10 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_lPcjKyOTOxjfSceyUUT6Mg_h-e1oATt
 
 let supabaseClient = null;
 let isAdmin = false;
+let isOwner = false;
+let currentClubUsername = "";
+let currentClubRole = "";
+const OWNER_UID = "dc4e457c-4b2c-413f-a6d8-b4f49c053480";
 let remoteSeasonIds = {};
 let remotePlayerIds = {};
 let remoteReady = false;
@@ -3157,8 +3161,8 @@ function renderDivision(){
 
 function openDivisionModal(){
 
-  if(!isAdmin){
-    alert("Admin login is required to change the division.");
+  if(!isOwner){
+    alert("Owner access is required to change the division.");
     return;
   }
 
@@ -3182,7 +3186,7 @@ function closeDivisionModal(){
 
 async function saveDivision(){
 
-  if(activeSeason === "ALL_TIME" || !isAdmin){
+  if(activeSeason === "ALL_TIME" || !isOwner){
     return;
   }
 
@@ -3269,7 +3273,7 @@ function configureMatchModal(season,isEdit){
 function openMatchForm(){
 
   if(!isAdmin){
-    alert("Admin login is required to add a match.");
+    alert("Club login is required to add a match.");
     return;
   }
 
@@ -3301,7 +3305,7 @@ function openMatchForm(){
 function openMatchForEdit(season,id){
 
   if(!isAdmin){
-    alert("Admin login is required to edit a match.");
+    alert("Club login is required to edit a match.");
     return;
   }
 
@@ -4557,14 +4561,14 @@ function renderMorePage(){
 
   }else{
 
-    if(isAdmin){
+    if(isOwner){
       el("resetSeasonButton").classList.remove("disabled");
     }else{
       el("resetSeasonButton").classList.add("disabled");
     }
-    el("resetSeasonTitle").textContent = isAdmin
+    el("resetSeasonTitle").textContent = isOwner
       ? `Reset Logged ${activeSeason} Data`
-      : "Admin Login Required to Reset";
+      : "Owner Access Required to Reset";
   }
 
   const addButton = el("addMatchButton");
@@ -4573,12 +4577,12 @@ function renderMorePage(){
   }
 
   document.querySelectorAll(".change-division").forEach(button => {
-    button.style.display = isAdmin ? "" : "none";
+    button.style.display = isOwner ? "" : "none";
   });
 
   const seasonSettings = el("seasonSettingsSection");
   if(seasonSettings && activeSeason !== "ALL_TIME"){
-    seasonSettings.style.display = isAdmin ? "block" : "none";
+    seasonSettings.style.display = isOwner ? "block" : "none";
   }
 
   updateAdminUI();
@@ -5420,7 +5424,7 @@ function editSelectedMatch(){
 async function deleteSelectedMatch(){
 
   if(!isAdmin){
-    alert("Admin login is required to delete a match.");
+    alert("Club login is required to delete a match.");
     return;
   }
 
@@ -5617,8 +5621,8 @@ function restoreBackup(event){
 
 async function resetSeasonData(){
 
-  if(!isAdmin){
-    alert("Admin login is required to reset season data.");
+  if(!isOwner){
+    alert("Owner access is required to reset season data.");
     return;
   }
 
@@ -5691,11 +5695,17 @@ function updateAdminUI(){
   const loginPanel = el("adminLoginPanel");
   const loggedPanel = el("adminLoggedInPanel");
   const access = el("adminAccessStatus");
+  const uploadButton = loggedPanel?.querySelector('button[onclick="uploadLocalDataToSupabase()"]');
 
   if(loginPanel) loginPanel.style.display = isAdmin ? "none" : "block";
   if(loggedPanel) loggedPanel.style.display = isAdmin ? "block" : "none";
+
+  if(uploadButton){
+    uploadButton.style.display = isOwner ? "" : "none";
+  }
+
   if(access){
-    access.textContent = isAdmin ? "Admin" : "Public view";
+    access.textContent = isOwner ? "Owner" : (isAdmin ? "Player Admin" : "Public view");
     access.style.color = isAdmin ? "#67d894" : "#9aa9bc";
   }
 }
@@ -5835,8 +5845,13 @@ async function bootstrapSeasonsFromLocal(){
 }
 
 async function saveMatchToSupabase(match,season){
-  if(!isAdmin) throw new Error("Admin login required");
-  await bootstrapSeasonsFromLocal();
+  if(!isAdmin) throw new Error("Club login required");
+
+  if(isOwner){
+    await bootstrapSeasonsFromLocal();
+  }else{
+    await ensureRemoteLookups();
+  }
 
   const seasonId = remoteSeasonIds[season];
   if(!seasonId) throw new Error("Season is missing online");
@@ -5883,32 +5898,83 @@ async function saveMatchToSupabase(match,season){
   }
 }
 
+async function loadCurrentClubAccess(session){
+  isAdmin = false;
+  isOwner = false;
+  currentClubUsername = "";
+  currentClubRole = "";
+
+  const user = session?.user;
+  if(!user) return;
+
+  if(user.id === OWNER_UID){
+    isAdmin = true;
+    isOwner = true;
+    currentClubRole = "owner";
+  }
+
+  try{
+    const {data,error} = await supabaseClient
+      .from("club_users")
+      .select("username,role,player_key")
+      .eq("user_id",user.id)
+      .maybeSingle();
+
+    if(error) throw error;
+
+    if(data){
+      currentClubUsername = data.username || "";
+      currentClubRole = data.role || currentClubRole;
+      isAdmin = ["owner","player_admin"].includes(data.role);
+      isOwner = data.role === "owner" || user.id === OWNER_UID;
+    }
+  }catch(error){
+    console.error("Club access lookup failed:",error);
+  }
+}
+
 async function adminLogin(){
-  const email = el("adminEmail")?.value.trim();
+  const loginValue = el("adminEmail")?.value.trim() || "";
   const password = el("adminPassword")?.value || "";
   const message = el("adminMessage");
 
-  if(!email || !password){
-    if(message) message.textContent = "Enter your admin email and password.";
+  if(!loginValue || !password){
+    if(message) message.textContent = "Enter your username and password.";
     return;
   }
+
+  const email = loginValue.includes("@")
+    ? loginValue
+    : `${loginValue.toLowerCase()}@olympus.invalid`;
 
   if(message) message.textContent = "Signing in…";
 
   const {data,error} = await supabaseClient.auth.signInWithPassword({email,password});
   if(error){
-    if(message) message.textContent = "Login failed. Check your email and password.";
+    if(message) message.textContent = "Login failed. Check your username and password.";
     return;
   }
 
-  isAdmin = Boolean(data.session);
-  if(message) message.textContent = isAdmin ? "Admin access enabled." : "Login failed.";
+  await loadCurrentClubAccess(data.session);
+
+  if(!isAdmin){
+    await supabaseClient.auth.signOut();
+    if(message) message.textContent = "This account does not have Olympus FC editing access.";
+    return;
+  }
+
+  if(message){
+    message.textContent = isOwner ? "Owner access enabled." : "Player Admin access enabled.";
+  }
   await handleAuthUI();
 }
 
 async function adminLogout(){
   await supabaseClient.auth.signOut();
   isAdmin = false;
+  isOwner = false;
+  currentClubUsername = "";
+  currentClubRole = "";
   const message = el("adminMessage");
   if(message) message.textContent = "Logged out. The site is now read-only.";
   await handleAuthUI();
@@ -5916,17 +5982,21 @@ async function adminLogout(){
 
 async function handleAuthUI(){
   const {data} = await supabaseClient.auth.getSession();
-  isAdmin = Boolean(data?.session);
+  await loadCurrentClubAccess(data?.session || null);
+
   const signed = el("adminSignedInText");
-  if(signed && data?.session?.user?.email){
-    signed.textContent = `Signed in as ${data.session.user.email}`;
+  if(signed && data?.session?.user){
+    const roleLabel = isOwner ? "Owner" : "Player Admin";
+    const displayName = currentClubUsername || data.session.user.email || "Club user";
+    signed.textContent = `Signed in as ${displayName} • ${roleLabel}`;
   }
+
   updateAdminUI();
   renderEverything();
 }
 
 async function uploadLocalDataToSupabase(){
-  if(!isAdmin) return;
+  if(!isOwner) return;
 
   if(!confirm("Replace the online FC26 and FC27 match data with the data currently stored on this device?")){
     return;
@@ -5990,10 +6060,10 @@ async function initSupabase(){
   try{
     supabaseClient = window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
     const {data} = await supabaseClient.auth.getSession();
-    isAdmin = Boolean(data?.session);
+    await loadCurrentClubAccess(data?.session || null);
 
-    supabaseClient.auth.onAuthStateChange((_event,session) => {
-      isAdmin = Boolean(session);
+    supabaseClient.auth.onAuthStateChange(async (_event,session) => {
+      await loadCurrentClubAccess(session);
       updateAdminUI();
       renderEverything();
     });
