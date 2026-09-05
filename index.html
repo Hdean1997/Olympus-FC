@@ -1,67 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Olympus FC</title>
 
-    <title>Olympus FC</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-    <style>
-        body {
-            margin: 0;
-            background: #07111f;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #07111f;
+      color: white;
+    }
 
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+    .app {
+      min-height: 100vh;
+      padding-bottom: 95px;
+    }
 
-        h1 {
-            font-size: 48px;
-            margin: 0;
-        }
+    .top {
+      text-align: center;
+      padding: 28px 20px 18px;
+      background: linear-gradient(180deg, #0b1c31, #07111f);
+    }
 
-        .red {
-            color: #e63946;
-        }
+    .badge {
+      width: 145px;
+      height: 145px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 14px;
+      box-shadow: 0 0 30px rgba(37, 116, 255, 0.2);
+    }
 
-        p {
-            color: #aab6c5;
-            font-size: 18px;
-        }
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      letter-spacing: 1px;
+    }
 
-        .button {
-            margin-top: 20px;
-            padding: 15px 28px;
-            background: #1769ff;
-            border-radius: 12px;
-            font-weight: bold;
-        }
-    </style>
+    .subtitle {
+      margin-top: 8px;
+      color: #9aa9bc;
+      font-size: 15px;
+    }
+
+    .season-card {
+      margin: 16px;
+      padding: 18px;
+      border-radius: 18px;
+      background: #101d2e;
+      border: 1px solid #1c314c;
+    }
+
+    .season-card h2 {
+      margin: 0 0 6px;
+      font-size: 20px;
+    }
+
+    .season-card p {
+      margin: 0;
+      color: #9aa9bc;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 0 16px;
+    }
+
+    .stat {
+      background: #101d2e;
+      border: 1px solid #1c314c;
+      border-radius: 16px;
+      padding: 18px 12px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 28px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .stat-label {
+      margin-top: 5px;
+      font-size: 13px;
+      color: #9aa9bc;
+    }
+
+    .section {
+      padding: 22px 16px 0;
+    }
+
+    .section h3 {
+      margin: 0 0 12px;
+      font-size: 19px;
+    }
+
+    .leader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #101d2e;
+      border: 1px solid #1c314c;
+      padding: 15px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+    }
+
+    .leader-name {
+      font-weight: bold;
+    }
+
+    .leader-detail {
+      color: #9aa9bc;
+      font-size: 13px;
+      margin-top: 3px;
+    }
+
+    .leader-value {
+      font-size: 22px;
+      font-weight: bold;
+      color: #e8bd4b;
+    }
+
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 78px;
+      background: #0b1625;
+      border-top: 1px solid #1c314c;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .nav-item {
+      text-align: center;
+      font-size: 12px;
+      color: #8392a6;
+    }
+
+    .nav-item span {
+      display: block;
+      font-size: 23px;
+      margin-bottom: 4px;
+    }
+
+    .nav-item.active {
+      color: #3c78ff;
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
 
-    <div class="hero">
-        <h1>OLYMPUS <span class="red">FC</span></h1>
+  <div class="app">
 
-        <p>Pro Clubs Stats Tracker</p>
+    <div class="top">
+      <img
+        src="Olympus FC Badge.PNG"
+        alt="Olympus FC Badge"
+        class="badge"
+      >
 
-        <div class="button">
-            ENTER THE SUMMIT
-        </div>
+      <h1>OLYMPUS FC</h1>
+      <div class="subtitle">Pro Clubs Stats Tracker</div>
     </div>
 
-</body>
+    <div class="season-card">
+      <h2>FC27 Season</h2>
+      <p>The climb to the summit begins here.</p>
+    </div>
 
+    <div class="stats-grid">
+
+      <div class="stat">
+        <div class="stat-number">0</div>
+        <div class="stat-label">Matches</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-number">0</div>
+        <div class="stat-label">Wins</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-number">0</div>
+        <div class="stat-label">Goals</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-number">0%</div>
+        <div class="stat-label">Win Rate</div>
+      </div>
+
+    </div>
+
+    <div class="section">
+      <h3>Club Leaders</h3>
+
+      <div class="leader">
+        <div>
+          <div class="leader-name">Tyrone Dean</div>
+          <div class="leader-detail">Top Goalscorer</div>
+        </div>
+
+        <div class="leader-value">0</div>
+      </div>
+
+      <div class="leader">
+        <div>
+          <div class="leader-name">Baganor Jamba</div>
+          <div class="leader-detail">Top Assists</div>
+        </div>
+
+        <div class="leader-value">0</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="nav">
+
+    <div class="nav-item active">
+      <span>⌂</span>
+      Home
+    </div>
+
+    <div class="nav-item">
+      <span>♟</span>
+      Squad
+    </div>
+
+    <div class="nav-item">
+      <span>⚽</span>
+      Matches
+    </div>
+
+    <div class="nav-item">
+      <span>▥</span>
+      Stats
+    </div>
+
+    <div class="nav-item">
+      <span>•••</span>
+      More
+    </div>
+
+  </div>
+
+</body>
 </html>
