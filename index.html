@@ -20,8 +20,13 @@
 html,
 body {
   margin: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+
   background: #07111f;
   color: white;
+
   font-family: Arial, sans-serif;
 }
 
@@ -48,21 +53,35 @@ button {
   display: block;
 }
 
-/* HOME */
+
+/* =========================
+HOME
+========================= */
 
 .top {
   text-align: center;
   padding: 28px 20px 18px;
-  background: linear-gradient(180deg,#0b1c31,#07111f);
+
+  background:
+    linear-gradient(
+      180deg,
+      #0b1c31,
+      #07111f
+    );
 }
 
 .badge {
   width: 145px;
   height: 145px;
+
   object-fit: cover;
   border-radius: 50%;
+
   margin-bottom: 14px;
-  box-shadow: 0 0 30px rgba(37,116,255,.2);
+
+  box-shadow:
+    0 0 30px
+    rgba(37,116,255,.2);
 }
 
 h1 {
@@ -78,7 +97,9 @@ h1 {
 .season-card {
   margin: 16px;
   padding: 18px;
+
   border-radius: 18px;
+
   background: #101d2e;
   border: 1px solid #1c314c;
 }
@@ -95,14 +116,18 @@ h1 {
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+
   gap: 12px;
   padding: 0 16px;
 }
 
 .stat {
   padding: 18px 12px;
+
   text-align: center;
+
   border-radius: 16px;
+
   background: #101d2e;
   border: 1px solid #1c314c;
 }
@@ -114,6 +139,7 @@ h1 {
 
 .stat-label {
   margin-top: 5px;
+
   font-size: 13px;
   color: #9aa9bc;
 }
@@ -130,11 +156,14 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  padding: 15px;
+  margin-bottom: 10px;
+
+  border-radius: 14px;
+
   background: #101d2e;
   border: 1px solid #1c314c;
-  padding: 15px;
-  border-radius: 14px;
-  margin-bottom: 10px;
 }
 
 .leader-name {
@@ -142,18 +171,23 @@ h1 {
 }
 
 .leader-detail {
+  margin-top: 3px;
+
   color: #9aa9bc;
   font-size: 13px;
-  margin-top: 3px;
 }
 
 .leader-value {
   color: #e8bd4b;
+
   font-size: 22px;
   font-weight: bold;
 }
 
-/* HEADERS */
+
+/* =========================
+PAGE HEADERS
+========================= */
 
 .page-header {
   padding: 38px 20px 18px;
@@ -169,15 +203,19 @@ h1 {
   color: #9aa9bc;
 }
 
-/* SQUAD */
+
+/* =========================
+SQUAD
+========================= */
 
 .player-card {
   margin: 12px 16px;
   padding: 18px;
+
   border-radius: 18px;
+
   background: #101d2e;
   border: 1px solid #1c314c;
-  cursor: pointer;
 }
 
 .player-main {
@@ -189,14 +227,20 @@ h1 {
 .number {
   width: 58px;
   height: 58px;
+
   flex-shrink: 0;
+
   border-radius: 50%;
+
   background: #0b2547;
   border: 1px solid #3269bb;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   color: #e8bd4b;
+
   font-size: 21px;
   font-weight: bold;
 }
@@ -208,32 +252,44 @@ h1 {
 
 .player-meta {
   margin-top: 5px;
+
   color: #9aa9bc;
   font-size: 13px;
 }
 
 .captain {
   display: inline-block;
+
   margin-top: 7px;
   padding: 5px 9px;
+
   border-radius: 7px;
+
   background: #e8bd4b;
   color: #07111f;
+
   font-size: 11px;
   font-weight: bold;
 }
 
 .player-mini-stats {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
+
+  grid-template-columns:
+    repeat(4,1fr);
+
   gap: 8px;
+
   margin-top: 16px;
 }
 
 .mini-stat {
   text-align: center;
+
   padding: 10px 4px;
+
   border-radius: 10px;
+
   background: #0b1625;
 }
 
@@ -243,24 +299,35 @@ h1 {
 }
 
 .mini-label {
+  margin-top: 3px;
+
   color: #8392a6;
   font-size: 9px;
-  margin-top: 3px;
 }
 
-/* MATCHES */
+
+/* =========================
+MATCHES
+========================= */
 
 .matches-summary {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
+
+  grid-template-columns:
+    repeat(3,1fr);
+
   gap: 10px;
+
   margin: 0 16px 18px;
 }
 
 .match-summary-box {
   padding: 15px 8px;
+
   text-align: center;
+
   border-radius: 15px;
+
   background: #101d2e;
   border: 1px solid #1c314c;
 }
@@ -272,19 +339,25 @@ h1 {
 
 .match-summary-label {
   margin-top: 5px;
+
   font-size: 11px;
   color: #9aa9bc;
 }
 
 .add-match-button {
   display: block;
+
   width: calc(100% - 32px);
+
   margin: 0 16px 20px;
   padding: 16px;
+
   border: 0;
   border-radius: 14px;
+
   background: #326eff;
   color: white;
+
   font-size: 16px;
   font-weight: bold;
 }
@@ -297,9 +370,12 @@ h1 {
 .empty-matches {
   margin: 0 16px;
   padding: 35px 20px;
+
   text-align: center;
+
   border: 1px dashed #29425f;
   border-radius: 18px;
+
   background: #0d1928;
 }
 
@@ -309,12 +385,14 @@ h1 {
 
 .empty-title {
   margin-top: 12px;
+
   font-size: 19px;
   font-weight: bold;
 }
 
 .empty-text {
   margin-top: 8px;
+
   color: #9aa9bc;
   line-height: 1.5;
 }
@@ -322,7 +400,9 @@ h1 {
 .match-card {
   margin: 0 16px 12px;
   padding: 18px;
+
   border-radius: 18px;
+
   background: #101d2e;
   border: 1px solid #1c314c;
 }
@@ -330,6 +410,7 @@ h1 {
 .match-card-top {
   display: flex;
   justify-content: space-between;
+
   gap: 10px;
 }
 
@@ -340,16 +421,20 @@ h1 {
 
 .match-date {
   margin-top: 4px;
+
   color: #9aa9bc;
   font-size: 12px;
 }
 
 .result-badge {
+  height: fit-content;
+
   padding: 5px 9px;
+
   border-radius: 7px;
+
   font-size: 12px;
   font-weight: bold;
-  height: fit-content;
 }
 
 .result-win {
@@ -366,12 +451,14 @@ h1 {
 
 .scoreline {
   margin-top: 18px;
+
   font-size: 21px;
   font-weight: bold;
 }
 
 .match-type {
   margin-top: 8px;
+
   color: #9aa9bc;
   font-size: 13px;
 }
@@ -379,51 +466,84 @@ h1 {
 .match-player-summary {
   margin-top: 14px;
   padding-top: 12px;
+
   border-top: 1px solid #25384f;
+
   color: #bdc8d6;
+
   font-size: 12px;
   line-height: 1.8;
 }
 
-.potm-line {
-  color: #e8bd4b;
+.match-actions {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 10px;
+
+  margin-top: 16px;
+}
+
+.edit-match {
+  padding: 10px;
+
+  border-radius: 9px;
+
+  border: 1px solid #315d9d;
+
+  background: transparent;
+  color: #75a4ff;
+
   font-weight: bold;
 }
 
 .delete-match {
-  margin-top: 15px;
-  padding: 8px 11px;
+  padding: 10px;
+
+  border-radius: 9px;
+
   border: 1px solid #69333a;
-  border-radius: 8px;
+
   background: transparent;
   color: #e27c83;
+
+  font-weight: bold;
 }
 
-/* LEADERBOARD */
+
+/* =========================
+STATS
+========================= */
 
 .leaderboard-title {
   margin: 0 16px 12px;
-  font-size: 14px;
+
   color: #9aa9bc;
+  font-size: 14px;
 }
 
 .stats-card {
   margin: 0 16px 12px;
   padding: 16px;
+
   border-radius: 16px;
+
   background: #101d2e;
   border: 1px solid #1c314c;
-  cursor: pointer;
 }
 
 .stats-player-top {
   display: flex;
+
   align-items: center;
   justify-content: space-between;
 }
 
 .stats-player-left {
   display: flex;
+
   align-items: center;
   gap: 12px;
 }
@@ -431,11 +551,15 @@ h1 {
 .rank-circle {
   width: 40px;
   height: 40px;
+
   border-radius: 50%;
+
   background: #0b2547;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   color: #e8bd4b;
   font-weight: bold;
 }
@@ -446,9 +570,10 @@ h1 {
 }
 
 .stats-player-meta {
+  margin-top: 3px;
+
   color: #8392a6;
   font-size: 11px;
-  margin-top: 3px;
 }
 
 .chevron {
@@ -458,15 +583,22 @@ h1 {
 
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
+
+  grid-template-columns:
+    repeat(3,1fr);
+
   gap: 7px;
+
   margin-top: 14px;
 }
 
 .stats-box {
   padding: 10px 3px;
+
   text-align: center;
+
   background: #0b1625;
+
   border-radius: 10px;
 }
 
@@ -477,28 +609,42 @@ h1 {
 
 .stats-box-label {
   margin-top: 3px;
+
   font-size: 9px;
   color: #8392a6;
 }
 
-/* PLAYER PROFILE */
+
+/* =========================
+PROFILE
+========================= */
 
 .profile-top {
   padding: 30px 20px 10px;
-  background: linear-gradient(180deg,#0d213a,#07111f);
+
+  background:
+    linear-gradient(
+      180deg,
+      #0d213a,
+      #07111f
+    );
 }
 
 .back-button {
   border: 0;
   background: transparent;
+
   color: #6e9cff;
+
   padding: 0;
   margin-bottom: 25px;
+
   font-size: 15px;
 }
 
 .profile-identity {
   display: flex;
+
   align-items: center;
   gap: 16px;
 }
@@ -506,13 +652,18 @@ h1 {
 .profile-number {
   width: 78px;
   height: 78px;
+
   border-radius: 50%;
+
   background: #0b2547;
   border: 2px solid #3269bb;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   color: #e8bd4b;
+
   font-size: 27px;
   font-weight: bold;
 }
@@ -529,15 +680,22 @@ h1 {
 
 .profile-grid {
   display: grid;
-  grid-template-columns: repeat(2,1fr);
+
+  grid-template-columns:
+    repeat(2,1fr);
+
   gap: 12px;
+
   margin: 22px 16px;
 }
 
 .profile-stat {
   padding: 18px;
-  border-radius: 16px;
+
   text-align: center;
+
+  border-radius: 16px;
+
   background: #101d2e;
   border: 1px solid #1c314c;
 }
@@ -549,6 +707,7 @@ h1 {
 
 .profile-stat-name {
   margin-top: 5px;
+
   color: #9aa9bc;
   font-size: 12px;
 }
@@ -556,16 +715,22 @@ h1 {
 .profile-secondary {
   margin: 0 16px 22px;
   padding: 16px;
+
   border-radius: 16px;
+
   background: #101d2e;
   border: 1px solid #1c314c;
 }
 
 .secondary-row {
   display: flex;
+
   justify-content: space-between;
+
   padding: 11px 0;
-  border-bottom: 1px solid #26384d;
+
+  border-bottom:
+    1px solid #26384d;
 }
 
 .secondary-row:last-child {
@@ -588,14 +753,19 @@ h1 {
 .profile-match {
   margin: 0 16px 10px;
   padding: 14px;
+
   border-radius: 14px;
+
   background: #101d2e;
   border: 1px solid #1c314c;
 }
 
 .profile-match-top {
   display: flex;
-  justify-content: space-between;
+
+  justify-content:
+    space-between;
+
   gap: 12px;
 }
 
@@ -604,36 +774,60 @@ h1 {
 }
 
 .profile-match-date {
+  margin-top: 4px;
+
   color: #8392a6;
   font-size: 11px;
-  margin-top: 4px;
 }
 
 .profile-match-contribution {
   color: #e8bd4b;
+
   font-weight: bold;
+
   text-align: right;
 }
 
 .no-profile-matches {
   margin: 0 16px;
-  color: #8392a6;
   padding: 20px;
+
   text-align: center;
+
+  color: #8392a6;
+
   background: #101d2e;
+
   border-radius: 14px;
 }
 
-/* MODAL */
+
+/* =========================
+MODAL
+========================= */
 
 .modal {
   display: none;
+
   position: fixed;
+
   inset: 0;
+
   z-index: 500;
+
   overflow-y: auto;
-  background: rgba(3,9,17,.94);
-  padding: 20px 16px calc(60px + env(safe-area-inset-bottom));
+  overflow-x: hidden;
+
+  background:
+    rgba(3,9,17,.94);
+
+  padding:
+    20px
+    16px
+    calc(
+      60px +
+      env(safe-area-inset-bottom)
+    );
 }
 
 .modal.open {
@@ -643,9 +837,16 @@ h1 {
 .modal-card {
   width: 100%;
   max-width: 520px;
+
+  min-width: 0;
+
   margin: 25px auto;
   padding: 22px;
+
+  overflow: hidden;
+
   border-radius: 20px;
+
   background: #101d2e;
   border: 1px solid #29425f;
 }
@@ -657,93 +858,171 @@ h1 {
 
 .modal-subtitle {
   margin: 5px 0 25px;
+
   color: #9aa9bc;
 }
 
 .step-indicator {
   margin-bottom: 20px;
+
   color: #5f8eff;
+
   font-size: 12px;
   font-weight: bold;
 }
 
 .form-group {
   width: 100%;
-  margin-bottom: 18px;
+  max-width: 100%;
+
   min-width: 0;
+
+  overflow: hidden;
+
+  margin-bottom: 18px;
 }
 
 .form-label {
   display: block;
+
   margin-bottom: 8px;
+
   color: #c9d2df;
+
   font-size: 13px;
   font-weight: bold;
 }
 
 .form-control {
   display: block;
+
   width: 100%;
   max-width: 100%;
   min-width: 0;
+
   height: 52px;
+
   padding: 12px 14px;
-  border: 1px solid #29425f;
+
+  border:
+    1px solid #29425f;
+
   border-radius: 12px;
+
   background: #07111f;
   color: white;
+
   font-size: 16px;
 }
 
+
+/* iPHONE DATE FIX */
+
+.date-wrapper {
+  width: 100%;
+  max-width: 100%;
+
+  min-width: 0;
+
+  overflow: hidden;
+}
+
+input[type="date"].form-control {
+  display: block;
+
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+
+  box-sizing: border-box;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  text-align: left;
+}
+
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+
+/* SCORES */
+
 .score-inputs {
   display: grid;
-  grid-template-columns: minmax(0,1fr) 35px minmax(0,1fr);
+
+  grid-template-columns:
+    minmax(0,1fr)
+    35px
+    minmax(0,1fr);
+
   gap: 8px;
+
   align-items: end;
+
+  width: 100%;
+  min-width: 0;
 }
 
 .score-divider {
   text-align: center;
+
   padding-bottom: 15px;
+
   color: #9aa9bc;
+
   font-size: 22px;
   font-weight: bold;
 }
 
 .form-buttons {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+
+  grid-template-columns:
+    1fr 1fr;
+
   gap: 10px;
+
   margin-top: 24px;
 }
 
 .cancel-button,
 .save-button {
   min-height: 54px;
+
   border-radius: 12px;
+
   font-weight: bold;
   font-size: 15px;
 }
 
 .cancel-button {
-  border: 1px solid #29425f;
+  border:
+    1px solid #29425f;
+
   background: #17263a;
   color: white;
 }
 
 .save-button {
   border: 0;
+
   background: #326eff;
   color: white;
 }
 
 .form-error {
   display: none;
+
   margin: 12px 0 0;
   padding: 11px;
+
   border-radius: 9px;
+
   background: #4b2026;
   color: #ffb4ba;
+
   font-size: 13px;
 }
 
@@ -751,20 +1030,26 @@ h1 {
   display: block;
 }
 
-/* PLAYER MATCH ENTRY */
+
+/* PLAYER ENTRY */
 
 .player-entry {
   margin-bottom: 12px;
   padding: 14px;
+
   border-radius: 14px;
+
   background: #0b1625;
   border: 1px solid #243b58;
 }
 
 .player-entry-header {
   display: flex;
+
   align-items: center;
-  justify-content: space-between;
+  justify-content:
+    space-between;
+
   gap: 10px;
 }
 
@@ -774,9 +1059,13 @@ h1 {
 
 .played-toggle {
   display: flex;
+
   gap: 6px;
+
   align-items: center;
+
   color: #9aa9bc;
+
   font-size: 12px;
 }
 
@@ -787,34 +1076,54 @@ h1 {
 
 .player-entry-inputs {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
+
+  grid-template-columns:
+    repeat(3,1fr);
+
   gap: 8px;
+
   margin-top: 12px;
 }
 
 .small-input-label {
-  color: #9aa9bc;
-  font-size: 11px;
   margin-bottom: 5px;
+
+  color: #9aa9bc;
+
+  font-size: 11px;
 }
 
 .small-stat-input {
   width: 100%;
+  min-width: 0;
+
   height: 44px;
+
   padding: 8px;
+
   color: white;
+
   background: #07111f;
-  border: 1px solid #29425f;
+
+  border:
+    1px solid #29425f;
+
   border-radius: 9px;
+
   font-size: 16px;
 }
 
 .potm-choice {
   margin-top: 13px;
+
   display: flex;
+
   align-items: center;
+
   gap: 9px;
+
   color: #e8bd4b;
+
   font-size: 13px;
   font-weight: bold;
 }
@@ -828,21 +1137,38 @@ h1 {
   opacity: .45;
 }
 
-/* NAV */
+
+/* =========================
+NAVIGATION
+========================= */
 
 .nav {
   position: fixed;
+
   left: 0;
   right: 0;
   bottom: 0;
+
   z-index: 100;
+
   min-height: 82px;
+
   padding-top: 9px;
-  padding-bottom: calc(8px + env(safe-area-inset-bottom));
+
+  padding-bottom:
+    calc(
+      8px +
+      env(safe-area-inset-bottom)
+    );
+
   display: flex;
+
   align-items: flex-start;
+
   background: #0b1625;
-  border-top: 1px solid #1c314c;
+
+  border-top:
+    1px solid #1c314c;
 }
 
 .nav.hidden {
@@ -851,16 +1177,22 @@ h1 {
 
 .nav-item {
   width: 20%;
+
   text-align: center;
+
   color: #8392a6;
+
   font-size: 12px;
 }
 
 .nav-icon {
   display: block;
+
   min-height: 30px;
-  font-size: 23px;
+
   margin-bottom: 3px;
+
+  font-size: 23px;
 }
 
 .nav-item.active {
@@ -871,9 +1203,11 @@ h1 {
 </style>
 </head>
 
+
 <body>
 
 <div class="app">
+
 
 <!-- HOME -->
 
@@ -910,23 +1244,58 @@ h1 {
   <div class="stats-grid">
 
     <div class="stat">
-      <div id="homeMatches" class="stat-number">0</div>
-      <div class="stat-label">Matches</div>
+      <div
+        id="homeMatches"
+        class="stat-number"
+      >
+        0
+      </div>
+
+      <div class="stat-label">
+        Matches
+      </div>
     </div>
 
-    <div class="stat">
-      <div id="homeWins" class="stat-number">0</div>
-      <div class="stat-label">Wins</div>
-    </div>
 
     <div class="stat">
-      <div id="homeGoals" class="stat-number">0</div>
-      <div class="stat-label">Goals</div>
+      <div
+        id="homeWins"
+        class="stat-number"
+      >
+        0
+      </div>
+
+      <div class="stat-label">
+        Wins
+      </div>
     </div>
 
+
     <div class="stat">
-      <div id="homeWinRate" class="stat-number">0%</div>
-      <div class="stat-label">Win Rate</div>
+      <div
+        id="homeGoals"
+        class="stat-number"
+      >
+        0
+      </div>
+
+      <div class="stat-label">
+        Goals
+      </div>
+    </div>
+
+
+    <div class="stat">
+      <div
+        id="homeWinRate"
+        class="stat-number"
+      >
+        0%
+      </div>
+
+      <div class="stat-label">
+        Win Rate
+      </div>
     </div>
 
   </div>
@@ -936,19 +1305,28 @@ h1 {
 
     <h3>Club Leaders</h3>
 
+
     <div class="leader">
 
       <div>
-        <div id="topScorerName" class="leader-name">
+
+        <div
+          id="topScorerName"
+          class="leader-name"
+        >
           No goals yet
         </div>
 
         <div class="leader-detail">
           Top Goalscorer
         </div>
+
       </div>
 
-      <div id="topScorerGoals" class="leader-value">
+      <div
+        id="topScorerGoals"
+        class="leader-value"
+      >
         0
       </div>
 
@@ -958,16 +1336,24 @@ h1 {
     <div class="leader">
 
       <div>
-        <div id="topAssisterName" class="leader-name">
+
+        <div
+          id="topAssisterName"
+          class="leader-name"
+        >
           No assists yet
         </div>
 
         <div class="leader-detail">
           Top Assists
         </div>
+
       </div>
 
-      <div id="topAssisterAssists" class="leader-value">
+      <div
+        id="topAssisterAssists"
+        class="leader-value"
+      >
         0
       </div>
 
@@ -977,16 +1363,24 @@ h1 {
     <div class="leader">
 
       <div>
-        <div id="bestRatingName" class="leader-name">
+
+        <div
+          id="bestRatingName"
+          class="leader-name"
+        >
           No ratings yet
         </div>
 
         <div class="leader-detail">
           Best Average Rating
         </div>
+
       </div>
 
-      <div id="bestRatingValue" class="leader-value">
+      <div
+        id="bestRatingValue"
+        class="leader-value"
+      >
         —
       </div>
 
@@ -996,16 +1390,24 @@ h1 {
     <div class="leader">
 
       <div>
-        <div id="potmLeaderName" class="leader-name">
+
+        <div
+          id="potmLeaderName"
+          class="leader-name"
+        >
           No POTM awards yet
         </div>
 
         <div class="leader-detail">
           Most Player of the Match
         </div>
+
       </div>
 
-      <div id="potmLeaderValue" class="leader-value">
+      <div
+        id="potmLeaderValue"
+        class="leader-value"
+      >
         0
       </div>
 
@@ -1016,13 +1418,19 @@ h1 {
 </div>
 
 
+
 <!-- SQUAD -->
 
 <div id="squad" class="page">
 
   <div class="page-header">
+
     <h2>Squad</h2>
-    <p>Olympus FC · FC27</p>
+
+    <p>
+      Olympus FC · FC27
+    </p>
+
   </div>
 
   <div id="squadList"></div>
@@ -1030,33 +1438,73 @@ h1 {
 </div>
 
 
+
 <!-- MATCHES -->
 
 <div id="matches" class="page">
 
   <div class="page-header">
+
     <h2>Matches</h2>
-    <p>Olympus FC · FC27</p>
+
+    <p>
+      Olympus FC · FC27
+    </p>
+
   </div>
+
 
   <div class="matches-summary">
 
     <div class="match-summary-box">
-      <div id="matchesPlayed" class="match-summary-number">0</div>
-      <div class="match-summary-label">Played</div>
+
+      <div
+        id="matchesPlayed"
+        class="match-summary-number"
+      >
+        0
+      </div>
+
+      <div class="match-summary-label">
+        Played
+      </div>
+
     </div>
 
-    <div class="match-summary-box">
-      <div id="matchesWins" class="match-summary-number">0</div>
-      <div class="match-summary-label">Wins</div>
-    </div>
 
     <div class="match-summary-box">
-      <div id="matchesGoals" class="match-summary-number">0</div>
-      <div class="match-summary-label">Goals</div>
+
+      <div
+        id="matchesWins"
+        class="match-summary-number"
+      >
+        0
+      </div>
+
+      <div class="match-summary-label">
+        Wins
+      </div>
+
+    </div>
+
+
+    <div class="match-summary-box">
+
+      <div
+        id="matchesGoals"
+        class="match-summary-number"
+      >
+        0
+      </div>
+
+      <div class="match-summary-label">
+        Goals
+      </div>
+
     </div>
 
   </div>
+
 
   <button
     class="add-match-button"
@@ -1065,13 +1513,16 @@ h1 {
     + Add Match
   </button>
 
+
   <div class="match-list-title">
     Match History
   </div>
 
+
   <div id="matchHistory"></div>
 
 </div>
+
 
 
 <!-- STATS -->
@@ -1079,272 +1530,360 @@ h1 {
 <div id="stats" class="page">
 
   <div class="page-header">
+
     <h2>Player Stats</h2>
-    <p>Olympus FC · FC27</p>
+
+    <p>
+      Olympus FC · FC27
+    </p>
+
   </div>
+
 
   <div class="leaderboard-title">
     Ranked by goal contributions
   </div>
+
 
   <div id="statsLeaderboard"></div>
 
 </div>
 
 
+
 <!-- PROFILE -->
 
 <div id="profile" class="page">
+
   <div id="playerProfile"></div>
+
 </div>
 
 </div>
+
 
 
 <!-- NAV -->
 
-<div id="bottomNav" class="nav">
+<div
+  id="bottomNav"
+  class="nav"
+>
 
   <div
     class="nav-item active"
     onclick="showPage('home',this)"
   >
-    <span class="nav-icon">⌂</span>
+
+    <span class="nav-icon">
+      ⌂
+    </span>
+
     Home
+
   </div>
+
 
   <div
     class="nav-item"
     onclick="showPage('squad',this)"
   >
-    <span class="nav-icon">♟</span>
+
+    <span class="nav-icon">
+      ♟
+    </span>
+
     Squad
+
   </div>
+
 
   <div
     class="nav-item"
     onclick="showPage('matches',this)"
   >
-    <span class="nav-icon">⚽</span>
+
+    <span class="nav-icon">
+      ⚽
+    </span>
+
     Matches
+
   </div>
+
 
   <div
     class="nav-item"
     onclick="showPage('stats',this)"
   >
-    <span class="nav-icon">▥</span>
+
+    <span class="nav-icon">
+      ▥
+    </span>
+
     Stats
+
   </div>
 
+
   <div class="nav-item">
-    <span class="nav-icon">•••</span>
+
+    <span class="nav-icon">
+      •••
+    </span>
+
     More
+
   </div>
 
 </div>
+
 
 
 <!-- MATCH MODAL -->
 
-<div id="matchModal" class="modal">
+<div
+  id="matchModal"
+  class="modal"
+>
 
-  <div class="modal-card">
-
-
-    <!-- STEP 1 -->
-
-    <div id="matchStep1">
-
-      <div class="step-indicator">
-        STEP 1 OF 2
-      </div>
-
-      <div class="modal-title">
-        Add Match
-      </div>
-
-      <div class="modal-subtitle">
-        Enter your Olympus FC result.
-      </div>
+<div class="modal-card">
 
 
-      <div class="form-group">
+<!-- STEP 1 -->
 
-        <label class="form-label">
-          Opponent
-        </label>
+<div id="matchStep1">
 
-        <input
-          id="opponent"
-          class="form-control"
-          type="text"
-          placeholder="e.g. Test FC"
-        >
-
-      </div>
+  <div
+    id="matchStepIndicator"
+    class="step-indicator"
+  >
+    STEP 1 OF 2
+  </div>
 
 
-      <div class="form-group">
-
-        <label class="form-label">
-          Date
-        </label>
-
-        <input
-          id="matchDate"
-          class="form-control"
-          type="date"
-        >
-
-      </div>
+  <div
+    id="matchModalTitle"
+    class="modal-title"
+  >
+    Add Match
+  </div>
 
 
-      <div class="form-group">
-
-        <label class="form-label">
-          Match Type
-        </label>
-
-        <select
-          id="matchType"
-          class="form-control"
-        >
-
-          <option value="League">League</option>
-          <option value="Promotion">Promotion</option>
-          <option value="Playoffs">Playoffs</option>
-          <option value="Friendly">Friendly</option>
-
-        </select>
-
-      </div>
+  <div
+    id="matchModalSubtitle"
+    class="modal-subtitle"
+  >
+    Enter your Olympus FC result.
+  </div>
 
 
-      <div class="score-inputs">
+  <div class="form-group">
 
-        <div class="form-group">
+    <label class="form-label">
+      Opponent
+    </label>
 
-          <label class="form-label">
-            Olympus FC
-          </label>
-
-          <input
-            id="olympusScore"
-            class="form-control"
-            type="number"
-            min="0"
-            inputmode="numeric"
-          >
-
-        </div>
-
-
-        <div class="score-divider">
-          –
-        </div>
-
-
-        <div class="form-group">
-
-          <label class="form-label">
-            Opponent
-          </label>
-
-          <input
-            id="opponentScore"
-            class="form-control"
-            type="number"
-            min="0"
-            inputmode="numeric"
-          >
-
-        </div>
-
-      </div>
-
-
-      <div
-        id="matchError"
-        class="form-error"
-      ></div>
-
-
-      <div class="form-buttons">
-
-        <button
-          class="cancel-button"
-          onclick="closeMatchForm()"
-        >
-          Cancel
-        </button>
-
-        <button
-          class="save-button"
-          onclick="continueToPlayerStats()"
-        >
-          Continue
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- STEP 2 -->
-
-    <div
-      id="matchStep2"
-      style="display:none;"
+    <input
+      id="opponent"
+      class="form-control"
+      type="text"
+      placeholder="e.g. Test FC"
     >
 
-      <div class="step-indicator">
-        STEP 2 OF 2
-      </div>
-
-      <div class="modal-title">
-        Player Stats
-      </div>
-
-      <div
-        id="playerStatsSubtitle"
-        class="modal-subtitle"
-      ></div>
-
-      <div id="playerEntryList"></div>
-
-      <div
-        id="playerError"
-        class="form-error"
-      ></div>
+  </div>
 
 
-      <div class="form-buttons">
+  <div class="form-group">
 
-        <button
-          class="cancel-button"
-          onclick="backToMatchDetails()"
-        >
-          Back
-        </button>
+    <label class="form-label">
+      Date
+    </label>
 
-        <button
-          class="save-button"
-          onclick="finishMatch()"
-        >
-          Finish Match
-        </button>
 
-      </div>
+    <div class="date-wrapper">
+
+      <input
+        id="matchDate"
+        class="form-control"
+        type="date"
+      >
 
     </div>
+
+  </div>
+
+
+  <div class="form-group">
+
+    <label class="form-label">
+      Match Type
+    </label>
+
+
+    <select
+      id="matchType"
+      class="form-control"
+    >
+
+      <option value="League">
+        League
+      </option>
+
+      <option value="Promotion">
+        Promotion
+      </option>
+
+      <option value="Playoffs">
+        Playoffs
+      </option>
+
+      <option value="Friendly">
+        Friendly
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <div class="score-inputs">
+
+    <div class="form-group">
+
+      <label class="form-label">
+        Olympus FC
+      </label>
+
+      <input
+        id="olympusScore"
+        class="form-control"
+        type="number"
+        inputmode="numeric"
+        min="0"
+      >
+
+    </div>
+
+
+    <div class="score-divider">
+      –
+    </div>
+
+
+    <div class="form-group">
+
+      <label class="form-label">
+        Opponent
+      </label>
+
+      <input
+        id="opponentScore"
+        class="form-control"
+        type="number"
+        inputmode="numeric"
+        min="0"
+      >
+
+    </div>
+
+  </div>
+
+
+  <div
+    id="matchError"
+    class="form-error"
+  ></div>
+
+
+  <div class="form-buttons">
+
+    <button
+      class="cancel-button"
+      onclick="closeMatchForm()"
+    >
+      Cancel
+    </button>
+
+
+    <button
+      class="save-button"
+      onclick="continueToPlayerStats()"
+    >
+      Continue
+    </button>
 
   </div>
 
 </div>
 
 
+
+<!-- STEP 2 -->
+
+<div
+  id="matchStep2"
+  style="display:none;"
+>
+
+  <div class="step-indicator">
+    STEP 2 OF 2
+  </div>
+
+
+  <div class="modal-title">
+    Player Stats
+  </div>
+
+
+  <div
+    id="playerStatsSubtitle"
+    class="modal-subtitle"
+  ></div>
+
+
+  <div id="playerEntryList"></div>
+
+
+  <div
+    id="playerError"
+    class="form-error"
+  ></div>
+
+
+  <div class="form-buttons">
+
+    <button
+      class="cancel-button"
+      onclick="backToMatchDetails()"
+    >
+      Back
+    </button>
+
+
+    <button
+      id="finishMatchButton"
+      class="save-button"
+      onclick="finishMatch()"
+    >
+      Finish Match
+    </button>
+
+  </div>
+
+</div>
+
+</div>
+</div>
+
+
+
 <script>
+
+
+/* =========================
+PLAYERS
+========================= */
 
 const players = [
 
@@ -1397,15 +1936,22 @@ const players = [
 
 
 let matches = [];
+
 let pendingMatch = null;
-let profileReturnPage = "squad";
+
+let editingMatchId = null;
+
+let profileReturnPage =
+  "squad";
 
 
 try {
 
   matches =
     JSON.parse(
-      localStorage.getItem("olympusFCMatches")
+      localStorage.getItem(
+        "olympusFCMatches"
+      )
     ) || [];
 
 } catch {
@@ -1416,91 +1962,174 @@ try {
 
 
 function el(id) {
-  return document.getElementById(id);
+
+  return document
+    .getElementById(id);
+
 }
 
 
-/* NAVIGATION */
 
-function showPage(pageId, navItem) {
+/* =========================
+NAVIGATION
+========================= */
+
+function showPage(
+  pageId,
+  navItem
+) {
 
   document
     .querySelectorAll(".page")
     .forEach(
-      page => page.classList.remove("active")
+      page =>
+        page.classList.remove(
+          "active"
+        )
     );
 
 
-  el(pageId).classList.add("active");
+  el(pageId)
+    .classList.add(
+      "active"
+    );
 
 
   document
-    .querySelectorAll(".nav-item")
+    .querySelectorAll(
+      ".nav-item"
+    )
     .forEach(
-      item => item.classList.remove("active")
+      item =>
+        item.classList.remove(
+          "active"
+        )
     );
 
 
   if (navItem) {
-    navItem.classList.add("active");
+
+    navItem
+      .classList.add(
+        "active"
+      );
+
   }
 
 
   el("bottomNav")
-    .classList.remove("hidden");
+    .classList.remove(
+      "hidden"
+    );
 
 
-  window.scrollTo(0,0);
+  window.scrollTo(
+    0,
+    0
+  );
 
 }
 
 
-/* DATE */
+
+/* =========================
+DATE
+========================= */
 
 function localDate() {
 
   const now =
     new Date();
 
+
   const year =
     now.getFullYear();
 
+
   const month =
-    String(now.getMonth() + 1)
-      .padStart(2,"0");
+    String(
+      now.getMonth() + 1
+    )
+    .padStart(
+      2,
+      "0"
+    );
+
 
   const day =
-    String(now.getDate())
-      .padStart(2,"0");
+    String(
+      now.getDate()
+    )
+    .padStart(
+      2,
+      "0"
+    );
 
-  return `${year}-${month}-${day}`;
+
+  return (
+    year +
+    "-" +
+    month +
+    "-" +
+    day
+  );
 
 }
 
 
-/* MATCH FORM */
+
+/* =========================
+NEW MATCH
+========================= */
 
 function openMatchForm() {
 
-  pendingMatch = null;
+  editingMatchId =
+    null;
 
-  el("matchStep1").style.display =
-    "block";
 
-  el("matchStep2").style.display =
-    "none";
+  pendingMatch =
+    null;
 
-  el("matchError")
-    .classList.remove("show");
 
-  el("playerError")
-    .classList.remove("show");
+  resetMatchForm();
 
-  el("matchDate").value =
-    localDate();
+
+  el("matchModalTitle")
+    .textContent =
+      "Add Match";
+
+
+  el("matchModalSubtitle")
+    .textContent =
+      "Enter your Olympus FC result.";
+
+
+  el("finishMatchButton")
+    .textContent =
+      "Finish Match";
+
+
+  el("matchStep1")
+    .style.display =
+      "block";
+
+
+  el("matchStep2")
+    .style.display =
+      "none";
+
+
+  el("matchDate")
+    .value =
+      localDate();
+
 
   el("matchModal")
-    .classList.add("open");
+    .classList.add(
+      "open"
+    );
+
 
   document.body.style.overflow =
     "hidden";
@@ -1508,62 +2137,234 @@ function openMatchForm() {
 }
 
 
+
+/* =========================
+EDIT MATCH
+========================= */
+
+function editMatch(
+  matchId
+) {
+
+  const match =
+    matches.find(
+      item =>
+        item.id === matchId
+    );
+
+
+  if (!match) {
+
+    return;
+
+  }
+
+
+  editingMatchId =
+    matchId;
+
+
+  pendingMatch = {
+
+    ...match,
+
+    playerStats:
+      match.playerStats
+        ? JSON.parse(
+            JSON.stringify(
+              match.playerStats
+            )
+          )
+        : {}
+
+  };
+
+
+  el("matchModalTitle")
+    .textContent =
+      "Edit Match";
+
+
+  el("matchModalSubtitle")
+    .textContent =
+      "Update this Olympus FC result.";
+
+
+  el("finishMatchButton")
+    .textContent =
+      "Save Changes";
+
+
+  el("opponent")
+    .value =
+      match.opponent || "";
+
+
+  el("matchDate")
+    .value =
+      match.date || localDate();
+
+
+  el("matchType")
+    .value =
+      match.type || "League";
+
+
+  el("olympusScore")
+    .value =
+      match.olympusScore;
+
+
+  el("opponentScore")
+    .value =
+      match.opponentScore;
+
+
+  clearErrors();
+
+
+  el("matchStep1")
+    .style.display =
+      "block";
+
+
+  el("matchStep2")
+    .style.display =
+      "none";
+
+
+  el("matchModal")
+    .classList.add(
+      "open"
+    );
+
+
+  document.body.style.overflow =
+    "hidden";
+
+}
+
+
+
+/* =========================
+CLOSE / RESET
+========================= */
+
 function closeMatchForm() {
 
   el("matchModal")
-    .classList.remove("open");
+    .classList.remove(
+      "open"
+    );
+
 
   document.body.style.overflow =
     "";
 
+
   resetMatchForm();
+
+
+  editingMatchId =
+    null;
+
+
+  pendingMatch =
+    null;
 
 }
 
 
 function resetMatchForm() {
 
-  el("opponent").value = "";
-  el("olympusScore").value = "";
-  el("opponentScore").value = "";
-  el("matchType").value = "League";
+  el("opponent").value =
+    "";
 
-  pendingMatch = null;
+
+  el("olympusScore").value =
+    "";
+
+
+  el("opponentScore").value =
+    "";
+
+
+  el("matchType").value =
+    "League";
+
+
+  clearErrors();
 
 }
 
 
-function showMatchError(message) {
-
-  el("matchError").textContent =
-    message;
+function clearErrors() {
 
   el("matchError")
-    .classList.add("show");
+    .classList.remove(
+      "show"
+    );
+
+
+  el("playerError")
+    .classList.remove(
+      "show"
+    );
 
 }
 
 
-/* STEP 1 */
+
+/* =========================
+MATCH DETAILS
+========================= */
+
+function showMatchError(
+  message
+) {
+
+  el("matchError")
+    .textContent =
+      message;
+
+
+  el("matchError")
+    .classList.add(
+      "show"
+    );
+
+}
+
 
 function continueToPlayerStats() {
+
+  clearErrors();
+
 
   const opponent =
     el("opponent")
       .value
       .trim();
 
+
   const date =
-    el("matchDate").value;
+    el("matchDate")
+      .value;
+
 
   const type =
-    el("matchType").value;
+    el("matchType")
+      .value;
+
 
   const olympusValue =
-    el("olympusScore").value;
+    el("olympusScore")
+      .value;
+
 
   const opponentValue =
-    el("opponentScore").value;
+    el("opponentScore")
+      .value;
 
 
   if (!opponent) {
@@ -1603,28 +2404,75 @@ function continueToPlayerStats() {
 
 
   const olympusScore =
-    Number(olympusValue);
+    Number(
+      olympusValue
+    );
+
 
   const opponentScore =
-    Number(opponentValue);
+    Number(
+      opponentValue
+    );
 
 
-  let result = "D";
+  if (
+    olympusScore < 0 ||
+    opponentScore < 0
+  ) {
 
+    showMatchError(
+      "Scores cannot be negative."
+    );
 
-  if (olympusScore > opponentScore) {
-    result = "W";
+    return;
+
   }
 
 
-  if (olympusScore < opponentScore) {
-    result = "L";
+  let result =
+    "D";
+
+
+  if (
+    olympusScore >
+    opponentScore
+  ) {
+
+    result =
+      "W";
+
   }
+
+
+  if (
+    olympusScore <
+    opponentScore
+  ) {
+
+    result =
+      "L";
+
+  }
+
+
+  const existingStats =
+    pendingMatch &&
+    pendingMatch.playerStats
+      ? pendingMatch.playerStats
+      : {};
+
+
+  const existingPotm =
+    pendingMatch
+      ? pendingMatch.potmPlayerId
+      : null;
 
 
   pendingMatch = {
 
-    id: Date.now(),
+    id:
+      editingMatchId ||
+      Date.now(),
 
     opponent,
 
@@ -1636,21 +2484,36 @@ function continueToPlayerStats() {
 
     opponentScore,
 
-    result
+    result,
+
+    playerStats:
+      existingStats,
+
+    potmPlayerId:
+      existingPotm
 
   };
 
 
-  el("matchStep1").style.display =
-    "none";
+  el("matchStep1")
+    .style.display =
+      "none";
 
-  el("matchStep2").style.display =
-    "block";
+
+  el("matchStep2")
+    .style.display =
+      "block";
 
 
   el("playerStatsSubtitle")
     .textContent =
-      `Olympus FC ${olympusScore} – ${opponentScore} ${opponent}`;
+
+      "Olympus FC " +
+      olympusScore +
+      " – " +
+      opponentScore +
+      " " +
+      opponent;
 
 
   renderPlayerEntry();
@@ -1658,212 +2521,457 @@ function continueToPlayerStats() {
 }
 
 
-/* PLAYER ENTRY */
+
+/* =========================
+PLAYER ENTRY
+========================= */
 
 function renderPlayerEntry() {
 
-  el("playerEntryList").innerHTML =
+  const oldStats =
+    pendingMatch.playerStats || {};
 
-    players.map(
-      player => `
 
-        <div
-          class="player-entry"
-          id="entry-${player.id}"
-        >
+  const oldPotm =
+    pendingMatch.potmPlayerId ||
+    null;
 
-          <div class="player-entry-header">
 
-            <div class="player-entry-name">
-              #${player.number} ${player.name}
+  el("playerEntryList")
+    .innerHTML =
+
+      players.map(
+        player => {
+
+          const saved =
+            oldStats[player.id] ||
+            {};
+
+
+          const played =
+            saved.played !==
+            undefined
+              ? saved.played
+              : true;
+
+
+          const goals =
+            Number(
+              saved.goals || 0
+            );
+
+
+          const assists =
+            Number(
+              saved.assists || 0
+            );
+
+
+          const rating =
+            saved.rating !==
+            undefined &&
+            saved.rating !==
+            null
+              ? saved.rating
+              : "";
+
+
+          const potmChecked =
+            oldPotm ===
+            player.id;
+
+
+          return `
+
+          <div
+            class="player-entry
+            ${played ? "" : "not-played"}"
+            id="entry-${player.id}"
+          >
+
+            <div class="player-entry-header">
+
+              <div class="player-entry-name">
+
+                #${player.number}
+                ${player.name}
+
+              </div>
+
+
+              <label class="played-toggle">
+
+                <input
+                  id="played-${player.id}"
+                  type="checkbox"
+                  ${played ? "checked" : ""}
+                  onchange="
+                    togglePlayer(
+                      '${player.id}'
+                    )
+                  "
+                >
+
+                Played
+
+              </label>
+
             </div>
 
 
-            <label class="played-toggle">
+            <div class="player-entry-inputs">
+
+              <div>
+
+                <div class="small-input-label">
+                  Goals
+                </div>
+
+                <input
+                  id="goals-${player.id}"
+                  class="small-stat-input"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  value="${goals}"
+                  ${played ? "" : "disabled"}
+                >
+
+              </div>
+
+
+              <div>
+
+                <div class="small-input-label">
+                  Assists
+                </div>
+
+                <input
+                  id="assists-${player.id}"
+                  class="small-stat-input"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  value="${assists}"
+                  ${played ? "" : "disabled"}
+                >
+
+              </div>
+
+
+              <div>
+
+                <div class="small-input-label">
+                  Rating
+                </div>
+
+                <input
+                  id="rating-${player.id}"
+                  class="small-stat-input"
+                  type="number"
+                  inputmode="decimal"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  value="${rating}"
+                  placeholder="Optional"
+                  ${played ? "" : "disabled"}
+                >
+
+              </div>
+
+            </div>
+
+
+            <label class="potm-choice">
 
               <input
-                id="played-${player.id}"
-                type="checkbox"
-                checked
-                onchange="togglePlayer('${player.id}')"
+                id="potm-${player.id}"
+                type="radio"
+                name="potmPlayer"
+                value="${player.id}"
+                ${potmChecked ? "checked" : ""}
+                ${played ? "" : "disabled"}
               >
 
-              Played
+              ⭐ Player of the Match
 
             </label>
 
           </div>
 
+        `;
 
-          <div class="player-entry-inputs">
+        }
 
-            <div>
-
-              <div class="small-input-label">
-                Goals
-              </div>
-
-              <input
-                id="goals-${player.id}"
-                class="small-stat-input"
-                type="number"
-                inputmode="numeric"
-                min="0"
-                value="0"
-              >
-
-            </div>
-
-
-            <div>
-
-              <div class="small-input-label">
-                Assists
-              </div>
-
-              <input
-                id="assists-${player.id}"
-                class="small-stat-input"
-                type="number"
-                inputmode="numeric"
-                min="0"
-                value="0"
-              >
-
-            </div>
-
-
-            <div>
-
-              <div class="small-input-label">
-                Rating
-              </div>
-
-              <input
-                id="rating-${player.id}"
-                class="small-stat-input"
-                type="number"
-                inputmode="decimal"
-                min="0"
-                max="10"
-                step="0.1"
-                placeholder="0.0"
-              >
-
-            </div>
-
-          </div>
-
-
-          <label class="potm-choice">
-
-            <input
-              id="potm-${player.id}"
-              type="radio"
-              name="potmPlayer"
-              value="${player.id}"
-            >
-
-            ⭐ Player of the Match
-
-          </label>
-
-        </div>
-
-      `
-    ).join("");
+      ).join("");
 
 }
 
 
-function togglePlayer(playerId) {
+
+/* =========================
+PLAYED TOGGLE
+========================= */
+
+function togglePlayer(
+  playerId
+) {
 
   const played =
-    el("played-" + playerId)
-      .checked;
+    el(
+      "played-" +
+      playerId
+    ).checked;
 
 
   const entry =
-    el("entry-" + playerId);
+    el(
+      "entry-" +
+      playerId
+    );
+
 
   const goals =
-    el("goals-" + playerId);
+    el(
+      "goals-" +
+      playerId
+    );
+
 
   const assists =
-    el("assists-" + playerId);
+    el(
+      "assists-" +
+      playerId
+    );
+
 
   const rating =
-    el("rating-" + playerId);
+    el(
+      "rating-" +
+      playerId
+    );
+
 
   const potm =
-    el("potm-" + playerId);
+    el(
+      "potm-" +
+      playerId
+    );
 
 
   if (played) {
 
-    entry.classList.remove(
-      "not-played"
-    );
+    entry
+      .classList.remove(
+        "not-played"
+      );
 
-    goals.disabled = false;
-    assists.disabled = false;
-    rating.disabled = false;
-    potm.disabled = false;
+
+    goals.disabled =
+      false;
+
+
+    assists.disabled =
+      false;
+
+
+    rating.disabled =
+      false;
+
+
+    potm.disabled =
+      false;
 
   } else {
 
-    entry.classList.add(
-      "not-played"
-    );
+    entry
+      .classList.add(
+        "not-played"
+      );
 
-    goals.value = 0;
-    assists.value = 0;
-    rating.value = "";
 
-    goals.disabled = true;
-    assists.disabled = true;
-    rating.disabled = true;
+    goals.value =
+      0;
+
+
+    assists.value =
+      0;
+
+
+    rating.value =
+      "";
+
+
+    goals.disabled =
+      true;
+
+
+    assists.disabled =
+      true;
+
+
+    rating.disabled =
+      true;
+
 
     if (potm.checked) {
-      potm.checked = false;
+
+      potm.checked =
+        false;
+
     }
 
-    potm.disabled = true;
+
+    potm.disabled =
+      true;
 
   }
 
 }
 
 
+
+/* =========================
+BACK
+========================= */
+
 function backToMatchDetails() {
 
-  el("matchStep2").style.display =
-    "none";
+  saveStep2Draft();
 
-  el("matchStep1").style.display =
-    "block";
+
+  el("matchStep2")
+    .style.display =
+      "none";
+
+
+  el("matchStep1")
+    .style.display =
+      "block";
 
 }
 
 
-/* FINISH MATCH */
+
+/* =========================
+SAVE PLAYER DRAFT
+========================= */
+
+function saveStep2Draft() {
+
+  if (!pendingMatch) {
+
+    return;
+
+  }
+
+
+  const playerStats =
+    {};
+
+
+  players.forEach(
+    player => {
+
+      const played =
+        el(
+          "played-" +
+          player.id
+        ).checked;
+
+
+      playerStats[
+        player.id
+      ] = {
+
+        played,
+
+        goals:
+          played
+            ? Number(
+                el(
+                  "goals-" +
+                  player.id
+                ).value
+              ) || 0
+            : 0,
+
+        assists:
+          played
+            ? Number(
+                el(
+                  "assists-" +
+                  player.id
+                ).value
+              ) || 0
+            : 0,
+
+        rating:
+          played &&
+          el(
+            "rating-" +
+            player.id
+          ).value !== ""
+            ? Number(
+                el(
+                  "rating-" +
+                  player.id
+                ).value
+              )
+            : null
+
+      };
+
+    }
+  );
+
+
+  const selectedPotm =
+    document.querySelector(
+      'input[name="potmPlayer"]:checked'
+    );
+
+
+  pendingMatch.playerStats =
+    playerStats;
+
+
+  pendingMatch.potmPlayerId =
+    selectedPotm
+      ? selectedPotm.value
+      : null;
+
+}
+
+
+
+/* =========================
+FINISH / SAVE EDIT
+========================= */
 
 function finishMatch() {
 
   if (!pendingMatch) {
+
     return;
+
   }
 
 
-  el("playerError")
-    .classList.remove("show");
+  clearErrors();
 
 
-  const playerStats = {};
+  const playerStats =
+    {};
 
-  let playerGoalTotal = 0;
 
-  let playerAssistTotal = 0;
+  let playerGoalTotal =
+    0;
+
+
+  let playerAssistTotal =
+    0;
 
 
   const selectedPotm =
@@ -1878,18 +2986,25 @@ function finishMatch() {
       : null;
 
 
-  for (const player of players) {
+  for (
+    const player
+    of players
+  ) {
 
     const played =
-      el("played-" + player.id)
-        .checked;
+      el(
+        "played-" +
+        player.id
+      ).checked;
 
 
     const goals =
       played
         ? Number(
-            el("goals-" + player.id)
-              .value
+            el(
+              "goals-" +
+              player.id
+            ).value
           ) || 0
         : 0;
 
@@ -1897,53 +3012,57 @@ function finishMatch() {
     const assists =
       played
         ? Number(
-            el("assists-" + player.id)
-              .value
+            el(
+              "assists-" +
+              player.id
+            ).value
           ) || 0
         : 0;
 
 
-    const ratingRaw =
+    const ratingText =
       played
-        ? el("rating-" + player.id)
-            .value
+        ? el(
+            "rating-" +
+            player.id
+          ).value
         : "";
 
 
+    /* RATINGS ARE NOW OPTIONAL */
+
+    let rating =
+      null;
+
+
     if (
-      played &&
-      ratingRaw === ""
+      ratingText !== ""
     ) {
 
-      showPlayerError(
-        `Please enter a rating for ${player.name}.`
-      );
-
-      return;
-
-    }
+      rating =
+        Number(
+          ratingText
+        );
 
 
-    const rating =
-      played
-        ? Number(ratingRaw)
-        : null;
-
-
-    if (
-      played &&
-      (
-        !Number.isFinite(rating) ||
+      if (
+        !Number.isFinite(
+          rating
+        ) ||
         rating < 0 ||
         rating > 10
-      )
-    ) {
+      ) {
 
-      showPlayerError(
-        `${player.name}'s rating must be between 0 and 10.`
-      );
+        showPlayerError(
 
-      return;
+          player.name +
+          "'s rating must be between 0 and 10."
+
+        );
+
+        return;
+
+      }
 
     }
 
@@ -1962,12 +3081,17 @@ function finishMatch() {
     }
 
 
-    playerGoalTotal += goals;
+    playerGoalTotal +=
+      goals;
 
-    playerAssistTotal += assists;
+
+    playerAssistTotal +=
+      assists;
 
 
-    playerStats[player.id] = {
+    playerStats[
+      player.id
+    ] = {
 
       played,
 
@@ -2012,13 +3136,13 @@ function finishMatch() {
 
   if (potmPlayerId) {
 
-    const potmStats =
-      playerStats[potmPlayerId];
-
-
     if (
-      !potmStats ||
-      !potmStats.played
+      !playerStats[
+        potmPlayerId
+      ] ||
+      !playerStats[
+        potmPlayerId
+      ].played
     ) {
 
       showPlayerError(
@@ -2040,49 +3164,101 @@ function finishMatch() {
     potmPlayerId;
 
 
-  matches.unshift(
-    pendingMatch
-  );
+  if (
+    editingMatchId
+  ) {
+
+    const index =
+      matches.findIndex(
+        match =>
+          match.id ===
+          editingMatchId
+      );
+
+
+    if (
+      index !== -1
+    ) {
+
+      matches[index] =
+        pendingMatch;
+
+    }
+
+  } else {
+
+    matches.unshift(
+      pendingMatch
+    );
+
+  }
 
 
   saveMatches();
 
+
   closeMatchForm();
+
 
   renderEverything();
 
 }
 
 
-function showPlayerError(message) {
-
-  el("playerError").textContent =
-    message;
+function showPlayerError(
+  message
+) {
 
   el("playerError")
-    .classList.add("show");
+    .textContent =
+      message;
+
+
+  el("playerError")
+    .classList.add(
+      "show"
+    );
 
 }
 
 
-/* STORAGE */
+
+/* =========================
+STORAGE
+========================= */
 
 function saveMatches() {
 
   localStorage.setItem(
+
     "olympusFCMatches",
-    JSON.stringify(matches)
+
+    JSON.stringify(
+      matches
+    )
+
   );
 
 }
 
 
-/* DELETE */
 
-function deleteMatch(id) {
+/* =========================
+DELETE
+========================= */
 
-  if (!confirm("Delete this match?")) {
+function deleteMatch(
+  id
+) {
+
+  if (
+    !confirm(
+      "Delete this match?"
+    )
+  ) {
+
     return;
+
   }
 
 
@@ -2095,12 +3271,16 @@ function deleteMatch(id) {
 
   saveMatches();
 
+
   renderEverything();
 
 }
 
 
-/* CLUB TOTALS */
+
+/* =========================
+CLUB STATS
+========================= */
 
 function calculateClubStats() {
 
@@ -2111,18 +3291,27 @@ function calculateClubStats() {
   const wins =
     matches.filter(
       match =>
-        match.result === "W"
+        match.result ===
+        "W"
     ).length;
 
 
   const goals =
     matches.reduce(
-      (total,match) =>
+
+      (
+        total,
+        match
+      ) =>
+
         total +
         Number(
-          match.olympusScore || 0
+          match.olympusScore ||
+          0
         ),
+
       0
+
     );
 
 
@@ -2130,7 +3319,11 @@ function calculateClubStats() {
     played === 0
       ? 0
       : Math.round(
-          (wins / played) * 100
+          (
+            wins /
+            played
+          ) *
+          100
         );
 
 
@@ -2149,33 +3342,47 @@ function calculateClubStats() {
 }
 
 
-/* PLAYER TOTALS */
+
+/* =========================
+PLAYER STATS
+========================= */
 
 function calculatePlayerStats() {
 
-  const totals = {};
+  const totals =
+    {};
 
 
   players.forEach(
     player => {
 
-      totals[player.id] = {
+      totals[
+        player.id
+      ] = {
 
-        appearances: 0,
+        appearances:
+          0,
 
-        goals: 0,
+        goals:
+          0,
 
-        assists: 0,
+        assists:
+          0,
 
-        contributions: 0,
+        contributions:
+          0,
 
-        ratingSum: 0,
+        ratingSum:
+          0,
 
-        ratedAppearances: 0,
+        ratedAppearances:
+          0,
 
-        averageRating: null,
+        averageRating:
+          null,
 
-        potm: 0
+        potm:
+          0
 
       };
 
@@ -2186,25 +3393,26 @@ function calculatePlayerStats() {
   matches.forEach(
     match => {
 
-      if (match.potmPlayerId) {
+      if (
+        match.potmPlayerId &&
+        totals[
+          match.potmPlayerId
+        ]
+      ) {
 
-        if (
-          totals[
-            match.potmPlayerId
-          ]
-        ) {
-
-          totals[
-            match.potmPlayerId
-          ].potm++;
-
-        }
+        totals[
+          match.potmPlayerId
+        ].potm++;
 
       }
 
 
-      if (!match.playerStats) {
+      if (
+        !match.playerStats
+      ) {
+
         return;
+
       }
 
 
@@ -2218,54 +3426,72 @@ function calculatePlayerStats() {
 
 
           if (!stat) {
+
             return;
-          }
-
-
-          if (stat.played) {
-
-            totals[player.id]
-              .appearances++;
 
           }
 
 
-          totals[player.id]
-            .goals +=
-              Number(
-                stat.goals || 0
-              );
+          if (
+            stat.played
+          ) {
+
+            totals[
+              player.id
+            ].appearances++;
+
+          }
 
 
-          totals[player.id]
-            .assists +=
-              Number(
-                stat.assists || 0
-              );
+          totals[
+            player.id
+          ].goals +=
+            Number(
+              stat.goals ||
+              0
+            );
+
+
+          totals[
+            player.id
+          ].assists +=
+            Number(
+              stat.assists ||
+              0
+            );
 
 
           if (
             stat.played &&
-            stat.rating !== undefined &&
-            stat.rating !== null &&
-            stat.rating !== ""
+            stat.rating !==
+              undefined &&
+            stat.rating !==
+              null &&
+            stat.rating !==
+              ""
           ) {
 
             const rating =
-              Number(stat.rating);
+              Number(
+                stat.rating
+              );
 
 
             if (
-              Number.isFinite(rating)
+              Number.isFinite(
+                rating
+              )
             ) {
 
-              totals[player.id]
-                .ratingSum +=
-                  rating;
+              totals[
+                player.id
+              ].ratingSum +=
+                rating;
 
 
-              totals[player.id]
-                .ratedAppearances++;
+              totals[
+                player.id
+              ].ratedAppearances++;
 
             }
 
@@ -2282,15 +3508,19 @@ function calculatePlayerStats() {
     player => {
 
       const stat =
-        totals[player.id];
+        totals[
+          player.id
+        ];
 
 
       stat.contributions =
+
         stat.goals +
         stat.assists;
 
 
       stat.averageRating =
+
         stat.ratedAppearances === 0
           ? null
           : stat.ratingSum /
@@ -2305,85 +3535,138 @@ function calculatePlayerStats() {
 }
 
 
-/* HOME */
+
+/* =========================
+HOME
+========================= */
 
 function renderHome() {
 
   const club =
     calculateClubStats();
 
+
   const totals =
     calculatePlayerStats();
 
 
-  el("homeMatches").textContent =
-    club.played;
+  el("homeMatches")
+    .textContent =
+      club.played;
 
-  el("homeWins").textContent =
-    club.wins;
 
-  el("homeGoals").textContent =
-    club.goals;
+  el("homeWins")
+    .textContent =
+      club.wins;
 
-  el("homeWinRate").textContent =
-    club.winRate + "%";
+
+  el("homeGoals")
+    .textContent =
+      club.goals;
+
+
+  el("homeWinRate")
+    .textContent =
+      club.winRate +
+      "%";
 
 
   const scorer =
-    [...players].sort(
-      (a,b) =>
-        totals[b.id].goals -
-        totals[a.id].goals
-    )[0];
+    [...players]
+      .sort(
+        (
+          a,
+          b
+        ) =>
+          totals[
+            b.id
+          ].goals -
+          totals[
+            a.id
+          ].goals
+      )[0];
 
 
   const assister =
-    [...players].sort(
-      (a,b) =>
-        totals[b.id].assists -
-        totals[a.id].assists
-    )[0];
+    [...players]
+      .sort(
+        (
+          a,
+          b
+        ) =>
+          totals[
+            b.id
+          ].assists -
+          totals[
+            a.id
+          ].assists
+      )[0];
 
 
   el("topScorerGoals")
     .textContent =
-      totals[scorer.id].goals;
+      totals[
+        scorer.id
+      ].goals;
 
 
   el("topScorerName")
     .textContent =
-      totals[scorer.id].goals === 0
+
+      totals[
+        scorer.id
+      ].goals === 0
+
         ? "No goals yet"
+
         : scorer.name;
 
 
   el("topAssisterAssists")
     .textContent =
-      totals[assister.id].assists;
+      totals[
+        assister.id
+      ].assists;
 
 
   el("topAssisterName")
     .textContent =
-      totals[assister.id].assists === 0
+
+      totals[
+        assister.id
+      ].assists === 0
+
         ? "No assists yet"
+
         : assister.name;
 
 
-  const ratedPlayers =
+  const rated =
     players
       .filter(
         player =>
-          totals[player.id]
-            .ratedAppearances > 0
+          totals[
+            player.id
+          ].ratedAppearances >
+          0
       )
       .sort(
-        (a,b) =>
-          totals[b.id].averageRating -
-          totals[a.id].averageRating
+        (
+          a,
+          b
+        ) =>
+          totals[
+            b.id
+          ].averageRating -
+          totals[
+            a.id
+          ].averageRating
       );
 
 
-  if (ratedPlayers.length === 0) {
+  if (
+    rated.length === 0
+  ) {
 
     el("bestRatingName")
       .textContent =
@@ -2397,7 +3680,7 @@ function renderHome() {
   } else {
 
     const best =
-      ratedPlayers[0];
+      rated[0];
 
 
     el("bestRatingName")
@@ -2407,55 +3690,56 @@ function renderHome() {
 
     el("bestRatingValue")
       .textContent =
-        totals[best.id]
-          .averageRating
-          .toFixed(2);
+
+        totals[
+          best.id
+        ].averageRating
+         .toFixed(2);
 
   }
 
 
-  const potmPlayers =
+  const potm =
     [...players]
       .sort(
-        (a,b) =>
-          totals[b.id].potm -
-          totals[a.id].potm
-      );
-
-
-  const potmLeader =
-    potmPlayers[0];
-
-
-  if (
-    totals[
-      potmLeader.id
-    ].potm === 0
-  ) {
-
-    el("potmLeaderName")
-      .textContent =
-        "No POTM awards yet";
-
-  } else {
-
-    el("potmLeaderName")
-      .textContent =
-        potmLeader.name;
-
-  }
+        (
+          a,
+          b
+        ) =>
+          totals[
+            b.id
+          ].potm -
+          totals[
+            a.id
+          ].potm
+      )[0];
 
 
   el("potmLeaderValue")
     .textContent =
       totals[
-        potmLeader.id
+        potm.id
       ].potm;
+
+
+  el("potmLeaderName")
+    .textContent =
+
+      totals[
+        potm.id
+      ].potm === 0
+
+        ? "No POTM awards yet"
+
+        : potm.name;
 
 }
 
 
-/* SQUAD */
+
+/* =========================
+SQUAD
+========================= */
 
 function renderSquad() {
 
@@ -2463,20 +3747,28 @@ function renderSquad() {
     calculatePlayerStats();
 
 
-  el("squadList").innerHTML =
+  el("squadList")
+    .innerHTML =
 
-    players.map(
-      player => {
+      players.map(
+        player => {
 
-        const stat =
-          totals[player.id];
+          const stat =
+            totals[
+              player.id
+            ];
 
 
-        return `
+          return `
 
           <div
             class="player-card"
-            onclick="openPlayerProfile('${player.id}','squad')"
+            onclick="
+              openPlayerProfile(
+                '${player.id}',
+                'squad'
+              )
+            "
           >
 
             <div class="player-main">
@@ -2492,16 +3784,22 @@ function renderSquad() {
                   ${player.name}
                 </div>
 
+
                 <div class="player-meta">
-                  ${player.position} · ${player.nation}
+
+                  ${player.position}
+                  ·
+                  ${player.nation}
+
                 </div>
+
 
                 ${
                   player.captain
                     ? `
-                      <span class="captain">
-                        DUAL CAPTAIN
-                      </span>
+                    <span class="captain">
+                      DUAL CAPTAIN
+                    </span>
                     `
                     : ""
                 }
@@ -2514,46 +3812,62 @@ function renderSquad() {
             <div class="player-mini-stats">
 
               <div class="mini-stat">
+
                 <div class="mini-number">
                   ${stat.appearances}
                 </div>
+
                 <div class="mini-label">
                   APP
                 </div>
+
               </div>
 
 
               <div class="mini-stat">
+
                 <div class="mini-number">
                   ${stat.goals}
                 </div>
+
                 <div class="mini-label">
                   GOALS
                 </div>
+
               </div>
 
 
               <div class="mini-stat">
+
                 <div class="mini-number">
+
                   ${
-                    stat.averageRating === null
+                    stat.averageRating ===
+                    null
                       ? "—"
-                      : stat.averageRating.toFixed(1)
+                      : stat.averageRating
+                          .toFixed(1)
                   }
+
                 </div>
+
                 <div class="mini-label">
                   AVG
                 </div>
+
               </div>
 
 
               <div class="mini-stat">
+
                 <div class="mini-number">
                   ${stat.potm}
                 </div>
+
                 <div class="mini-label">
                   POTM
                 </div>
+
               </div>
 
             </div>
@@ -2562,28 +3876,41 @@ function renderSquad() {
 
         `;
 
-      }
-    ).join("");
+        }
+
+      ).join("");
 
 }
 
 
-/* ESCAPE */
 
-function escapeHTML(text) {
+/* =========================
+SAFE TEXT
+========================= */
+
+function escapeHTML(
+  text
+) {
 
   const div =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
+
 
   div.textContent =
     text;
+
 
   return div.innerHTML;
 
 }
 
 
-/* MATCH HISTORY */
+
+/* =========================
+MATCH HISTORY
+========================= */
 
 function renderMatches() {
 
@@ -2591,19 +3918,27 @@ function renderMatches() {
     calculateClubStats();
 
 
-  el("matchesPlayed").textContent =
-    club.played;
-
-  el("matchesWins").textContent =
-    club.wins;
-
-  el("matchesGoals").textContent =
-    club.goals;
+  el("matchesPlayed")
+    .textContent =
+      club.played;
 
 
-  if (matches.length === 0) {
+  el("matchesWins")
+    .textContent =
+      club.wins;
 
-    el("matchHistory").innerHTML = `
+
+  el("matchesGoals")
+    .textContent =
+      club.goals;
+
+
+  if (
+    matches.length === 0
+  ) {
+
+    el("matchHistory")
+      .innerHTML = `
 
       <div class="empty-matches">
 
@@ -2616,151 +3951,215 @@ function renderMatches() {
         </div>
 
         <div class="empty-text">
-          Your FC27 match history will appear here
-          once you start adding results.
+
+          Your FC27 match history
+          will appear here once
+          you start adding results.
+
         </div>
 
       </div>
 
     `;
 
+
     return;
 
   }
 
 
-  el("matchHistory").innerHTML =
+  el("matchHistory")
+    .innerHTML =
 
-    matches.map(
-      match => {
+      matches.map(
+        match => {
 
-        let resultClass =
-          "result-draw";
-
-        let resultText =
-          "DRAW";
+          let resultClass =
+            "result-draw";
 
 
-        if (match.result === "W") {
-          resultClass = "result-win";
-          resultText = "WIN";
-        }
+          let resultText =
+            "DRAW";
 
 
-        if (match.result === "L") {
-          resultClass = "result-loss";
-          resultText = "LOSS";
-        }
+          if (
+            match.result ===
+            "W"
+          ) {
+
+            resultClass =
+              "result-win";
 
 
-        const displayDate =
-          new Date(
-            match.date + "T12:00:00"
-          )
-          .toLocaleDateString(
-            "en-GB",
-            {
-              day: "numeric",
-              month: "short",
-              year: "numeric"
-            }
-          );
+            resultText =
+              "WIN";
+
+          }
 
 
-        const lines = [];
+          if (
+            match.result ===
+            "L"
+          ) {
+
+            resultClass =
+              "result-loss";
 
 
-        if (match.playerStats) {
+            resultText =
+              "LOSS";
 
-          players.forEach(
-            player => {
+          }
 
-              const stat =
-                match.playerStats[
+
+          const date =
+            new Date(
+              match.date +
+              "T12:00:00"
+            )
+            .toLocaleDateString(
+              "en-GB",
+              {
+
+                day:
+                  "numeric",
+
+                month:
+                  "short",
+
+                year:
+                  "numeric"
+
+              }
+            );
+
+
+          const lines =
+            [];
+
+
+          if (
+            match.playerStats
+          ) {
+
+            players.forEach(
+              player => {
+
+                const stat =
+                  match.playerStats[
+                    player.id
+                  ];
+
+
+                if (
+                  !stat ||
+                  !stat.played
+                ) {
+
+                  return;
+
+                }
+
+
+                const pieces =
+                  [];
+
+
+                if (
+                  stat.goals
+                ) {
+
+                  pieces.push(
+                    stat.goals +
+                    "G"
+                  );
+
+                }
+
+
+                if (
+                  stat.assists
+                ) {
+
+                  pieces.push(
+                    stat.assists +
+                    "A"
+                  );
+
+                }
+
+
+                if (
+                  stat.rating !==
+                    undefined &&
+                  stat.rating !==
+                    null &&
+                  stat.rating !==
+                    ""
+                ) {
+
+                  pieces.push(
+
+                    Number(
+                      stat.rating
+                    ).toFixed(1)
+
+                  );
+
+                }
+
+
+                if (
+                  match.potmPlayerId ===
                   player.id
-                ];
+                ) {
+
+                  pieces.push(
+                    "⭐ POTM"
+                  );
+
+                }
 
 
-              if (!stat || !stat.played) {
-                return;
-              }
+                if (
+                  pieces.length
+                ) {
 
+                  lines.push(
 
-              const parts = [];
+                    player.name +
+                    " " +
+                    pieces.join(
+                      " · "
+                    )
 
+                  );
 
-              if (stat.goals) {
-                parts.push(
-                  stat.goals + "G"
-                );
-              }
-
-
-              if (stat.assists) {
-                parts.push(
-                  stat.assists + "A"
-                );
-              }
-
-
-              if (
-                stat.rating !== undefined &&
-                stat.rating !== null &&
-                stat.rating !== ""
-              ) {
-
-                parts.push(
-                  Number(
-                    stat.rating
-                  ).toFixed(1)
-                );
+                }
 
               }
+            );
+
+          }
 
 
-              if (
-                match.potmPlayerId ===
-                player.id
-              ) {
+          const summary =
+            lines.length
 
-                parts.push("⭐ POTM");
+              ? `
 
-              }
+                <div class="match-player-summary">
 
+                  ${lines.join("<br>")}
 
-              if (parts.length) {
+                </div>
 
-                lines.push(
-                  player.name +
-                  " " +
-                  parts.join(" · ")
-                );
+              `
 
-              }
-
-            }
-          );
-
-        }
+              : "";
 
 
-        let performanceText = "";
-
-
-        if (lines.length) {
-
-          performanceText = `
-
-            <div class="match-player-summary">
-              ${lines.join("<br>")}
-            </div>
-
-          `;
-
-        }
-
-
-        return `
+          return `
 
           <div class="match-card">
 
@@ -2769,17 +4168,26 @@ function renderMatches() {
               <div>
 
                 <div class="match-opponent">
-                  vs ${escapeHTML(match.opponent)}
+
+                  vs
+                  ${escapeHTML(match.opponent)}
+
                 </div>
 
+
                 <div class="match-date">
-                  ${displayDate}
+                  ${date}
                 </div>
 
               </div>
 
 
-              <div class="result-badge ${resultClass}">
+              <div
+                class="
+                  result-badge
+                  ${resultClass}
+                "
+              >
                 ${resultText}
               </div>
 
@@ -2788,8 +4196,11 @@ function renderMatches() {
 
             <div class="scoreline">
 
-              Olympus FC ${match.olympusScore}
+              Olympus FC
+              ${match.olympusScore}
+
               –
+
               ${match.opponentScore}
               ${escapeHTML(match.opponent)}
 
@@ -2801,27 +4212,51 @@ function renderMatches() {
             </div>
 
 
-            ${performanceText}
+            ${summary}
 
 
-            <button
-              class="delete-match"
-              onclick="deleteMatch(${match.id})"
-            >
-              Delete Match
-            </button>
+            <div class="match-actions">
+
+              <button
+                class="edit-match"
+                onclick="
+                  editMatch(
+                    ${match.id}
+                  )
+                "
+              >
+                Edit Match
+              </button>
+
+
+              <button
+                class="delete-match"
+                onclick="
+                  deleteMatch(
+                    ${match.id}
+                  )
+                "
+              >
+                Delete
+              </button>
+
+            </div>
 
           </div>
 
         `;
 
-      }
-    ).join("");
+        }
+
+      ).join("");
 
 }
 
 
-/* STATS */
+
+/* =========================
+STATS PAGE
+========================= */
 
 function renderStatsPage() {
 
@@ -2832,59 +4267,100 @@ function renderStatsPage() {
   const sorted =
     [...players]
       .sort(
-        (a,b) => {
+        (
+          a,
+          b
+        ) => {
 
           const ga =
-            totals[b.id]
-              .contributions -
-            totals[a.id]
-              .contributions;
+
+            totals[
+              b.id
+            ].contributions -
+
+            totals[
+              a.id
+            ].contributions;
 
 
-          if (ga !== 0) {
+          if (
+            ga !== 0
+          ) {
+
             return ga;
+
           }
 
 
           const goals =
-            totals[b.id].goals -
-            totals[a.id].goals;
+
+            totals[
+              b.id
+            ].goals -
+
+            totals[
+              a.id
+            ].goals;
 
 
-          if (goals !== 0) {
+          if (
+            goals !== 0
+          ) {
+
             return goals;
+
           }
 
 
           return (
-            totals[b.id].assists -
-            totals[a.id].assists
+
+            totals[
+              b.id
+            ].assists -
+
+            totals[
+              a.id
+            ].assists
+
           );
 
         }
       );
 
 
-  el("statsLeaderboard").innerHTML =
+  el("statsLeaderboard")
+    .innerHTML =
 
-    sorted.map(
-      (player,index) => {
+      sorted.map(
+        (
+          player,
+          index
+        ) => {
 
-        const stat =
-          totals[player.id];
+          const stat =
+            totals[
+              player.id
+            ];
 
 
-        const avg =
-          stat.averageRating === null
-            ? "—"
-            : stat.averageRating.toFixed(2);
+          const avg =
+            stat.averageRating ===
+            null
+              ? "—"
+              : stat.averageRating
+                  .toFixed(2);
 
 
-        return `
+          return `
 
           <div
             class="stats-card"
-            onclick="openPlayerProfile('${player.id}','stats')"
+            onclick="
+              openPlayerProfile(
+                '${player.id}',
+                'stats'
+              )
+            "
           >
 
             <div class="stats-player-top">
@@ -2902,8 +4378,13 @@ function renderStatsPage() {
                     ${player.name}
                   </div>
 
+
                   <div class="stats-player-meta">
-                    #${player.number} · ${player.position}
+
+                    #${player.number}
+                    ·
+                    ${player.position}
+
                   </div>
 
                 </div>
@@ -2921,62 +4402,80 @@ function renderStatsPage() {
             <div class="stats-row">
 
               <div class="stats-box">
+
                 <div class="stats-box-number">
                   ${stat.goals}
                 </div>
+
                 <div class="stats-box-label">
                   GOALS
                 </div>
+
               </div>
 
 
               <div class="stats-box">
+
                 <div class="stats-box-number">
                   ${stat.assists}
                 </div>
+
                 <div class="stats-box-label">
                   ASSISTS
                 </div>
+
               </div>
 
 
               <div class="stats-box">
+
                 <div class="stats-box-number">
                   ${stat.contributions}
                 </div>
+
                 <div class="stats-box-label">
                   G/A
                 </div>
+
               </div>
 
 
               <div class="stats-box">
+
                 <div class="stats-box-number">
                   ${stat.appearances}
                 </div>
+
                 <div class="stats-box-label">
                   APP
                 </div>
+
               </div>
 
 
               <div class="stats-box">
+
                 <div class="stats-box-number">
                   ${avg}
                 </div>
+
                 <div class="stats-box-label">
                   AVG
                 </div>
+
               </div>
 
 
               <div class="stats-box">
+
                 <div class="stats-box-number">
                   ${stat.potm}
                 </div>
+
                 <div class="stats-box-label">
                   POTM
                 </div>
+
               </div>
 
             </div>
@@ -2985,13 +4484,17 @@ function renderStatsPage() {
 
         `;
 
-      }
-    ).join("");
+        }
+
+      ).join("");
 
 }
 
 
-/* PROFILE */
+
+/* =========================
+PLAYER PROFILE
+========================= */
 
 function openPlayerProfile(
   playerId,
@@ -2999,18 +4502,22 @@ function openPlayerProfile(
 ) {
 
   profileReturnPage =
-    returnPage || "squad";
+    returnPage ||
+    "squad";
 
 
   const player =
     players.find(
       player =>
-        player.id === playerId
+        player.id ===
+        playerId
     );
 
 
   if (!player) {
+
     return;
+
   }
 
 
@@ -3019,7 +4526,9 @@ function openPlayerProfile(
 
 
   const stat =
-    totals[player.id];
+    totals[
+      player.id
+    ];
 
 
   const goalsPerGame =
@@ -3050,7 +4559,8 @@ function openPlayerProfile(
 
 
   const averageRating =
-    stat.averageRating === null
+    stat.averageRating ===
+    null
       ? "—"
       : stat.averageRating
           .toFixed(2);
@@ -3073,15 +4583,20 @@ function openPlayerProfile(
     );
 
 
-  let recentHTML = "";
+  let recentHTML =
+    "";
 
 
-  if (playerMatches.length === 0) {
+  if (
+    playerMatches.length === 0
+  ) {
 
     recentHTML = `
 
       <div class="no-profile-matches">
+
         No appearances recorded yet.
+
       </div>
 
     `;
@@ -3091,7 +4606,10 @@ function openPlayerProfile(
     recentHTML =
 
       playerMatches
-        .slice(0,5)
+        .slice(
+          0,
+          5
+        )
         .map(
           match => {
 
@@ -3109,41 +4627,60 @@ function openPlayerProfile(
               .toLocaleDateString(
                 "en-GB",
                 {
-                  day: "numeric",
-                  month: "short"
+
+                  day:
+                    "numeric",
+
+                  month:
+                    "short"
+
                 }
               );
 
 
-            const bits = [];
+            const bits =
+              [];
 
 
-            if (matchStat.goals) {
+            if (
+              matchStat.goals
+            ) {
+
               bits.push(
                 matchStat.goals +
                 "G"
               );
-            }
 
-
-            if (matchStat.assists) {
-              bits.push(
-                matchStat.assists +
-                "A"
-              );
             }
 
 
             if (
-              matchStat.rating !== undefined &&
-              matchStat.rating !== null
+              matchStat.assists
             ) {
 
               bits.push(
+                matchStat.assists +
+                "A"
+              );
+
+            }
+
+
+            if (
+              matchStat.rating !==
+                undefined &&
+              matchStat.rating !==
+                null
+            ) {
+
+              bits.push(
+
                 "⭐ " +
+
                 Number(
                   matchStat.rating
                 ).toFixed(1)
+
               );
 
             }
@@ -3154,14 +4691,18 @@ function openPlayerProfile(
               player.id
             ) {
 
-              bits.push("POTM");
+              bits.push(
+                "POTM"
+              );
 
             }
 
 
-            const contribution =
+            const performance =
               bits.length
-                ? bits.join(" · ")
+                ? bits.join(
+                    " · "
+                  )
                 : "No G/A";
 
 
@@ -3174,20 +4715,30 @@ function openPlayerProfile(
                   <div>
 
                     <div class="profile-match-name">
-                      vs ${escapeHTML(match.opponent)}
+
+                      vs
+                      ${escapeHTML(match.opponent)}
+
                     </div>
 
+
                     <div class="profile-match-date">
+
                       ${date}
+
                       ·
+
                       ${match.olympusScore}-${match.opponentScore}
+
                     </div>
 
                   </div>
 
 
                   <div class="profile-match-contribution">
-                    ${contribution}
+
+                    ${performance}
+
                   </div>
 
                 </div>
@@ -3197,13 +4748,14 @@ function openPlayerProfile(
             `;
 
           }
-        )
-        .join("");
+
+        ).join("");
 
   }
 
 
-  el("playerProfile").innerHTML = `
+  el("playerProfile")
+    .innerHTML = `
 
     <div class="profile-top">
 
@@ -3228,17 +4780,24 @@ function openPlayerProfile(
             ${player.name}
           </h2>
 
+
           <div class="profile-meta">
-            ${player.position} · ${player.nation}
+
+            ${player.position}
+            ·
+            ${player.nation}
+
           </div>
 
 
           ${
             player.captain
               ? `
+
                 <span class="captain">
                   DUAL CAPTAIN
                 </span>
+
               `
               : ""
           }
@@ -3253,62 +4812,80 @@ function openPlayerProfile(
     <div class="profile-grid">
 
       <div class="profile-stat">
+
         <div class="profile-stat-big">
           ${stat.appearances}
         </div>
+
         <div class="profile-stat-name">
           Appearances
         </div>
+
       </div>
 
 
       <div class="profile-stat">
+
         <div class="profile-stat-big">
           ${stat.contributions}
         </div>
+
         <div class="profile-stat-name">
           Goal Contributions
         </div>
+
       </div>
 
 
       <div class="profile-stat">
+
         <div class="profile-stat-big">
           ${stat.goals}
         </div>
+
         <div class="profile-stat-name">
           Goals
         </div>
+
       </div>
 
 
       <div class="profile-stat">
+
         <div class="profile-stat-big">
           ${stat.assists}
         </div>
+
         <div class="profile-stat-name">
           Assists
         </div>
+
       </div>
 
 
       <div class="profile-stat">
+
         <div class="profile-stat-big">
           ${averageRating}
         </div>
+
         <div class="profile-stat-name">
           Average Rating
         </div>
+
       </div>
 
 
       <div class="profile-stat">
+
         <div class="profile-stat-big">
           ${stat.potm}
         </div>
+
         <div class="profile-stat-name">
           POTM Awards
         </div>
+
       </div>
 
     </div>
@@ -3317,32 +4894,41 @@ function openPlayerProfile(
     <div class="profile-secondary">
 
       <div class="secondary-row">
+
         <div class="secondary-name">
           Goals per game
         </div>
+
         <div class="secondary-value">
           ${goalsPerGame}
         </div>
+
       </div>
 
 
       <div class="secondary-row">
+
         <div class="secondary-name">
           Assists per game
         </div>
+
         <div class="secondary-value">
           ${assistsPerGame}
         </div>
+
       </div>
 
 
       <div class="secondary-row">
+
         <div class="secondary-name">
           G/A per game
         </div>
+
         <div class="secondary-value">
           ${gaPerGame}
         </div>
+
       </div>
 
     </div>
@@ -3359,46 +4945,74 @@ function openPlayerProfile(
 
 
   document
-    .querySelectorAll(".page")
+    .querySelectorAll(
+      ".page"
+    )
     .forEach(
       page =>
-        page.classList.remove("active")
+        page.classList.remove(
+          "active"
+        )
     );
 
 
   el("profile")
-    .classList.add("active");
+    .classList.add(
+      "active"
+    );
 
 
   el("bottomNav")
-    .classList.add("hidden");
+    .classList.add(
+      "hidden"
+    );
 
 
-  window.scrollTo(0,0);
+  window.scrollTo(
+    0,
+    0
+  );
 
 }
 
+
+
+/* =========================
+CLOSE PROFILE
+========================= */
 
 function closePlayerProfile() {
 
   el("profile")
-    .classList.remove("active");
+    .classList.remove(
+      "active"
+    );
 
 
   el(profileReturnPage)
-    .classList.add("active");
+    .classList.add(
+      "active"
+    );
 
 
   el("bottomNav")
-    .classList.remove("hidden");
+    .classList.remove(
+      "hidden"
+    );
 
 
-  window.scrollTo(0,0);
+  window.scrollTo(
+    0,
+    0
+  );
 
 }
 
 
-/* RENDER */
+
+/* =========================
+RENDER EVERYTHING
+========================= */
 
 function renderEverything() {
 
@@ -3418,5 +5032,4 @@ renderEverything();
 </script>
 
 </body>
-
 </html>
