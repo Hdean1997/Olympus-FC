@@ -6515,7 +6515,7 @@ function renderSpotifyJamHome(){
 
   let html = "";
   if(hasJam){
-    html += `<a class="spotify-jam-join" href="${escapeHtml(spotifyJam.jam_url)}" target="_blank" rel="noopener noreferrer">🎧 Join Jam</a>`;
+    html += `<a class="spotify-jam-join" href="${escapeHTML(spotifyJam.jam_url)}" target="_blank" rel="noopener noreferrer">🎧 Join Jam</a>`;
   }
 
   if(isAdmin){
@@ -7137,7 +7137,7 @@ function renderEverything(){
   });
 }
 
-const OLYMPUS_APP_BUILD = "20260906-spotify-jam-4";
+const OLYMPUS_APP_BUILD = "20260906-spotify-jam-5";
 
 async function checkForAppUpdate(){
   try{
