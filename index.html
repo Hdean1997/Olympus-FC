@@ -1619,6 +1619,18 @@ h1{
   font-weight:bold;
 }
 
+
+/* SPOTIFY JAM */
+.spotify-jam-card{margin:0 16px 18px;padding:14px 15px;border-radius:16px;background:linear-gradient(145deg,#12213a,#0d1929);border:1px solid #28405f;display:none;}
+.spotify-jam-top{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.spotify-jam-label{font-size:10px;font-weight:800;letter-spacing:.9px;color:#8ea0b8;text-transform:uppercase;}
+.spotify-jam-title{margin-top:4px;font-size:15px;font-weight:800;color:#fff;overflow-wrap:anywhere;}
+.spotify-jam-empty{margin-top:4px;font-size:12px;color:#8392a6;}
+.spotify-jam-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;}
+.spotify-jam-join{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 15px;border:0;border-radius:11px;background:#1ed760;color:#04120a;font-weight:900;text-decoration:none;}
+.spotify-jam-edit,.spotify-jam-end{min-height:42px;padding:9px 12px;border-radius:11px;background:#10233b;color:#9fc0ff;border:1px solid #315d9d;font-weight:800;}
+.spotify-jam-end{border-color:#71343c;color:#ffadb4;background:#35171d;}
+
 /* PLAYER STATUS */
 .player-status-card{margin:0;padding:17px;border-radius:16px;background:linear-gradient(145deg,#12213a,#101d2e);border:1px solid #28405f;}
 .player-status-quote{font-size:16px;font-weight:700;line-height:1.5;color:#fff;overflow-wrap:anywhere;}
@@ -1968,6 +1980,17 @@ input[type="date"]::-webkit-date-and-time-value{
   <div id="historicalNote" class="data-note"></div>
 
   <div id="homeMatchdayLive" class="matchday-live-home" style="display:none"></div>
+
+  <div id="spotifyJamCard" class="spotify-jam-card">
+    <div class="spotify-jam-top">
+      <div>
+        <div class="spotify-jam-label">🎵 Olympus Spotify Jam</div>
+        <div id="spotifyJamTitle" class="spotify-jam-title">No Jam active</div>
+        <div id="spotifyJamEmpty" class="spotify-jam-empty">Start a Jam when the squad gets online.</div>
+      </div>
+    </div>
+    <div id="spotifyJamActions" class="spotify-jam-actions"></div>
+  </div>
 
   <div class="stats-grid">
     <div class="stat">
@@ -2881,6 +2904,7 @@ let currentClubUsername = "";
 let currentClubRole = "";
 let currentClubPlayerKey = "";
 let playerStatuses = {};
+let spotifyJam = null;
 const OWNER_UID = "dc4e457c-4b2c-413f-a6d8-b4f49c053480";
 let remoteSeasonIds = {};
 let remotePlayerIds = {};
@@ -6405,6 +6429,141 @@ async function resetSeasonData(){
   );
 }
 
+
+
+/* SPOTIFY JAM */
+
+async function loadSpotifyJam(){
+  spotifyJam = null;
+
+  // The Jam is intentionally account-only. Public visitors never request it.
+  if(!supabaseClient || !currentClubRole){
+    renderSpotifyJamHome();
+    return;
+  }
+
+  try{
+    const {data,error} = await supabaseClient
+      .from("spotify_jam")
+      .select("id,jam_url,jam_title,updated_at")
+      .eq("id",1)
+      .maybeSingle();
+
+    if(error) throw error;
+    spotifyJam = data || null;
+  }catch(error){
+    // Keep this feature isolated so a Jam problem can never break the tracker.
+    console.warn("Spotify Jam could not be loaded:",error);
+    spotifyJam = null;
+  }
+
+  renderSpotifyJamHome();
+}
+
+function renderSpotifyJamHome(){
+  const card = el("spotifyJamCard");
+  const title = el("spotifyJamTitle");
+  const empty = el("spotifyJamEmpty");
+  const actions = el("spotifyJamActions");
+  if(!card || !title || !empty || !actions) return;
+
+  if(!currentClubRole){
+    card.style.display = "none";
+    actions.innerHTML = "";
+    return;
+  }
+
+  card.style.display = "block";
+  const hasJam = Boolean(spotifyJam?.jam_url);
+  title.textContent = hasJam ? (spotifyJam.jam_title || "Olympus FC Jam") : "No Jam active";
+  empty.style.display = hasJam ? "none" : "block";
+
+  let html = "";
+  if(hasJam){
+    html += `<a class="spotify-jam-join" href="${escapeHtml(spotifyJam.jam_url)}" target="_blank" rel="noopener noreferrer">🎧 Join Jam</a>`;
+  }
+
+  if(isAdmin){
+    html += `<button class="spotify-jam-edit" onclick="editSpotifyJam()">${hasJam ? "✏️ Edit Jam" : "➕ Set Jam"}</button>`;
+    if(hasJam){
+      html += `<button class="spotify-jam-end" onclick="endSpotifyJam()">End Jam</button>`;
+    }
+  }
+
+  actions.innerHTML = html;
+}
+
+async function editSpotifyJam(){
+  if(!isAdmin || !supabaseClient) return;
+
+  const currentTitle = spotifyJam?.jam_title || "";
+  const currentUrl = spotifyJam?.jam_url || "";
+  const jamUrl = prompt("Paste the Spotify Jam link:",currentUrl);
+  if(jamUrl === null) return;
+
+  const cleanUrl = jamUrl.trim();
+  if(!cleanUrl){
+    alert("Paste a Spotify Jam link first.");
+    return;
+  }
+
+  let parsed;
+  try{
+    parsed = new URL(cleanUrl);
+  }catch{
+    alert("That does not look like a valid link.");
+    return;
+  }
+
+  if(parsed.protocol !== "https:" || !/(^|\\.)spotify\\.com$/i.test(parsed.hostname)){
+    alert("Please use a Spotify link.");
+    return;
+  }
+
+  const jamTitle = prompt("Optional Jam name (for example Friday Night Session):",currentTitle);
+  if(jamTitle === null) return;
+
+  try{
+    const {data:authData} = await supabaseClient.auth.getSession();
+    const userId = authData?.session?.user?.id;
+    if(!userId) throw new Error("Not signed in");
+
+    const {error} = await supabaseClient
+      .from("spotify_jam")
+      .upsert({
+        id:1,
+        jam_url:cleanUrl,
+        jam_title:jamTitle.trim() || null,
+        updated_by:userId,
+        updated_at:new Date().toISOString()
+      },{onConflict:"id"});
+
+    if(error) throw error;
+    await loadSpotifyJam();
+  }catch(error){
+    console.error("Spotify Jam save failed:",error);
+    alert("The Spotify Jam could not be saved.");
+  }
+}
+
+async function endSpotifyJam(){
+  if(!isAdmin || !supabaseClient || !spotifyJam) return;
+  if(!confirm("End the current Spotify Jam and remove it from the homepage?")) return;
+
+  try{
+    const {error} = await supabaseClient
+      .from("spotify_jam")
+      .delete()
+      .eq("id",1);
+    if(error) throw error;
+    spotifyJam = null;
+    renderSpotifyJamHome();
+  }catch(error){
+    console.error("Spotify Jam delete failed:",error);
+    alert("The Spotify Jam could not be ended.");
+  }
+}
+
 /* SUPABASE ONLINE DATABASE */
 
 function setOnlineStatus(text,color="#9aa9bc"){
@@ -6790,6 +6949,7 @@ async function handleAuthUI(){
     signed.textContent = `Signed in as ${displayName} • ${roleLabel}`;
   }
 
+  await loadSpotifyJam();
   updateAdminUI();
   renderEverything();
 }
@@ -6863,6 +7023,7 @@ async function initSupabase(){
 
     supabaseClient.auth.onAuthStateChange(async (_event,session) => {
       await loadCurrentClubAccess(session);
+      await loadSpotifyJam();
       updateAdminUI();
       renderEverything();
     });
@@ -6882,6 +7043,7 @@ function renderEverything(){
   syncSeasonSelectors();
   renderDivision();
   renderHome();
+  renderSpotifyJamHome();
   renderSquad();
   renderMatches();
   renderMatchday();
@@ -6893,7 +7055,7 @@ function renderEverything(){
   });
 }
 
-const OLYMPUS_APP_BUILD = "20260906-profile-status-1";
+const OLYMPUS_APP_BUILD = "20260906-spotify-jam-1";
 
 async function checkForAppUpdate(){
   try{
