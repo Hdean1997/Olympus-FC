@@ -3466,7 +3466,9 @@ function matchdayPotnHTML(session){
     : [];
 
   let votingControls = "";
-  if(currentClubRole && voter && isInSquad){
+  if(result.complete){
+    votingControls = `<div class="matchday-potn-note">🔒 Voting closed — all eligible players have voted and the result is final.</div>`;
+  }else if(currentClubRole && voter && isInSquad){
     votingControls = `<div class="matchday-potn-votes">
       <div class="matchday-potn-row">
         <div class="matchday-potn-voter">Your vote</div>
@@ -3498,6 +3500,10 @@ async function savePotnVote(sessionId){
   if(!currentClubRole || !currentClubPlayerKey) return;
   const session = matchdaySessions.find(s => String(s.id) === String(sessionId));
   if(!session || session.status !== "ended") return;
+  if(calculatePotnResult(session).complete){
+    alert("Player of the Night voting is closed. The final result cannot be changed.");
+    return;
+  }
 
   const voter = players.find(p => p.id === currentClubPlayerKey);
   if(!voter || !(session.players || []).some(item => item.playerKey === voter.id)){
