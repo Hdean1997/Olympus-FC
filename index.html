@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
   <title>Olympus FC</title>
 
   <style>
+
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      background: #07111f;
     }
 
     body {
@@ -17,9 +28,11 @@
       color: white;
     }
 
+    /* Makes sure content can always scroll above
+       the fixed navigation bar on iPhone */
     .app {
       min-height: 100vh;
-      padding-bottom: 180px;
+      padding-bottom: calc(155px + env(safe-area-inset-bottom));
     }
 
     .page {
@@ -30,10 +43,18 @@
       display: block;
     }
 
+    /* =========================
+       HOME
+       ========================= */
+
     .top {
       text-align: center;
       padding: 28px 20px 18px;
-      background: linear-gradient(180deg, #0b1c31, #07111f);
+      background: linear-gradient(
+        180deg,
+        #0b1c31,
+        #07111f
+      );
     }
 
     .badge {
@@ -42,7 +63,8 @@
       object-fit: cover;
       border-radius: 50%;
       margin-bottom: 14px;
-      box-shadow: 0 0 30px rgba(37, 116, 255, 0.2);
+      box-shadow:
+        0 0 30px rgba(37, 116, 255, 0.20);
     }
 
     h1 {
@@ -57,8 +79,7 @@
       font-size: 15px;
     }
 
-    .season-card,
-    .player-card {
+    .season-card {
       margin: 16px;
       padding: 18px;
       border-radius: 18px;
@@ -98,8 +119,8 @@
 
     .stat-label {
       margin-top: 5px;
-      font-size: 13px;
       color: #9aa9bc;
+      font-size: 13px;
     }
 
     .section {
@@ -115,8 +136,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+
       background: #101d2e;
       border: 1px solid #1c314c;
+
       padding: 15px;
       border-radius: 14px;
       margin-bottom: 10px;
@@ -138,40 +161,61 @@
       color: #e8bd4b;
     }
 
+    /* =========================
+       PAGE HEADERS
+       ========================= */
+
     .page-header {
-      padding: 28px 20px 10px;
+      padding: 38px 20px 18px;
     }
 
     .page-header h2 {
       margin: 0;
-      font-size: 30px;
+      font-size: 32px;
     }
 
     .page-header p {
-      margin-top: 7px;
+      margin: 7px 0 0;
       color: #9aa9bc;
+      font-size: 16px;
     }
+
+    /* =========================
+       SQUAD
+       ========================= */
 
     .player-card {
       display: flex;
       align-items: center;
       gap: 14px;
-      margin-top: 12px;
-      margin-bottom: 12px;
+
+      margin: 12px 16px;
+      padding: 18px;
+
+      border-radius: 18px;
+
+      background: #101d2e;
+      border: 1px solid #1c314c;
     }
 
     .number {
-      width: 55px;
-      height: 55px;
+      width: 58px;
+      height: 58px;
+
       flex-shrink: 0;
+
       border-radius: 50%;
+
       background: #0b2547;
-      border: 1px solid #285da8;
+      border: 1px solid #3269bb;
+
       display: flex;
       justify-content: center;
       align-items: center;
+
       font-size: 21px;
       font-weight: bold;
+
       color: #e8bd4b;
     }
 
@@ -192,214 +236,695 @@
 
     .captain {
       display: inline-block;
+
       margin-top: 7px;
-      padding: 4px 8px;
-      border-radius: 6px;
+      padding: 5px 9px;
+
+      border-radius: 7px;
+
       background: #e8bd4b;
       color: #07111f;
+
       font-size: 11px;
       font-weight: bold;
     }
 
+    /* =========================
+       MATCHES
+       ========================= */
+
+    .matches-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+
+      margin: 0 16px 18px;
+    }
+
+    .match-summary-box {
+      padding: 15px 8px;
+
+      border-radius: 15px;
+
+      text-align: center;
+
+      background: #101d2e;
+      border: 1px solid #1c314c;
+    }
+
+    .match-summary-number {
+      font-size: 23px;
+      font-weight: bold;
+    }
+
+    .match-summary-label {
+      margin-top: 5px;
+      font-size: 11px;
+      color: #9aa9bc;
+    }
+
+    .add-match-button {
+      display: block;
+
+      width: calc(100% - 32px);
+
+      margin: 0 16px 20px;
+      padding: 16px;
+
+      border: none;
+      border-radius: 14px;
+
+      background: #326eff;
+      color: white;
+
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .match-list-title {
+      margin: 26px 16px 12px;
+      font-size: 20px;
+    }
+
+    .empty-matches {
+      margin: 0 16px;
+
+      padding: 35px 20px;
+
+      text-align: center;
+
+      border: 1px dashed #29425f;
+      border-radius: 18px;
+
+      background: #0d1928;
+    }
+
+    .empty-icon {
+      font-size: 42px;
+      margin-bottom: 12px;
+    }
+
+    .empty-title {
+      font-size: 19px;
+      font-weight: bold;
+    }
+
+    .empty-text {
+      margin-top: 8px;
+
+      color: #9aa9bc;
+
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* =========================
+       BOTTOM NAVIGATION
+       ========================= */
+
     .nav {
       position: fixed;
-      bottom: 0;
+
       left: 0;
       right: 0;
-      height: 78px;
+      bottom: 0;
+
+      min-height: 82px;
+
+      padding-top: 9px;
+      padding-bottom: calc(
+        8px + env(safe-area-inset-bottom)
+      );
+
       background: #0b1625;
+
       border-top: 1px solid #1c314c;
+
       display: flex;
       justify-content: space-around;
-      align-items: center;
-      z-index: 10;
+      align-items: flex-start;
+
+      z-index: 100;
     }
 
     .nav-item {
       width: 20%;
+
       text-align: center;
+
+      padding-top: 2px;
+
       font-size: 12px;
+
       color: #8392a6;
+
       cursor: pointer;
+
+      user-select: none;
     }
 
     .nav-icon {
       display: block;
+
+      min-height: 30px;
+
       font-size: 23px;
-      margin-bottom: 4px;
+
+      margin-bottom: 3px;
     }
 
     .nav-item.active {
       color: #3c78ff;
       font-weight: bold;
     }
+
   </style>
+
 </head>
+
 
 <body>
 
 <div class="app">
 
-  <!-- HOME PAGE -->
-  <div id="home" class="page active">
+
+  <!-- ========================
+       HOME PAGE
+       ======================== -->
+
+  <div
+    id="home"
+    class="page active"
+  >
 
     <div class="top">
-      <img src="Olympus FC Badge.PNG" alt="Olympus FC Badge" class="badge">
+
+      <img
+        src="Olympus FC Badge.PNG"
+        alt="Olympus FC Badge"
+        class="badge"
+      >
+
       <h1>OLYMPUS FC</h1>
-      <div class="subtitle">Pro Clubs Stats Tracker</div>
+
+      <div class="subtitle">
+        Pro Clubs Stats Tracker
+      </div>
+
     </div>
+
 
     <div class="season-card">
+
       <h2>FC27 Season</h2>
-      <p>The climb to the summit begins here.</p>
+
+      <p>
+        The climb to the summit begins here.
+      </p>
+
     </div>
+
 
     <div class="stats-grid">
-      <div class="stat">
-        <div class="stat-number">0</div>
-        <div class="stat-label">Matches</div>
-      </div>
 
       <div class="stat">
-        <div class="stat-number">0</div>
-        <div class="stat-label">Wins</div>
+
+        <div class="stat-number">
+          0
+        </div>
+
+        <div class="stat-label">
+          Matches
+        </div>
+
       </div>
 
-      <div class="stat">
-        <div class="stat-number">0</div>
-        <div class="stat-label">Goals</div>
-      </div>
 
       <div class="stat">
-        <div class="stat-number">0%</div>
-        <div class="stat-label">Win Rate</div>
+
+        <div class="stat-number">
+          0
+        </div>
+
+        <div class="stat-label">
+          Wins
+        </div>
+
       </div>
+
+
+      <div class="stat">
+
+        <div class="stat-number">
+          0
+        </div>
+
+        <div class="stat-label">
+          Goals
+        </div>
+
+      </div>
+
+
+      <div class="stat">
+
+        <div class="stat-number">
+          0%
+        </div>
+
+        <div class="stat-label">
+          Win Rate
+        </div>
+
+      </div>
+
     </div>
+
 
     <div class="section">
-      <h3>Club Leaders</h3>
+
+      <h3>
+        Club Leaders
+      </h3>
+
 
       <div class="leader">
+
         <div>
-          <div class="leader-name">Tyrone Dean</div>
-          <div class="leader-detail">Top Goalscorer</div>
+
+          <div class="leader-name">
+            Tyrone Dean
+          </div>
+
+          <div class="leader-detail">
+            Top Goalscorer
+          </div>
+
         </div>
-        <div class="leader-value">0</div>
+
+        <div class="leader-value">
+          0
+        </div>
+
       </div>
 
+
       <div class="leader">
+
         <div>
-          <div class="leader-name">Baganor Jamba</div>
-          <div class="leader-detail">Top Assists</div>
+
+          <div class="leader-name">
+            Baganor Jamba
+          </div>
+
+          <div class="leader-detail">
+            Top Assists
+          </div>
+
         </div>
-        <div class="leader-value">0</div>
+
+        <div class="leader-value">
+          0
+        </div>
+
       </div>
+
     </div>
 
   </div>
 
-  <!-- SQUAD PAGE -->
-  <div id="squad" class="page">
+
+
+  <!-- ========================
+       SQUAD PAGE
+       ======================== -->
+
+  <div
+    id="squad"
+    class="page"
+  >
 
     <div class="page-header">
-      <h2>Squad</h2>
-      <p>Olympus FC · FC27</p>
+
+      <h2>
+        Squad
+      </h2>
+
+      <p>
+        Olympus FC · FC27
+      </p>
+
     </div>
 
-    <div class="player-card">
-      <div class="number">40</div>
-      <div class="player-info">
-        <div class="player-name">Tyrone Dean</div>
-        <div class="player-meta">CM · England</div>
-        <span class="captain">DUAL CAPTAIN</span>
-      </div>
-    </div>
 
     <div class="player-card">
-      <div class="number">78</div>
-      <div class="player-info">
-        <div class="player-name">Baganor Jamba</div>
-        <div class="player-meta">CM · DR Congo</div>
-        <span class="captain">DUAL CAPTAIN</span>
+
+      <div class="number">
+        40
       </div>
+
+      <div class="player-info">
+
+        <div class="player-name">
+          Tyrone Dean
+        </div>
+
+        <div class="player-meta">
+          CM · England
+        </div>
+
+        <span class="captain">
+          DUAL CAPTAIN
+        </span>
+
+      </div>
+
     </div>
 
-    <div class="player-card">
-      <div class="number">26</div>
-      <div class="player-info">
-        <div class="player-name">Kenny Kitbag</div>
-        <div class="player-meta">CAM · England</div>
-      </div>
-    </div>
 
     <div class="player-card">
-      <div class="number">7</div>
-      <div class="player-info">
-        <div class="player-name">Deano</div>
-        <div class="player-meta">ST · England</div>
+
+      <div class="number">
+        78
       </div>
+
+      <div class="player-info">
+
+        <div class="player-name">
+          Baganor Jamba
+        </div>
+
+        <div class="player-meta">
+          CM · DR Congo
+        </div>
+
+        <span class="captain">
+          DUAL CAPTAIN
+        </span>
+
+      </div>
+
     </div>
 
+
     <div class="player-card">
-      <div class="number">23</div>
-      <div class="player-info">
-        <div class="player-name">Juanny P</div>
-        <div class="player-meta">Position TBC · Mexico</div>
+
+      <div class="number">
+        26
       </div>
+
+      <div class="player-info">
+
+        <div class="player-name">
+          Kenny Kitbag
+        </div>
+
+        <div class="player-meta">
+          CAM · England
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="player-card">
+
+      <div class="number">
+        7
+      </div>
+
+      <div class="player-info">
+
+        <div class="player-name">
+          Deano
+        </div>
+
+        <div class="player-meta">
+          ST · England
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="player-card">
+
+      <div class="number">
+        23
+      </div>
+
+      <div class="player-info">
+
+        <div class="player-name">
+          Juanny P
+        </div>
+
+        <div class="player-meta">
+          Position TBC · Mexico
+        </div>
+
+      </div>
+
     </div>
 
   </div>
 
+
+
+  <!-- ========================
+       MATCHES PAGE
+       ======================== -->
+
+  <div
+    id="matches"
+    class="page"
+  >
+
+    <div class="page-header">
+
+      <h2>
+        Matches
+      </h2>
+
+      <p>
+        Olympus FC · FC27
+      </p>
+
+    </div>
+
+
+    <div class="matches-summary">
+
+      <div class="match-summary-box">
+
+        <div class="match-summary-number">
+          0
+        </div>
+
+        <div class="match-summary-label">
+          Played
+        </div>
+
+      </div>
+
+
+      <div class="match-summary-box">
+
+        <div class="match-summary-number">
+          0
+        </div>
+
+        <div class="match-summary-label">
+          Wins
+        </div>
+
+      </div>
+
+
+      <div class="match-summary-box">
+
+        <div class="match-summary-number">
+          0
+        </div>
+
+        <div class="match-summary-label">
+          Goals
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <button
+      class="add-match-button"
+      onclick="addMatchComingSoon()"
+    >
+      + Add Match
+    </button>
+
+
+    <div class="match-list-title">
+      Match History
+    </div>
+
+
+    <div class="empty-matches">
+
+      <div class="empty-icon">
+        ⚽
+      </div>
+
+      <div class="empty-title">
+        No matches recorded
+      </div>
+
+      <div class="empty-text">
+        Your FC27 match history will appear here
+        once we start adding results.
+      </div>
+
+    </div>
+
+  </div>
+
+
 </div>
+
+
+
+<!-- ========================
+     BOTTOM NAVIGATION
+     ======================== -->
 
 <div class="nav">
 
-  <div class="nav-item active" onclick="showPage('home', this)">
-    <span class="nav-icon">⌂</span>
+
+  <div
+    class="nav-item active"
+    onclick="showPage('home', this)"
+  >
+
+    <span class="nav-icon">
+      ⌂
+    </span>
+
     Home
+
   </div>
 
-  <div class="nav-item" onclick="showPage('squad', this)">
-    <span class="nav-icon">♟</span>
+
+  <div
+    class="nav-item"
+    onclick="showPage('squad', this)"
+  >
+
+    <span class="nav-icon">
+      ♟
+    </span>
+
     Squad
+
   </div>
 
-  <div class="nav-item">
-    <span class="nav-icon">⚽</span>
+
+  <div
+    class="nav-item"
+    onclick="showPage('matches', this)"
+  >
+
+    <span class="nav-icon">
+      ⚽
+    </span>
+
     Matches
+
   </div>
 
+
   <div class="nav-item">
-    <span class="nav-icon">▥</span>
+
+    <span class="nav-icon">
+      ▥
+    </span>
+
     Stats
+
   </div>
 
+
   <div class="nav-item">
-    <span class="nav-icon">•••</span>
+
+    <span class="nav-icon">
+      •••
+    </span>
+
     More
+
   </div>
+
 
 </div>
 
+
+
 <script>
+
   function showPage(pageId, navItem) {
-    const pages = document.querySelectorAll('.page');
-    const navItems = document.querySelectorAll('.nav-item');
+
+    const pages =
+      document.querySelectorAll('.page');
+
+    const navItems =
+      document.querySelectorAll('.nav-item');
+
 
     pages.forEach(page => {
+
       page.classList.remove('active');
+
     });
+
 
     navItems.forEach(item => {
+
       item.classList.remove('active');
+
     });
 
-    document.getElementById(pageId).classList.add('active');
-    navItem.classList.add('active');
 
-    window.scrollTo(0, 0);
+    document
+      .getElementById(pageId)
+      .classList
+      .add('active');
+
+
+    navItem
+      .classList
+      .add('active');
+
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'instant'
+    });
+
   }
+
+
+  function addMatchComingSoon() {
+
+    alert(
+      'Match entry is the next feature we are building.'
+    );
+
+  }
+
 </script>
 
+
 </body>
+
 </html>
