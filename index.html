@@ -22,7 +22,7 @@ html,body{
 
 button,input,select{font:inherit}
 
-button,.nav-item,.player-card,.stats-card{
+button,.nav-item,.player-card,.stats-card,.leaderboard-player-row{
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
 }
@@ -868,7 +868,8 @@ h1{
 .compare-top,
 .match-detail-top,
 .player-profile-top,
-.form-streaks-top{
+.form-streaks-top,
+.leaderboards-top{
   padding:30px 20px 12px;
   background:linear-gradient(180deg,#0d213a,#07111f);
 }
@@ -877,7 +878,8 @@ h1{
 .compare-title,
 .match-detail-title,
 .player-profile-title,
-.form-streaks-title{
+.form-streaks-title,
+.leaderboards-title{
   margin:0;
   font-size:32px;
 }
@@ -886,7 +888,8 @@ h1{
 .compare-subtitle,
 .match-detail-subtitle,
 .player-profile-subtitle,
-.form-streaks-subtitle{
+.form-streaks-subtitle,
+.leaderboards-subtitle{
   margin-top:7px;
   color:#9aa9bc;
 }
@@ -895,19 +898,193 @@ h1{
 .compare-section,
 .match-detail-section,
 .player-profile-section,
-.form-streaks-section{
+.form-streaks-section,
+.leaderboards-section{
   padding:22px 16px 0;
 }
 
 .records-section-title,
 .detail-section-title,
 .profile-section-title,
-.form-section-title{
+.form-section-title,
+.leaderboards-section-title{
   margin:0 0 12px;
   color:#9aa9bc;
   font-size:12px;
   font-weight:bold;
   letter-spacing:.8px;
+}
+
+/* LEADERBOARDS */
+
+.leaderboard-control-card{
+  margin:8px 16px 0;
+  padding:18px;
+  border-radius:18px;
+  background:linear-gradient(145deg,#12243d,#101d2e);
+  border:1px solid #284a76;
+}
+
+.leaderboard-control-label{
+  color:#8392a6;
+  font-size:10px;
+  font-weight:bold;
+  letter-spacing:.8px;
+  margin-bottom:8px;
+}
+
+.leaderboard-category-select{
+  width:100%;
+  height:52px;
+  padding:0 13px;
+  border-radius:12px;
+  border:1px solid #315d9d;
+  background:#07111f;
+  color:#fff;
+  font-weight:bold;
+  font-size:15px;
+}
+
+.leaderboard-leader-card{
+  margin:14px 16px 0;
+  padding:22px 18px;
+  border-radius:20px;
+  text-align:center;
+  background:linear-gradient(145deg,#2c2818,#121d2d);
+  border:1px solid #8d712a;
+}
+
+.leaderboard-crown{
+  font-size:27px;
+}
+
+.leaderboard-leader-label{
+  margin-top:8px;
+  color:#c7aa5d;
+  font-size:10px;
+  font-weight:bold;
+  letter-spacing:.8px;
+}
+
+.leaderboard-leader-name{
+  margin-top:7px;
+  color:#fff;
+  font-size:21px;
+  font-weight:bold;
+  line-height:1.3;
+}
+
+.leaderboard-leader-value{
+  margin-top:8px;
+  color:#e8bd4b;
+  font-size:32px;
+  font-weight:bold;
+}
+
+.leaderboard-list{
+  padding:0 16px;
+}
+
+.leaderboard-player-row{
+  display:grid;
+  grid-template-columns:48px 52px minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  margin-bottom:10px;
+  padding:13px 14px;
+  border-radius:16px;
+  background:#101d2e;
+  border:1px solid #1c314c;
+  transition:transform .12s ease,border-color .12s ease;
+}
+
+.leaderboard-player-row:active{
+  transform:scale(.985);
+  border-color:#315d9d;
+}
+
+.leaderboard-player-row.rank-one{
+  border-color:#8d712a;
+  background:linear-gradient(145deg,#252316,#101d2e);
+}
+
+.leaderboard-player-row.rank-two{
+  border-color:#5c6879;
+}
+
+.leaderboard-player-row.rank-three{
+  border-color:#735039;
+}
+
+.leaderboard-rank{
+  width:42px;
+  height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:#0b1625;
+  font-size:16px;
+  font-weight:bold;
+  color:#9aa9bc;
+}
+
+.rank-one .leaderboard-rank{
+  color:#e8bd4b;
+  border:1px solid #8d712a;
+}
+
+.leaderboard-shirt{
+  width:46px;
+  height:46px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:#0b2547;
+  border:1px solid #3269bb;
+  color:#e8bd4b;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.leaderboard-player-info{
+  min-width:0;
+}
+
+.leaderboard-player-name{
+  font-size:15px;
+  font-weight:bold;
+  overflow-wrap:anywhere;
+}
+
+.leaderboard-player-meta{
+  margin-top:4px;
+  color:#8392a6;
+  font-size:10px;
+}
+
+.leaderboard-player-value{
+  min-width:55px;
+  text-align:right;
+  color:#fff;
+  font-size:22px;
+  font-weight:bold;
+}
+
+.rank-one .leaderboard-player-value{
+  color:#e8bd4b;
+}
+
+.leaderboard-note{
+  margin:14px 16px 0;
+  padding:13px 14px;
+  border-radius:12px;
+  background:#0b1625;
+  border:1px solid #1c314c;
+  color:#8392a6;
+  font-size:11px;
+  line-height:1.45;
 }
 
 /* FORM & STREAKS */
@@ -1810,6 +1987,28 @@ input[type="date"]::-webkit-date-and-time-value{
     height:112px;
     font-size:38px;
   }
+
+  .leaderboard-player-row{
+    grid-template-columns:40px 44px minmax(0,1fr) auto;
+    padding:12px 10px;
+    gap:8px;
+  }
+
+  .leaderboard-rank{
+    width:36px;
+    height:36px;
+  }
+
+  .leaderboard-shirt{
+    width:40px;
+    height:40px;
+    font-size:12px;
+  }
+
+  .leaderboard-player-value{
+    min-width:48px;
+    font-size:19px;
+  }
 }
 </style>
 </head>
@@ -2165,6 +2364,14 @@ input[type="date"]::-webkit-date-and-time-value{
         <div class="hub-action-arrow">›</div>
       </button>
 
+      <button class="hub-action gold" onclick="openLeaderboardsPage()">
+        <div>
+          <div class="hub-action-main">🏅 Player Leaderboards</div>
+          <div class="hub-action-sub">Rank the Olympus squad across nine stat categories</div>
+        </div>
+        <div class="hub-action-arrow">›</div>
+      </button>
+
       <button class="hub-action blue" onclick="openComparePage()">
         <div>
           <div class="hub-action-main">⚖️ Player Comparison</div>
@@ -2235,6 +2442,63 @@ input[type="date"]::-webkit-date-and-time-value{
       onchange="restoreBackup(event)"
     >
   </div>
+</div>
+
+<!-- LEADERBOARDS -->
+
+<div id="leaderboards" class="page">
+
+  <div class="leaderboards-top">
+
+    <button class="app-back-button" onclick="closeLeaderboardsPage()">
+      <span class="app-back-icon">‹</span>
+      <span>Back</span>
+    </button>
+
+    <h2 class="leaderboards-title">Player Leaderboards</h2>
+
+    <div id="leaderboardsSubtitle" class="leaderboards-subtitle">
+      Olympus FC · FC26
+    </div>
+
+  </div>
+
+  <div class="leaderboard-control-card">
+
+    <div class="leaderboard-control-label">
+      LEADERBOARD CATEGORY
+    </div>
+
+    <select
+      id="leaderboardCategory"
+      class="leaderboard-category-select"
+      onchange="changeLeaderboardCategory(this.value)"
+    >
+      <option value="goals">Goals</option>
+      <option value="assists">Assists</option>
+      <option value="contributions" selected>Goal Contributions</option>
+      <option value="goalsPerGame">Goals / Game</option>
+      <option value="assistsPerGame">Assists / Game</option>
+      <option value="gaPerGame">G/A / Game</option>
+      <option value="averageRating">Average Rating</option>
+      <option value="potm">POTM Awards</option>
+      <option value="appearances">Appearances</option>
+    </select>
+
+  </div>
+
+  <div id="leaderboardLeader"></div>
+
+  <div class="leaderboards-section">
+    <div id="leaderboardSectionTitle" class="leaderboards-section-title">
+      GOAL CONTRIBUTIONS RANKING
+    </div>
+  </div>
+
+  <div id="leaderboardList" class="leaderboard-list"></div>
+
+  <div id="leaderboardNote" class="leaderboard-note"></div>
+
 </div>
 
 <!-- FORM & STREAKS -->
@@ -2682,6 +2946,8 @@ let comparisonPlayer2 = "baganor";
 let selectedProfilePlayerId = null;
 let playerProfileReturnPage = "squad";
 
+let leaderboardCategory = "contributions";
+
 function el(id){
   return document.getElementById(id);
 }
@@ -2934,6 +3200,10 @@ function changeSeason(season){
     renderFormPage();
   }
 
+  if(el("leaderboards").classList.contains("active")){
+    renderLeaderboardsPage();
+  }
+
   if(
     el("playerProfile").classList.contains("active") &&
     selectedProfilePlayerId
@@ -2965,6 +3235,7 @@ function syncSeasonSelectors(){
   el("compareSubtitle").textContent = "Olympus FC · " + displaySeason;
   el("compareSeasonValue").textContent = displaySeason;
   el("formStreaksSubtitle").textContent = "Olympus FC · " + displaySeason;
+  el("leaderboardsSubtitle").textContent = "Olympus FC · " + displaySeason;
   el("moreSeason").textContent = displaySeason;
 }
 
@@ -3520,6 +3791,10 @@ function finishMatch(){
   if(el("formStreaks").classList.contains("active")){
     renderFormPage();
   }
+
+  if(el("leaderboards").classList.contains("active")){
+    renderLeaderboardsPage();
+  }
 }
 
 /* CLUB STATS */
@@ -3723,6 +3998,296 @@ function renderHome(){
 
   el("topAssisterName").textContent =
     totals[assister.id].assists ? assister.name : "No assists yet";
+}
+
+/* LEADERBOARDS */
+
+function openLeaderboardsPage(){
+
+  renderLeaderboardsPage();
+
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.remove("active");
+  });
+
+  el("leaderboards").classList.add("active");
+  el("bottomNav").classList.add("hidden");
+
+  window.scrollTo(0,0);
+}
+
+function closeLeaderboardsPage(){
+
+  el("leaderboards").classList.remove("active");
+  el("more").classList.add("active");
+
+  el("bottomNav").classList.remove("hidden");
+
+  activateNavForPage("more");
+
+  window.scrollTo(0,0);
+}
+
+function changeLeaderboardCategory(category){
+
+  leaderboardCategory = category;
+
+  renderLeaderboardsPage();
+}
+
+function leaderboardDefinition(){
+
+  const definitions = {
+
+    goals:{
+      title:"Goals",
+      section:"GOALS RANKING",
+      value:stat => stat.goals,
+      display:stat => stat.goals
+    },
+
+    assists:{
+      title:"Assists",
+      section:"ASSISTS RANKING",
+      value:stat => stat.assists,
+      display:stat => stat.assists
+    },
+
+    contributions:{
+      title:"Goal Contributions",
+      section:"GOAL CONTRIBUTIONS RANKING",
+      value:stat => stat.contributions,
+      display:stat => stat.contributions
+    },
+
+    goalsPerGame:{
+      title:"Goals / Game",
+      section:"GOALS PER GAME RANKING",
+      value:stat =>
+        stat.appearances
+          ? stat.goals / stat.appearances
+          : 0,
+      display:stat =>
+        (
+          stat.appearances
+            ? stat.goals / stat.appearances
+            : 0
+        ).toFixed(2)
+    },
+
+    assistsPerGame:{
+      title:"Assists / Game",
+      section:"ASSISTS PER GAME RANKING",
+      value:stat =>
+        stat.appearances
+          ? stat.assists / stat.appearances
+          : 0,
+      display:stat =>
+        (
+          stat.appearances
+            ? stat.assists / stat.appearances
+            : 0
+        ).toFixed(2)
+    },
+
+    gaPerGame:{
+      title:"G/A / Game",
+      section:"GOAL CONTRIBUTIONS PER GAME RANKING",
+      value:stat =>
+        stat.appearances
+          ? stat.contributions / stat.appearances
+          : 0,
+      display:stat =>
+        (
+          stat.appearances
+            ? stat.contributions / stat.appearances
+            : 0
+        ).toFixed(2)
+    },
+
+    averageRating:{
+      title:"Average Rating",
+      section:"AVERAGE RATING RANKING",
+      value:stat =>
+        stat.averageRating === null
+          ? -1
+          : stat.averageRating,
+      display:stat =>
+        stat.averageRating === null
+          ? "—"
+          : stat.averageRating.toFixed(2)
+    },
+
+    potm:{
+      title:"POTM Awards",
+      section:"PLAYER OF THE MATCH RANKING",
+      value:stat => stat.potm,
+      display:stat => stat.potm
+    },
+
+    appearances:{
+      title:"Appearances",
+      section:"APPEARANCES RANKING",
+      value:stat => stat.appearances,
+      display:stat => stat.appearances
+    }
+
+  };
+
+  return definitions[leaderboardCategory] || definitions.contributions;
+}
+
+function renderLeaderboardsPage(){
+
+  const totals = calculatePlayerStats();
+  const definition = leaderboardDefinition();
+
+  el("leaderboardsSubtitle").textContent =
+    "Olympus FC · " + seasonLabel(activeSeason);
+
+  el("leaderboardCategory").value =
+    leaderboardCategory;
+
+  el("leaderboardSectionTitle").textContent =
+    definition.section;
+
+  const ranked = players.map(player => ({
+    player,
+    stat:totals[player.id],
+    value:definition.value(totals[player.id])
+  })).sort((a,b) => {
+
+    if(b.value !== a.value){
+      return b.value - a.value;
+    }
+
+    const bContributions =
+      totals[b.player.id].contributions;
+
+    const aContributions =
+      totals[a.player.id].contributions;
+
+    if(bContributions !== aContributions){
+      return bContributions - aContributions;
+    }
+
+    return a.player.name.localeCompare(b.player.name);
+  });
+
+  const topValue = ranked[0]?.value ?? 0;
+
+  const leaders = ranked.filter(item =>
+    Math.abs(item.value - topValue) < 0.000001
+  );
+
+  const leaderNames = leaders
+    .map(item => item.player.name)
+    .join(" / ");
+
+  const leaderValue =
+    ranked.length
+      ? definition.display(ranked[0].stat)
+      : "—";
+
+  el("leaderboardLeader").innerHTML = `
+    <div class="leaderboard-leader-card">
+
+      <div class="leaderboard-crown">👑</div>
+
+      <div class="leaderboard-leader-label">
+        ${definition.title.toUpperCase()} LEADER
+      </div>
+
+      <div class="leaderboard-leader-name">
+        ${leaderNames}
+      </div>
+
+      <div class="leaderboard-leader-value">
+        ${leaderValue}
+      </div>
+
+    </div>
+  `;
+
+  let previousValue = null;
+  let previousRank = 0;
+
+  el("leaderboardList").innerHTML = ranked.map((item,index) => {
+
+    let rank;
+
+    if(
+      previousValue !== null &&
+      Math.abs(item.value - previousValue) < 0.000001
+    ){
+      rank = previousRank;
+    }else{
+      rank = index + 1;
+    }
+
+    previousValue = item.value;
+    previousRank = rank;
+
+    let rankClass = "";
+
+    if(rank === 1){
+      rankClass = " rank-one";
+    }else if(rank === 2){
+      rankClass = " rank-two";
+    }else if(rank === 3){
+      rankClass = " rank-three";
+    }
+
+    return `
+      <div
+        class="leaderboard-player-row${rankClass}"
+        onclick="openPlayerProfile('${item.player.id}','leaderboards')"
+      >
+
+        <div class="leaderboard-rank">
+          ${rank}
+        </div>
+
+        <div class="leaderboard-shirt">
+          #${item.player.number}
+        </div>
+
+        <div class="leaderboard-player-info">
+
+          <div class="leaderboard-player-name">
+            ${item.player.name}
+          </div>
+
+          <div class="leaderboard-player-meta">
+            ${item.player.position} · ${item.player.nation}
+          </div>
+
+        </div>
+
+        <div class="leaderboard-player-value">
+          ${definition.display(item.stat)}
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
+
+  if(activeSeason === "FC26"){
+
+    el("leaderboardNote").textContent =
+      "FC26 rankings include the historical player totals imported into the tracker, plus any FC26 performances you log.";
+
+  }else if(activeSeason === "FC27"){
+
+    el("leaderboardNote").textContent =
+      "FC27 rankings are built entirely from the FC27 matches and player performances you log.";
+
+  }else{
+
+    el("leaderboardNote").textContent =
+      "All Time combines the imported FC26 player totals with your logged FC26 and FC27 performances.";
+  }
 }
 
 /* FORM PAGE */
@@ -4123,6 +4688,18 @@ function openPlayerProfile(playerId,returnPage="squad"){
 function closePlayerProfile(){
 
   el("playerProfile").classList.remove("active");
+
+  if(playerProfileReturnPage === "leaderboards"){
+
+    el("leaderboards").classList.add("active");
+    el("bottomNav").classList.add("hidden");
+
+    renderLeaderboardsPage();
+
+    window.scrollTo(0,0);
+
+    return;
+  }
 
   const returnPage =
     ["squad","stats"].includes(playerProfileReturnPage)
@@ -5289,6 +5866,10 @@ function renderEverything(){
   renderMatches();
   renderStatsPage();
   renderMorePage();
+
+  if(el("leaderboards").classList.contains("active")){
+    renderLeaderboardsPage();
+  }
 }
 
 renderEverything();
