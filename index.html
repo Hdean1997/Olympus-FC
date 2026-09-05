@@ -6671,12 +6671,15 @@ async function ensureRemoteLookups(){
 async function loadRemoteData(){
   if(!supabaseClient) return;
 
+  let loadStage = "starting";
+
   try{
     setOnlineStatus("Loading…");
+
+    loadStage = "club lookups";
     await ensureRemoteLookups();
 
-    // Player statuses are an optional profile feature. If this table has a
-    // permissions/schema problem, keep the main Olympus database connected.
+    // Optional profile feature: never take down the main tracker.
     playerStatuses = {};
     try{
       const {data:statusRows,error:statusError} = await supabaseClient
@@ -6690,37 +6693,62 @@ async function loadRemoteData(){
       console.warn("Player statuses could not be loaded:",statusError);
     }
 
+    loadStage = "seasons";
     const {data:seasons,error:seasonError} = await supabaseClient
       .from("seasons")
       .select("id,name,division,playoff_games");
     if(seasonError) throw seasonError;
 
+    loadStage = "matches";
     const {data:matches,error:matchError} = await supabaseClient
       .from("matches")
       .select("id,season_id,opponent,match_date,match_type,olympus_score,opponent_score,matchday_session_id,created_at")
       .order("id",{ascending:false});
     if(matchError) throw matchError;
 
+    loadStage = "player performances";
     const {data:performances,error:perfError} = await supabaseClient
       .from("player_performances")
       .select("id,match_id,player_id,played,goals,assists,rating,potm");
     if(perfError) throw perfError;
 
-    const {data:sessionRows,error:sessionError} = await supabaseClient
-      .from("matchday_sessions")
-      .select("id,season_id,session_date,status,created_by,started_at,ended_at")
-      .order("id",{ascending:false});
-    if(sessionError) throw sessionError;
+    // Matchday/reporting features are useful but non-core. If one of these
+    // tables ever has a temporary RLS/schema issue, the main stats database
+    // must remain usable instead of reporting a full connection failure.
+    let sessionRows = [];
+    let sessionPlayerRows = [];
+    let potnVoteRows = [];
 
-    const {data:sessionPlayerRows,error:sessionPlayerError} = await supabaseClient
-      .from("matchday_session_players")
-      .select("session_id,player_id,position");
-    if(sessionPlayerError) throw sessionPlayerError;
+    try{
+      const {data,error} = await supabaseClient
+        .from("matchday_sessions")
+        .select("id,season_id,session_date,status,created_by,started_at,ended_at")
+        .order("id",{ascending:false});
+      if(error) throw error;
+      sessionRows = data || [];
+    }catch(error){
+      console.warn("Matchday sessions could not be loaded:",error);
+    }
 
-    const {data:potnVoteRows,error:potnVoteError} = await supabaseClient
-      .from("matchday_potn_votes")
-      .select("id,session_id,voter_player_id,voted_for_player_id,created_at");
-    if(potnVoteError) throw potnVoteError;
+    try{
+      const {data,error} = await supabaseClient
+        .from("matchday_session_players")
+        .select("session_id,player_id,position");
+      if(error) throw error;
+      sessionPlayerRows = data || [];
+    }catch(error){
+      console.warn("Matchday session players could not be loaded:",error);
+    }
+
+    try{
+      const {data,error} = await supabaseClient
+        .from("matchday_potn_votes")
+        .select("id,session_id,voter_player_id,voted_for_player_id,created_at");
+      if(error) throw error;
+      potnVoteRows = data || [];
+    }catch(error){
+      console.warn("POTN votes could not be loaded:",error);
+    }
 
     const seasonById = {};
     (seasons || []).forEach(row => { seasonById[String(row.id)] = row.name; });
@@ -6820,9 +6848,6 @@ async function loadRemoteData(){
       });
     });
 
-    // Supabase is now the source of truth for live Olympus FC data.
-    // Always replace the browser cache with the current online state, even when
-    // the online match list is empty (for example after the admin deletes the last match).
     seasonData = remoteData;
     saveSeasonData();
 
@@ -6830,9 +6855,11 @@ async function loadRemoteData(){
     setOnlineStatus("Connected","#67d894");
     renderEverything();
   }catch(error){
-    console.error("Supabase load failed:",error);
+    console.error(`Supabase load failed at ${loadStage}:`,error);
     remoteReady = false;
-    setOnlineStatus("Connection failed","#ff9ea6");
+    // Showing the stage makes an iPhone screenshot enough to diagnose any
+    // remaining issue without needing browser developer tools.
+    setOnlineStatus(`Connection failed — ${loadStage}`,"#ff9ea6");
   }
 }
 
