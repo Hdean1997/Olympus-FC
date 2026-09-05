@@ -1630,6 +1630,20 @@ h1{
 .spotify-jam-join{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 15px;border:0;border-radius:11px;background:#1ed760;color:#04120a;font-weight:900;text-decoration:none;}
 .spotify-jam-edit,.spotify-jam-end{min-height:42px;padding:9px 12px;border-radius:11px;background:#10233b;color:#9fc0ff;border:1px solid #315d9d;font-weight:800;}
 .spotify-jam-end{border-color:#71343c;color:#ffadb4;background:#35171d;}
+.spotify-jam-editor{display:none;margin-top:13px;padding:14px;border-radius:14px;background:#0a1524;border:1px solid #223a58;}
+.spotify-jam-editor.open{display:block;}
+.spotify-jam-field{margin-top:11px;}
+.spotify-jam-field:first-child{margin-top:0;}
+.spotify-jam-field-label{display:block;margin-bottom:6px;font-size:10px;font-weight:800;letter-spacing:.6px;color:#8ea0b8;text-transform:uppercase;}
+.spotify-jam-input-wrap{display:flex;align-items:center;gap:8px;padding:4px 4px 4px 12px;border-radius:12px;background:#101f32;border:1px solid #31506f;}
+.spotify-jam-input-wrap:focus-within{border-color:#5d8fd3;box-shadow:0 0 0 2px rgba(93,143,211,.12);}
+.spotify-jam-input{min-width:0;flex:1;padding:10px 0;background:transparent;border:0;outline:0;color:#fff;font-size:13px;font-family:inherit;}
+.spotify-jam-input::placeholder{color:#66788f;}
+.spotify-jam-clear{flex:0 0 auto;width:34px;height:34px;border:0;border-radius:9px;background:#192b40;color:#aab8c9;font-size:16px;font-weight:900;}
+.spotify-jam-editor-actions{display:flex;gap:8px;margin-top:13px;}
+.spotify-jam-save{flex:1;min-height:43px;border:0;border-radius:11px;background:#1ed760;color:#04120a;font-weight:900;}
+.spotify-jam-cancel{min-height:43px;padding:0 14px;border-radius:11px;background:#15263a;color:#aebed0;border:1px solid #2a4665;font-weight:800;}
+.spotify-jam-editor-message{min-height:16px;margin-top:8px;font-size:11px;color:#ffadb4;}
 
 /* PLAYER STATUS */
 .player-status-card{margin:0;padding:17px;border-radius:16px;background:linear-gradient(145deg,#12213a,#101d2e);border:1px solid #28405f;}
@@ -1990,6 +2004,27 @@ input[type="date"]::-webkit-date-and-time-value{
       </div>
     </div>
     <div id="spotifyJamActions" class="spotify-jam-actions"></div>
+    <div id="spotifyJamEditor" class="spotify-jam-editor">
+      <div class="spotify-jam-field">
+        <label class="spotify-jam-field-label" for="spotifyJamUrlInput">Spotify Jam Link</label>
+        <div class="spotify-jam-input-wrap">
+          <input id="spotifyJamUrlInput" class="spotify-jam-input" type="url" inputmode="url" autocomplete="off" autocapitalize="off" placeholder="Paste your Spotify Jam link…">
+          <button class="spotify-jam-clear" type="button" onclick="clearSpotifyJamField('spotifyJamUrlInput')" aria-label="Clear Spotify Jam link">✕</button>
+        </div>
+      </div>
+      <div class="spotify-jam-field">
+        <label class="spotify-jam-field-label" for="spotifyJamNameInput">Jam Name <span style="font-weight:500;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <div class="spotify-jam-input-wrap">
+          <input id="spotifyJamNameInput" class="spotify-jam-input" type="text" maxlength="60" autocomplete="off" placeholder="e.g. Friday Night Session">
+          <button class="spotify-jam-clear" type="button" onclick="clearSpotifyJamField('spotifyJamNameInput')" aria-label="Clear Jam name">✕</button>
+        </div>
+      </div>
+      <div id="spotifyJamEditorMessage" class="spotify-jam-editor-message"></div>
+      <div class="spotify-jam-editor-actions">
+        <button class="spotify-jam-save" type="button" onclick="saveSpotifyJamFromEditor()">Save Jam</button>
+        <button class="spotify-jam-cancel" type="button" onclick="closeSpotifyJamEditor()">Cancel</button>
+      </div>
+    </div>
   </div>
 
   <div class="stats-grid">
@@ -6493,56 +6528,70 @@ function renderSpotifyJamHome(){
   actions.innerHTML = html;
 }
 
-async function editSpotifyJam(){
+function editSpotifyJam(){
   if(!isAdmin || !supabaseClient) return;
+  const editor = el("spotifyJamEditor");
+  const urlInput = el("spotifyJamUrlInput");
+  const nameInput = el("spotifyJamNameInput");
+  const message = el("spotifyJamEditorMessage");
+  if(!editor || !urlInput || !nameInput) return;
+  urlInput.value = spotifyJam?.jam_url || "";
+  nameInput.value = spotifyJam?.jam_title || "";
+  if(message) message.textContent = "";
+  editor.classList.add("open");
+  setTimeout(() => urlInput.focus(), 50);
+}
 
-  const currentTitle = spotifyJam?.jam_title || "";
-  const currentUrl = spotifyJam?.jam_url || "";
-  const jamUrl = prompt("Paste the Spotify Jam link:",currentUrl);
-  if(jamUrl === null) return;
+function closeSpotifyJamEditor(){
+  el("spotifyJamEditor")?.classList.remove("open");
+  const message = el("spotifyJamEditorMessage");
+  if(message) message.textContent = "";
+}
 
-  const cleanUrl = jamUrl.trim();
+function clearSpotifyJamField(id){
+  const input = el(id);
+  if(!input) return;
+  input.value = "";
+  input.focus();
+}
+
+async function saveSpotifyJamFromEditor(){
+  if(!isAdmin || !supabaseClient) return;
+  const urlInput = el("spotifyJamUrlInput");
+  const nameInput = el("spotifyJamNameInput");
+  const message = el("spotifyJamEditorMessage");
+  const cleanUrl = (urlInput?.value || "").trim();
+  const jamTitle = (nameInput?.value || "").trim();
+  if(message) message.textContent = "";
+
   if(!cleanUrl){
-    alert("Paste a Spotify Jam link first.");
+    if(message) message.textContent = "Paste a Spotify Jam link first.";
+    urlInput?.focus();
     return;
   }
-
   let parsed;
-  try{
-    parsed = new URL(cleanUrl);
-  }catch{
-    alert("That does not look like a valid link.");
+  try{ parsed = new URL(cleanUrl); }catch{
+    if(message) message.textContent = "That doesn't look like a valid link.";
     return;
   }
-
   if(parsed.protocol !== "https:" || !/(^|\.)spotify\.com$/i.test(parsed.hostname)){
-    alert("Please use a Spotify link.");
+    if(message) message.textContent = "Please use a Spotify link.";
     return;
   }
-
-  const jamTitle = prompt("Optional Jam name (for example Friday Night Session):",currentTitle);
-  if(jamTitle === null) return;
 
   try{
     const {data:authData} = await supabaseClient.auth.getSession();
     const userId = authData?.session?.user?.id;
     if(!userId) throw new Error("Not signed in");
-
-    const {error} = await supabaseClient
-      .from("spotify_jam")
-      .upsert({
-        id:1,
-        jam_url:cleanUrl,
-        jam_title:jamTitle.trim() || null,
-        updated_by:userId,
-        updated_at:new Date().toISOString()
-      },{onConflict:"id"});
-
+    const {error} = await supabaseClient.from("spotify_jam").upsert({
+      id:1, jam_url:cleanUrl, jam_title:jamTitle || null, updated_by:userId, updated_at:new Date().toISOString()
+    },{onConflict:"id"});
     if(error) throw error;
+    closeSpotifyJamEditor();
     await loadSpotifyJam();
   }catch(error){
     console.error("Spotify Jam save failed:",error);
-    alert("The Spotify Jam could not be saved.");
+    if(message) message.textContent = "The Spotify Jam could not be saved.";
   }
 }
 
@@ -7055,7 +7104,7 @@ function renderEverything(){
   });
 }
 
-const OLYMPUS_APP_BUILD = "20260906-spotify-jam-2";
+const OLYMPUS_APP_BUILD = "20260906-spotify-jam-3";
 
 async function checkForAppUpdate(){
   try{
