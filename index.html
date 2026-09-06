@@ -1938,6 +1938,14 @@ input[type="date"]::-webkit-date-and-time-value{
     height:160px;
   }
 }
+
+/* CLUBHOUSE HOME - STAGE 1 */
+.clubhouse-hero{margin:18px 16px 14px;padding:18px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:linear-gradient(145deg,rgba(26,55,104,.45),rgba(8,16,32,.82));box-shadow:0 12px 28px rgba(0,0,0,.18)}
+.clubhouse-kicker{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#d8b75b;text-transform:uppercase;margin-bottom:6px}
+.clubhouse-title{font-size:22px;font-weight:900;letter-spacing:.3px;color:#fff;margin-bottom:5px}
+.clubhouse-copy{font-size:13px;line-height:1.45;color:#aeb9cc}
+.clubhouse-legacy-home{display:none!important}
+
 </style>
 </head>
 
@@ -1952,9 +1960,16 @@ input[type="date"]::-webkit-date-and-time-value{
   <div class="top">
     <img src="Olympus FC Badge.PNG" class="badge" alt="Olympus FC Badge">
     <h1>OLYMPUS FC</h1>
-    <div class="subtitle">Pro Clubs Stats Tracker</div>
+    <div class="subtitle">The Olympus FC Clubhouse</div>
   </div>
 
+  <div class="clubhouse-hero">
+    <div class="clubhouse-kicker">Welcome to Mount Olympus</div>
+    <div class="clubhouse-title">Clubhouse</div>
+    <div class="clubhouse-copy">The squad's place for tonight's session, who's online and the Olympus Spotify Jam.</div>
+  </div>
+
+  <div class="clubhouse-legacy-home">
   <div class="season-switcher">
     <div>
       <div class="season-switcher-label">VIEWING SEASON</div>
@@ -1984,6 +1999,7 @@ input[type="date"]::-webkit-date-and-time-value{
       <span>D5</span><span>D4</span><span>D3</span>
       <span>D2</span><span>D1</span><span>ELITE</span>
     </div>
+  </div>
   </div>
 
   <div id="spotifyJamCard" class="spotify-jam-card">
@@ -2018,6 +2034,7 @@ input[type="date"]::-webkit-date-and-time-value{
     </div>
   </div>
 
+  <div class="clubhouse-legacy-home">
   <div class="season-card">
     <h2 id="seasonCardTitle">FC26 Season</h2>
     <p id="seasonCardText">The climb to the summit continues.</p>
@@ -2126,6 +2143,7 @@ input[type="date"]::-webkit-date-and-time-value{
       </div>
       <div id="topAssisterAssists" class="leader-value">0</div>
     </div>
+  </div>
   </div>
 
 </div>
@@ -7154,7 +7172,7 @@ function renderEverything(){
   });
 }
 
-const OLYMPUS_APP_BUILD = "20260906-owner-alias-1";
+const OLYMPUS_APP_BUILD = "20260906-clubhouse-stage1";
 
 async function checkForAppUpdate(){
   try{
