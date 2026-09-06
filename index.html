@@ -4210,7 +4210,7 @@ let remoteReady = false;
 let matchdaySessions = [];
 let matchdayPotnVotes = [];
 let bugReports = [];
-const APP_VERSION = "2026.09.06-achievements-stage3-unlocks";
+const APP_VERSION = "2026.09.06-achievements-stage3-account-filter-fix";
 
 const OLYMPUS_ACHIEVEMENTS = [
   {id:"first_goal",category:"Goals",icon:"⚽",name:"Off the Mark",description:"Score your first FC27 goal.",rarity:"Common"},
@@ -4680,7 +4680,17 @@ function achievementUnlockTagline(item){
 
 function showAchievementUnlocks(unlocks){
   if(!Array.isArray(unlocks) || !unlocks.length) return;
-  achievementUnlockQueue = unlocks;
+
+  // Final safety gate: personal celebrations can only ever be shown
+  // for the player linked to the account currently signed in.
+  const safeUnlocks = unlocks.filter(unlock => {
+    if(!unlock?.player) return true; // Club achievements are for everyone.
+    return Boolean(currentClubPlayerKey) && unlock.player.id === currentClubPlayerKey;
+  });
+
+  if(!safeUnlocks.length) return;
+
+  achievementUnlockQueue = safeUnlocks;
   achievementUnlockIndex = 0;
   document.body.style.overflow = "hidden";
   renderAchievementUnlock();
@@ -6157,11 +6167,11 @@ async function finishMatch(){
     if(newlyUnlockedAchievements.length){
       // Save every personal/club unlock for the correct account first.
       await queueAchievementNotifications(newlyUnlockedAchievements);
-      // The person logging the match only sees their own personal unlocks, plus club unlocks.
-      const myUnlocks = achievementUnlockForCurrentPlayer(newlyUnlockedAchievements);
-      if(myUnlocks.length){
-        setTimeout(() => showAchievementUnlocks(myUnlocks),120);
-      }
+
+      // Always load celebrations back through the signed-in account's
+      // own notification feed. This guarantees team-mates' personal
+      // achievements never enter this device's popup queue.
+      await loadPendingAchievementNotifications();
     }
   }
 
