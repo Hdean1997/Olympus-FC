@@ -585,7 +585,7 @@ h1{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:10px;
-  margin:0 16px 18px;
+  margin:14px 16px 18px;
 }
 
 .match-summary-box{
@@ -2654,7 +2654,7 @@ input[type="date"]::-webkit-date-and-time-value{
 <div id="more" class="page">
   <div class="more-hero">
     <h2>Club Hub</h2>
-    <p id="moreSeasonSubtitle">Olympus FC · FC26</p>
+    <p id="moreSeasonSubtitle">Olympus FC</p>
   </div>
 
   <div class="hub-section">
@@ -2709,11 +2709,6 @@ input[type="date"]::-webkit-date-and-time-value{
       <div class="info-row">
         <div class="info-label">Stadium</div>
         <div class="info-value">Mount Olympus</div>
-      </div>
-
-      <div class="info-row">
-        <div class="info-label">Season</div>
-        <div id="moreSeason" class="info-value">FC26</div>
       </div>
 
       <div class="info-row">
@@ -3616,12 +3611,12 @@ function syncSeasonSelectors(){
   el("squadSeasonSubtitle").textContent = "Olympus FC · " + displaySeason;
   el("matchesSeasonSubtitle").textContent = "Olympus FC · " + displaySeason;
   el("statsSeasonSubtitle").textContent = "Olympus FC · " + displaySeason;
-  el("moreSeasonSubtitle").textContent = "Olympus FC · " + displaySeason;
+  el("moreSeasonSubtitle").textContent = "Olympus FC";
   el("recordsSubtitle").textContent = "Olympus FC · " + displaySeason;
   el("compareSubtitle").textContent = "Olympus FC · " + displaySeason;
   el("compareSeasonValue").textContent = displaySeason;
   el("formStreaksSubtitle").textContent = "Olympus FC · " + displaySeason;
-  el("moreSeason").textContent = displaySeason;
+  if(el("moreSeason")) el("moreSeason").textContent = displaySeason;
 }
 
 /* NAVIGATION */
@@ -4888,11 +4883,11 @@ function openFormPage(){
 function closeFormPage(){
 
   el("formStreaks").classList.remove("active");
-  el("more").classList.add("active");
+  el("matches").classList.add("active");
 
   el("bottomNav").classList.remove("hidden");
 
-  activateNavForPage("more");
+  activateNavForPage("matches");
 
   window.scrollTo(0,0);
 }
@@ -5686,11 +5681,11 @@ function openRecordsPage(){
 function closeRecordsPage(){
 
   el("records").classList.remove("active");
-  el("more").classList.add("active");
+  el("stats").classList.add("active");
 
   el("bottomNav").classList.remove("hidden");
 
-  activateNavForPage("more");
+  activateNavForPage("stats");
 
   window.scrollTo(0,0);
 }
@@ -6119,11 +6114,11 @@ function openComparePage(){
 function closeComparePage(){
 
   el("compare").classList.remove("active");
-  el("more").classList.add("active");
+  el("stats").classList.add("active");
 
   el("bottomNav").classList.remove("hidden");
 
-  activateNavForPage("more");
+  activateNavForPage("stats");
 
   window.scrollTo(0,0);
 }
