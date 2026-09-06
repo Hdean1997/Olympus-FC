@@ -2183,6 +2183,22 @@ input[type="date"]::-webkit-date-and-time-value{
 .clubhouse-session-message{min-height:15px;margin-top:7px;font-size:11px;color:#ffadb4}
 
 /* CLUBHOUSE HOME - STAGE 1 */
+
+/* CLUBHOUSE PLAYER PRESENCE */
+.clubhouse-presence-card{margin:0 16px 14px;padding:15px;border-radius:16px;background:linear-gradient(145deg,#12213a,#0d1929);border:1px solid #28405f;display:none}
+.clubhouse-presence-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.clubhouse-presence-label{font-size:10px;font-weight:800;letter-spacing:.9px;color:#8ea0b8;text-transform:uppercase}
+.clubhouse-presence-count{font-size:10px;font-weight:800;color:#8ea0b8;white-space:nowrap}
+.clubhouse-presence-list{display:grid;gap:7px}
+.clubhouse-presence-player{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:42px;padding:9px 11px;border-radius:11px;background:#0b1726;border:1px solid #203854}
+.clubhouse-presence-name{font-size:13px;font-weight:800;color:#fff}
+.clubhouse-presence-state{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;color:#9aa9bc;white-space:nowrap}
+.clubhouse-presence-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:0 0 10px;box-shadow:0 0 0 2px rgba(255,255,255,.04)}
+.clubhouse-presence-dot.online{background:#35d06f;box-shadow:0 0 10px rgba(53,208,111,.45)}
+.clubhouse-presence-dot.offline{background:#e0525c}
+.clubhouse-presence-state.online{color:#67d894}
+.clubhouse-presence-state.offline{color:#a7b2c1}
+
 .clubhouse-hero{margin:18px 16px 14px;padding:18px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:linear-gradient(145deg,rgba(26,55,104,.45),rgba(8,16,32,.82));box-shadow:0 12px 28px rgba(0,0,0,.18)}
 .clubhouse-kicker{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#d8b75b;text-transform:uppercase;margin-bottom:6px}
 .clubhouse-title{font-size:22px;font-weight:900;letter-spacing:.3px;color:#fff;margin-bottom:5px}
@@ -2287,6 +2303,15 @@ input[type="date"]::-webkit-date-and-time-value{
         <button class="clubhouse-session-cancel" type="button" onclick="closeClubhouseSessionEditor()">Cancel</button>
       </div>
     </div>
+  </div>
+
+
+  <div id="clubhousePresenceCard" class="clubhouse-presence-card">
+    <div class="clubhouse-presence-head">
+      <div class="clubhouse-presence-label">👥 Players</div>
+      <div id="clubhousePresenceCount" class="clubhouse-presence-count">0/5 online</div>
+    </div>
+    <div id="clubhousePresenceList" class="clubhouse-presence-list"></div>
   </div>
 
   <div id="spotifyJamCard" class="spotify-jam-card">
@@ -3247,6 +3272,10 @@ let playerStatuses = {};
 let spotifyJam = null;
 let clubhouseSession = null;
 let clubhouseAttendance = {};
+let playerPresence = {};
+let presenceHeartbeatTimer = null;
+let presenceRefreshTimer = null;
+const PRESENCE_ONLINE_MS = 90000;
 const OWNER_UID = "dc4e457c-4b2c-413f-a6d8-b4f49c053480";
 const OWNER_LOGIN_ALIAS = "TyroneDean40";
 const OWNER_EMAIL_CACHE_KEY = "olympusOwnerLoginEmail";
@@ -6992,6 +7021,132 @@ async function setMyClubhouseAttendance(response){
 
 /* SPOTIFY JAM */
 
+
+
+/* CLUBHOUSE PLAYER PRESENCE */
+function stopPresenceTracking(){
+  if(presenceHeartbeatTimer){
+    clearInterval(presenceHeartbeatTimer);
+    presenceHeartbeatTimer = null;
+  }
+  if(presenceRefreshTimer){
+    clearInterval(presenceRefreshTimer);
+    presenceRefreshTimer = null;
+  }
+}
+
+function isPlayerOnline(playerKey){
+  const lastSeen = playerPresence[playerKey];
+  if(!lastSeen) return false;
+  const stamp = new Date(lastSeen).getTime();
+  return Number.isFinite(stamp) && (Date.now() - stamp) <= PRESENCE_ONLINE_MS;
+}
+
+function renderPlayerPresence(){
+  const card = el("clubhousePresenceCard");
+  const list = el("clubhousePresenceList");
+  const count = el("clubhousePresenceCount");
+  if(!card || !list || !count) return;
+
+  if(!currentClubRole){
+    card.style.display = "none";
+    list.innerHTML = "";
+    return;
+  }
+
+  card.style.display = "block";
+  const onlineCount = players.filter(player => isPlayerOnline(player.id)).length;
+  count.textContent = `${onlineCount}/${players.length} online`;
+
+  list.innerHTML = players.map(player => {
+    const online = isPlayerOnline(player.id);
+    return `
+      <div class="clubhouse-presence-player">
+        <div class="clubhouse-presence-name">${escapeHTML(player.name)}</div>
+        <div class="clubhouse-presence-state ${online ? "online" : "offline"}">
+          <span class="clubhouse-presence-dot ${online ? "online" : "offline"}"></span>
+          <span>${online ? "Online" : "Offline"}</span>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+async function loadPlayerPresence(){
+  if(!supabaseClient || !currentClubRole){
+    playerPresence = {};
+    renderPlayerPresence();
+    return;
+  }
+
+  try{
+    const {data,error} = await supabaseClient
+      .from("player_presence")
+      .select("player_key,last_seen");
+    if(error) throw error;
+
+    playerPresence = {};
+    (data || []).forEach(row => {
+      if(row.player_key) playerPresence[row.player_key] = row.last_seen;
+    });
+  }catch(error){
+    // Presence is deliberately optional: if it fails, the tracker stays healthy.
+    console.warn("Player presence could not be loaded:",error);
+    playerPresence = {};
+  }
+  renderPlayerPresence();
+}
+
+async function markCurrentPlayerOnline(){
+  if(!supabaseClient || !currentClubPlayerKey || document.visibilityState === "hidden") return;
+
+  const now = new Date().toISOString();
+  try{
+    const {error} = await supabaseClient
+      .from("player_presence")
+      .upsert({player_key:currentClubPlayerKey,last_seen:now},{onConflict:"player_key"});
+    if(error) throw error;
+
+    playerPresence[currentClubPlayerKey] = now;
+    renderPlayerPresence();
+  }catch(error){
+    console.warn("Presence heartbeat failed:",error);
+  }
+}
+
+async function startPresenceTracking(){
+  stopPresenceTracking();
+
+  if(!currentClubRole || !currentClubPlayerKey){
+    playerPresence = {};
+    renderPlayerPresence();
+    return;
+  }
+
+  await markCurrentPlayerOnline();
+  await loadPlayerPresence();
+
+  presenceHeartbeatTimer = setInterval(() => {
+    markCurrentPlayerOnline();
+  },30000);
+
+  presenceRefreshTimer = setInterval(() => {
+    loadPlayerPresence();
+  },15000);
+}
+
+document.addEventListener("visibilitychange",() => {
+  if(document.visibilityState === "visible" && currentClubPlayerKey){
+    markCurrentPlayerOnline();
+    loadPlayerPresence();
+  }
+});
+window.addEventListener("focus",() => {
+  if(currentClubPlayerKey){
+    markCurrentPlayerOnline();
+    loadPlayerPresence();
+  }
+});
+
 async function loadSpotifyJam(){
   spotifyJam = null;
 
@@ -7546,6 +7701,7 @@ async function adminLogin(){
 }
 
 async function adminLogout(){
+  stopPresenceTracking();
   await supabaseClient.auth.signOut();
   isAdmin = false;
   isOwner = false;
@@ -7572,6 +7728,7 @@ async function handleAuthUI(){
 
   await loadClubhouseSession();
   await loadSpotifyJam();
+  await startPresenceTracking();
   updateAdminUI();
   renderEverything();
 }
@@ -7679,7 +7836,7 @@ function renderEverything(){
   });
 }
 
-const OLYMPUS_APP_BUILD = "20260906-clubhouse-attendance-layout-1";
+const OLYMPUS_APP_BUILD = "20260906-clubhouse-presence-1";
 
 async function checkForAppUpdate(){
   try{
