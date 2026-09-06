@@ -32,7 +32,7 @@ html,body{
   font-family:Arial,sans-serif;
 }
 
-button,input,select{font:inherit}
+button,input,select,textarea{font:inherit}
 
 button,.nav-item,.player-card,.stats-card{
   cursor:pointer;
@@ -942,7 +942,9 @@ h1{
 .compare-top,
 .match-detail-top,
 .player-profile-top,
-.form-streaks-top{
+.form-streaks-top,
+.bug-report-top,
+.bug-admin-top{
   padding:30px 20px 12px;
   background:linear-gradient(180deg,#0d213a,#07111f);
 }
@@ -951,7 +953,9 @@ h1{
 .compare-title,
 .match-detail-title,
 .player-profile-title,
-.form-streaks-title{
+.form-streaks-title,
+.bug-report-title,
+.bug-admin-title{
   margin:0;
   font-size:32px;
 }
@@ -2221,6 +2225,223 @@ input[type="date"]::-webkit-date-and-time-value{
 .public-club-detail{padding:10px;border-radius:11px;background:#0b1726;border:1px solid #203854}
 .public-club-detail-label{font-size:9px;font-weight:800;letter-spacing:.6px;color:#8396ad;text-transform:uppercase}.public-club-detail-value{margin-top:3px;font-size:12px;font-weight:900;color:#eef3fa}
 
+
+/* BUG REPORTING */
+
+.bug-report-subtitle,
+.bug-admin-subtitle{
+  margin:7px 0 0;
+  color:#9aa9bc;
+  line-height:1.45;
+}
+
+.bug-report-content,
+.bug-admin-content{
+  padding:12px 16px 30px;
+}
+
+.bug-form-card{
+  padding:16px;
+  border-radius:18px;
+  background:#101d2e;
+  border:1px solid #1c314c;
+}
+
+.bug-form-group{
+  margin-bottom:16px;
+}
+
+.bug-form-group:last-child{margin-bottom:0}
+
+.bug-form-label{
+  display:block;
+  margin-bottom:7px;
+  color:#c6d3e5;
+  font-size:12px;
+  font-weight:bold;
+  letter-spacing:.5px;
+}
+
+.bug-form-control{
+  width:100%;
+  min-height:48px;
+  padding:12px 13px;
+  border:1px solid #2b415f;
+  border-radius:12px;
+  background:#0a1625;
+  color:#fff;
+  outline:none;
+}
+
+textarea.bug-form-control{
+  min-height:120px;
+  resize:vertical;
+  line-height:1.45;
+}
+
+.bug-form-control:focus{
+  border-color:#4d7ec4;
+  box-shadow:0 0 0 3px rgba(77,126,196,.13);
+}
+
+.bug-help-text{
+  margin-top:7px;
+  color:#7f91aa;
+  font-size:11px;
+  line-height:1.45;
+}
+
+.bug-submit-button{
+  width:100%;
+  min-height:52px;
+  margin-top:4px;
+  border:1px solid #315d9d;
+  border-radius:13px;
+  background:linear-gradient(145deg,#173760,#102844);
+  color:#dbe9ff;
+  font-weight:bold;
+}
+
+.bug-submit-button:disabled{
+  opacity:.5;
+  cursor:default;
+}
+
+.bug-message{
+  margin-top:12px;
+  min-height:18px;
+  color:#9aa9bc;
+  font-size:12px;
+  line-height:1.45;
+}
+
+.bug-owner-summary{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.bug-summary-chip{
+  flex:1;
+  padding:12px;
+  border-radius:13px;
+  background:#101d2e;
+  border:1px solid #1c314c;
+  text-align:center;
+}
+
+.bug-summary-number{
+  font-size:22px;
+  font-weight:bold;
+}
+
+.bug-summary-label{
+  margin-top:3px;
+  color:#8392a6;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.55px;
+}
+
+.bug-report-card{
+  margin-bottom:12px;
+  padding:15px;
+  border-radius:16px;
+  background:#101d2e;
+  border:1px solid #1c314c;
+}
+
+.bug-report-card:last-child{margin-bottom:0}
+
+.bug-report-card-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+}
+
+.bug-report-page{
+  color:#75a4ff;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.bug-status-pill{
+  flex:0 0 auto;
+  padding:5px 8px;
+  border-radius:999px;
+  background:#17263a;
+  border:1px solid #2c4567;
+  color:#b9c9df;
+  font-size:10px;
+  font-weight:bold;
+  text-transform:uppercase;
+  letter-spacing:.45px;
+}
+
+.bug-report-description{
+  margin-top:11px;
+  color:#edf3fb;
+  font-size:13px;
+  line-height:1.48;
+  white-space:pre-wrap;
+}
+
+.bug-report-expected{
+  margin-top:10px;
+  padding:10px 11px;
+  border-radius:11px;
+  background:#0b1726;
+  color:#aebdd1;
+  font-size:12px;
+  line-height:1.45;
+}
+
+.bug-report-meta{
+  margin-top:11px;
+  color:#7f91aa;
+  font-size:10px;
+  line-height:1.5;
+}
+
+.bug-status-select{
+  width:100%;
+  min-height:44px;
+  margin-top:12px;
+  padding:9px 11px;
+  border:1px solid #2b415f;
+  border-radius:11px;
+  background:#0a1625;
+  color:#fff;
+}
+
+.bug-empty{
+  padding:22px 16px;
+  border-radius:16px;
+  background:#101d2e;
+  border:1px solid #1c314c;
+  color:#8fa0b6;
+  text-align:center;
+  font-size:13px;
+  line-height:1.5;
+}
+
+.bug-count-badge{
+  display:inline-grid;
+  place-items:center;
+  min-width:24px;
+  height:24px;
+  margin-left:7px;
+  padding:0 7px;
+  border-radius:999px;
+  background:#e8bd4b;
+  color:#07111f;
+  font-size:11px;
+  font-weight:900;
+  vertical-align:middle;
+}
+
 </style>
 </head>
 
@@ -2786,6 +3007,110 @@ input[type="date"]::-webkit-date-and-time-value{
       onchange="restoreBackup(event)"
     >
   </div>
+
+  <div class="hub-section">
+    <div class="hub-heading">SUPPORT</div>
+    <div class="hub-card">
+      <button class="hub-action blue" onclick="openBugReportPage()">
+        <div>
+          <div class="hub-action-main">🐞 Report a Bug</div>
+          <div class="hub-action-sub">Tell the club owner if something is not working properly</div>
+        </div>
+        <div class="hub-action-arrow">›</div>
+      </button>
+    </div>
+  </div>
+
+  <div id="ownerBugReportsSection" class="hub-section" style="display:none">
+    <div class="hub-heading">OWNER SUPPORT</div>
+    <div class="hub-card">
+      <button class="hub-action gold" onclick="openBugAdminPage()">
+        <div>
+          <div class="hub-action-main">🐞 Bug Reports <span id="bugOpenCountBadge" class="bug-count-badge" style="display:none">0</span></div>
+          <div class="hub-action-sub">Review reports from players and update their status</div>
+        </div>
+        <div class="hub-action-arrow">›</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- BUG REPORT -->
+
+<div id="bugReport" class="page">
+  <div class="bug-report-top">
+    <button class="app-back-button" onclick="closeBugReportPage()">
+      <span class="app-back-icon">‹</span>
+      <span>Back</span>
+    </button>
+    <h2 class="bug-report-title">Report a Bug</h2>
+    <p class="bug-report-subtitle">Let the Olympus FC owner know what went wrong.</p>
+  </div>
+
+  <div class="bug-report-content">
+    <div class="bug-form-card">
+      <div class="bug-form-group">
+        <label class="bug-form-label" for="bugPageName">WHERE DID YOU NOTICE IT?</label>
+        <select id="bugPageName" class="bug-form-control">
+          <option value="">Select an area</option>
+          <option>Home</option>
+          <option>Squad</option>
+          <option>Matches</option>
+          <option>Stats</option>
+          <option>More</option>
+          <option>Player Profile</option>
+          <option>Matchday</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="bug-form-group">
+        <label class="bug-form-label" for="bugDescription">WHAT WENT WRONG?</label>
+        <textarea id="bugDescription" class="bug-form-control" maxlength="1200" placeholder="Explain what happened and what you were trying to do..."></textarea>
+        <div class="bug-help-text">Include enough detail for us to reproduce the problem.</div>
+      </div>
+
+      <div class="bug-form-group">
+        <label class="bug-form-label" for="bugExpected">WHAT SHOULD HAVE HAPPENED? <span style="color:#6f829c;font-weight:normal">(optional)</span></label>
+        <textarea id="bugExpected" class="bug-form-control" maxlength="800" placeholder="What did you expect the app to do?"></textarea>
+      </div>
+
+      <button id="bugSubmitButton" class="bug-submit-button" onclick="submitBugReport()">Submit Bug Report</button>
+      <div id="bugReportMessage" class="bug-message"></div>
+    </div>
+  </div>
+</div>
+
+<!-- OWNER BUG REPORTS -->
+
+<div id="bugAdmin" class="page">
+  <div class="bug-admin-top">
+    <button class="app-back-button" onclick="closeBugAdminPage()">
+      <span class="app-back-icon">‹</span>
+      <span>Back</span>
+    </button>
+    <h2 class="bug-admin-title">Bug Reports</h2>
+    <p class="bug-admin-subtitle">Owner dashboard for player-reported issues.</p>
+  </div>
+
+  <div class="bug-admin-content">
+    <div class="bug-owner-summary">
+      <div class="bug-summary-chip">
+        <div id="bugSummaryOpen" class="bug-summary-number">0</div>
+        <div class="bug-summary-label">Open</div>
+      </div>
+      <div class="bug-summary-chip">
+        <div id="bugSummaryInvestigating" class="bug-summary-number">0</div>
+        <div class="bug-summary-label">Investigating</div>
+      </div>
+      <div class="bug-summary-chip">
+        <div id="bugSummaryFixed" class="bug-summary-number">0</div>
+        <div class="bug-summary-label">Fixed</div>
+      </div>
+    </div>
+    <div id="bugAdminMessage" class="bug-message"></div>
+    <div id="bugReportsList"></div>
+  </div>
 </div>
 
 <!-- FORM & STREAKS -->
@@ -3283,6 +3608,8 @@ let remotePlayerIds = {};
 let remoteReady = false;
 let matchdaySessions = [];
 let matchdayPotnVotes = [];
+let bugReports = [];
+const APP_VERSION = "2026.09.06-bug-reports-v1";
 let matchdayTimerInterval = setInterval(updateMatchdayTimers,1000);
 
 const players = [
@@ -7282,6 +7609,259 @@ async function endSpotifyJam(){
   }
 }
 
+
+/* BUG REPORTING */
+
+function bugReporterName(){
+  const player = currentClubPlayerKey ? getPlayer(currentClubPlayerKey) : null;
+  if(player) return player.name;
+  return currentClubUsername || (isOwner ? OWNER_LOGIN_ALIAS : "Club player");
+}
+
+function updateBugOpenBadge(){
+  const count = bugReports.filter(report => report.status === "open").length;
+  const badge = el("bugOpenCountBadge");
+  if(badge){
+    badge.textContent = String(count);
+    badge.style.display = isOwner && count > 0 ? "inline-grid" : "none";
+  }
+}
+
+function openBugReportPage(){
+  if(!currentClubRole){
+    const message = el("adminMessage");
+    if(message) message.textContent = "Sign in to your Olympus FC account before submitting a bug report.";
+    const panel = el("adminLoginPanel");
+    if(panel) panel.scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
+
+  const message = el("bugReportMessage");
+  if(message){
+    message.textContent = "";
+    message.style.color = "#9aa9bc";
+  }
+  document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
+  el("bugReport").classList.add("active");
+  el("bottomNav").classList.add("hidden");
+  window.scrollTo(0,0);
+}
+
+function closeBugReportPage(){
+  el("bugReport").classList.remove("active");
+  el("more").classList.add("active");
+  el("bottomNav").classList.remove("hidden");
+  activateNavForPage("more");
+  window.scrollTo(0,0);
+}
+
+async function submitBugReport(){
+  if(!supabaseClient || !currentClubRole){
+    const message = el("bugReportMessage");
+    if(message) message.textContent = "Please sign in before submitting a bug report.";
+    return;
+  }
+
+  const pageName = el("bugPageName")?.value.trim() || "";
+  const description = el("bugDescription")?.value.trim() || "";
+  const expectedBehavior = el("bugExpected")?.value.trim() || "";
+  const message = el("bugReportMessage");
+  const button = el("bugSubmitButton");
+
+  if(!pageName){
+    if(message) message.textContent = "Choose the area of the app where you found the problem.";
+    return;
+  }
+  if(description.length < 8){
+    if(message) message.textContent = "Please add a little more detail about what went wrong.";
+    return;
+  }
+
+  if(button) button.disabled = true;
+  if(message) message.textContent = "Sending report…";
+
+  try{
+    const {data:authData} = await supabaseClient.auth.getSession();
+    const userId = authData?.session?.user?.id;
+    if(!userId) throw new Error("No signed-in user");
+
+    const row = {
+      user_id:userId,
+      reporter_username:bugReporterName(),
+      reporter_player_key:currentClubPlayerKey || null,
+      page_name:pageName,
+      description,
+      expected_behavior:expectedBehavior || null,
+      season:activeSeason,
+      app_version:APP_VERSION,
+      status:"open"
+    };
+
+    const {error} = await supabaseClient.from("bug_reports").insert(row);
+    if(error) throw error;
+
+    el("bugPageName").value = "";
+    el("bugDescription").value = "";
+    el("bugExpected").value = "";
+    if(message){
+      message.textContent = "Bug report sent. The club owner can now see it.";
+      message.style.color = "#67d894";
+    }
+
+    if(isOwner) await loadOwnerBugReports();
+  }catch(error){
+    console.error("Bug report submission failed:",error);
+    if(message){
+      message.textContent = error?.message?.includes("bug_reports")
+        ? "Bug reporting needs its one-time database setup before reports can be submitted."
+        : "The report could not be sent. Please try again.";
+      message.style.color = "#ff9ea6";
+    }
+  }finally{
+    if(button) button.disabled = false;
+  }
+}
+
+async function loadOwnerBugReports(){
+  if(!isOwner || !supabaseClient){
+    bugReports = [];
+    updateBugOpenBadge();
+    return;
+  }
+
+  try{
+    const {data,error} = await supabaseClient
+      .from("bug_reports")
+      .select("id,user_id,reporter_username,reporter_player_key,page_name,description,expected_behavior,season,app_version,status,created_at,updated_at")
+      .order("created_at",{ascending:false});
+    if(error) throw error;
+    bugReports = data || [];
+    updateBugOpenBadge();
+    renderBugAdminPage();
+  }catch(error){
+    console.warn("Bug reports could not be loaded:",error);
+    bugReports = [];
+    updateBugOpenBadge();
+    const message = el("bugAdminMessage");
+    if(message) message.textContent = "Bug reporting needs its one-time database setup.";
+  }
+}
+
+function bugStatusLabel(status){
+  return ({
+    open:"Open",
+    investigating:"Investigating",
+    fixed:"Fixed",
+    closed:"Closed"
+  })[status] || "Open";
+}
+
+function formatBugDate(value){
+  if(!value) return "Unknown date";
+  const d = new Date(value);
+  if(Number.isNaN(d.getTime())) return "Unknown date";
+  return d.toLocaleString("en-GB",{
+    day:"numeric",
+    month:"short",
+    year:"numeric",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+}
+
+function renderBugAdminPage(){
+  const list = el("bugReportsList");
+  if(!list) return;
+
+  const open = bugReports.filter(report => report.status === "open").length;
+  const investigating = bugReports.filter(report => report.status === "investigating").length;
+  const fixed = bugReports.filter(report => report.status === "fixed").length;
+  if(el("bugSummaryOpen")) el("bugSummaryOpen").textContent = String(open);
+  if(el("bugSummaryInvestigating")) el("bugSummaryInvestigating").textContent = String(investigating);
+  if(el("bugSummaryFixed")) el("bugSummaryFixed").textContent = String(fixed);
+
+  if(!bugReports.length){
+    list.innerHTML = '<div class="bug-empty">No bug reports have been submitted yet.</div>';
+    return;
+  }
+
+  list.innerHTML = bugReports.map(report => {
+    const expected = report.expected_behavior
+      ? `<div class="bug-report-expected"><strong>Expected:</strong> ${escapeHTML(report.expected_behavior)}</div>`
+      : "";
+    const reporter = escapeHTML(report.reporter_username || report.reporter_player_key || "Club player");
+    const season = report.season === "ALL_TIME" ? "All Time" : (report.season || "—");
+    return `
+      <div class="bug-report-card">
+        <div class="bug-report-card-top">
+          <div class="bug-report-page">${escapeHTML(report.page_name || "Other")}</div>
+          <div class="bug-status-pill">${escapeHTML(bugStatusLabel(report.status))}</div>
+        </div>
+        <div class="bug-report-description">${escapeHTML(report.description || "")}</div>
+        ${expected}
+        <div class="bug-report-meta">
+          Reported by ${reporter} · ${escapeHTML(season)}<br>
+          ${escapeHTML(formatBugDate(report.created_at))} · App ${escapeHTML(report.app_version || "unknown")}
+        </div>
+        <select class="bug-status-select" onchange="updateBugReportStatus('${escapeHTML(report.id)}',this.value)">
+          <option value="open" ${report.status === "open" ? "selected" : ""}>Open</option>
+          <option value="investigating" ${report.status === "investigating" ? "selected" : ""}>Investigating</option>
+          <option value="fixed" ${report.status === "fixed" ? "selected" : ""}>Fixed</option>
+          <option value="closed" ${report.status === "closed" ? "selected" : ""}>Closed</option>
+        </select>
+      </div>`;
+  }).join("");
+}
+
+async function openBugAdminPage(){
+  if(!isOwner) return;
+  document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
+  el("bugAdmin").classList.add("active");
+  el("bottomNav").classList.add("hidden");
+  const message = el("bugAdminMessage");
+  if(message) message.textContent = "Loading reports…";
+  window.scrollTo(0,0);
+  await loadOwnerBugReports();
+  if(message && isOwner) message.textContent = "";
+}
+
+function closeBugAdminPage(){
+  el("bugAdmin").classList.remove("active");
+  el("more").classList.add("active");
+  el("bottomNav").classList.remove("hidden");
+  activateNavForPage("more");
+  window.scrollTo(0,0);
+}
+
+async function updateBugReportStatus(reportId,status){
+  if(!isOwner || !supabaseClient) return;
+  if(!["open","investigating","fixed","closed"].includes(status)) return;
+
+  const message = el("bugAdminMessage");
+  if(message) message.textContent = "Updating report…";
+
+  try{
+    const {error} = await supabaseClient
+      .from("bug_reports")
+      .update({status,updated_at:new Date().toISOString()})
+      .eq("id",reportId);
+    if(error) throw error;
+
+    const report = bugReports.find(item => String(item.id) === String(reportId));
+    if(report) report.status = status;
+    updateBugOpenBadge();
+    renderBugAdminPage();
+    if(message) message.textContent = "Status updated.";
+    setTimeout(() => {
+      if(el("bugAdminMessage")?.textContent === "Status updated.") el("bugAdminMessage").textContent = "";
+    },1200);
+  }catch(error){
+    console.error("Bug status update failed:",error);
+    if(message) message.textContent = "The status could not be updated.";
+    await loadOwnerBugReports();
+  }
+}
+
 /* SUPABASE ONLINE DATABASE */
 
 function setOnlineStatus(text,color="#9aa9bc"){
@@ -7344,6 +7924,12 @@ function updateAdminUI(){
     access.textContent = isOwner ? "Owner" : (isAdmin ? "Player Admin" : (isSignedClubUser ? "Player" : "Public view"));
     access.style.color = isSignedClubUser ? "#67d894" : "#9aa9bc";
   }
+
+  const ownerBugSection = el("ownerBugReportsSection");
+  if(ownerBugSection){
+    ownerBugSection.style.display = isOwner ? "block" : "none";
+  }
+  updateBugOpenBadge();
 }
 
 async function ensureRemoteLookups(){
@@ -7714,7 +8300,7 @@ async function adminLogin(){
   if(message){
     message.textContent = isOwner
       ? "Owner access enabled."
-      : (isAdmin ? "Player Admin access enabled." : "Player access enabled — voting only.");
+      : (isAdmin ? "Player Admin access enabled." : "Player access enabled.");
   }
   await handleAuthUI();
 }
@@ -7748,6 +8334,11 @@ async function handleAuthUI(){
   await loadClubhouseSession();
   await loadSpotifyJam();
   await startPresenceTracking();
+  if(isOwner){
+    await loadOwnerBugReports();
+  }else{
+    bugReports = [];
+  }
   updateAdminUI();
   renderEverything();
 }
@@ -7823,6 +8414,11 @@ async function initSupabase(){
       await loadCurrentClubAccess(session);
       await loadClubhouseSession();
       await loadSpotifyJam();
+      if(isOwner){
+        await loadOwnerBugReports();
+      }else{
+        bugReports = [];
+      }
       updateAdminUI();
       renderEverything();
     });
