@@ -939,7 +939,8 @@ h1{
   line-height:1.25;
   text-align:center;
   letter-spacing:.3px;
-  pointer-events:none;
+  pointer-events:auto;
+  cursor:pointer;
 }
 
 .achievement-player-chevron{
@@ -3275,10 +3276,10 @@ textarea.bug-form-control{
     <label for="achievementPlayerSelect">VIEWING ACHIEVEMENTS FOR</label>
     <div class="achievement-player-select-wrap">
       <select id="achievementPlayerSelect" class="achievement-player-select" onchange="changeAchievementPlayer(this.value)" aria-label="Choose player to view achievements"></select>
-      <div class="achievement-player-change" aria-hidden="true">
+      <label class="achievement-player-change" for="achievementPlayerSelect">
         <span class="achievement-player-chevron">⌄</span>
         <span>TAP TO CHANGE PLAYER</span>
-      </div>
+      </label>
     </div>
   </div>
 
