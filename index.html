@@ -9476,6 +9476,19 @@ async function saveMatchToSupabase(match,season){
   }
 }
 
+function inferPlayerKeyFromUsername(username){
+  const raw = String(username || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  if(!raw) return "";
+
+  const direct = players.find(player => {
+    const id = String(player.id || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const name = String(player.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    return raw === id || raw === name || raw.startsWith(name) || raw.includes(name);
+  });
+
+  return direct?.id || "";
+}
+
 async function loadCurrentClubAccess(session){
   isAdmin = false;
   isOwner = false;
@@ -9504,7 +9517,7 @@ async function loadCurrentClubAccess(session){
     if(data){
       currentClubUsername = data.username || "";
       currentClubRole = data.role || currentClubRole;
-      currentClubPlayerKey = data.player_key || "";
+      currentClubPlayerKey = data.player_key || inferPlayerKeyFromUsername(data.username);
       isAdmin = ["owner","player_admin"].includes(data.role);
       isOwner = data.role === "owner" || user.id === OWNER_UID;
     }
@@ -9580,6 +9593,16 @@ async function adminLogout(){
 async function handleAuthUI(){
   const {data} = await supabaseClient.auth.getSession();
   await loadCurrentClubAccess(data?.session || null);
+
+  // Make sure achievement validation uses the latest FC27 data before
+  // checking this account's pending congratulations.
+  if(data?.session){
+    try{
+      await loadRemoteData();
+    }catch(error){
+      console.warn("Fresh match data could not be loaded before achievement notifications:",error);
+    }
+  }
 
   const signed = el("adminSignedInText");
   if(signed && data?.session?.user){
@@ -9681,6 +9704,14 @@ async function initSupabase(){
       }
       updateAdminUI();
       renderEverything();
+      if(session){
+        try{
+          await loadRemoteData();
+          await loadPendingAchievementNotifications();
+        }catch(error){
+          console.warn("Achievement notification refresh after sign-in failed:",error);
+        }
+      }
     });
 
     await loadRemoteData();
@@ -9713,7 +9744,7 @@ function renderEverything(){
   });
 }
 
-const OLYMPUS_APP_BUILD = "20260906-achievements-stage1-fix1";
+const OLYMPUS_APP_BUILD = "20260906-achievements-stage3-account-pending-fix2";
 
 async function checkForAppUpdate(){
   try{
