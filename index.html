@@ -4577,6 +4577,92 @@ function collectNewAchievementUnlocks(beforeState){
   return unlocks;
 }
 
+// Stage 3.1: achievement celebrations belong to the signed-in player.
+// Personal unlocks for team-mates are saved as pending notifications in Supabase
+// and shown when that player next signs in. Club unlocks are queued for everyone.
+function achievementUnlockForCurrentPlayer(unlocks){
+  return (unlocks || []).filter(unlock => !unlock.player || unlock.player.id === currentClubPlayerKey);
+}
+
+async function queueAchievementNotifications(unlocks){
+  if(!supabaseClient || !Array.isArray(unlocks) || !unlocks.length) return;
+
+  const rows = [];
+  unlocks.forEach(unlock => {
+    if(unlock.player){
+      rows.push({
+        player_key:unlock.player.id,
+        achievement_id:unlock.item.id,
+        is_club:false
+      });
+    }else{
+      players.forEach(player => rows.push({
+        player_key:player.id,
+        achievement_id:unlock.item.id,
+        is_club:true
+      }));
+    }
+  });
+
+  if(!rows.length) return;
+  try{
+    const {error} = await supabaseClient
+      .from("achievement_notifications")
+      .upsert(rows,{onConflict:"player_key,achievement_id",ignoreDuplicates:true});
+    if(error) throw error;
+  }catch(error){
+    console.error("Achievement notification queue failed:",error);
+  }
+}
+
+async function loadPendingAchievementNotifications(){
+  if(!supabaseClient || !currentClubPlayerKey) return;
+
+  try{
+    const {data,error} = await supabaseClient
+      .from("achievement_notifications")
+      .select("id,player_key,achievement_id,is_club,created_at")
+      .eq("player_key",currentClubPlayerKey)
+      .order("created_at",{ascending:true});
+    if(error) throw error;
+    if(!data?.length) return;
+
+    const player = players.find(p => p.id === currentClubPlayerKey);
+    if(!player) return;
+    const {results} = calculateAchievementResults(player.id);
+    const valid = [];
+    const staleIds = [];
+
+    data.forEach(row => {
+      const item = OLYMPUS_ACHIEVEMENTS.find(a => a.id === row.achievement_id);
+      if(!item || !results[row.achievement_id]?.unlocked){
+        staleIds.push(row.id);
+        return;
+      }
+      valid.push({item,player:row.is_club ? null : player,notificationId:row.id});
+    });
+
+    if(staleIds.length){
+      await supabaseClient.from("achievement_notifications").delete().in("id",staleIds);
+    }
+    if(valid.length) setTimeout(() => showAchievementUnlocks(valid),180);
+  }catch(error){
+    // Allows the frontend to remain usable until the one-time Stage 3.1 SQL is run.
+    console.error("Pending achievement notification load failed:",error);
+  }
+}
+
+async function clearDisplayedAchievementNotifications(){
+  const ids = achievementUnlockQueue.map(x => x.notificationId).filter(Boolean);
+  if(!supabaseClient || !ids.length) return;
+  try{
+    const {error} = await supabaseClient.from("achievement_notifications").delete().in("id",ids);
+    if(error) throw error;
+  }catch(error){
+    console.error("Achievement notification clear failed:",error);
+  }
+}
+
 function achievementUnlockTagline(item){
   const special = {
     first_goal:"The climb has begun.",
@@ -4627,7 +4713,7 @@ function renderAchievementUnlock(){
   }
 }
 
-function advanceAchievementUnlock(){
+async function advanceAchievementUnlock(){
   if(achievementUnlockIndex < achievementUnlockQueue.length - 1){
     achievementUnlockIndex++;
     renderAchievementUnlock();
@@ -4635,6 +4721,7 @@ function advanceAchievementUnlock(){
   }
 
   el("achievementUnlockOverlay")?.classList.remove("open");
+  await clearDisplayedAchievementNotifications();
   achievementUnlockQueue = [];
   achievementUnlockIndex = 0;
   document.body.style.overflow = "";
@@ -6068,8 +6155,13 @@ async function finishMatch(){
   if(savedSeason === "FC27" && achievementStateBeforeSave){
     const newlyUnlockedAchievements = collectNewAchievementUnlocks(achievementStateBeforeSave);
     if(newlyUnlockedAchievements.length){
-      // Let the match modal finish closing before displaying the celebration.
-      setTimeout(() => showAchievementUnlocks(newlyUnlockedAchievements),120);
+      // Save every personal/club unlock for the correct account first.
+      await queueAchievementNotifications(newlyUnlockedAchievements);
+      // The person logging the match only sees their own personal unlocks, plus club unlocks.
+      const myUnlocks = achievementUnlockForCurrentPlayer(newlyUnlockedAchievements);
+      if(myUnlocks.length){
+        setTimeout(() => showAchievementUnlocks(myUnlocks),120);
+      }
     }
   }
 
@@ -9498,6 +9590,7 @@ async function handleAuthUI(){
   }
   updateAdminUI();
   renderEverything();
+  await loadPendingAchievementNotifications();
 }
 
 async function uploadLocalDataToSupabase(){
