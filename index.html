@@ -2941,6 +2941,8 @@ let currentClubPlayerKey = "";
 let playerStatuses = {};
 let spotifyJam = null;
 const OWNER_UID = "dc4e457c-4b2c-413f-a6d8-b4f49c053480";
+const OWNER_LOGIN_ALIAS = "TyroneDean40";
+const OWNER_EMAIL_CACHE_KEY = "olympusOwnerLoginEmail";
 let remoteSeasonIds = {};
 let remotePlayerIds = {};
 let remoteReady = false;
@@ -6980,9 +6982,18 @@ async function adminLogin(){
     return;
   }
 
-  const email = loginValue.includes("@")
-    ? loginValue
-    : `${loginValue.toLowerCase()}@olympus.invalid`;
+  let email;
+  if(loginValue.toLowerCase() === OWNER_LOGIN_ALIAS.toLowerCase()){
+    email = localStorage.getItem(OWNER_EMAIL_CACHE_KEY) || "";
+    if(!email){
+      if(message) message.textContent = `On this device, sign in once with your owner email first. After that you can use ${OWNER_LOGIN_ALIAS}.`;
+      return;
+    }
+  }else{
+    email = loginValue.includes("@")
+      ? loginValue
+      : `${loginValue.toLowerCase()}@olympus.invalid`;
+  }
 
   if(message) message.textContent = "Signing in…";
 
@@ -6993,6 +7004,10 @@ async function adminLogin(){
   }
 
   await loadCurrentClubAccess(data.session);
+
+  if(isOwner && data?.session?.user?.email){
+    localStorage.setItem(OWNER_EMAIL_CACHE_KEY, data.session.user.email);
+  }
 
   if(!currentClubRole){
     await supabaseClient.auth.signOut();
@@ -7027,7 +7042,9 @@ async function handleAuthUI(){
   const signed = el("adminSignedInText");
   if(signed && data?.session?.user){
     const roleLabel = isOwner ? "Owner" : (isAdmin ? "Player Admin" : "Player");
-    const displayName = currentClubUsername || data.session.user.email || "Club user";
+    const displayName = isOwner
+      ? OWNER_LOGIN_ALIAS
+      : (currentClubUsername || data.session.user.email || "Club user");
     signed.textContent = `Signed in as ${displayName} • ${roleLabel}`;
   }
 
@@ -7137,7 +7154,7 @@ function renderEverything(){
   });
 }
 
-const OLYMPUS_APP_BUILD = "20260906-spotify-position-1";
+const OLYMPUS_APP_BUILD = "20260906-owner-alias-1";
 
 async function checkForAppUpdate(){
   try{
