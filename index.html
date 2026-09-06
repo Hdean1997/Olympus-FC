@@ -900,6 +900,83 @@ h1{
   line-height:1.5;
 }
 
+.achievement-player-picker{
+  margin:0 16px 14px;
+  padding:13px 14px;
+  border-radius:14px;
+  background:#101d2e;
+  border:1px solid #29425f;
+}
+
+.achievement-player-picker label{
+  display:block;
+  margin-bottom:7px;
+  color:#8392a6;
+  font-size:9px;
+  font-weight:bold;
+  letter-spacing:.7px;
+}
+
+.achievement-player-select{
+  width:100%;
+  min-height:44px;
+  padding:0 12px;
+  border-radius:11px;
+  border:1px solid #31567e;
+  background:#07111f;
+  color:#f3f6fb;
+  font-size:14px;
+  font-weight:bold;
+}
+
+.achievement-progress-bar{
+  height:8px;
+  margin:12px 0 2px;
+  border-radius:999px;
+  overflow:hidden;
+  background:#07111f;
+  border:1px solid #29425f;
+}
+
+.achievement-progress-fill{
+  height:100%;
+  width:0;
+  border-radius:999px;
+  background:linear-gradient(90deg,#b88b26,#f0c650);
+}
+
+.achievement-card.unlocked{
+  background:linear-gradient(145deg,#152a42,#10233a);
+  border-color:#6f9dff;
+  box-shadow:0 0 0 1px rgba(111,157,255,.08),0 8px 24px rgba(0,0,0,.16);
+}
+
+.achievement-card.unlocked .achievement-icon{
+  filter:none;
+  opacity:1;
+  border-color:#8d712a;
+  background:#17243a;
+}
+
+.achievement-card.unlocked .achievement-card-name{color:#ffffff}
+.achievement-card.unlocked .achievement-rarity{color:#d8e5f8;border-color:#40658d}
+.achievement-card.unlocked.rarity-legendary{border-color:#8d712a}
+.achievement-card.unlocked.rarity-olympus{border-color:#5f91d7}
+.achievement-card.unlocked.rarity-epic{border-color:#705f9d}
+
+.achievement-unlocked{
+  color:#79d995;
+  font-size:10px;
+  font-weight:bold;
+}
+
+.achievement-progress-text{
+  margin-top:8px;
+  color:#6f9dff;
+  font-size:9px;
+  font-weight:bold;
+}
+
 .achievement-filters{
   display:flex;
   gap:8px;
@@ -3160,31 +3237,37 @@ textarea.bug-form-control{
       <span>Back</span>
     </button>
     <h2 class="achievements-title">Olympus Achievements</h2>
-    <div id="achievementsSubtitle" class="achievements-subtitle">Olympus FC · FC26</div>
+    <div id="achievementsSubtitle" class="achievements-subtitle">Olympus FC · FC27</div>
   </div>
 
   <div class="achievements-hero">
-    <div class="achievements-kicker">🏔️ CLIMB THE MOUNTAIN</div>
-    <div class="achievements-hero-title">Build your Olympus legacy.</div>
-    <div class="achievements-hero-copy">Career milestones, match feats, streaks and club achievements — all in one trophy cabinet.</div>
+    <div class="achievements-kicker">🏔️ FC27 ACHIEVEMENT JOURNEY</div>
+    <div id="achievementHeroTitle" class="achievements-hero-title">The climb starts from zero.</div>
+    <div class="achievements-hero-copy">Every player starts fresh. Only FC27 logged matches count towards Olympus Achievements.</div>
+    <div class="achievement-progress-bar"><div id="achievementProgressFill" class="achievement-progress-fill"></div></div>
     <div class="achievements-overview">
       <div class="achievements-overview-card">
-        <div class="achievements-overview-number">50</div>
-        <div class="achievements-overview-label">ACHIEVEMENTS</div>
+        <div id="achievementUnlockedCount" class="achievements-overview-number">0/42</div>
+        <div class="achievements-overview-label">PLAYER UNLOCKED</div>
       </div>
       <div class="achievements-overview-card">
-        <div class="achievements-overview-number">7</div>
-        <div class="achievements-overview-label">CATEGORIES</div>
+        <div id="achievementCompletion" class="achievements-overview-number">0%</div>
+        <div class="achievements-overview-label">COMPLETE</div>
       </div>
       <div class="achievements-overview-card">
-        <div class="achievements-overview-number">5</div>
-        <div class="achievements-overview-label">RARITIES</div>
+        <div id="achievementClubCount" class="achievements-overview-number">0/8</div>
+        <div class="achievements-overview-label">CLUB TROPHIES</div>
       </div>
     </div>
   </div>
 
+  <div class="achievement-player-picker">
+    <label for="achievementPlayerSelect">VIEWING ACHIEVEMENTS FOR</label>
+    <select id="achievementPlayerSelect" class="achievement-player-select" onchange="changeAchievementPlayer(this.value)"></select>
+  </div>
+
   <div class="achievement-stage-note">
-    Stage 1 previews the complete Olympus achievement catalogue. Automatic unlocking and player progress will be connected in Stage 2.
+    FC26 historical totals are not used here. Goals, assists, appearances, streaks and match feats all begin from the first FC27 match.
   </div>
 
   <div id="achievementFilters" class="achievement-filters"></div>
@@ -3936,78 +4019,347 @@ let remoteReady = false;
 let matchdaySessions = [];
 let matchdayPotnVotes = [];
 let bugReports = [];
-const APP_VERSION = "2026.09.06-achievements-stage1-fix1";
+const APP_VERSION = "2026.09.06-achievements-stage2-fc27";
 
 const OLYMPUS_ACHIEVEMENTS = [
-  {category:"Goals",icon:"⚽",name:"Off the Mark",description:"Score your first goal.",rarity:"Common"},
-  {category:"Goals",icon:"🥉",name:"Goalscorer",description:"Score 25 career goals.",rarity:"Common"},
-  {category:"Goals",icon:"🥈",name:"Finisher",description:"Score 50 career goals.",rarity:"Rare"},
-  {category:"Goals",icon:"🥇",name:"Centurion",description:"Score 100 career goals.",rarity:"Epic"},
-  {category:"Goals",icon:"🏔️",name:"Olympus Marksman",description:"Score 250 career goals.",rarity:"Legendary"},
-  {category:"Goals",icon:"🎩",name:"Hat-Trick Hero",description:"Score 3+ goals in one logged match.",rarity:"Rare"},
-  {category:"Goals",icon:"🔥",name:"Four of a Kind",description:"Score 4+ goals in one logged match.",rarity:"Epic"},
-  {category:"Goals",icon:"👑",name:"Five-Star Finisher",description:"Score 5+ goals in one logged match.",rarity:"Legendary"},
+  {id:"first_goal",category:"Goals",icon:"⚽",name:"Off the Mark",description:"Score your first FC27 goal.",rarity:"Common"},
+  {id:"goals_25",category:"Goals",icon:"🥉",name:"Goalscorer",description:"Score 25 FC27 goals.",rarity:"Common"},
+  {id:"goals_50",category:"Goals",icon:"🥈",name:"Finisher",description:"Score 50 FC27 goals.",rarity:"Rare"},
+  {id:"goals_100",category:"Goals",icon:"🥇",name:"Centurion",description:"Score 100 FC27 goals.",rarity:"Epic"},
+  {id:"goals_250",category:"Goals",icon:"🏔️",name:"Olympus Marksman",description:"Score 250 FC27 goals.",rarity:"Legendary"},
+  {id:"hat_trick",category:"Goals",icon:"🎩",name:"Hat-Trick Hero",description:"Score 3+ goals in one FC27 match.",rarity:"Rare"},
+  {id:"four_goals",category:"Goals",icon:"🔥",name:"Four of a Kind",description:"Score 4+ goals in one FC27 match.",rarity:"Epic"},
+  {id:"five_goals",category:"Goals",icon:"👑",name:"Five-Star Finisher",description:"Score 5+ goals in one FC27 match.",rarity:"Legendary"},
 
-  {category:"Assists",icon:"🤝",name:"First Delivery",description:"Record your first assist.",rarity:"Common"},
-  {category:"Assists",icon:"🥉",name:"Creator",description:"Record 25 career assists.",rarity:"Common"},
-  {category:"Assists",icon:"🥈",name:"Playmaker",description:"Record 50 career assists.",rarity:"Rare"},
-  {category:"Assists",icon:"🥇",name:"Assist King",description:"Record 100 career assists.",rarity:"Epic"},
-  {category:"Assists",icon:"🏔️",name:"Olympus Architect",description:"Record 250 career assists.",rarity:"Legendary"},
-  {category:"Assists",icon:"🎯",name:"Perfect Provider",description:"Record 3+ assists in one logged match.",rarity:"Rare"},
-  {category:"Assists",icon:"🪄",name:"Master Creator",description:"Record 5+ assists in one logged match.",rarity:"Legendary"},
+  {id:"first_assist",category:"Assists",icon:"🤝",name:"First Delivery",description:"Record your first FC27 assist.",rarity:"Common"},
+  {id:"assists_25",category:"Assists",icon:"🥉",name:"Creator",description:"Record 25 FC27 assists.",rarity:"Common"},
+  {id:"assists_50",category:"Assists",icon:"🥈",name:"Playmaker",description:"Record 50 FC27 assists.",rarity:"Rare"},
+  {id:"assists_100",category:"Assists",icon:"🥇",name:"Assist King",description:"Record 100 FC27 assists.",rarity:"Epic"},
+  {id:"assists_250",category:"Assists",icon:"🏔️",name:"Olympus Architect",description:"Record 250 FC27 assists.",rarity:"Legendary"},
+  {id:"assists_3_match",category:"Assists",icon:"🎯",name:"Perfect Provider",description:"Record 3+ assists in one FC27 match.",rarity:"Rare"},
+  {id:"assists_5_match",category:"Assists",icon:"🪄",name:"Master Creator",description:"Record 5+ assists in one FC27 match.",rarity:"Legendary"},
 
-  {category:"Contributions",icon:"⚡",name:"Double Impact",description:"Record 2+ goal contributions in one match.",rarity:"Common"},
-  {category:"Contributions",icon:"🔥",name:"Triple Threat",description:"Record 3+ goal contributions in one match.",rarity:"Rare"},
-  {category:"Contributions",icon:"⭐",name:"Five-Star Performance",description:"Record 5+ goal contributions in one match.",rarity:"Epic"},
-  {category:"Contributions",icon:"👑",name:"Unplayable",description:"Record 7+ goal contributions in one match.",rarity:"Legendary"},
-  {category:"Contributions",icon:"💯",name:"Century of Influence",description:"Reach 100 career goal contributions.",rarity:"Rare"},
-  {category:"Contributions",icon:"🏔️",name:"Mount Olympus",description:"Reach 250 career goal contributions.",rarity:"Epic"},
-  {category:"Contributions",icon:"⚡",name:"500 Club",description:"Reach 500 career goal contributions.",rarity:"Olympus"},
+  {id:"ga_2_match",category:"Contributions",icon:"⚡",name:"Double Impact",description:"Record 2+ goal contributions in one FC27 match.",rarity:"Common"},
+  {id:"ga_3_match",category:"Contributions",icon:"🔥",name:"Triple Threat",description:"Record 3+ goal contributions in one FC27 match.",rarity:"Rare"},
+  {id:"ga_5_match",category:"Contributions",icon:"⭐",name:"Five-Star Performance",description:"Record 5+ goal contributions in one FC27 match.",rarity:"Epic"},
+  {id:"ga_7_match",category:"Contributions",icon:"👑",name:"Unplayable",description:"Record 7+ goal contributions in one FC27 match.",rarity:"Legendary"},
+  {id:"ga_100",category:"Contributions",icon:"💯",name:"Century of Influence",description:"Reach 100 FC27 goal contributions.",rarity:"Rare"},
+  {id:"ga_250",category:"Contributions",icon:"🏔️",name:"Mount Olympus",description:"Reach 250 FC27 goal contributions.",rarity:"Epic"},
+  {id:"ga_500",category:"Contributions",icon:"⚡",name:"500 Club",description:"Reach 500 FC27 goal contributions.",rarity:"Olympus"},
 
-  {category:"Appearances",icon:"🆕",name:"Olympus Debut",description:"Make your first Olympus FC appearance.",rarity:"Common"},
-  {category:"Appearances",icon:"🥉",name:"Regular",description:"Make 25 appearances.",rarity:"Common"},
-  {category:"Appearances",icon:"🥈",name:"Established",description:"Make 50 appearances.",rarity:"Rare"},
-  {category:"Appearances",icon:"🥇",name:"Centurion",description:"Make 100 appearances.",rarity:"Epic"},
-  {category:"Appearances",icon:"🏛️",name:"Club Veteran",description:"Make 250 appearances.",rarity:"Legendary"},
-  {category:"Appearances",icon:"👑",name:"Olympus Legend",description:"Make 500 appearances.",rarity:"Olympus"},
+  {id:"app_1",category:"Appearances",icon:"🆕",name:"Olympus Debut",description:"Make your first FC27 appearance.",rarity:"Common"},
+  {id:"app_25",category:"Appearances",icon:"🥉",name:"Regular",description:"Make 25 FC27 appearances.",rarity:"Common"},
+  {id:"app_50",category:"Appearances",icon:"🥈",name:"Established",description:"Make 50 FC27 appearances.",rarity:"Rare"},
+  {id:"app_100",category:"Appearances",icon:"🥇",name:"Centurion",description:"Make 100 FC27 appearances.",rarity:"Epic"},
+  {id:"app_250",category:"Appearances",icon:"🏛️",name:"Club Veteran",description:"Make 250 FC27 appearances.",rarity:"Legendary"},
+  {id:"app_500",category:"Appearances",icon:"👑",name:"Olympus Legend",description:"Make 500 FC27 appearances.",rarity:"Olympus"},
 
-  {category:"Streaks",icon:"🔥",name:"Heating Up",description:"Score in 3 consecutive appearances.",rarity:"Rare"},
-  {category:"Streaks",icon:"🌋",name:"On Fire",description:"Score in 5 consecutive appearances.",rarity:"Epic"},
-  {category:"Streaks",icon:"👑",name:"Unstoppable",description:"Score in 10 consecutive appearances.",rarity:"Olympus"},
-  {category:"Streaks",icon:"🎯",name:"Creator's Run",description:"Assist in 5 consecutive appearances.",rarity:"Epic"},
-  {category:"Streaks",icon:"⚡",name:"Always Involved",description:"Record a G/A in 10 consecutive appearances.",rarity:"Legendary"},
-  {category:"Streaks",icon:"🏔️",name:"Summit Form",description:"Record a G/A in 15 consecutive appearances.",rarity:"Olympus"},
+  {id:"score_streak_3",category:"Streaks",icon:"🔥",name:"Heating Up",description:"Score in 3 consecutive FC27 appearances.",rarity:"Rare"},
+  {id:"score_streak_5",category:"Streaks",icon:"🌋",name:"On Fire",description:"Score in 5 consecutive FC27 appearances.",rarity:"Epic"},
+  {id:"score_streak_10",category:"Streaks",icon:"👑",name:"Unstoppable",description:"Score in 10 consecutive FC27 appearances.",rarity:"Olympus"},
+  {id:"assist_streak_5",category:"Streaks",icon:"🎯",name:"Creator's Run",description:"Assist in 5 consecutive FC27 appearances.",rarity:"Epic"},
+  {id:"ga_streak_10",category:"Streaks",icon:"⚡",name:"Always Involved",description:"Record a G/A in 10 consecutive FC27 appearances.",rarity:"Legendary"},
+  {id:"ga_streak_15",category:"Streaks",icon:"🏔️",name:"Summit Form",description:"Record a G/A in 15 consecutive FC27 appearances.",rarity:"Olympus"},
 
-  {category:"Club",icon:"🏆",name:"First Blood",description:"Be part of Olympus FC's first logged victory.",rarity:"Common"},
-  {category:"Club",icon:"⛰️",name:"The Climb Begins",description:"Earn a promotion with Olympus FC.",rarity:"Rare"},
-  {category:"Club",icon:"🏔️",name:"Division One",description:"Reach Division 1 with Olympus FC.",rarity:"Epic"},
-  {category:"Club",icon:"👑",name:"The Summit",description:"Reach Elite Division with Olympus FC.",rarity:"Olympus"},
-  {category:"Club",icon:"🔥",name:"Five Alive",description:"Olympus FC wins 5 consecutive matches.",rarity:"Rare"},
-  {category:"Club",icon:"💪",name:"Ten Strong",description:"Olympus FC goes 10 matches unbeaten.",rarity:"Epic"},
-  {category:"Club",icon:"⚽",name:"Century Club",description:"Olympus FC scores 100 logged goals.",rarity:"Rare"},
-  {category:"Club",icon:"🏛️",name:"Olympus History",description:"Olympus FC logs its 100th match.",rarity:"Legendary"},
+  {id:"club_first_win",category:"Club",icon:"🏆",name:"First Blood",description:"Olympus FC records its first FC27 victory.",rarity:"Common",club:true},
+  {id:"club_promotion",category:"Club",icon:"⛰️",name:"The Climb Begins",description:"Earn the first FC27 promotion.",rarity:"Rare",club:true},
+  {id:"club_div1",category:"Club",icon:"🏔️",name:"Division One",description:"Reach Division 1 in FC27.",rarity:"Epic",club:true},
+  {id:"club_elite",category:"Club",icon:"👑",name:"The Summit",description:"Reach Elite Division in FC27.",rarity:"Olympus",club:true},
+  {id:"club_wins_5",category:"Club",icon:"🔥",name:"Five Alive",description:"Olympus FC wins 5 consecutive FC27 matches.",rarity:"Rare",club:true},
+  {id:"club_unbeaten_10",category:"Club",icon:"💪",name:"Ten Strong",description:"Olympus FC goes 10 FC27 matches unbeaten.",rarity:"Epic",club:true},
+  {id:"club_goals_100",category:"Club",icon:"⚽",name:"Century Club",description:"Olympus FC scores 100 FC27 goals.",rarity:"Rare",club:true},
+  {id:"club_matches_100",category:"Club",icon:"🏛️",name:"Olympus History",description:"Olympus FC logs its 100th FC27 match.",rarity:"Legendary",club:true},
 
-  {category:"Secret",icon:"🤝",name:"Perfect Partnership",description:"Two players combine for 5+ G/A in one match.",rarity:"Epic"},
-  {category:"Secret",icon:"💥",name:"Total Domination",description:"Olympus FC wins a match by 5+ goals.",rarity:"Rare"},
-  {category:"Secret",icon:"🧱",name:"Untouchable",description:"Win 5 consecutive matches.",rarity:"Epic"},
-  {category:"Secret",icon:"🎩",name:"Back-to-Back Magic",description:"Score hat-tricks in consecutive matches.",rarity:"Legendary"},
-  {category:"Secret",icon:"⚔️",name:"Dynamic Duo",description:"Two players both score 2+ in the same match.",rarity:"Epic"},
-  {category:"Secret",icon:"🪄",name:"Generous God",description:"Record 4+ assists in one match.",rarity:"Legendary"},
-  {category:"Secret",icon:"⚡",name:"One-Man Army",description:"Record 6+ G/A in one match.",rarity:"Legendary"},
-  {category:"Secret",icon:"🌟",name:"God of Olympus",description:"Unlock every other individual achievement.",rarity:"Olympus"}
+  {id:"perfect_partnership",category:"Secret",icon:"🤝",name:"Perfect Partnership",description:"You and a teammate combine for 5+ G/A in one FC27 match.",rarity:"Epic"},
+  {id:"total_domination",category:"Secret",icon:"💥",name:"Total Domination",description:"Play in an FC27 win by 5+ goals.",rarity:"Rare"},
+  {id:"player_wins_5",category:"Secret",icon:"🧱",name:"Untouchable",description:"Win 5 consecutive FC27 appearances.",rarity:"Epic"},
+  {id:"back_to_back_hat_tricks",category:"Secret",icon:"🎩",name:"Back-to-Back Magic",description:"Score hat-tricks in consecutive FC27 appearances.",rarity:"Legendary"},
+  {id:"dynamic_duo",category:"Secret",icon:"⚔️",name:"Dynamic Duo",description:"You and a teammate both score 2+ in the same FC27 match.",rarity:"Epic"},
+  {id:"assists_4_match",category:"Secret",icon:"🪄",name:"Generous God",description:"Record 4+ assists in one FC27 match.",rarity:"Legendary"},
+  {id:"ga_6_match",category:"Secret",icon:"⚡",name:"One-Man Army",description:"Record 6+ G/A in one FC27 match.",rarity:"Legendary"},
+  {id:"god_of_olympus",category:"Secret",icon:"🌟",name:"God of Olympus",description:"Unlock every other individual FC27 achievement.",rarity:"Olympus"}
 ];
 
 let achievementCategoryFilter = "All";
+let selectedAchievementPlayerId = "tyrone";
 
 function achievementCategoryLabel(category){
   const icons = {Goals:"⚽",Assists:"🎯",Contributions:"⭐",Appearances:"👕",Streaks:"🔥",Club:"🏔️",Secret:"💎"};
   return `${icons[category] || "🏆"} ${category}`;
 }
 
+function achievementChronologicalMatches(){
+  return [...(seasonData?.FC27?.matches || [])].sort((a,b) => {
+    const ad = new Date(a.date || 0).getTime();
+    const bd = new Date(b.date || 0).getTime();
+    if(ad !== bd) return ad - bd;
+    return Number(a.id || 0) - Number(b.id || 0);
+  });
+}
+
+function longestAchievementStreak(items,predicate){
+  let longest = 0;
+  let running = 0;
+  items.forEach(item => {
+    if(predicate(item)){
+      running++;
+      longest = Math.max(longest,running);
+    }else{
+      running = 0;
+    }
+  });
+  return longest;
+}
+
+function achievementPlayerSnapshot(playerId){
+  const matches = achievementChronologicalMatches();
+  const appearances = matches.filter(match => match.playerStats?.[playerId]?.played);
+  let goals = 0;
+  let assists = 0;
+  let maxGoals = 0;
+  let maxAssists = 0;
+  let maxGA = 0;
+
+  appearances.forEach(match => {
+    const stat = match.playerStats[playerId] || {};
+    const g = Number(stat.goals || 0);
+    const a = Number(stat.assists || 0);
+    goals += g;
+    assists += a;
+    maxGoals = Math.max(maxGoals,g);
+    maxAssists = Math.max(maxAssists,a);
+    maxGA = Math.max(maxGA,g+a);
+  });
+
+  const longestScoreStreak = longestAchievementStreak(
+    appearances,
+    match => Number(match.playerStats?.[playerId]?.goals || 0) > 0
+  );
+  const longestAssistStreak = longestAchievementStreak(
+    appearances,
+    match => Number(match.playerStats?.[playerId]?.assists || 0) > 0
+  );
+  const longestGAStreak = longestAchievementStreak(
+    appearances,
+    match => (
+      Number(match.playerStats?.[playerId]?.goals || 0) +
+      Number(match.playerStats?.[playerId]?.assists || 0)
+    ) > 0
+  );
+  const longestPlayerWinStreak = longestAchievementStreak(
+    appearances,
+    match => match.result === "W"
+  );
+
+  let backToBackHatTricks = false;
+  for(let i=1;i<appearances.length;i++){
+    const currentGoals = Number(appearances[i].playerStats?.[playerId]?.goals || 0);
+    const previousGoals = Number(appearances[i-1].playerStats?.[playerId]?.goals || 0);
+    if(currentGoals >= 3 && previousGoals >= 3){
+      backToBackHatTricks = true;
+      break;
+    }
+  }
+
+  const perfectPartnership = appearances.some(match => {
+    const own = match.playerStats?.[playerId] || {};
+    const ownGA = Number(own.goals || 0) + Number(own.assists || 0);
+    return players.some(other => {
+      if(other.id === playerId) return false;
+      const stat = match.playerStats?.[other.id];
+      if(!stat?.played) return false;
+      const otherGA = Number(stat.goals || 0) + Number(stat.assists || 0);
+      return ownGA + otherGA >= 5;
+    });
+  });
+
+  const dynamicDuo = appearances.some(match => {
+    const ownGoals = Number(match.playerStats?.[playerId]?.goals || 0);
+    if(ownGoals < 2) return false;
+    return players.some(other => (
+      other.id !== playerId &&
+      match.playerStats?.[other.id]?.played &&
+      Number(match.playerStats?.[other.id]?.goals || 0) >= 2
+    ));
+  });
+
+  const totalDomination = appearances.some(match => (
+    match.result === "W" &&
+    Number(match.olympusScore || 0) - Number(match.opponentScore || 0) >= 5
+  ));
+
+  return {
+    matches,
+    appearances,
+    appearancesCount:appearances.length,
+    goals,
+    assists,
+    contributions:goals+assists,
+    maxGoals,
+    maxAssists,
+    maxGA,
+    longestScoreStreak,
+    longestAssistStreak,
+    longestGAStreak,
+    longestPlayerWinStreak,
+    backToBackHatTricks,
+    perfectPartnership,
+    dynamicDuo,
+    totalDomination
+  };
+}
+
+function achievementClubSnapshot(){
+  const matches = achievementChronologicalMatches();
+  const division = seasonData?.FC27?.division || "Division 5";
+  const divisionIndex = divisions.indexOf(division);
+  const div1Index = divisions.indexOf("Division 1");
+  const eliteIndex = divisions.indexOf("Elite");
+  const totalGoals = matches.reduce((sum,match) => sum + Number(match.olympusScore || 0),0);
+  const longestWins = longestAchievementStreak(matches,match => match.result === "W");
+  const longestUnbeaten = longestAchievementStreak(matches,match => match.result !== "L");
+
+  return {
+    matches:matches.length,
+    totalGoals,
+    anyWin:matches.some(match => match.result === "W"),
+    promoted:divisionIndex > divisions.indexOf("Division 5"),
+    divisionOne:divisionIndex >= div1Index,
+    elite:divisionIndex >= eliteIndex,
+    longestWins,
+    longestUnbeaten
+  };
+}
+
+function achievementResult(item,playerSnapshot,clubSnapshot,priorResults){
+  const p = playerSnapshot;
+  const c = clubSnapshot;
+  let value = 0;
+  let target = 1;
+  let unlocked = false;
+
+  switch(item.id){
+    case "first_goal": value=p.goals; target=1; break;
+    case "goals_25": value=p.goals; target=25; break;
+    case "goals_50": value=p.goals; target=50; break;
+    case "goals_100": value=p.goals; target=100; break;
+    case "goals_250": value=p.goals; target=250; break;
+    case "hat_trick": value=p.maxGoals; target=3; break;
+    case "four_goals": value=p.maxGoals; target=4; break;
+    case "five_goals": value=p.maxGoals; target=5; break;
+
+    case "first_assist": value=p.assists; target=1; break;
+    case "assists_25": value=p.assists; target=25; break;
+    case "assists_50": value=p.assists; target=50; break;
+    case "assists_100": value=p.assists; target=100; break;
+    case "assists_250": value=p.assists; target=250; break;
+    case "assists_3_match": value=p.maxAssists; target=3; break;
+    case "assists_5_match": value=p.maxAssists; target=5; break;
+
+    case "ga_2_match": value=p.maxGA; target=2; break;
+    case "ga_3_match": value=p.maxGA; target=3; break;
+    case "ga_5_match": value=p.maxGA; target=5; break;
+    case "ga_7_match": value=p.maxGA; target=7; break;
+    case "ga_100": value=p.contributions; target=100; break;
+    case "ga_250": value=p.contributions; target=250; break;
+    case "ga_500": value=p.contributions; target=500; break;
+
+    case "app_1": value=p.appearancesCount; target=1; break;
+    case "app_25": value=p.appearancesCount; target=25; break;
+    case "app_50": value=p.appearancesCount; target=50; break;
+    case "app_100": value=p.appearancesCount; target=100; break;
+    case "app_250": value=p.appearancesCount; target=250; break;
+    case "app_500": value=p.appearancesCount; target=500; break;
+
+    case "score_streak_3": value=p.longestScoreStreak; target=3; break;
+    case "score_streak_5": value=p.longestScoreStreak; target=5; break;
+    case "score_streak_10": value=p.longestScoreStreak; target=10; break;
+    case "assist_streak_5": value=p.longestAssistStreak; target=5; break;
+    case "ga_streak_10": value=p.longestGAStreak; target=10; break;
+    case "ga_streak_15": value=p.longestGAStreak; target=15; break;
+
+    case "club_first_win": unlocked=c.anyWin; value=unlocked?1:0; target=1; break;
+    case "club_promotion": unlocked=c.promoted; value=unlocked?1:0; target=1; break;
+    case "club_div1": unlocked=c.divisionOne; value=unlocked?1:0; target=1; break;
+    case "club_elite": unlocked=c.elite; value=unlocked?1:0; target=1; break;
+    case "club_wins_5": value=c.longestWins; target=5; break;
+    case "club_unbeaten_10": value=c.longestUnbeaten; target=10; break;
+    case "club_goals_100": value=c.totalGoals; target=100; break;
+    case "club_matches_100": value=c.matches; target=100; break;
+
+    case "perfect_partnership": unlocked=p.perfectPartnership; value=unlocked?1:0; target=1; break;
+    case "total_domination": unlocked=p.totalDomination; value=unlocked?1:0; target=1; break;
+    case "player_wins_5": value=p.longestPlayerWinStreak; target=5; break;
+    case "back_to_back_hat_tricks": unlocked=p.backToBackHatTricks; value=unlocked?1:0; target=1; break;
+    case "dynamic_duo": unlocked=p.dynamicDuo; value=unlocked?1:0; target=1; break;
+    case "assists_4_match": value=p.maxAssists; target=4; break;
+    case "ga_6_match": value=p.maxGA; target=6; break;
+    case "god_of_olympus":
+      unlocked = OLYMPUS_ACHIEVEMENTS
+        .filter(other => !other.club && other.id !== "god_of_olympus")
+        .every(other => priorResults?.[other.id]?.unlocked);
+      value = unlocked ? 1 : 0;
+      target = 1;
+      break;
+  }
+
+  if(item.id !== "god_of_olympus" && !["club_first_win","club_promotion","club_div1","club_elite","perfect_partnership","total_domination","back_to_back_hat_tricks","dynamic_duo"].includes(item.id)){
+    unlocked = value >= target;
+  }
+
+  const capped = Math.min(Number(value || 0),target);
+  const progressText = target > 1 ? `${capped}/${target}` : (unlocked ? "Unlocked" : "Locked");
+  return {unlocked,value,target,progressText};
+}
+
+function calculateAchievementResults(playerId){
+  const playerSnapshot = achievementPlayerSnapshot(playerId);
+  const clubSnapshot = achievementClubSnapshot();
+  const results = {};
+
+  OLYMPUS_ACHIEVEMENTS
+    .filter(item => item.id !== "god_of_olympus")
+    .forEach(item => {
+      results[item.id] = achievementResult(item,playerSnapshot,clubSnapshot,results);
+    });
+
+  const god = OLYMPUS_ACHIEVEMENTS.find(item => item.id === "god_of_olympus");
+  results[god.id] = achievementResult(god,playerSnapshot,clubSnapshot,results);
+
+  return {results,playerSnapshot,clubSnapshot};
+}
+
 function renderAchievementsPage(){
   const filters = el("achievementFilters");
   const catalogue = el("achievementsCatalogue");
+  const picker = el("achievementPlayerSelect");
   if(!filters || !catalogue) return;
+
+  if(!players.some(player => player.id === selectedAchievementPlayerId)){
+    selectedAchievementPlayerId = players[0].id;
+  }
+
+  if(picker){
+    picker.innerHTML = players.map(player => `
+      <option value="${escapeHTML(player.id)}" ${player.id === selectedAchievementPlayerId ? "selected" : ""}>
+        ${escapeHTML(player.name)} · #${escapeHTML(player.number)}
+      </option>`).join("");
+  }
+
+  const selectedPlayer = getPlayer(selectedAchievementPlayerId) || players[0];
+  const {results} = calculateAchievementResults(selectedAchievementPlayerId);
+  const individualItems = OLYMPUS_ACHIEVEMENTS.filter(item => !item.club);
+  const clubItems = OLYMPUS_ACHIEVEMENTS.filter(item => item.club);
+  const playerUnlocked = individualItems.filter(item => results[item.id]?.unlocked).length;
+  const clubUnlocked = clubItems.filter(item => results[item.id]?.unlocked).length;
+  const completion = individualItems.length ? Math.round((playerUnlocked / individualItems.length) * 100) : 0;
+
+  if(el("achievementHeroTitle")) el("achievementHeroTitle").textContent = `${selectedPlayer.name}'s climb starts here.`;
+  if(el("achievementUnlockedCount")) el("achievementUnlockedCount").textContent = `${playerUnlocked}/${individualItems.length}`;
+  if(el("achievementCompletion")) el("achievementCompletion").textContent = `${completion}%`;
+  if(el("achievementClubCount")) el("achievementClubCount").textContent = `${clubUnlocked}/${clubItems.length}`;
+  if(el("achievementProgressFill")) el("achievementProgressFill").style.width = `${completion}%`;
+  if(el("achievementsSubtitle")) el("achievementsSubtitle").textContent = "Olympus FC · FC27";
 
   const categories = ["All","Goals","Assists","Contributions","Appearances","Streaks","Club","Secret"];
   filters.innerHTML = categories.map(category => `
@@ -4025,19 +4377,29 @@ function renderAchievementsPage(){
       <div class="achievement-category">
         <div class="achievement-category-title">${achievementCategoryLabel(category)} · ${items.length}</div>
         <div class="achievement-grid">
-          ${items.map(item => `
-            <div class="achievement-card locked rarity-${item.rarity.toLowerCase()}">
-              <div class="achievement-icon">${item.icon}</div>
-              <div class="achievement-card-name">${escapeHTML(item.name)}</div>
-              <div class="achievement-card-description">${escapeHTML(item.description)}</div>
-              <div class="achievement-card-bottom">
-                <span class="achievement-rarity">${escapeHTML(item.rarity)}</span>
-                <span class="achievement-lock">🔒</span>
-              </div>
-            </div>`).join("")}
+          ${items.map(item => {
+            const result = results[item.id] || {unlocked:false,progressText:"Locked"};
+            return `
+              <div class="achievement-card ${result.unlocked ? "unlocked" : "locked"} rarity-${item.rarity.toLowerCase()}">
+                <div class="achievement-icon">${item.icon}</div>
+                <div class="achievement-card-name">${escapeHTML(item.name)}</div>
+                <div class="achievement-card-description">${escapeHTML(item.description)}</div>
+                ${!result.unlocked && result.target > 1 ? `<div class="achievement-progress-text">${escapeHTML(result.progressText)}</div>` : ""}
+                <div class="achievement-card-bottom">
+                  <span class="achievement-rarity">${escapeHTML(item.rarity)}</span>
+                  <span class="${result.unlocked ? "achievement-unlocked" : "achievement-lock"}">${result.unlocked ? "✓ UNLOCKED" : "🔒"}</span>
+                </div>
+              </div>`;
+          }).join("")}
         </div>
       </div>`;
   }).join("");
+}
+
+function changeAchievementPlayer(playerId){
+  if(!players.some(player => player.id === playerId)) return;
+  selectedAchievementPlayerId = playerId;
+  renderAchievementsPage();
 }
 
 function setAchievementFilter(category){
@@ -4047,6 +4409,9 @@ function setAchievementFilter(category){
 }
 
 function openAchievementsPage(){
+  if(currentClubPlayerKey && players.some(player => player.id === currentClubPlayerKey)){
+    selectedAchievementPlayerId = currentClubPlayerKey;
+  }
   renderAchievementsPage();
   document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
   el("achievements").classList.add("active");
@@ -4390,7 +4755,7 @@ function syncSeasonSelectors(){
   el("squadSeasonSubtitle").textContent = "Olympus FC · " + displaySeason;
   el("matchesSeasonSubtitle").textContent = "Olympus FC · " + displaySeason;
   el("statsSeasonSubtitle").textContent = "Olympus FC · " + displaySeason;
-  if(el("achievementsSubtitle")) el("achievementsSubtitle").textContent = "Olympus FC · " + displaySeason;
+  if(el("achievementsSubtitle")) el("achievementsSubtitle").textContent = "Olympus FC · FC27";
   el("moreSeasonSubtitle").textContent = "Olympus FC";
   el("recordsSubtitle").textContent = "Olympus FC · " + displaySeason;
   el("compareSubtitle").textContent = "Olympus FC · " + displaySeason;
