@@ -2623,6 +2623,46 @@ input[type="date"]::-webkit-date-and-time-value{
     <p id="moreSeasonSubtitle">Olympus FC · FC26</p>
   </div>
 
+  <div class="hub-section">
+    <div class="hub-heading">CLUB ACCESS</div>
+    <div class="hub-card" style="padding:15px">
+      <div id="adminLoginPanel">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input id="adminEmail" class="form-control" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Username">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input id="adminPassword" class="form-control" type="password" autocomplete="current-password" placeholder="Password">
+        </div>
+        <button class="save-button" style="width:100%;min-height:52px" onclick="adminLogin()">Sign In</button>
+      </div>
+
+      <div id="adminLoggedInPanel" style="display:none">
+        <div id="adminSignedInText" style="margin-bottom:12px;color:#9aa9bc;font-size:13px"></div>
+        <button id="myProfileButton" class="hub-action gold" style="display:none;border:1px solid #8d712a;border-radius:12px;margin-bottom:10px" onclick="openMyPlayerProfile()">
+          <div>
+            <div class="hub-action-main">👤 My Player Profile</div>
+            <div class="hub-action-sub">View your stats and update your player status</div>
+          </div>
+          <div class="hub-action-arrow">›</div>
+        </button>
+        <button class="hub-action blue" style="border:1px solid #25384f;border-radius:12px;margin-bottom:10px" onclick="uploadLocalDataToSupabase()">
+          <div>
+            <div class="hub-action-main">Upload / Replace Online Data</div>
+            <div class="hub-action-sub">Copies this device's FC26 and FC27 data to Supabase</div>
+          </div>
+          <div class="hub-action-arrow">↑</div>
+        </button>
+        <button class="hub-action" style="border:1px solid #25384f;border-radius:12px" onclick="adminLogout()">
+          <div><div class="hub-action-main">Log Out</div></div>
+          <div class="hub-action-arrow">›</div>
+        </button>
+      </div>
+      <div id="adminMessage" style="margin-top:12px;color:#9aa9bc;font-size:12px;line-height:1.45"></div>
+    </div>
+  </div>
+
   <div class="season-switcher">
     <div>
       <div class="season-switcher-label">VIEWING SEASON</div>
@@ -2658,42 +2698,6 @@ input[type="date"]::-webkit-date-and-time-value{
       <div class="info-row">
         <div class="info-label">Current Division</div>
         <div id="moreDivision" class="info-value">Division 5</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="hub-section">
-    <div class="hub-heading">LOGGED MATCH RECORD</div>
-
-    <div class="hub-record-grid">
-      <div class="hub-record">
-        <div id="morePlayed" class="hub-record-number">0</div>
-        <div class="hub-record-label">PLAYED</div>
-      </div>
-
-      <div class="hub-record">
-        <div id="moreWins" class="hub-record-number">0</div>
-        <div class="hub-record-label">WINS</div>
-      </div>
-
-      <div class="hub-record">
-        <div id="moreDraws" class="hub-record-number">0</div>
-        <div class="hub-record-label">DRAWS</div>
-      </div>
-
-      <div class="hub-record">
-        <div id="moreLosses" class="hub-record-number">0</div>
-        <div class="hub-record-label">LOSSES</div>
-      </div>
-
-      <div class="hub-record">
-        <div id="moreGF" class="hub-record-number">0</div>
-        <div class="hub-record-label">GF</div>
-      </div>
-
-      <div class="hub-record">
-        <div id="moreGA" class="hub-record-number">0</div>
-        <div class="hub-record-label">GA</div>
       </div>
     </div>
   </div>
@@ -2760,45 +2764,6 @@ input[type="date"]::-webkit-date-and-time-value{
     </div>
   </div>
 
-  <div class="hub-section">
-    <div class="hub-heading">CLUB ACCESS</div>
-    <div class="hub-card" style="padding:15px">
-      <div id="adminLoginPanel">
-        <div class="form-group">
-          <label class="form-label">Username</label>
-          <input id="adminEmail" class="form-control" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Username">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <input id="adminPassword" class="form-control" type="password" autocomplete="current-password" placeholder="Password">
-        </div>
-        <button class="save-button" style="width:100%;min-height:52px" onclick="adminLogin()">Sign In</button>
-      </div>
-
-      <div id="adminLoggedInPanel" style="display:none">
-        <div id="adminSignedInText" style="margin-bottom:12px;color:#9aa9bc;font-size:13px"></div>
-        <button id="myProfileButton" class="hub-action gold" style="display:none;border:1px solid #8d712a;border-radius:12px;margin-bottom:10px" onclick="openMyPlayerProfile()">
-          <div>
-            <div class="hub-action-main">👤 My Player Profile</div>
-            <div class="hub-action-sub">View your stats and update your player status</div>
-          </div>
-          <div class="hub-action-arrow">›</div>
-        </button>
-        <button class="hub-action blue" style="border:1px solid #25384f;border-radius:12px;margin-bottom:10px" onclick="uploadLocalDataToSupabase()">
-          <div>
-            <div class="hub-action-main">Upload / Replace Online Data</div>
-            <div class="hub-action-sub">Copies this device's FC26 and FC27 data to Supabase</div>
-          </div>
-          <div class="hub-action-arrow">↑</div>
-        </button>
-        <button class="hub-action" style="border:1px solid #25384f;border-radius:12px" onclick="adminLogout()">
-          <div><div class="hub-action-main">Log Out</div></div>
-          <div class="hub-action-arrow">›</div>
-        </button>
-      </div>
-      <div id="adminMessage" style="margin-top:12px;color:#9aa9bc;font-size:12px;line-height:1.45"></div>
-    </div>
-  </div>
 
   <div class="hub-section">
     <div class="hub-heading">DATA & BACKUP</div>
@@ -5679,15 +5644,6 @@ function renderPlayerProfile(){
 
 function renderMorePage(){
 
-  const club = calculateClubStats();
-
-  el("morePlayed").textContent = club.played;
-  el("moreWins").textContent = club.wins;
-  el("moreDraws").textContent = club.draws;
-  el("moreLosses").textContent = club.losses;
-  el("moreGF").textContent = club.goalsFor;
-  el("moreGA").textContent = club.goalsAgainst;
-
   if(activeSeason === "ALL_TIME"){
 
     el("resetSeasonButton").classList.add("disabled");
@@ -7916,7 +7872,7 @@ function renderEverything(){
   });
 }
 
-const OLYMPUS_APP_BUILD = "20260906-public-home-1";
+const OLYMPUS_APP_BUILD = "20260906-more-cleanup-1";
 
 async function checkForAppUpdate(){
   try{
