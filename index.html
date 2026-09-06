@@ -1135,6 +1135,142 @@ h1{
   .achievement-card{min-height:0}
 }
 
+/* ACHIEVEMENT UNLOCK CELEBRATION */
+.achievement-unlock-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:950;
+  padding:calc(28px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom));
+  background:rgba(3,9,17,.96);
+  align-items:center;
+  justify-content:center;
+}
+
+.achievement-unlock-overlay.open{display:flex}
+
+.achievement-unlock-card{
+  width:100%;
+  max-width:430px;
+  padding:25px 20px 20px;
+  border-radius:24px;
+  background:linear-gradient(150deg,#152943,#0e1d30);
+  border:1px solid #8d712a;
+  box-shadow:0 22px 70px rgba(0,0,0,.48);
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+
+.achievement-unlock-card::before{
+  content:"";
+  position:absolute;
+  width:190px;
+  height:190px;
+  border-radius:50%;
+  left:50%;
+  top:-105px;
+  transform:translateX(-50%);
+  background:radial-gradient(circle,rgba(232,189,75,.22),rgba(232,189,75,0) 70%);
+  pointer-events:none;
+}
+
+.achievement-unlock-kicker{
+  position:relative;
+  color:#e8bd4b;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:1.4px;
+}
+
+.achievement-unlock-icon{
+  position:relative;
+  width:86px;
+  height:86px;
+  margin:18px auto 12px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#081525;
+  border:1px solid #8d712a;
+  font-size:42px;
+  box-shadow:0 0 0 7px rgba(232,189,75,.06);
+}
+
+.achievement-unlock-name{
+  position:relative;
+  font-size:28px;
+  line-height:1.08;
+  font-weight:900;
+}
+
+.achievement-unlock-description{
+  margin:10px auto 0;
+  max-width:330px;
+  color:#a9b6c8;
+  font-size:13px;
+  line-height:1.5;
+}
+
+.achievement-unlock-player{
+  margin-top:18px;
+  color:#f5f7fb;
+  font-size:14px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+}
+
+.achievement-unlock-rarity{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:28px;
+  margin-top:9px;
+  padding:0 12px;
+  border-radius:999px;
+  background:#081525;
+  border:1px solid #31567e;
+  color:#9fc1ff;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+}
+
+.achievement-unlock-card.rarity-epic{border-color:#705f9d}
+.achievement-unlock-card.rarity-legendary{border-color:#b58a2d}
+.achievement-unlock-card.rarity-olympus{border-color:#6f9dff}
+.achievement-unlock-card.rarity-rare{border-color:#466e9b}
+
+.achievement-unlock-tagline{
+  margin-top:15px;
+  color:#8392a6;
+  font-size:11px;
+  font-style:italic;
+}
+
+.achievement-unlock-count{
+  margin-top:15px;
+  color:#62758e;
+  font-size:9px;
+  font-weight:bold;
+}
+
+.achievement-unlock-button{
+  width:100%;
+  min-height:50px;
+  margin-top:17px;
+  border:1px solid #8d712a;
+  border-radius:14px;
+  background:linear-gradient(180deg,#d5aa3e,#b78725);
+  color:#07111f;
+  font-size:14px;
+  font-weight:900;
+}
+
+.achievement-unlock-button:active{transform:scale(.985)}
+
 /* MORE */
 
 .more-hero{
@@ -4025,6 +4161,21 @@ textarea.bug-form-control{
   </div>
 </div>
 
+<!-- ACHIEVEMENT UNLOCK CELEBRATION -->
+<div id="achievementUnlockOverlay" class="achievement-unlock-overlay" role="dialog" aria-modal="true" aria-labelledby="achievementUnlockName">
+  <div id="achievementUnlockCard" class="achievement-unlock-card">
+    <div class="achievement-unlock-kicker">🏆 ACHIEVEMENT UNLOCKED</div>
+    <div id="achievementUnlockIcon" class="achievement-unlock-icon">⚽</div>
+    <div id="achievementUnlockName" class="achievement-unlock-name">Off the Mark</div>
+    <div id="achievementUnlockDescription" class="achievement-unlock-description">Score your first FC27 goal.</div>
+    <div id="achievementUnlockPlayer" class="achievement-unlock-player">TYRONE DEAN</div>
+    <div id="achievementUnlockRarity" class="achievement-unlock-rarity">COMMON</div>
+    <div id="achievementUnlockTagline" class="achievement-unlock-tagline">The climb has begun.</div>
+    <div id="achievementUnlockCount" class="achievement-unlock-count"></div>
+    <button id="achievementUnlockButton" class="achievement-unlock-button" onclick="advanceAchievementUnlock()">Continue</button>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -4059,7 +4210,7 @@ let remoteReady = false;
 let matchdaySessions = [];
 let matchdayPotnVotes = [];
 let bugReports = [];
-const APP_VERSION = "2026.09.06-achievements-stage2-fc27";
+const APP_VERSION = "2026.09.06-achievements-stage3-unlocks";
 
 const OLYMPUS_ACHIEVEMENTS = [
   {id:"first_goal",category:"Goals",icon:"⚽",name:"Off the Mark",description:"Score your first FC27 goal.",rarity:"Common"},
@@ -4367,6 +4518,126 @@ function calculateAchievementResults(playerId){
   results[god.id] = achievementResult(god,playerSnapshot,clubSnapshot,results);
 
   return {results,playerSnapshot,clubSnapshot};
+}
+
+let achievementUnlockQueue = [];
+let achievementUnlockIndex = 0;
+
+function captureAchievementUnlockState(){
+  const state = {players:{},club:{}};
+
+  players.forEach(player => {
+    const {results} = calculateAchievementResults(player.id);
+    state.players[player.id] = {};
+    OLYMPUS_ACHIEVEMENTS
+      .filter(item => !item.club)
+      .forEach(item => {
+        state.players[player.id][item.id] = Boolean(results[item.id]?.unlocked);
+      });
+  });
+
+  const {results} = calculateAchievementResults(players[0].id);
+  OLYMPUS_ACHIEVEMENTS
+    .filter(item => item.club)
+    .forEach(item => {
+      state.club[item.id] = Boolean(results[item.id]?.unlocked);
+    });
+
+  return state;
+}
+
+function collectNewAchievementUnlocks(beforeState){
+  if(!beforeState) return [];
+  const unlocks = [];
+
+  players.forEach(player => {
+    const {results} = calculateAchievementResults(player.id);
+    OLYMPUS_ACHIEVEMENTS
+      .filter(item => !item.club)
+      .forEach(item => {
+        const wasUnlocked = Boolean(beforeState.players?.[player.id]?.[item.id]);
+        const isUnlocked = Boolean(results[item.id]?.unlocked);
+        if(!wasUnlocked && isUnlocked){
+          unlocks.push({item,player});
+        }
+      });
+  });
+
+  const {results} = calculateAchievementResults(players[0].id);
+  OLYMPUS_ACHIEVEMENTS
+    .filter(item => item.club)
+    .forEach(item => {
+      const wasUnlocked = Boolean(beforeState.club?.[item.id]);
+      const isUnlocked = Boolean(results[item.id]?.unlocked);
+      if(!wasUnlocked && isUnlocked){
+        unlocks.push({item,player:null});
+      }
+    });
+
+  return unlocks;
+}
+
+function achievementUnlockTagline(item){
+  const special = {
+    first_goal:"The climb has begun.",
+    first_assist:"The first chance created. Many more to come.",
+    app_1:"Your FC27 Olympus journey is underway.",
+    hat_trick:"Three goals. One unforgettable performance.",
+    club_first_win:"Olympus has its first FC27 victory.",
+    club_promotion:"The mountain gets steeper from here.",
+    club_div1:"One step from the Summit.",
+    club_elite:"The Summit has been conquered.",
+    god_of_olympus:"You have conquered every individual challenge."
+  };
+  return special[item.id] || "Another step up Mount Olympus.";
+}
+
+function showAchievementUnlocks(unlocks){
+  if(!Array.isArray(unlocks) || !unlocks.length) return;
+  achievementUnlockQueue = unlocks;
+  achievementUnlockIndex = 0;
+  document.body.style.overflow = "hidden";
+  renderAchievementUnlock();
+  el("achievementUnlockOverlay")?.classList.add("open");
+}
+
+function renderAchievementUnlock(){
+  const unlock = achievementUnlockQueue[achievementUnlockIndex];
+  if(!unlock) return;
+  const item = unlock.item;
+  const playerName = unlock.player ? unlock.player.name : "Olympus FC";
+  const card = el("achievementUnlockCard");
+
+  if(card){
+    card.className = `achievement-unlock-card rarity-${String(item.rarity || "common").toLowerCase()}`;
+  }
+  if(el("achievementUnlockIcon")) el("achievementUnlockIcon").textContent = item.icon || "🏆";
+  if(el("achievementUnlockName")) el("achievementUnlockName").textContent = item.name;
+  if(el("achievementUnlockDescription")) el("achievementUnlockDescription").textContent = item.description;
+  if(el("achievementUnlockPlayer")) el("achievementUnlockPlayer").textContent = playerName;
+  if(el("achievementUnlockRarity")) el("achievementUnlockRarity").textContent = item.rarity || "Common";
+  if(el("achievementUnlockTagline")) el("achievementUnlockTagline").textContent = achievementUnlockTagline(item);
+
+  const total = achievementUnlockQueue.length;
+  if(el("achievementUnlockCount")){
+    el("achievementUnlockCount").textContent = total > 1 ? `${achievementUnlockIndex + 1} of ${total} new achievements` : "";
+  }
+  if(el("achievementUnlockButton")){
+    el("achievementUnlockButton").textContent = achievementUnlockIndex === total - 1 ? "Done" : "Continue";
+  }
+}
+
+function advanceAchievementUnlock(){
+  if(achievementUnlockIndex < achievementUnlockQueue.length - 1){
+    achievementUnlockIndex++;
+    renderAchievementUnlock();
+    return;
+  }
+
+  el("achievementUnlockOverlay")?.classList.remove("open");
+  achievementUnlockQueue = [];
+  achievementUnlockIndex = 0;
+  document.body.style.overflow = "";
 }
 
 function renderAchievementsPage(){
@@ -5753,6 +6024,12 @@ async function finishMatch(){
 
   const savedId = pendingMatch.id;
 
+  // Stage 3: capture the FC27 achievement state before this save so we can
+  // celebrate only achievements that become newly unlocked because of it.
+  const achievementStateBeforeSave = savedSeason === "FC27"
+    ? captureAchievementUnlockState()
+    : null;
+
   try{
     await saveMatchToSupabase(pendingMatch,savedSeason);
   }catch(error){
@@ -5787,6 +6064,14 @@ async function finishMatch(){
   editContext = null;
 
   renderEverything();
+
+  if(savedSeason === "FC27" && achievementStateBeforeSave){
+    const newlyUnlockedAchievements = collectNewAchievementUnlocks(achievementStateBeforeSave);
+    if(newlyUnlockedAchievements.length){
+      // Let the match modal finish closing before displaying the celebration.
+      setTimeout(() => showAchievementUnlocks(newlyUnlockedAchievements),120);
+    }
+  }
 
   if(wasEditing && selectedMatchRef){
 
