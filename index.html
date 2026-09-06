@@ -2205,6 +2205,22 @@ input[type="date"]::-webkit-date-and-time-value{
 .clubhouse-copy{font-size:13px;line-height:1.45;color:#aeb9cc}
 .clubhouse-legacy-home{display:none!important}
 
+
+/* PUBLIC HOME LANDING */
+.public-home{display:none;margin:0 16px 22px}
+.public-home-card{padding:16px;border-radius:16px;background:linear-gradient(145deg,#12213a,#0d1929);border:1px solid #28405f;margin-bottom:14px}
+.public-home-label{font-size:10px;font-weight:900;letter-spacing:1px;color:#8ea0b8;text-transform:uppercase;margin-bottom:7px}
+.public-home-title{font-size:18px;font-weight:900;color:#fff;margin-bottom:6px}
+.public-home-copy{font-size:12px;line-height:1.5;color:#aab8ca}
+.public-login-button{width:100%;min-height:46px;margin-top:13px;border:1px solid #3d6fb4;border-radius:12px;background:#15315a;color:#b8d0ff;font-size:13px;font-weight:900}
+.public-squad-list{display:grid;gap:8px;margin-top:10px}
+.public-player-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 12px;border-radius:12px;border:1px solid #203854;background:#0b1726;color:#fff;text-align:left}
+.public-player-main{min-width:0}.public-player-name{display:block;font-size:13px;font-weight:900}.public-player-meta{display:block;margin-top:2px;font-size:10px;color:#91a1b5}
+.public-player-arrow{font-size:18px;color:#729bd8}
+.public-club-details{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.public-club-detail{padding:10px;border-radius:11px;background:#0b1726;border:1px solid #203854}
+.public-club-detail-label{font-size:9px;font-weight:800;letter-spacing:.6px;color:#8396ad;text-transform:uppercase}.public-club-detail-value{margin-top:3px;font-size:12px;font-weight:900;color:#eef3fa}
+
 </style>
 </head>
 
@@ -2223,9 +2239,43 @@ input[type="date"]::-webkit-date-and-time-value{
   </div>
 
   <div class="clubhouse-hero">
-    <div class="clubhouse-kicker">Welcome to Mount Olympus</div>
-    <div class="clubhouse-title">Clubhouse</div>
-    <div class="clubhouse-copy">The squad's place for tonight's session, who's online and the Olympus Spotify Jam.</div>
+    <div id="clubhouseHeroKicker" class="clubhouse-kicker">Welcome to Mount Olympus</div>
+    <div id="clubhouseHeroTitle" class="clubhouse-title">Clubhouse</div>
+    <div id="clubhouseHeroCopy" class="clubhouse-copy">The squad's place for tonight's session, who's online and the Olympus Spotify Jam.</div>
+  </div>
+
+  <div id="publicHome" class="public-home">
+    <div class="public-home-card">
+      <div class="public-home-label">🔐 Members Area</div>
+      <div class="public-home-title">Enter the Clubhouse</div>
+      <div class="public-home-copy">Olympus FC players can sign in to access the next session, attendance, who's online and the private Spotify Jam.</div>
+      <button class="public-login-button" type="button" onclick="goToClubLogin()">Sign In to the Clubhouse →</button>
+    </div>
+
+    <div class="public-home-card">
+      <div class="public-home-label">👥 Meet the Squad</div>
+      <div class="public-home-title">Olympus FC First Team</div>
+      <div class="public-home-copy">Explore the current squad and open a player's public profile.</div>
+      <div class="public-squad-list">
+        <button class="public-player-row" type="button" onclick="openPlayerProfile('tyrone','home')"><span class="public-player-main"><span class="public-player-name">Tyrone Dean</span><span class="public-player-meta">#40 · CM · England</span></span><span class="public-player-arrow">›</span></button>
+        <button class="public-player-row" type="button" onclick="openPlayerProfile('baganor','home')"><span class="public-player-main"><span class="public-player-name">Baganor Jamba</span><span class="public-player-meta">#78 · CM · DR Congo</span></span><span class="public-player-arrow">›</span></button>
+        <button class="public-player-row" type="button" onclick="openPlayerProfile('kenny','home')"><span class="public-player-main"><span class="public-player-name">Kenny Kitbag</span><span class="public-player-meta">#26 · RM · England</span></span><span class="public-player-arrow">›</span></button>
+        <button class="public-player-row" type="button" onclick="openPlayerProfile('deano','home')"><span class="public-player-main"><span class="public-player-name">Deano</span><span class="public-player-meta">#7 · ST · England</span></span><span class="public-player-arrow">›</span></button>
+        <button class="public-player-row" type="button" onclick="openPlayerProfile('juanny','home')"><span class="public-player-main"><span class="public-player-name">Juanny P</span><span class="public-player-meta">#23 · CDM · Mexico</span></span><span class="public-player-arrow">›</span></button>
+      </div>
+    </div>
+
+    <div class="public-home-card">
+      <div class="public-home-label">🏔️ Club Identity</div>
+      <div class="public-home-title">Olympus FC</div>
+      <div class="public-home-copy">The climb to the summit continues.</div>
+      <div class="public-club-details">
+        <div class="public-club-detail"><div class="public-club-detail-label">Stadium</div><div class="public-club-detail-value">Mount Olympus</div></div>
+        <div class="public-club-detail"><div class="public-club-detail-label">Game</div><div class="public-club-detail-value">EA SPORTS FC Clubs</div></div>
+        <div class="public-club-detail"><div class="public-club-detail-label">Established</div><div class="public-club-detail-value">2025</div></div>
+        <div class="public-club-detail"><div class="public-club-detail-label">Home</div><div class="public-club-detail-value">The Clubhouse</div></div>
+      </div>
+    </div>
   </div>
 
   <div class="clubhouse-legacy-home">
@@ -5292,7 +5342,7 @@ function closePlayerProfile(){
   el("playerProfile").classList.remove("active");
 
   const returnPage =
-    ["squad","stats","more"].includes(playerProfileReturnPage)
+    ["home","squad","stats","more"].includes(playerProfileReturnPage)
       ? playerProfileReturnPage
       : "squad";
 
@@ -7302,6 +7352,35 @@ function setOnlineStatus(text,color="#9aa9bc"){
   }
 }
 
+function renderPublicHome(){
+  const publicHome = el("publicHome");
+  const kicker = el("clubhouseHeroKicker");
+  const title = el("clubhouseHeroTitle");
+  const copy = el("clubhouseHeroCopy");
+  const signedIn = Boolean(currentClubRole);
+
+  if(publicHome) publicHome.style.display = signedIn ? "none" : "block";
+
+  if(kicker) kicker.textContent = "Welcome to Mount Olympus";
+  if(title) title.textContent = signedIn ? "Clubhouse" : "Olympus FC";
+  if(copy){
+    copy.textContent = signedIn
+      ? "The squad's place for tonight's session, who's online and the Olympus Spotify Jam."
+      : "Home of Olympus FC. Meet the squad and follow the club's journey through EA SPORTS FC Clubs.";
+  }
+}
+
+function goToClubLogin(){
+  const navItems = document.querySelectorAll(".nav-item");
+  showPage("more",navItems[4] || null);
+  setTimeout(() => {
+    const panel = el("adminLoginPanel");
+    if(panel) panel.scrollIntoView({behavior:"smooth",block:"center"});
+    const input = el("adminEmail");
+    if(input) input.focus({preventScroll:true});
+  },80);
+}
+
 function updateAdminUI(){
   const loginPanel = el("adminLoginPanel");
   const loggedPanel = el("adminLoggedInPanel");
@@ -7823,6 +7902,7 @@ function renderEverything(){
   syncSeasonSelectors();
   renderDivision();
   renderHome();
+  renderPublicHome();
   renderClubhouseSessionHome();
   renderSpotifyJamHome();
   renderSquad();
@@ -7836,7 +7916,7 @@ function renderEverything(){
   });
 }
 
-const OLYMPUS_APP_BUILD = "20260906-clubhouse-presence-1";
+const OLYMPUS_APP_BUILD = "20260906-public-home-1";
 
 async function checkForAppUpdate(){
   try{
