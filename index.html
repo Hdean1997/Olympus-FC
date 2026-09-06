@@ -917,6 +917,37 @@ h1{
   letter-spacing:.7px;
 }
 
+
+.achievement-player-select-wrap{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 86px;
+  gap:10px;
+  align-items:stretch;
+}
+
+.achievement-player-change{
+  border-left:1px solid #29425f;
+  padding-left:10px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  color:#8fa7c8;
+  font-size:8px;
+  font-weight:bold;
+  line-height:1.25;
+  text-align:center;
+  letter-spacing:.3px;
+  pointer-events:none;
+}
+
+.achievement-player-chevron{
+  color:#d8e5f8;
+  font-size:22px;
+  line-height:.8;
+}
+
 .achievement-player-select{
   width:100%;
   min-height:44px;
@@ -3240,6 +3271,17 @@ textarea.bug-form-control{
     <div id="achievementsSubtitle" class="achievements-subtitle">Olympus FC · FC27</div>
   </div>
 
+  <div class="achievement-player-picker">
+    <label for="achievementPlayerSelect">VIEWING ACHIEVEMENTS FOR</label>
+    <div class="achievement-player-select-wrap">
+      <select id="achievementPlayerSelect" class="achievement-player-select" onchange="changeAchievementPlayer(this.value)" aria-label="Choose player to view achievements"></select>
+      <div class="achievement-player-change" aria-hidden="true">
+        <span class="achievement-player-chevron">⌄</span>
+        <span>TAP TO CHANGE PLAYER</span>
+      </div>
+    </div>
+  </div>
+
   <div class="achievements-hero">
     <div class="achievements-kicker">🏔️ FC27 ACHIEVEMENT JOURNEY</div>
     <div id="achievementHeroTitle" class="achievements-hero-title">The climb starts from zero.</div>
@@ -3259,11 +3301,6 @@ textarea.bug-form-control{
         <div class="achievements-overview-label">CLUB TROPHIES</div>
       </div>
     </div>
-  </div>
-
-  <div class="achievement-player-picker">
-    <label for="achievementPlayerSelect">VIEWING ACHIEVEMENTS FOR</label>
-    <select id="achievementPlayerSelect" class="achievement-player-select" onchange="changeAchievementPlayer(this.value)"></select>
   </div>
 
   <div class="achievement-stage-note">
