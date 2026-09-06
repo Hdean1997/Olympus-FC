@@ -813,6 +813,216 @@ h1{
   font-size:9px;
 }
 
+
+/* OLYMPUS ACHIEVEMENTS */
+
+.achievements-top{
+  padding:30px 20px 14px;
+  background:linear-gradient(180deg,#0d213a,#07111f);
+}
+
+.achievements-title{
+  margin:0;
+  font-size:32px;
+}
+
+.achievements-subtitle{
+  margin-top:7px;
+  color:#9aa9bc;
+}
+
+.achievements-hero{
+  margin:8px 16px 16px;
+  padding:20px;
+  border-radius:20px;
+  background:linear-gradient(145deg,#12243d,#101d2e);
+  border:1px solid #8d712a;
+}
+
+.achievements-kicker{
+  color:#e8bd4b;
+  font-size:11px;
+  font-weight:bold;
+  letter-spacing:.9px;
+}
+
+.achievements-hero-title{
+  margin-top:7px;
+  font-size:24px;
+  font-weight:bold;
+}
+
+.achievements-hero-copy{
+  margin-top:7px;
+  color:#9aa9bc;
+  font-size:12px;
+  line-height:1.5;
+}
+
+.achievements-overview{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:16px;
+}
+
+.achievements-overview-card{
+  min-width:0;
+  padding:12px 6px;
+  border-radius:12px;
+  background:#07111f;
+  border:1px solid #29425f;
+  text-align:center;
+}
+
+.achievements-overview-number{
+  font-size:20px;
+  font-weight:bold;
+  color:#e8bd4b;
+}
+
+.achievements-overview-label{
+  margin-top:4px;
+  color:#8392a6;
+  font-size:8px;
+  font-weight:bold;
+  line-height:1.25;
+}
+
+.achievement-stage-note{
+  margin:0 16px 16px;
+  padding:12px 14px;
+  border-radius:12px;
+  background:#0b1625;
+  border:1px solid #29425f;
+  color:#9aa9bc;
+  font-size:11px;
+  line-height:1.5;
+}
+
+.achievement-filters{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:0 16px 12px;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+
+.achievement-filters::-webkit-scrollbar{display:none}
+
+.achievement-filter{
+  flex:0 0 auto;
+  min-height:38px;
+  padding:0 12px;
+  border-radius:999px;
+  border:1px solid #29425f;
+  background:#0b1625;
+  color:#9aa9bc;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.achievement-filter.active{
+  border-color:#8d712a;
+  background:#2a2313;
+  color:#e8bd4b;
+}
+
+.achievement-category{
+  padding:8px 16px 0;
+}
+
+.achievement-category-title{
+  margin:12px 0 10px;
+  color:#cbd5e3;
+  font-size:13px;
+  font-weight:bold;
+  letter-spacing:.5px;
+}
+
+.achievement-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.achievement-card{
+  min-width:0;
+  min-height:178px;
+  padding:15px 12px;
+  border-radius:16px;
+  background:#101d2e;
+  border:1px solid #1c314c;
+  position:relative;
+  overflow:hidden;
+}
+
+.achievement-card.locked{
+  background:linear-gradient(145deg,#0e1928,#101d2e);
+}
+
+.achievement-icon{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#0b1625;
+  border:1px solid #29425f;
+  font-size:21px;
+  filter:grayscale(.45);
+  opacity:.8;
+}
+
+.achievement-card-name{
+  margin-top:11px;
+  font-size:14px;
+  font-weight:bold;
+  line-height:1.25;
+}
+
+.achievement-card-description{
+  margin-top:6px;
+  color:#8392a6;
+  font-size:10px;
+  line-height:1.4;
+}
+
+.achievement-card-bottom{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:7px;
+  margin-top:12px;
+}
+
+.achievement-rarity{
+  padding:4px 7px;
+  border-radius:999px;
+  background:#0b1625;
+  border:1px solid #29425f;
+  color:#8fa0b7;
+  font-size:8px;
+  font-weight:bold;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+}
+
+.achievement-lock{
+  color:#617188;
+  font-size:13px;
+}
+
+.achievement-card.rarity-legendary{border-color:#594a25}
+.achievement-card.rarity-olympus{border-color:#315d9d}
+.achievement-card.rarity-epic{border-color:#41385f}
+
+@media(max-width:360px){
+  .achievement-grid{grid-template-columns:1fr}
+  .achievement-card{min-height:0}
+}
+
 /* MORE */
 
 .more-hero{
@@ -1101,6 +1311,133 @@ h1{
   margin-top:11px;
   font-size:14px;
   font-weight:bold;
+}
+
+
+/* OLYMPUS ACHIEVEMENTS - STAGE 1 */
+
+const OLYMPUS_ACHIEVEMENTS = [
+  {category:"Goals",icon:"⚽",name:"Off the Mark",description:"Score your first goal.",rarity:"Common"},
+  {category:"Goals",icon:"🥉",name:"Goalscorer",description:"Score 25 career goals.",rarity:"Common"},
+  {category:"Goals",icon:"🥈",name:"Finisher",description:"Score 50 career goals.",rarity:"Rare"},
+  {category:"Goals",icon:"🥇",name:"Centurion",description:"Score 100 career goals.",rarity:"Epic"},
+  {category:"Goals",icon:"🏔️",name:"Olympus Marksman",description:"Score 250 career goals.",rarity:"Legendary"},
+  {category:"Goals",icon:"🎩",name:"Hat-Trick Hero",description:"Score 3+ goals in one logged match.",rarity:"Rare"},
+  {category:"Goals",icon:"🔥",name:"Four of a Kind",description:"Score 4+ goals in one logged match.",rarity:"Epic"},
+  {category:"Goals",icon:"👑",name:"Five-Star Finisher",description:"Score 5+ goals in one logged match.",rarity:"Legendary"},
+
+  {category:"Assists",icon:"🤝",name:"First Delivery",description:"Record your first assist.",rarity:"Common"},
+  {category:"Assists",icon:"🥉",name:"Creator",description:"Record 25 career assists.",rarity:"Common"},
+  {category:"Assists",icon:"🥈",name:"Playmaker",description:"Record 50 career assists.",rarity:"Rare"},
+  {category:"Assists",icon:"🥇",name:"Assist King",description:"Record 100 career assists.",rarity:"Epic"},
+  {category:"Assists",icon:"🏔️",name:"Olympus Architect",description:"Record 250 career assists.",rarity:"Legendary"},
+  {category:"Assists",icon:"🎯",name:"Perfect Provider",description:"Record 3+ assists in one logged match.",rarity:"Rare"},
+  {category:"Assists",icon:"🪄",name:"Master Creator",description:"Record 5+ assists in one logged match.",rarity:"Legendary"},
+
+  {category:"Contributions",icon:"⚡",name:"Double Impact",description:"Record 2+ goal contributions in one match.",rarity:"Common"},
+  {category:"Contributions",icon:"🔥",name:"Triple Threat",description:"Record 3+ goal contributions in one match.",rarity:"Rare"},
+  {category:"Contributions",icon:"⭐",name:"Five-Star Performance",description:"Record 5+ goal contributions in one match.",rarity:"Epic"},
+  {category:"Contributions",icon:"👑",name:"Unplayable",description:"Record 7+ goal contributions in one match.",rarity:"Legendary"},
+  {category:"Contributions",icon:"💯",name:"Century of Influence",description:"Reach 100 career goal contributions.",rarity:"Rare"},
+  {category:"Contributions",icon:"🏔️",name:"Mount Olympus",description:"Reach 250 career goal contributions.",rarity:"Epic"},
+  {category:"Contributions",icon:"⚡",name:"500 Club",description:"Reach 500 career goal contributions.",rarity:"Olympus"},
+
+  {category:"Appearances",icon:"🆕",name:"Olympus Debut",description:"Make your first Olympus FC appearance.",rarity:"Common"},
+  {category:"Appearances",icon:"🥉",name:"Regular",description:"Make 25 appearances.",rarity:"Common"},
+  {category:"Appearances",icon:"🥈",name:"Established",description:"Make 50 appearances.",rarity:"Rare"},
+  {category:"Appearances",icon:"🥇",name:"Centurion",description:"Make 100 appearances.",rarity:"Epic"},
+  {category:"Appearances",icon:"🏛️",name:"Club Veteran",description:"Make 250 appearances.",rarity:"Legendary"},
+  {category:"Appearances",icon:"👑",name:"Olympus Legend",description:"Make 500 appearances.",rarity:"Olympus"},
+
+  {category:"Streaks",icon:"🔥",name:"Heating Up",description:"Score in 3 consecutive appearances.",rarity:"Rare"},
+  {category:"Streaks",icon:"🌋",name:"On Fire",description:"Score in 5 consecutive appearances.",rarity:"Epic"},
+  {category:"Streaks",icon:"👑",name:"Unstoppable",description:"Score in 10 consecutive appearances.",rarity:"Olympus"},
+  {category:"Streaks",icon:"🎯",name:"Creator's Run",description:"Assist in 5 consecutive appearances.",rarity:"Epic"},
+  {category:"Streaks",icon:"⚡",name:"Always Involved",description:"Record a G/A in 10 consecutive appearances.",rarity:"Legendary"},
+  {category:"Streaks",icon:"🏔️",name:"Summit Form",description:"Record a G/A in 15 consecutive appearances.",rarity:"Olympus"},
+
+  {category:"Club",icon:"🏆",name:"First Blood",description:"Be part of Olympus FC's first logged victory.",rarity:"Common"},
+  {category:"Club",icon:"⛰️",name:"The Climb Begins",description:"Earn a promotion with Olympus FC.",rarity:"Rare"},
+  {category:"Club",icon:"🏔️",name:"Division One",description:"Reach Division 1 with Olympus FC.",rarity:"Epic"},
+  {category:"Club",icon:"👑",name:"The Summit",description:"Reach Elite Division with Olympus FC.",rarity:"Olympus"},
+  {category:"Club",icon:"🔥",name:"Five Alive",description:"Olympus FC wins 5 consecutive matches.",rarity:"Rare"},
+  {category:"Club",icon:"💪",name:"Ten Strong",description:"Olympus FC goes 10 matches unbeaten.",rarity:"Epic"},
+  {category:"Club",icon:"⚽",name:"Century Club",description:"Olympus FC scores 100 logged goals.",rarity:"Rare"},
+  {category:"Club",icon:"🏛️",name:"Olympus History",description:"Olympus FC logs its 100th match.",rarity:"Legendary"},
+
+  {category:"Secret",icon:"🤝",name:"Perfect Partnership",description:"Two players combine for 5+ G/A in one match.",rarity:"Epic"},
+  {category:"Secret",icon:"💥",name:"Total Domination",description:"Olympus FC wins a match by 5+ goals.",rarity:"Rare"},
+  {category:"Secret",icon:"🧱",name:"Untouchable",description:"Win 5 consecutive matches.",rarity:"Epic"},
+  {category:"Secret",icon:"🎩",name:"Back-to-Back Magic",description:"Score hat-tricks in consecutive matches.",rarity:"Legendary"},
+  {category:"Secret",icon:"⚔️",name:"Dynamic Duo",description:"Two players both score 2+ in the same match.",rarity:"Epic"},
+  {category:"Secret",icon:"🪄",name:"Generous God",description:"Record 4+ assists in one match.",rarity:"Legendary"},
+  {category:"Secret",icon:"⚡",name:"One-Man Army",description:"Record 6+ G/A in one match.",rarity:"Legendary"},
+  {category:"Secret",icon:"🌟",name:"God of Olympus",description:"Unlock every other individual achievement.",rarity:"Olympus"}
+];
+
+let achievementCategoryFilter = "All";
+
+function achievementCategoryLabel(category){
+  const icons = {Goals:"⚽",Assists:"🎯",Contributions:"⭐",Appearances:"👕",Streaks:"🔥",Club:"🏔️",Secret:"💎"};
+  return `${icons[category] || "🏆"} ${category}`;
+}
+
+function renderAchievementsPage(){
+  const filters = el("achievementFilters");
+  const catalogue = el("achievementsCatalogue");
+  if(!filters || !catalogue) return;
+
+  const categories = ["All","Goals","Assists","Contributions","Appearances","Streaks","Club","Secret"];
+  filters.innerHTML = categories.map(category => `
+    <button class="achievement-filter ${achievementCategoryFilter === category ? "active" : ""}" onclick="setAchievementFilter('${category}')">
+      ${category === "All" ? "🏆 All" : achievementCategoryLabel(category)}
+    </button>`).join("");
+
+  const shownCategories = achievementCategoryFilter === "All"
+    ? categories.slice(1)
+    : [achievementCategoryFilter];
+
+  catalogue.innerHTML = shownCategories.map(category => {
+    const items = OLYMPUS_ACHIEVEMENTS.filter(item => item.category === category);
+    return `
+      <div class="achievement-category">
+        <div class="achievement-category-title">${achievementCategoryLabel(category)} · ${items.length}</div>
+        <div class="achievement-grid">
+          ${items.map(item => `
+            <div class="achievement-card locked rarity-${item.rarity.toLowerCase()}">
+              <div class="achievement-icon">${item.icon}</div>
+              <div class="achievement-card-name">${escapeHTML(item.name)}</div>
+              <div class="achievement-card-description">${escapeHTML(item.description)}</div>
+              <div class="achievement-card-bottom">
+                <span class="achievement-rarity">${escapeHTML(item.rarity)}</span>
+                <span class="achievement-lock">🔒</span>
+              </div>
+            </div>`).join("")}
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function setAchievementFilter(category){
+  achievementCategoryFilter = category;
+  renderAchievementsPage();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function openAchievementsPage(){
+  renderAchievementsPage();
+  document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
+  el("achievements").classList.add("active");
+  el("bottomNav").classList.add("hidden");
+  window.scrollTo(0,0);
+}
+
+function closeAchievementsPage(){
+  el("achievements").classList.remove("active");
+  el("stats").classList.add("active");
+  el("bottomNav").classList.remove("hidden");
+  activateNavForPage("stats");
+  window.scrollTo(0,0);
 }
 
 /* RECORDS */
@@ -2907,6 +3244,14 @@ textarea.bug-form-control{
   <div class="hub-section">
     <div class="hub-heading">STAT TOOLS</div>
     <div class="hub-card">
+      <button class="hub-action gold" onclick="openAchievementsPage()">
+        <div>
+          <div class="hub-action-main">🏔️ Olympus Achievements</div>
+          <div class="hub-action-sub">50 challenges across goals, assists, performances and club milestones</div>
+        </div>
+        <div class="hub-action-arrow">›</div>
+      </button>
+
       <button class="hub-action gold" onclick="openRecordsPage()">
         <div>
           <div class="hub-action-main">🏆 Records & Awards</div>
@@ -2924,6 +3269,47 @@ textarea.bug-form-control{
       </button>
     </div>
   </div>
+</div>
+
+
+<!-- OLYMPUS ACHIEVEMENTS -->
+
+<div id="achievements" class="page">
+  <div class="achievements-top">
+    <button class="app-back-button" onclick="closeAchievementsPage()">
+      <span class="app-back-icon">‹</span>
+      <span>Back</span>
+    </button>
+    <h2 class="achievements-title">Olympus Achievements</h2>
+    <div id="achievementsSubtitle" class="achievements-subtitle">Olympus FC · FC26</div>
+  </div>
+
+  <div class="achievements-hero">
+    <div class="achievements-kicker">🏔️ CLIMB THE MOUNTAIN</div>
+    <div class="achievements-hero-title">Build your Olympus legacy.</div>
+    <div class="achievements-hero-copy">Career milestones, match feats, streaks and club achievements — all in one trophy cabinet.</div>
+    <div class="achievements-overview">
+      <div class="achievements-overview-card">
+        <div class="achievements-overview-number">50</div>
+        <div class="achievements-overview-label">ACHIEVEMENTS</div>
+      </div>
+      <div class="achievements-overview-card">
+        <div class="achievements-overview-number">7</div>
+        <div class="achievements-overview-label">CATEGORIES</div>
+      </div>
+      <div class="achievements-overview-card">
+        <div class="achievements-overview-number">5</div>
+        <div class="achievements-overview-label">RARITIES</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="achievement-stage-note">
+    Stage 1 previews the complete Olympus achievement catalogue. Automatic unlocking and player progress will be connected in Stage 2.
+  </div>
+
+  <div id="achievementFilters" class="achievement-filters"></div>
+  <div id="achievementsCatalogue"></div>
 </div>
 
 <!-- MORE -->
@@ -3671,7 +4057,7 @@ let remoteReady = false;
 let matchdaySessions = [];
 let matchdayPotnVotes = [];
 let bugReports = [];
-const APP_VERSION = "2026.09.06-bug-reports-v1";
+const APP_VERSION = "2026.09.06-achievements-stage1";
 let matchdayTimerInterval = setInterval(updateMatchdayTimers,1000);
 
 const players = [
@@ -4000,6 +4386,7 @@ function syncSeasonSelectors(){
   el("squadSeasonSubtitle").textContent = "Olympus FC · " + displaySeason;
   el("matchesSeasonSubtitle").textContent = "Olympus FC · " + displaySeason;
   el("statsSeasonSubtitle").textContent = "Olympus FC · " + displaySeason;
+  if(el("achievementsSubtitle")) el("achievementsSubtitle").textContent = "Olympus FC · " + displaySeason;
   el("moreSeasonSubtitle").textContent = "Olympus FC";
   el("recordsSubtitle").textContent = "Olympus FC · " + displaySeason;
   el("compareSubtitle").textContent = "Olympus FC · " + displaySeason;
@@ -8521,6 +8908,7 @@ function renderEverything(){
   renderMatches();
   renderMatchday();
   renderStatsPage();
+  if(el("achievementsCatalogue")) renderAchievementsPage();
   renderMorePage();
 
   document.querySelectorAll(".edit-match-button,.delete-match-button").forEach(button => {
