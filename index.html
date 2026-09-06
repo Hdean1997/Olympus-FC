@@ -1620,6 +1620,221 @@ h1{
 }
 
 
+/* CLUBHOUSE PLANNED SESSION / ATTENDANCE */
+
+async function loadClubhouseSession(){
+  clubhouseSession = null;
+  clubhouseAttendance = {};
+
+  if(!supabaseClient || !currentClubRole){
+    renderClubhouseSessionHome();
+    return;
+  }
+
+  try{
+    const {data,error} = await supabaseClient
+      .from("clubhouse_sessions")
+      .select("id,session_date,session_time,title,note,created_by,created_at,is_active")
+      .eq("is_active",true)
+      .order("id",{ascending:false})
+      .limit(1)
+      .maybeSingle();
+    if(error) throw error;
+    clubhouseSession = data || null;
+
+    if(clubhouseSession){
+      const {data:attendanceRows,error:attendanceError} = await supabaseClient
+        .from("clubhouse_attendance")
+        .select("player_key,response,updated_at")
+        .eq("session_id",clubhouseSession.id);
+      if(attendanceError) throw attendanceError;
+      (attendanceRows || []).forEach(row => {
+        if(row.player_key) clubhouseAttendance[row.player_key] = row.response;
+      });
+    }
+  }catch(error){
+    console.warn("Clubhouse session could not be loaded:",error);
+    clubhouseSession = null;
+    clubhouseAttendance = {};
+  }
+
+  renderClubhouseSessionHome();
+}
+
+function formatClubhouseSessionDate(dateValue,timeValue){
+  if(!dateValue) return "Date TBC";
+  const d = new Date(`${dateValue}T12:00:00`);
+  const dateText = d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
+  if(!timeValue) return dateText;
+  const [h,m] = String(timeValue).slice(0,5).split(":").map(Number);
+  const temp = new Date(2000,0,1,h,m);
+  return `${dateText} · ${temp.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}`;
+}
+
+function renderClubhouseSessionHome(){
+  const card = el("clubhouseSessionCard");
+  const title = el("clubhouseSessionTitle");
+  const meta = el("clubhouseSessionMeta");
+  const note = el("clubhouseSessionNote");
+  const content = el("clubhouseSessionContent");
+  const count = el("clubhouseAttendanceCount");
+  const list = el("clubhouseAttendanceList");
+  const mine = el("clubhouseMyAttendance");
+  const adminActions = el("clubhouseSessionAdminActions");
+  const noSessionActions = el("clubhouseNoSessionActions");
+  if(!card || !title || !meta || !content || !list || !mine) return;
+
+  if(!currentClubRole){
+    card.style.display = "none";
+    return;
+  }
+
+  card.style.display = "block";
+
+  if(!clubhouseSession){
+    title.textContent = "No session planned";
+    meta.textContent = "Waiting for the next Olympus session.";
+    if(note) note.style.display = "none";
+    content.style.display = "none";
+    if(noSessionActions){
+      noSessionActions.innerHTML = isAdmin
+        ? '<button class="clubhouse-session-button" onclick="openClubhouseSessionEditor()">➕ Plan Session</button>'
+        : '';
+    }
+    return;
+  }
+
+  if(noSessionActions) noSessionActions.innerHTML = "";
+  title.textContent = clubhouseSession.title || "Pro Clubs";
+  meta.textContent = formatClubhouseSessionDate(clubhouseSession.session_date,clubhouseSession.session_time);
+  if(note){
+    note.textContent = clubhouseSession.note || "";
+    note.style.display = clubhouseSession.note ? "block" : "none";
+  }
+  content.style.display = "block";
+
+  const playingCount = players.filter(p => clubhouseAttendance[p.id] === "playing").length;
+  if(count) count.textContent = `${playingCount}/${players.length} Playing`;
+
+  list.innerHTML = players.map(player => {
+    const response = clubhouseAttendance[player.id] || "";
+    const label = response === "playing" ? "✅ Playing" : response === "maybe" ? "❓ Maybe" : response === "not_playing" ? "❌ Can't Play" : "— No response";
+    return `<div class="attendance-row"><div class="attendance-player">${escapeHTML(player.name)}</div><div class="attendance-status ${response}">${label}</div></div>`;
+  }).join("");
+
+  const ownResponse = clubhouseAttendance[currentClubPlayerKey] || "";
+  mine.innerHTML = currentClubPlayerKey ? `
+    <button class="attendance-choice playing ${ownResponse === "playing" ? "active" : ""}" onclick="setMyClubhouseAttendance('playing')">✅ Playing</button>
+    <button class="attendance-choice maybe ${ownResponse === "maybe" ? "active" : ""}" onclick="setMyClubhouseAttendance('maybe')">❓ Maybe</button>
+    <button class="attendance-choice not_playing ${ownResponse === "not_playing" ? "active" : ""}" onclick="setMyClubhouseAttendance('not_playing')">❌ Can't Play</button>` : "";
+
+  if(adminActions){
+    adminActions.innerHTML = isAdmin
+      ? '<button class="clubhouse-session-button" onclick="openClubhouseSessionEditor(true)">✏️ Edit</button><button class="clubhouse-session-button danger" onclick="endClubhouseSession()">End</button>'
+      : '';
+  }
+}
+
+function openClubhouseSessionEditor(editing=false){
+  if(!isAdmin) return;
+  const editor = el("clubhouseSessionEditor");
+  const titleInput = el("clubhouseSessionTitleInput");
+  const dateInput = el("clubhouseSessionDateInput");
+  const timeInput = el("clubhouseSessionTimeInput");
+  const noteInput = el("clubhouseSessionNoteInput");
+  const msg = el("clubhouseSessionEditorMessage");
+  if(!editor) return;
+
+  const now = new Date();
+  const localDate = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().slice(0,10);
+  titleInput.value = editing && clubhouseSession ? (clubhouseSession.title || "") : "Pro Clubs";
+  dateInput.value = editing && clubhouseSession ? (clubhouseSession.session_date || localDate) : localDate;
+  timeInput.value = editing && clubhouseSession && clubhouseSession.session_time ? String(clubhouseSession.session_time).slice(0,5) : "20:00";
+  noteInput.value = editing && clubhouseSession ? (clubhouseSession.note || "") : "";
+  if(msg) msg.textContent = "";
+  editor.classList.add("open");
+}
+
+function closeClubhouseSessionEditor(){
+  el("clubhouseSessionEditor")?.classList.remove("open");
+  const msg = el("clubhouseSessionEditorMessage");
+  if(msg) msg.textContent = "";
+}
+
+async function saveClubhouseSession(){
+  if(!isAdmin || !supabaseClient) return;
+  const title = (el("clubhouseSessionTitleInput")?.value || "").trim();
+  const sessionDate = el("clubhouseSessionDateInput")?.value || "";
+  const sessionTime = el("clubhouseSessionTimeInput")?.value || null;
+  const note = (el("clubhouseSessionNoteInput")?.value || "").trim();
+  const msg = el("clubhouseSessionEditorMessage");
+  if(msg) msg.textContent = "";
+  if(!title || !sessionDate){
+    if(msg) msg.textContent = "Add a session name and date.";
+    return;
+  }
+
+  try{
+    const {data:authData} = await supabaseClient.auth.getSession();
+    const userId = authData?.session?.user?.id;
+    if(!userId) throw new Error("Not signed in");
+
+    if(clubhouseSession){
+      const {error} = await supabaseClient.from("clubhouse_sessions").update({
+        title,session_date:sessionDate,session_time:sessionTime || null,note:note || null
+      }).eq("id",clubhouseSession.id);
+      if(error) throw error;
+    }else{
+      // Keep only one planned session active at a time.
+      await supabaseClient.from("clubhouse_sessions").update({is_active:false}).eq("is_active",true);
+      const {error} = await supabaseClient.from("clubhouse_sessions").insert({
+        title,session_date:sessionDate,session_time:sessionTime || null,note:note || null,created_by:userId,is_active:true
+      });
+      if(error) throw error;
+    }
+
+    closeClubhouseSessionEditor();
+    await loadClubhouseSession();
+  }catch(error){
+    console.error("Clubhouse session save failed:",error);
+    if(msg) msg.textContent = "The session could not be saved.";
+  }
+}
+
+async function endClubhouseSession(){
+  if(!isAdmin || !supabaseClient || !clubhouseSession) return;
+  if(!confirm("End this planned session? The attendance responses will be kept in the database.")) return;
+  try{
+    const {error} = await supabaseClient.from("clubhouse_sessions").update({is_active:false}).eq("id",clubhouseSession.id);
+    if(error) throw error;
+    clubhouseSession = null;
+    clubhouseAttendance = {};
+    renderClubhouseSessionHome();
+  }catch(error){
+    console.error("Clubhouse session end failed:",error);
+    alert("The session could not be ended.");
+  }
+}
+
+async function setMyClubhouseAttendance(response){
+  if(!supabaseClient || !clubhouseSession || !currentClubPlayerKey) return;
+  if(!["playing","maybe","not_playing"].includes(response)) return;
+  try{
+    const {error} = await supabaseClient.from("clubhouse_attendance").upsert({
+      session_id:clubhouseSession.id,
+      player_key:currentClubPlayerKey,
+      response,
+      updated_at:new Date().toISOString()
+    },{onConflict:"session_id,player_key"});
+    if(error) throw error;
+    clubhouseAttendance[currentClubPlayerKey] = response;
+    renderClubhouseSessionHome();
+  }catch(error){
+    console.error("Attendance save failed:",error);
+    alert("Your attendance response could not be saved.");
+  }
+}
+
 /* SPOTIFY JAM */
 .spotify-jam-card{margin:0 16px 18px;padding:14px 15px;border-radius:16px;background:linear-gradient(145deg,#12213a,#0d1929);border:1px solid #28405f;display:none;}
 .spotify-jam-top{display:flex;align-items:center;justify-content:space-between;gap:12px;}
@@ -1939,6 +2154,31 @@ input[type="date"]::-webkit-date-and-time-value{
   }
 }
 
+/* CLUBHOUSE SESSION / ATTENDANCE - STAGE 2 */
+.clubhouse-session-card{margin:0 16px 14px;padding:15px;border-radius:16px;background:linear-gradient(145deg,#12213a,#0d1929);border:1px solid #28405f;display:none}
+.clubhouse-session-label{font-size:10px;font-weight:800;letter-spacing:.9px;color:#8ea0b8;text-transform:uppercase}
+.clubhouse-session-title{margin-top:5px;font-size:18px;font-weight:900;color:#fff}
+.clubhouse-session-meta{margin-top:4px;font-size:12px;color:#aab8ca}
+.clubhouse-session-note{margin-top:7px;font-size:12px;line-height:1.4;color:#8899ae}
+.clubhouse-session-summary{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid #21364f}
+.clubhouse-session-count{font-size:11px;font-weight:900;letter-spacing:.6px;color:#d8b75b;text-transform:uppercase}
+.clubhouse-session-admin-actions{display:flex;gap:7px;flex-wrap:wrap}
+.clubhouse-session-button{min-height:38px;padding:8px 11px;border-radius:10px;background:#10233b;color:#9fc0ff;border:1px solid #315d9d;font-weight:800;font-size:12px}
+.clubhouse-session-button.danger{border-color:#71343c;color:#ffadb4;background:#35171d}
+.attendance-list{margin-top:10px;display:grid;gap:7px}
+.attendance-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border-radius:11px;background:#0b1727;border:1px solid #1d334d}
+.attendance-player{min-width:0;font-size:12px;font-weight:800;color:#e8eef7}
+.attendance-status{flex:0 0 auto;font-size:11px;font-weight:800;color:#93a3b6}
+.attendance-status.playing{color:#65da93}.attendance-status.maybe{color:#e3be5d}.attendance-status.not_playing{color:#ff9ea6}
+.attendance-my-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}
+.attendance-choice{min-height:40px;padding:7px 5px;border-radius:10px;border:1px solid #2a4665;background:#101f32;color:#b9c5d5;font-size:11px;font-weight:900}
+.attendance-choice.active.playing{border-color:#2c8152;background:#123222;color:#7ae4a1}.attendance-choice.active.maybe{border-color:#806a2e;background:#302911;color:#f0cd69}.attendance-choice.active.not_playing{border-color:#7b3942;background:#35171d;color:#ffadb4}
+.clubhouse-session-editor{display:none;margin-top:13px;padding:13px;border-radius:14px;background:#0a1524;border:1px solid #223a58}.clubhouse-session-editor.open{display:block}
+.clubhouse-session-field{margin-top:10px}.clubhouse-session-field:first-child{margin-top:0}.clubhouse-session-field label{display:block;margin-bottom:5px;font-size:10px;font-weight:800;letter-spacing:.6px;color:#8ea0b8;text-transform:uppercase}
+.clubhouse-session-input{width:100%;box-sizing:border-box;padding:11px 12px;border-radius:11px;background:#101f32;border:1px solid #31506f;color:#fff;font:inherit;font-size:13px;outline:0}.clubhouse-session-input:focus{border-color:#5d8fd3;box-shadow:0 0 0 2px rgba(93,143,211,.12)}
+.clubhouse-session-editor-actions{display:flex;gap:8px;margin-top:12px}.clubhouse-session-save{flex:1;min-height:42px;border:0;border-radius:11px;background:#3c78ff;color:#fff;font-weight:900}.clubhouse-session-cancel{min-height:42px;padding:0 13px;border-radius:11px;background:#15263a;color:#aebed0;border:1px solid #2a4665;font-weight:800}
+.clubhouse-session-message{min-height:15px;margin-top:7px;font-size:11px;color:#ffadb4}
+
 /* CLUBHOUSE HOME - STAGE 1 */
 .clubhouse-hero{margin:18px 16px 14px;padding:18px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:linear-gradient(145deg,rgba(26,55,104,.45),rgba(8,16,32,.82));box-shadow:0 12px 28px rgba(0,0,0,.18)}
 .clubhouse-kicker{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#d8b75b;text-transform:uppercase;margin-bottom:6px}
@@ -2000,6 +2240,48 @@ input[type="date"]::-webkit-date-and-time-value{
       <span>D2</span><span>D1</span><span>ELITE</span>
     </div>
   </div>
+  </div>
+
+  <div id="clubhouseSessionCard" class="clubhouse-session-card">
+    <div class="clubhouse-session-label">⚽ Next Session</div>
+    <div id="clubhouseSessionTitle" class="clubhouse-session-title">No session planned</div>
+    <div id="clubhouseSessionMeta" class="clubhouse-session-meta">Waiting for the next Olympus session.</div>
+    <div id="clubhouseSessionNote" class="clubhouse-session-note" style="display:none"></div>
+
+    <div id="clubhouseSessionContent" style="display:none">
+      <div class="clubhouse-session-summary">
+        <div id="clubhouseAttendanceCount" class="clubhouse-session-count">0/5 Playing</div>
+        <div id="clubhouseSessionAdminActions" class="clubhouse-session-admin-actions"></div>
+      </div>
+      <div id="clubhouseAttendanceList" class="attendance-list"></div>
+      <div id="clubhouseMyAttendance" class="attendance-my-actions"></div>
+    </div>
+
+    <div id="clubhouseNoSessionActions" class="clubhouse-session-admin-actions" style="margin-top:12px"></div>
+
+    <div id="clubhouseSessionEditor" class="clubhouse-session-editor">
+      <div class="clubhouse-session-field">
+        <label for="clubhouseSessionTitleInput">Session Name</label>
+        <input id="clubhouseSessionTitleInput" class="clubhouse-session-input" maxlength="60" placeholder="e.g. Division Push">
+      </div>
+      <div class="clubhouse-session-field">
+        <label for="clubhouseSessionDateInput">Date</label>
+        <input id="clubhouseSessionDateInput" class="clubhouse-session-input" type="date">
+      </div>
+      <div class="clubhouse-session-field">
+        <label for="clubhouseSessionTimeInput">Time</label>
+        <input id="clubhouseSessionTimeInput" class="clubhouse-session-input" type="time">
+      </div>
+      <div class="clubhouse-session-field">
+        <label for="clubhouseSessionNoteInput">Note <span style="font-weight:500;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <input id="clubhouseSessionNoteInput" class="clubhouse-session-input" maxlength="120" placeholder="e.g. FC27 Clubs — promotion push">
+      </div>
+      <div id="clubhouseSessionEditorMessage" class="clubhouse-session-message"></div>
+      <div class="clubhouse-session-editor-actions">
+        <button class="clubhouse-session-save" type="button" onclick="saveClubhouseSession()">Save Session</button>
+        <button class="clubhouse-session-cancel" type="button" onclick="closeClubhouseSessionEditor()">Cancel</button>
+      </div>
+    </div>
   </div>
 
   <div id="spotifyJamCard" class="spotify-jam-card">
@@ -2958,6 +3240,8 @@ let currentClubRole = "";
 let currentClubPlayerKey = "";
 let playerStatuses = {};
 let spotifyJam = null;
+let clubhouseSession = null;
+let clubhouseAttendance = {};
 const OWNER_UID = "dc4e457c-4b2c-413f-a6d8-b4f49c053480";
 const OWNER_LOGIN_ALIAS = "TyroneDean40";
 const OWNER_EMAIL_CACHE_KEY = "olympusOwnerLoginEmail";
@@ -6486,6 +6770,221 @@ async function resetSeasonData(){
 
 
 
+/* CLUBHOUSE PLANNED SESSION / ATTENDANCE */
+
+async function loadClubhouseSession(){
+  clubhouseSession = null;
+  clubhouseAttendance = {};
+
+  if(!supabaseClient || !currentClubRole){
+    renderClubhouseSessionHome();
+    return;
+  }
+
+  try{
+    const {data,error} = await supabaseClient
+      .from("clubhouse_sessions")
+      .select("id,session_date,session_time,title,note,created_by,created_at,is_active")
+      .eq("is_active",true)
+      .order("id",{ascending:false})
+      .limit(1)
+      .maybeSingle();
+    if(error) throw error;
+    clubhouseSession = data || null;
+
+    if(clubhouseSession){
+      const {data:attendanceRows,error:attendanceError} = await supabaseClient
+        .from("clubhouse_attendance")
+        .select("player_key,response,updated_at")
+        .eq("session_id",clubhouseSession.id);
+      if(attendanceError) throw attendanceError;
+      (attendanceRows || []).forEach(row => {
+        if(row.player_key) clubhouseAttendance[row.player_key] = row.response;
+      });
+    }
+  }catch(error){
+    console.warn("Clubhouse session could not be loaded:",error);
+    clubhouseSession = null;
+    clubhouseAttendance = {};
+  }
+
+  renderClubhouseSessionHome();
+}
+
+function formatClubhouseSessionDate(dateValue,timeValue){
+  if(!dateValue) return "Date TBC";
+  const d = new Date(`${dateValue}T12:00:00`);
+  const dateText = d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
+  if(!timeValue) return dateText;
+  const [h,m] = String(timeValue).slice(0,5).split(":").map(Number);
+  const temp = new Date(2000,0,1,h,m);
+  return `${dateText} · ${temp.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}`;
+}
+
+function renderClubhouseSessionHome(){
+  const card = el("clubhouseSessionCard");
+  const title = el("clubhouseSessionTitle");
+  const meta = el("clubhouseSessionMeta");
+  const note = el("clubhouseSessionNote");
+  const content = el("clubhouseSessionContent");
+  const count = el("clubhouseAttendanceCount");
+  const list = el("clubhouseAttendanceList");
+  const mine = el("clubhouseMyAttendance");
+  const adminActions = el("clubhouseSessionAdminActions");
+  const noSessionActions = el("clubhouseNoSessionActions");
+  if(!card || !title || !meta || !content || !list || !mine) return;
+
+  if(!currentClubRole){
+    card.style.display = "none";
+    return;
+  }
+
+  card.style.display = "block";
+
+  if(!clubhouseSession){
+    title.textContent = "No session planned";
+    meta.textContent = "Waiting for the next Olympus session.";
+    if(note) note.style.display = "none";
+    content.style.display = "none";
+    if(noSessionActions){
+      noSessionActions.innerHTML = isAdmin
+        ? '<button class="clubhouse-session-button" onclick="openClubhouseSessionEditor()">➕ Plan Session</button>'
+        : '';
+    }
+    return;
+  }
+
+  if(noSessionActions) noSessionActions.innerHTML = "";
+  title.textContent = clubhouseSession.title || "Pro Clubs";
+  meta.textContent = formatClubhouseSessionDate(clubhouseSession.session_date,clubhouseSession.session_time);
+  if(note){
+    note.textContent = clubhouseSession.note || "";
+    note.style.display = clubhouseSession.note ? "block" : "none";
+  }
+  content.style.display = "block";
+
+  const playingCount = players.filter(p => clubhouseAttendance[p.id] === "playing").length;
+  if(count) count.textContent = `${playingCount}/${players.length} Playing`;
+
+  list.innerHTML = players.map(player => {
+    const response = clubhouseAttendance[player.id] || "";
+    const label = response === "playing" ? "✅ Playing" : response === "maybe" ? "❓ Maybe" : response === "not_playing" ? "❌ Can't Play" : "— No response";
+    return `<div class="attendance-row"><div class="attendance-player">${escapeHTML(player.name)}</div><div class="attendance-status ${response}">${label}</div></div>`;
+  }).join("");
+
+  const ownResponse = clubhouseAttendance[currentClubPlayerKey] || "";
+  mine.innerHTML = currentClubPlayerKey ? `
+    <button class="attendance-choice playing ${ownResponse === "playing" ? "active" : ""}" onclick="setMyClubhouseAttendance('playing')">✅ Playing</button>
+    <button class="attendance-choice maybe ${ownResponse === "maybe" ? "active" : ""}" onclick="setMyClubhouseAttendance('maybe')">❓ Maybe</button>
+    <button class="attendance-choice not_playing ${ownResponse === "not_playing" ? "active" : ""}" onclick="setMyClubhouseAttendance('not_playing')">❌ Can't Play</button>` : "";
+
+  if(adminActions){
+    adminActions.innerHTML = isAdmin
+      ? '<button class="clubhouse-session-button" onclick="openClubhouseSessionEditor(true)">✏️ Edit</button><button class="clubhouse-session-button danger" onclick="endClubhouseSession()">End</button>'
+      : '';
+  }
+}
+
+function openClubhouseSessionEditor(editing=false){
+  if(!isAdmin) return;
+  const editor = el("clubhouseSessionEditor");
+  const titleInput = el("clubhouseSessionTitleInput");
+  const dateInput = el("clubhouseSessionDateInput");
+  const timeInput = el("clubhouseSessionTimeInput");
+  const noteInput = el("clubhouseSessionNoteInput");
+  const msg = el("clubhouseSessionEditorMessage");
+  if(!editor) return;
+
+  const now = new Date();
+  const localDate = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().slice(0,10);
+  titleInput.value = editing && clubhouseSession ? (clubhouseSession.title || "") : "Pro Clubs";
+  dateInput.value = editing && clubhouseSession ? (clubhouseSession.session_date || localDate) : localDate;
+  timeInput.value = editing && clubhouseSession && clubhouseSession.session_time ? String(clubhouseSession.session_time).slice(0,5) : "20:00";
+  noteInput.value = editing && clubhouseSession ? (clubhouseSession.note || "") : "";
+  if(msg) msg.textContent = "";
+  editor.classList.add("open");
+}
+
+function closeClubhouseSessionEditor(){
+  el("clubhouseSessionEditor")?.classList.remove("open");
+  const msg = el("clubhouseSessionEditorMessage");
+  if(msg) msg.textContent = "";
+}
+
+async function saveClubhouseSession(){
+  if(!isAdmin || !supabaseClient) return;
+  const title = (el("clubhouseSessionTitleInput")?.value || "").trim();
+  const sessionDate = el("clubhouseSessionDateInput")?.value || "";
+  const sessionTime = el("clubhouseSessionTimeInput")?.value || null;
+  const note = (el("clubhouseSessionNoteInput")?.value || "").trim();
+  const msg = el("clubhouseSessionEditorMessage");
+  if(msg) msg.textContent = "";
+  if(!title || !sessionDate){
+    if(msg) msg.textContent = "Add a session name and date.";
+    return;
+  }
+
+  try{
+    const {data:authData} = await supabaseClient.auth.getSession();
+    const userId = authData?.session?.user?.id;
+    if(!userId) throw new Error("Not signed in");
+
+    if(clubhouseSession){
+      const {error} = await supabaseClient.from("clubhouse_sessions").update({
+        title,session_date:sessionDate,session_time:sessionTime || null,note:note || null
+      }).eq("id",clubhouseSession.id);
+      if(error) throw error;
+    }else{
+      // Keep only one planned session active at a time.
+      await supabaseClient.from("clubhouse_sessions").update({is_active:false}).eq("is_active",true);
+      const {error} = await supabaseClient.from("clubhouse_sessions").insert({
+        title,session_date:sessionDate,session_time:sessionTime || null,note:note || null,created_by:userId,is_active:true
+      });
+      if(error) throw error;
+    }
+
+    closeClubhouseSessionEditor();
+    await loadClubhouseSession();
+  }catch(error){
+    console.error("Clubhouse session save failed:",error);
+    if(msg) msg.textContent = "The session could not be saved.";
+  }
+}
+
+async function endClubhouseSession(){
+  if(!isAdmin || !supabaseClient || !clubhouseSession) return;
+  if(!confirm("End this planned session? The attendance responses will be kept in the database.")) return;
+  try{
+    const {error} = await supabaseClient.from("clubhouse_sessions").update({is_active:false}).eq("id",clubhouseSession.id);
+    if(error) throw error;
+    clubhouseSession = null;
+    clubhouseAttendance = {};
+    renderClubhouseSessionHome();
+  }catch(error){
+    console.error("Clubhouse session end failed:",error);
+    alert("The session could not be ended.");
+  }
+}
+
+async function setMyClubhouseAttendance(response){
+  if(!supabaseClient || !clubhouseSession || !currentClubPlayerKey) return;
+  if(!["playing","maybe","not_playing"].includes(response)) return;
+  try{
+    const {error} = await supabaseClient.from("clubhouse_attendance").upsert({
+      session_id:clubhouseSession.id,
+      player_key:currentClubPlayerKey,
+      response,
+      updated_at:new Date().toISOString()
+    },{onConflict:"session_id,player_key"});
+    if(error) throw error;
+    clubhouseAttendance[currentClubPlayerKey] = response;
+    renderClubhouseSessionHome();
+  }catch(error){
+    console.error("Attendance save failed:",error);
+    alert("Your attendance response could not be saved.");
+  }
+}
+
 /* SPOTIFY JAM */
 
 async function loadSpotifyJam(){
@@ -7066,6 +7565,7 @@ async function handleAuthUI(){
     signed.textContent = `Signed in as ${displayName} • ${roleLabel}`;
   }
 
+  await loadClubhouseSession();
   await loadSpotifyJam();
   updateAdminUI();
   renderEverything();
@@ -7140,6 +7640,7 @@ async function initSupabase(){
 
     supabaseClient.auth.onAuthStateChange(async (_event,session) => {
       await loadCurrentClubAccess(session);
+      await loadClubhouseSession();
       await loadSpotifyJam();
       updateAdminUI();
       renderEverything();
@@ -7160,6 +7661,7 @@ function renderEverything(){
   syncSeasonSelectors();
   renderDivision();
   renderHome();
+  renderClubhouseSessionHome();
   renderSpotifyJamHome();
   renderSquad();
   renderMatches();
@@ -7172,7 +7674,7 @@ function renderEverything(){
   });
 }
 
-const OLYMPUS_APP_BUILD = "20260906-clubhouse-stage1";
+const OLYMPUS_APP_BUILD = "20260906-clubhouse-stage2";
 
 async function checkForAppUpdate(){
   try{
