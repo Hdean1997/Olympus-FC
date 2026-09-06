@@ -2427,6 +2427,62 @@ textarea.bug-form-control{
   line-height:1.5;
 }
 
+.bug-archive{
+  margin-top:18px;
+  border:1px solid #1c314c;
+  border-radius:16px;
+  background:#0b1625;
+  overflow:hidden;
+}
+
+.bug-archive summary{
+  list-style:none;
+  cursor:pointer;
+  min-height:56px;
+  padding:15px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  color:#b9c6d8;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.bug-archive summary::-webkit-details-marker{display:none}
+
+.bug-archive summary::after{
+  content:"⌄";
+  color:#6f9dff;
+  font-size:18px;
+  line-height:1;
+}
+
+.bug-archive[open] summary::after{content:"⌃"}
+
+.bug-archive-count{
+  display:inline-grid;
+  place-items:center;
+  min-width:24px;
+  height:24px;
+  margin-left:7px;
+  padding:0 7px;
+  border-radius:999px;
+  background:#26384f;
+  color:#d7e2f0;
+  font-size:10px;
+}
+
+.bug-archive-list{
+  padding:0 12px 12px;
+  border-top:1px solid #1c314c;
+}
+
+.bug-archive-list .bug-report-card{
+  margin-top:12px;
+  margin-bottom:0;
+}
+
 .bug-count-badge{
   display:inline-grid;
   place-items:center;
@@ -3110,6 +3166,12 @@ textarea.bug-form-control{
     </div>
     <div id="bugAdminMessage" class="bug-message"></div>
     <div id="bugReportsList"></div>
+    <details id="bugClosedArchive" class="bug-archive" style="display:none">
+      <summary>
+        <span>Resolved / Closed Reports <span id="bugClosedCount" class="bug-archive-count">0</span></span>
+      </summary>
+      <div id="bugClosedReportsList" class="bug-archive-list"></div>
+    </details>
   </div>
 </div>
 
@@ -7769,8 +7831,38 @@ function formatBugDate(value){
   });
 }
 
+function bugReportCardHTML(report){
+  const expected = report.expected_behavior
+    ? `<div class="bug-report-expected"><strong>Expected:</strong> ${escapeHTML(report.expected_behavior)}</div>`
+    : "";
+  const reporter = escapeHTML(report.reporter_username || report.reporter_player_key || "Club player");
+  const season = report.season === "ALL_TIME" ? "All Time" : (report.season || "—");
+  return `
+    <div class="bug-report-card">
+      <div class="bug-report-card-top">
+        <div class="bug-report-page">${escapeHTML(report.page_name || "Other")}</div>
+        <div class="bug-status-pill">${escapeHTML(bugStatusLabel(report.status))}</div>
+      </div>
+      <div class="bug-report-description">${escapeHTML(report.description || "")}</div>
+      ${expected}
+      <div class="bug-report-meta">
+        Reported by ${reporter} · ${escapeHTML(season)}<br>
+        ${escapeHTML(formatBugDate(report.created_at))} · App ${escapeHTML(report.app_version || "unknown")}
+      </div>
+      <select class="bug-status-select" onchange="updateBugReportStatus('${escapeHTML(report.id)}',this.value)">
+        <option value="open" ${report.status === "open" ? "selected" : ""}>Open</option>
+        <option value="investigating" ${report.status === "investigating" ? "selected" : ""}>Investigating</option>
+        <option value="fixed" ${report.status === "fixed" ? "selected" : ""}>Fixed</option>
+        <option value="closed" ${report.status === "closed" ? "selected" : ""}>Closed</option>
+      </select>
+    </div>`;
+}
+
 function renderBugAdminPage(){
   const list = el("bugReportsList");
+  const closedList = el("bugClosedReportsList");
+  const archive = el("bugClosedArchive");
+  const closedCount = el("bugClosedCount");
   if(!list) return;
 
   const open = bugReports.filter(report => report.status === "open").length;
@@ -7780,37 +7872,21 @@ function renderBugAdminPage(){
   if(el("bugSummaryInvestigating")) el("bugSummaryInvestigating").textContent = String(investigating);
   if(el("bugSummaryFixed")) el("bugSummaryFixed").textContent = String(fixed);
 
-  if(!bugReports.length){
-    list.innerHTML = '<div class="bug-empty">No bug reports have been submitted yet.</div>';
-    return;
+  const activeReports = bugReports.filter(report => report.status !== "closed");
+  const closedReports = bugReports.filter(report => report.status === "closed");
+
+  if(activeReports.length){
+    list.innerHTML = activeReports.map(bugReportCardHTML).join("");
+  }else{
+    list.innerHTML = '<div class="bug-empty">No active bug reports. Anything marked Closed is stored in the archive below.</div>';
   }
 
-  list.innerHTML = bugReports.map(report => {
-    const expected = report.expected_behavior
-      ? `<div class="bug-report-expected"><strong>Expected:</strong> ${escapeHTML(report.expected_behavior)}</div>`
-      : "";
-    const reporter = escapeHTML(report.reporter_username || report.reporter_player_key || "Club player");
-    const season = report.season === "ALL_TIME" ? "All Time" : (report.season || "—");
-    return `
-      <div class="bug-report-card">
-        <div class="bug-report-card-top">
-          <div class="bug-report-page">${escapeHTML(report.page_name || "Other")}</div>
-          <div class="bug-status-pill">${escapeHTML(bugStatusLabel(report.status))}</div>
-        </div>
-        <div class="bug-report-description">${escapeHTML(report.description || "")}</div>
-        ${expected}
-        <div class="bug-report-meta">
-          Reported by ${reporter} · ${escapeHTML(season)}<br>
-          ${escapeHTML(formatBugDate(report.created_at))} · App ${escapeHTML(report.app_version || "unknown")}
-        </div>
-        <select class="bug-status-select" onchange="updateBugReportStatus('${escapeHTML(report.id)}',this.value)">
-          <option value="open" ${report.status === "open" ? "selected" : ""}>Open</option>
-          <option value="investigating" ${report.status === "investigating" ? "selected" : ""}>Investigating</option>
-          <option value="fixed" ${report.status === "fixed" ? "selected" : ""}>Fixed</option>
-          <option value="closed" ${report.status === "closed" ? "selected" : ""}>Closed</option>
-        </select>
-      </div>`;
-  }).join("");
+  if(archive && closedList && closedCount){
+    closedCount.textContent = String(closedReports.length);
+    archive.style.display = closedReports.length ? "block" : "none";
+    closedList.innerHTML = closedReports.map(bugReportCardHTML).join("");
+    if(!closedReports.length) archive.open = false;
+  }
 }
 
 async function openBugAdminPage(){
