@@ -2555,6 +2555,19 @@ input[type="date"]::-webkit-date-and-time-value{
     </select>
   </div>
 
+  <div class="hub-section">
+    <div class="hub-heading">MATCH INSIGHTS</div>
+    <div class="hub-card">
+      <button class="hub-action blue" onclick="openFormPage()">
+        <div>
+          <div class="hub-action-main">📈 Form & Streaks</div>
+          <div class="hub-action-sub">Current form, streaks and last-five performance</div>
+        </div>
+        <div class="hub-action-arrow">›</div>
+      </button>
+    </div>
+  </div>
+
   <div class="matches-summary">
     <div class="match-summary-box">
       <div id="matchesPlayed" class="match-summary-number">0</div>
@@ -2613,6 +2626,27 @@ input[type="date"]::-webkit-date-and-time-value{
 
   <div class="leaderboard-title">Ranked by goal contributions</div>
   <div id="statsLeaderboard"></div>
+
+  <div class="hub-section">
+    <div class="hub-heading">STAT TOOLS</div>
+    <div class="hub-card">
+      <button class="hub-action gold" onclick="openRecordsPage()">
+        <div>
+          <div class="hub-action-main">🏆 Records & Awards</div>
+          <div class="hub-action-sub">Player leaders and recorded match records</div>
+        </div>
+        <div class="hub-action-arrow">›</div>
+      </button>
+
+      <button class="hub-action blue" onclick="openComparePage()">
+        <div>
+          <div class="hub-action-main">⚖️ Player Comparison</div>
+          <div class="hub-action-sub">Compare any two Olympus FC players side-by-side</div>
+        </div>
+        <div class="hub-action-arrow">›</div>
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- MORE -->
@@ -2663,19 +2697,6 @@ input[type="date"]::-webkit-date-and-time-value{
     </div>
   </div>
 
-  <div class="season-switcher">
-    <div>
-      <div class="season-switcher-label">VIEWING SEASON</div>
-      <div class="season-switcher-value seasonText">FC26</div>
-    </div>
-
-    <select class="season-select season-selector" onchange="changeSeason(this.value)">
-      <option value="FC26">FC26</option>
-      <option value="FC27">FC27</option>
-      <option value="ALL_TIME">All Time</option>
-    </select>
-  </div>
-
   <div class="hub-section">
     <div class="hub-heading">CLUB INFORMATION</div>
 
@@ -2699,38 +2720,6 @@ input[type="date"]::-webkit-date-and-time-value{
         <div class="info-label">Current Division</div>
         <div id="moreDivision" class="info-value">Division 5</div>
       </div>
-    </div>
-  </div>
-
-  <div class="hub-section">
-    <div class="hub-heading">OLYMPUS FC</div>
-
-    <div class="hub-card">
-
-      <button class="hub-action gold" onclick="openRecordsPage()">
-        <div>
-          <div class="hub-action-main">🏆 Records & Awards</div>
-          <div class="hub-action-sub">Player leaders and recorded match records</div>
-        </div>
-        <div class="hub-action-arrow">›</div>
-      </button>
-
-      <button class="hub-action blue" onclick="openComparePage()">
-        <div>
-          <div class="hub-action-main">⚖️ Player Comparison</div>
-          <div class="hub-action-sub">Compare any two Olympus FC players side-by-side</div>
-        </div>
-        <div class="hub-action-arrow">›</div>
-      </button>
-
-      <button class="hub-action blue" onclick="openFormPage()">
-        <div>
-          <div class="hub-action-main">📈 Form & Streaks</div>
-          <div class="hub-action-sub">Current form, streaks and last-five performance</div>
-        </div>
-        <div class="hub-action-arrow">›</div>
-      </button>
-
     </div>
   </div>
 
