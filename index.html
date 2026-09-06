@@ -926,14 +926,15 @@ h1{
 }
 
 .achievement-player-change{
-  border-left:1px solid #29425f;
-  padding-left:10px;
+  min-height:44px;
+  padding:0 10px;
+  border:1px solid #31567e;
+  border-radius:11px;
+  background:#10223a;
   display:flex;
-  flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:2px;
-  color:#8fa7c8;
+  color:#8fb5ff;
   font-size:8px;
   font-weight:bold;
   line-height:1.25;
@@ -941,12 +942,13 @@ h1{
   letter-spacing:.3px;
   pointer-events:auto;
   cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
 }
 
-.achievement-player-chevron{
-  color:#d8e5f8;
-  font-size:22px;
-  line-height:.8;
+.achievement-player-change:active{
+  transform:scale(.98);
+  background:#132a47;
 }
 
 .achievement-player-select{
@@ -3277,7 +3279,6 @@ textarea.bug-form-control{
     <div class="achievement-player-select-wrap">
       <select id="achievementPlayerSelect" class="achievement-player-select" onchange="changeAchievementPlayer(this.value)" aria-label="Choose player to view achievements"></select>
       <label class="achievement-player-change" for="achievementPlayerSelect">
-        <span class="achievement-player-chevron">⌄</span>
         <span>TAP TO CHANGE PLAYER</span>
       </label>
     </div>
