@@ -4577,89 +4577,100 @@ function collectNewAchievementUnlocks(beforeState){
   return unlocks;
 }
 
-// Stage 3.1: achievement celebrations belong to the signed-in player.
-// Personal unlocks for team-mates are saved as pending notifications in Supabase
-// and shown when that player next signs in. Club unlocks are queued for everyone.
-function achievementUnlockForCurrentPlayer(unlocks){
-  return (unlocks || []).filter(unlock => !unlock.player || unlock.player.id === currentClubPlayerKey);
+// Stage 3.2: achievement celebrations are account-specific and derived from
+// the signed-in player's CURRENT FC27 achievement state. We store only which
+// achievements that account has already seen. This means team-mates never get
+// shown on the wrong account, and a player still receives their own unlocks
+// when they next sign in.
+let achievementSeenCheckInProgress = false;
+
+async function getSeenAchievementIdsForCurrentPlayer(){
+  if(!supabaseClient || !currentClubPlayerKey) return new Set();
+
+  const {data,error} = await supabaseClient
+    .from("achievement_seen")
+    .select("achievement_id")
+    .eq("player_key",currentClubPlayerKey);
+
+  if(error) throw error;
+  return new Set((data || []).map(row => row.achievement_id));
 }
 
-async function queueAchievementNotifications(unlocks){
-  if(!supabaseClient || !Array.isArray(unlocks) || !unlocks.length) return;
+async function removeStaleSeenAchievements(currentUnlockedIds,seenIds){
+  if(!supabaseClient || !currentClubPlayerKey) return;
+  const staleIds = [...seenIds].filter(id => !currentUnlockedIds.has(id));
+  if(!staleIds.length) return;
 
-  const rows = [];
-  unlocks.forEach(unlock => {
-    if(unlock.player){
-      rows.push({
-        player_key:unlock.player.id,
-        achievement_id:unlock.item.id,
-        is_club:false
-      });
-    }else{
-      players.forEach(player => rows.push({
-        player_key:player.id,
-        achievement_id:unlock.item.id,
-        is_club:true
-      }));
-    }
-  });
+  const {error} = await supabaseClient
+    .from("achievement_seen")
+    .delete()
+    .eq("player_key",currentClubPlayerKey)
+    .in("achievement_id",staleIds);
 
-  if(!rows.length) return;
-  try{
-    const {error} = await supabaseClient
-      .from("achievement_notifications")
-      .upsert(rows,{onConflict:"player_key,achievement_id",ignoreDuplicates:true});
-    if(error) throw error;
-  }catch(error){
-    console.error("Achievement notification queue failed:",error);
-  }
+  if(error) throw error;
 }
 
 async function loadPendingAchievementNotifications(){
+  // Kept under the existing function name so the rest of the app can call it.
+  // It now means: show CURRENT achievements this signed-in account has not seen.
   if(!supabaseClient || !currentClubPlayerKey) return;
+  if(achievementSeenCheckInProgress) return;
+  if(el("achievementUnlockOverlay")?.classList.contains("open")) return;
 
+  const player = players.find(p => p.id === currentClubPlayerKey);
+  if(!player) return;
+
+  achievementSeenCheckInProgress = true;
   try{
-    const {data,error} = await supabaseClient
-      .from("achievement_notifications")
-      .select("id,player_key,achievement_id,is_club,created_at")
-      .eq("player_key",currentClubPlayerKey)
-      .order("created_at",{ascending:true});
-    if(error) throw error;
-    if(!data?.length) return;
-
-    const player = players.find(p => p.id === currentClubPlayerKey);
-    if(!player) return;
     const {results} = calculateAchievementResults(player.id);
-    const valid = [];
-    const staleIds = [];
+    const unlockedItems = OLYMPUS_ACHIEVEMENTS.filter(item => results[item.id]?.unlocked);
+    const currentUnlockedIds = new Set(unlockedItems.map(item => item.id));
+    const seenIds = await getSeenAchievementIdsForCurrentPlayer();
 
-    data.forEach(row => {
-      const item = OLYMPUS_ACHIEVEMENTS.find(a => a.id === row.achievement_id);
-      if(!item || !results[row.achievement_id]?.unlocked){
-        staleIds.push(row.id);
-        return;
-      }
-      valid.push({item,player:row.is_club ? null : player,notificationId:row.id});
-    });
+    // If a test match is deleted, remove its old "seen" marker too. When the
+    // achievement is genuinely earned later, its celebration can appear again.
+    await removeStaleSeenAchievements(currentUnlockedIds,seenIds);
 
-    if(staleIds.length){
-      await supabaseClient.from("achievement_notifications").delete().in("id",staleIds);
+    const unseen = unlockedItems
+      .filter(item => !seenIds.has(item.id))
+      .map(item => ({
+        item,
+        player:item.club ? null : player,
+        seenAchievementId:item.id
+      }));
+
+    if(unseen.length){
+      setTimeout(() => showAchievementUnlocks(unseen),180);
     }
-    if(valid.length) setTimeout(() => showAchievementUnlocks(valid),180);
   }catch(error){
-    // Allows the frontend to remain usable until the one-time Stage 3.1 SQL is run.
-    console.error("Pending achievement notification load failed:",error);
+    console.error("Achievement seen-state check failed:",error);
+  }finally{
+    achievementSeenCheckInProgress = false;
   }
 }
 
-async function clearDisplayedAchievementNotifications(){
-  const ids = achievementUnlockQueue.map(x => x.notificationId).filter(Boolean);
-  if(!supabaseClient || !ids.length) return;
+async function markDisplayedAchievementsSeen(){
+  if(!supabaseClient || !currentClubPlayerKey) return;
+  const ids = [...new Set(
+    achievementUnlockQueue
+      .map(x => x.seenAchievementId || x.item?.id)
+      .filter(Boolean)
+  )];
+  if(!ids.length) return;
+
+  const rows = ids.map(achievementId => ({
+    player_key:currentClubPlayerKey,
+    achievement_id:achievementId,
+    seen_at:new Date().toISOString()
+  }));
+
   try{
-    const {error} = await supabaseClient.from("achievement_notifications").delete().in("id",ids);
+    const {error} = await supabaseClient
+      .from("achievement_seen")
+      .upsert(rows,{onConflict:"player_key,achievement_id",ignoreDuplicates:false});
     if(error) throw error;
   }catch(error){
-    console.error("Achievement notification clear failed:",error);
+    console.error("Achievement seen-state save failed:",error);
   }
 }
 
@@ -4731,7 +4742,7 @@ async function advanceAchievementUnlock(){
   }
 
   el("achievementUnlockOverlay")?.classList.remove("open");
-  await clearDisplayedAchievementNotifications();
+  await markDisplayedAchievementsSeen();
   achievementUnlockQueue = [];
   achievementUnlockIndex = 0;
   document.body.style.overflow = "";
@@ -6163,16 +6174,9 @@ async function finishMatch(){
   renderEverything();
 
   if(savedSeason === "FC27" && achievementStateBeforeSave){
-    const newlyUnlockedAchievements = collectNewAchievementUnlocks(achievementStateBeforeSave);
-    if(newlyUnlockedAchievements.length){
-      // Save every personal/club unlock for the correct account first.
-      await queueAchievementNotifications(newlyUnlockedAchievements);
-
-      // Always load celebrations back through the signed-in account's
-      // own notification feed. This guarantees team-mates' personal
-      // achievements never enter this device's popup queue.
-      await loadPendingAchievementNotifications();
-    }
+    // Re-check only the currently signed-in player's achievements. Team-mates'
+    // unlocks are discovered automatically when they next sign in.
+    await loadPendingAchievementNotifications();
   }
 
   if(wasEditing && selectedMatchRef){
