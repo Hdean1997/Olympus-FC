@@ -2218,9 +2218,93 @@ function renderClubhouseSessionHome(){
     <button class="attendance-choice not_playing ${ownResponse === "not_playing" ? "active" : ""}" onclick="setMyClubhouseAttendance('not_playing')">❌ Can't Play</button>` : "";
 
   if(adminActions){
+    const shareButton = '<button class="clubhouse-session-button share" type="button" onclick="shareClubhouseSession()">↗️ Share</button>';
     adminActions.innerHTML = isAdmin
-      ? '<button class="clubhouse-session-button" onclick="openClubhouseSessionEditor(true)">✏️ Edit</button><button class="clubhouse-session-button danger" onclick="endClubhouseSession()">End</button>'
-      : '';
+      ? shareButton + '<button class="clubhouse-session-button" onclick="openClubhouseSessionEditor(true)">✏️ Edit</button><button class="clubhouse-session-button danger" onclick="endClubhouseSession()">End</button>'
+      : shareButton;
+  }
+}
+
+async function shareClubhouseSession(){
+  if(!clubhouseSession) return;
+
+  const source = el("clubhouseSessionCard");
+  if(!source) return;
+
+  if(typeof html2canvas !== "function"){
+    alert("The share image tool has not loaded yet. Refresh the app and try again.");
+    return;
+  }
+
+  let stage = null;
+  try{
+    stage = document.createElement("div");
+    stage.className = "clubhouse-share-stage";
+
+    const clone = source.cloneNode(true);
+    clone.removeAttribute("id");
+    clone.querySelectorAll("[id]").forEach(node => node.removeAttribute("id"));
+
+    clone.querySelectorAll(
+      ".clubhouse-session-admin-actions, .attendance-my-actions, .clubhouse-session-editor"
+    ).forEach(node => node.remove());
+
+    const content = clone.querySelector('[style*="display:none"]');
+    if(content && clubhouseSession) content.style.display = "block";
+
+    const footer = document.createElement("div");
+    footer.className = "clubhouse-share-footer";
+    footer.textContent = "Olympus FC · Mount Olympus";
+    clone.appendChild(footer);
+
+    stage.appendChild(clone);
+    document.body.appendChild(stage);
+
+    if(document.fonts?.ready){
+      try{ await document.fonts.ready; }catch(_){ }
+    }
+
+    const canvas = await html2canvas(clone,{
+      backgroundColor:"#0b1625",
+      scale:2,
+      useCORS:true,
+      logging:false,
+      scrollX:0,
+      scrollY:0
+    });
+
+    const blob = await new Promise(resolve => canvas.toBlob(resolve,"image/png",0.96));
+    if(!blob) throw new Error("Could not create the session image.");
+
+    const datePart = clubhouseSession.session_date || new Date().toISOString().slice(0,10);
+    const file = new File([blob],`olympus-next-session-${datePart}.png`,{type:"image/png"});
+    const shareData = {
+      title:"Olympus FC — Next Session",
+      text:"Olympus FC next session availability",
+      files:[file]
+    };
+
+    if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
+      await navigator.share(shareData);
+      return;
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url),1500);
+    alert("Session image created. Your browser has saved it so you can share it in the group chat.");
+  }catch(error){
+    if(error?.name !== "AbortError"){
+      console.error("Session share failed:",error);
+      alert("The session image could not be shared. Please try again.");
+    }
+  }finally{
+    stage?.remove();
   }
 }
 
@@ -2654,6 +2738,19 @@ input[type="date"]::-webkit-date-and-time-value{
 .clubhouse-session-admin-actions{display:flex;gap:7px;flex-wrap:wrap}
 .clubhouse-session-button{min-height:38px;padding:8px 11px;border-radius:10px;background:#10233b;color:#9fc0ff;border:1px solid #315d9d;font-weight:800;font-size:12px}
 .clubhouse-session-button.danger{border-color:#71343c;color:#ffadb4;background:#35171d}
+.clubhouse-session-button.share{border-color:#8d712a;color:#e8bd4b;background:#241f13}
+.clubhouse-share-stage{position:absolute;left:-10000px;top:0;width:390px;pointer-events:none;z-index:-1}
+.clubhouse-share-stage .clubhouse-session-card{display:block!important;width:390px!important;margin:0!important;padding:20px!important;border-radius:22px!important;background:linear-gradient(145deg,#12213a,#0d1929)!important;border:2px solid #8d712a!important;box-sizing:border-box!important}
+.clubhouse-share-stage .clubhouse-session-label{color:#e8bd4b!important;font-size:12px!important;letter-spacing:1.2px!important}
+.clubhouse-share-stage .clubhouse-session-title{font-size:26px!important;margin-top:8px!important}
+.clubhouse-share-stage .clubhouse-session-meta{font-size:15px!important;margin-top:7px!important}
+.clubhouse-share-stage .clubhouse-session-note{font-size:14px!important;margin-top:10px!important}
+.clubhouse-share-stage .clubhouse-session-summary{margin-top:18px!important;padding-top:16px!important}
+.clubhouse-share-stage .clubhouse-session-count{font-size:13px!important}
+.clubhouse-share-stage .attendance-list{margin-top:12px!important}
+.clubhouse-share-stage .attendance-row{min-height:48px!important}
+.clubhouse-share-footer{margin-top:16px;padding-top:14px;border-top:1px solid #21364f;color:#8192aa;font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;text-align:center}
+
 .attendance-list{margin-top:10px;display:grid;gap:7px}
 .attendance-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border-radius:11px;background:#0b1727;border:1px solid #1d334d}
 .attendance-player{min-width:0;font-size:12px;font-weight:800;color:#e8eef7}
@@ -4257,6 +4354,7 @@ textarea.bug-form-control{
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <script>
 
@@ -8529,9 +8627,10 @@ function renderClubhouseSessionHome(){
     <button class="attendance-choice not_playing ${ownResponse === "not_playing" ? "active" : ""}" onclick="setMyClubhouseAttendance('not_playing')">❌ Can't Play</button>` : "";
 
   if(adminActions){
+    const shareButton = '<button class="clubhouse-session-button share" type="button" onclick="shareClubhouseSession()">↗️ Share</button>';
     adminActions.innerHTML = isAdmin
-      ? '<button class="clubhouse-session-button" onclick="openClubhouseSessionEditor(true)">✏️ Edit</button><button class="clubhouse-session-button danger" onclick="endClubhouseSession()">End</button>'
-      : '';
+      ? shareButton + '<button class="clubhouse-session-button" onclick="openClubhouseSessionEditor(true)">✏️ Edit</button><button class="clubhouse-session-button danger" onclick="endClubhouseSession()">End</button>'
+      : shareButton;
   }
 }
 
