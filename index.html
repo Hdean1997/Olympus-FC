@@ -9750,7 +9750,7 @@ function renderOlympusClips(){
   feed.innerHTML=olympusClips.map(row=>{
     const url=clipPublicUrl(row); const mine=currentClubPlayerKey && row.player_key===currentClubPlayerKey;
     const canDelete=mine||isOwner; const when=row.created_at?new Date(row.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
-    return `<article class="clips-feed-card"><div class="clips-feed-head"><div><div class="clips-player">${escapeHtml(clipPlayerName(row))}</div><div class="clips-time">${escapeHtml(when)}</div></div>${canDelete?`<button class="clips-delete" onclick="deleteOlympusClip('${row.id}')">Delete</button>`:""}</div>${url?`<video class="clips-video" src="${escapeHtml(url)}" controls playsinline preload="metadata"></video>`:""}${row.caption?`<div class="clips-caption">${escapeHtml(row.caption)}</div>`:""}<span class="clips-category">${escapeHtml(row.category||"Other")}</span></article>`;
+    return `<article class="clips-feed-card"><div class="clips-feed-head"><div><div class="clips-player">${escapeHTML(clipPlayerName(row))}</div><div class="clips-time">${escapeHTML(when)}</div></div>${canDelete?`<button class="clips-delete" onclick="deleteOlympusClip('${row.id}')">Delete</button>`:""}</div>${url?`<video class="clips-video" src="${escapeHTML(url)}" controls playsinline preload="metadata"></video>`:""}${row.caption?`<div class="clips-caption">${escapeHTML(row.caption)}</div>`:""}<span class="clips-category">${escapeHTML(row.category||"Other")}</span></article>`;
   }).join("");
 }
 async function loadOlympusClips(){
