@@ -3121,18 +3121,6 @@ textarea.bug-form-control{
   </div>
 
 
-  <div id="olympusClipsHomeCard" class="olympus-clips-home-card">
-    <button class="olympus-clips-home-button" type="button" onclick="openClipsPage()">
-      <div class="olympus-clips-home-icon">🎥</div>
-      <div class="olympus-clips-home-copy">
-        <div class="olympus-clips-home-kicker">Olympus Social</div>
-        <div class="olympus-clips-home-title">Olympus Clips</div>
-        <div class="olympus-clips-home-sub">Goals. Skills. Team play. Olympus moments.</div>
-      </div>
-      <div class="olympus-clips-home-arrow">›</div>
-    </button>
-  </div>
-
   <div id="clubhousePresenceCard" class="clubhouse-presence-card">
     <div class="clubhouse-presence-head">
       <div class="clubhouse-presence-label">👥 Players</div>
@@ -3654,7 +3642,6 @@ textarea.bug-form-control{
 <!-- OLYMPUS CLIPS -->
 <div id="clips" class="page">
   <div class="clips-top">
-    <button class="app-back-button clips-back" onclick="closeClipsPage()"><span class="app-back-icon">‹</span><span>Back</span></button>
     <h2 class="clips-title">Olympus Clips</h2>
     <p class="clips-subtitle">Goals. Skills. Team play. Olympus moments.</p>
   </div>
@@ -9179,9 +9166,6 @@ function renderPublicHome(){
   const signedIn = Boolean(currentClubRole);
 
   if(publicHome) publicHome.style.display = signedIn ? "none" : "block";
-  const clipsHomeCard = el("olympusClipsHomeCard");
-  if(clipsHomeCard) clipsHomeCard.style.display = signedIn ? "block" : "none";
-
   if(kicker) kicker.textContent = "Welcome to Mount Olympus";
   if(title) title.textContent = signedIn ? "Clubhouse" : "Olympus FC";
   if(copy){
