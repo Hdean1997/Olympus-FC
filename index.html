@@ -2986,6 +2986,25 @@ textarea.bug-form-control{
 
 /* OLYMPUS CLIPS */
 #clips{box-sizing:border-box;padding-left:16px;padding-right:16px;overflow-x:hidden}.clips-top{padding:8px 0 18px}.clips-title{margin:0;font-size:34px;line-height:1.08}.clips-subtitle{color:#91a0b4;margin:7px 0 0;line-height:1.4}.clips-card{width:100%;box-sizing:border-box;background:#101f32;border:1px solid #29415d;border-radius:18px;padding:16px;margin:0 0 16px}.clips-upload-button{width:100%;border:0;border-radius:14px;padding:16px;background:#3477ff;color:white;font-size:17px;font-weight:800}.clips-file{display:none}.clips-field{width:100%;box-sizing:border-box;background:#081423;border:1px solid #29415d;color:#fff;border-radius:12px;padding:13px;font:inherit;margin-top:10px}.clips-preview{width:100%;max-height:360px;border-radius:14px;background:#000;margin-top:12px}.clips-feed-card{width:100%;box-sizing:border-box;background:#101f32;border:1px solid #29415d;border-radius:18px;overflow:hidden;margin-bottom:18px}.clips-feed-head{padding:14px 16px;display:flex;align-items:center;justify-content:space-between}.clips-player{font-weight:800}.clips-time{color:#8495aa;font-size:12px}.clips-video{width:100%;display:block;background:#000;max-height:520px}.clips-caption{padding:14px 16px 5px;font-size:15px;line-height:1.45}.clips-category{display:inline-block;margin:8px 16px 15px;padding:5px 9px;border-radius:999px;background:#0a1728;border:1px solid #29415d;color:#e8bd4b;font-size:11px;font-weight:800;text-transform:uppercase}.clips-empty{width:100%;box-sizing:border-box;border:1px dashed #304966;border-radius:18px;padding:34px 20px;text-align:center;color:#8fa0b5}.clips-message{font-size:12px;color:#9aa9bc;margin-top:10px}.clips-delete{border:0;background:transparent;color:#e27c83;font-weight:700}.clips-progress{height:6px;background:#07111e;border-radius:99px;overflow:hidden;margin-top:12px;display:none}.clips-progress>div{height:100%;width:0;background:#3477ff}.clips-back{margin-bottom:12px}.clips-section-heading{color:#91a0b4;font-size:12px;font-weight:800;letter-spacing:1.3px;margin:22px 0 12px}.olympus-clips-home-card{display:none;margin:0 16px 14px;padding:0;border-radius:16px;background:linear-gradient(145deg,#13243d,#0c192b);border:1px solid #8d712a;overflow:hidden}.olympus-clips-home-button{width:100%;display:flex;align-items:center;gap:13px;padding:15px;border:0;background:transparent;color:#fff;text-align:left;font-family:inherit}.olympus-clips-home-icon{width:48px;height:48px;flex:0 0 48px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:#0a1728;border:1px solid #8d712a;font-size:24px}.olympus-clips-home-copy{min-width:0;flex:1}.olympus-clips-home-kicker{font-size:10px;font-weight:900;letter-spacing:1px;color:#e7bd4b;text-transform:uppercase}.olympus-clips-home-title{font-size:18px;font-weight:900;margin-top:3px}.olympus-clips-home-sub{font-size:12px;color:#93a3b7;line-height:1.4;margin-top:3px}.olympus-clips-home-arrow{font-size:28px;color:#7da8df;line-height:1}
+
+/* OLYMPUS CLIPS - SOCIAL LAYER */
+.clips-social{border-top:1px solid #233a55;padding:12px 16px 15px;background:#0d1a2b}
+.clips-reactions{display:flex;gap:8px;flex-wrap:wrap}
+.clips-reaction{min-width:56px;min-height:38px;padding:7px 10px;border-radius:999px;border:1px solid #29415d;background:#081423;color:#d7e0ec;font-weight:800;font-size:13px}
+.clips-reaction.active{border-color:#e8bd4b;background:#2a2313;color:#f4cd61}
+.clips-comments{margin-top:13px}
+.clips-comment{padding:9px 0;border-top:1px solid #1c3048}
+.clips-comment:first-child{border-top:0}
+.clips-comment-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.clips-comment-name{font-size:12px;font-weight:900;color:#dce6f4}
+.clips-comment-time{font-size:10px;color:#71839b;white-space:nowrap}
+.clips-comment-body{margin-top:4px;color:#b9c5d5;font-size:13px;line-height:1.4;overflow-wrap:anywhere}
+.clips-comment-delete{border:0;background:transparent;color:#e27c83;font-size:10px;font-weight:800;padding:2px 0 2px 8px}
+.clips-comment-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:10px}
+.clips-comment-input{min-width:0;height:42px;border-radius:11px;border:1px solid #29415d;background:#07111f;color:#fff;padding:0 11px}
+.clips-comment-post{height:42px;border:0;border-radius:11px;background:#326eff;color:#fff;padding:0 14px;font-weight:800}
+.clips-comment-note{margin-top:8px;color:#71839b;font-size:10px}
+
 </style>
 </head>
 
@@ -4267,6 +4286,8 @@ let matchdaySessions = [];
 let matchdayPotnVotes = [];
 let bugReports = [];
 let olympusClips = [];
+let clipReactions = [];
+let clipComments = [];
 let pendingClipFile = null;
 const APP_VERSION = "2026.09.06-achievements-stage3-account-filter-fix";
 
@@ -9744,21 +9765,89 @@ function clipPublicUrl(row){
   if(!path || !supabaseClient) return "";
   return supabaseClient.storage.from("olympus-clips").getPublicUrl(path).data.publicUrl;
 }
+function clipReactionCounts(clipId){
+  const rows=clipReactions.filter(r=>String(r.clip_id)===String(clipId));
+  const types=["🔥","👏","😂","🏔️"];
+  return types.map(type=>({type,count:rows.filter(r=>r.reaction===type).length,active:rows.some(r=>r.reaction===type && r.player_key===currentClubPlayerKey)}));
+}
+function clipCommentsFor(clipId){
+  return clipComments.filter(r=>String(r.clip_id)===String(clipId)).sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0));
+}
+function clipCommentPlayerName(row){
+  const p=players.find(x=>x.id===row.player_key);
+  return p?.name || "Olympus Player";
+}
+function clipSocialHTML(row){
+  const reactions=clipReactionCounts(row.id);
+  const comments=clipCommentsFor(row.id);
+  const reactionHtml=reactions.map(r=>`<button class="clips-reaction ${r.active?"active":""}" onclick="toggleClipReaction('${row.id}','${r.type}')">${r.type} ${r.count||""}</button>`).join("");
+  const commentsHtml=comments.length?comments.map(c=>{
+    const mine=currentClubPlayerKey && c.player_key===currentClubPlayerKey;
+    const canDelete=mine||isOwner;
+    const when=c.created_at?new Date(c.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
+    return `<div class="clips-comment"><div class="clips-comment-head"><div><div class="clips-comment-name">${escapeHTML(clipCommentPlayerName(c))}</div><div class="clips-comment-time">${escapeHTML(when)}</div></div>${canDelete?`<button class="clips-comment-delete" onclick="deleteClipComment('${c.id}')">Delete</button>`:""}</div><div class="clips-comment-body">${escapeHTML(c.body||"")}</div></div>`;
+  }).join(""):'<div class="clips-comment-note">No comments yet.</div>';
+  const form=currentClubRole?`<div class="clips-comment-form"><input id="clip-comment-${row.id}" class="clips-comment-input" maxlength="300" placeholder="Write a comment…"><button class="clips-comment-post" onclick="postClipComment('${row.id}')">Post</button></div>`:'<div class="clips-comment-note">Sign in to react or comment.</div>';
+  return `<div class="clips-social"><div class="clips-reactions">${reactionHtml}</div><div class="clips-comments">${commentsHtml}${form}</div></div>`;
+}
 function renderOlympusClips(){
   const feed=el("clipsFeed"); if(!feed) return;
   if(!olympusClips.length){ feed.innerHTML='<div class="clips-empty"><div style="font-size:34px;margin-bottom:8px">🎥</div><b>No clips yet</b><div style="margin-top:6px">Be the first to post an Olympus moment.</div></div>'; return; }
   feed.innerHTML=olympusClips.map(row=>{
     const url=clipPublicUrl(row); const mine=currentClubPlayerKey && row.player_key===currentClubPlayerKey;
     const canDelete=mine||isOwner; const when=row.created_at?new Date(row.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
-    return `<article class="clips-feed-card"><div class="clips-feed-head"><div><div class="clips-player">${escapeHTML(clipPlayerName(row))}</div><div class="clips-time">${escapeHTML(when)}</div></div>${canDelete?`<button class="clips-delete" onclick="deleteOlympusClip('${row.id}')">Delete</button>`:""}</div>${url?`<video class="clips-video" src="${escapeHTML(url)}" controls playsinline preload="metadata"></video>`:""}${row.caption?`<div class="clips-caption">${escapeHTML(row.caption)}</div>`:""}<span class="clips-category">${escapeHTML(row.category||"Other")}</span></article>`;
+    return `<article class="clips-feed-card"><div class="clips-feed-head"><div><div class="clips-player">${escapeHTML(clipPlayerName(row))}</div><div class="clips-time">${escapeHTML(when)}</div></div>${canDelete?`<button class="clips-delete" onclick="deleteOlympusClip('${row.id}')">Delete</button>`:""}</div>${url?`<video class="clips-video" src="${escapeHTML(url)}" controls playsinline preload="metadata"></video>`:""}${row.caption?`<div class="clips-caption">${escapeHTML(row.caption)}</div>`:""}<span class="clips-category">${escapeHTML(row.category||"Other")}</span>${clipSocialHTML(row)}</article>`;
   }).join("");
 }
 async function loadOlympusClips(){
   if(!supabaseClient) return;
   try{
-    const {data,error}=await supabaseClient.from("clips").select("*").order("created_at",{ascending:false});
-    if(error) throw error; olympusClips=data||[]; renderOlympusClips();
+    const clipsResult=await supabaseClient.from("clips").select("*").order("created_at",{ascending:false});
+    if(clipsResult.error) throw clipsResult.error;
+    olympusClips=clipsResult.data||[];
+    const [reactionsResult,commentsResult]=await Promise.all([
+      supabaseClient.from("clip_reactions").select("*"),
+      supabaseClient.from("clip_comments").select("*").order("created_at",{ascending:true})
+    ]);
+    clipReactions=reactionsResult.error?[]:(reactionsResult.data||[]);
+    clipComments=commentsResult.error?[]:(commentsResult.data||[]);
+    renderOlympusClips();
   }catch(error){ console.error("Clips load failed:",error); if(el("clipsFeed")) el("clipsFeed").innerHTML='<div class="clips-empty">Clips could not be loaded yet.</div>'; }
+}
+async function toggleClipReaction(clipId,reaction){
+  if(!currentClubRole){ alert("Sign in to react to clips."); return; }
+  try{
+    const {data:{user}}=await supabaseClient.auth.getUser();
+    const existing=clipReactions.find(r=>String(r.clip_id)===String(clipId) && r.user_id===user?.id);
+    if(existing && existing.reaction===reaction){
+      const {error}=await supabaseClient.from("clip_reactions").delete().eq("id",existing.id); if(error) throw error;
+    }else if(existing){
+      const {error}=await supabaseClient.from("clip_reactions").update({reaction}).eq("id",existing.id); if(error) throw error;
+    }else{
+      const {error}=await supabaseClient.from("clip_reactions").insert({clip_id:clipId,user_id:user?.id,player_key:currentClubPlayerKey,reaction}); if(error) throw error;
+    }
+    await loadOlympusClips();
+  }catch(error){ console.error("Reaction failed:",error); alert("That reaction could not be saved."); }
+}
+async function postClipComment(clipId){
+  if(!currentClubRole){ alert("Sign in to comment."); return; }
+  const input=el(`clip-comment-${clipId}`);
+  const body=(input?.value||"").trim();
+  if(!body) return;
+  try{
+    const {data:{user}}=await supabaseClient.auth.getUser();
+    const {error}=await supabaseClient.from("clip_comments").insert({clip_id:clipId,user_id:user?.id,player_key:currentClubPlayerKey,body});
+    if(error) throw error;
+    if(input) input.value="";
+    await loadOlympusClips();
+  }catch(error){ console.error("Comment failed:",error); alert("That comment could not be posted."); }
+}
+async function deleteClipComment(commentId){
+  if(!confirm("Delete this comment?")) return;
+  try{
+    const {error}=await supabaseClient.from("clip_comments").delete().eq("id",commentId); if(error) throw error;
+    await loadOlympusClips();
+  }catch(error){ console.error("Comment delete failed:",error); alert("That comment could not be deleted."); }
 }
 async function uploadOlympusClip(){
   const msg=el("clipUploadMessage"), btn=el("clipPostButton");
