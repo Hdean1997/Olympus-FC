@@ -7756,56 +7756,167 @@ function renderRecordsPage(){
       value => value.toFixed(1)
     );
 
-  const passingSessionRecords = [];
+  const matchdayPlayerRecords = {
+    goals:[],
+    assists:[],
+    contributions:[],
+    potm:[],
+    averageRating:[],
+    passes:[]
+  };
+  const matchdayClubRecords = [];
+
   matchdaySessions
     .filter(session =>
       session.status === "ended" &&
       (activeSeason === "ALL_TIME" || session.season === activeSeason)
     )
     .forEach(session => {
-      const passing = matchdayPassingForSession(session);
-      if(!passing) return;
-      const gamesPlayed = calculateMatchdayStats(session).matches.length;
+      const st = calculateMatchdayStats(session);
+      const gamesPlayed = st.matches.length;
+      if(!gamesPlayed) return;
+
+      const playerTotals = {};
+      players.forEach(player => {
+        playerTotals[player.id] = {goals:0,assists:0,potm:0,ratingTotal:0,ratingCount:0};
+      });
+
+      st.matches.forEach(match => {
+        players.forEach(player => {
+          const stat = match.playerStats?.[player.id];
+          if(!stat?.played) return;
+          playerTotals[player.id].goals += Number(stat.goals || 0);
+          playerTotals[player.id].assists += Number(stat.assists || 0);
+          const rating = Number(stat.rating);
+          if(Number.isFinite(rating)){
+            playerTotals[player.id].ratingTotal += rating;
+            playerTotals[player.id].ratingCount += 1;
+          }
+        });
+        if(match.potmPlayerId && playerTotals[match.potmPlayerId]){
+          playerTotals[match.potmPlayerId].potm += 1;
+        }
+      });
+
       (session.players || []).forEach(item => {
         const player = players.find(p => p.id === item.playerKey);
-        const value = Number(passing.passes?.[item.playerKey]);
-        if(player && Number.isFinite(value)){
-          passingSessionRecords.push({player,session,value,gamesPlayed});
+        const totalsForPlayer = playerTotals[item.playerKey];
+        if(!player || !totalsForPlayer) return;
+        const base = {player,session,gamesPlayed};
+        matchdayPlayerRecords.goals.push({...base,value:totalsForPlayer.goals});
+        matchdayPlayerRecords.assists.push({...base,value:totalsForPlayer.assists});
+        matchdayPlayerRecords.contributions.push({...base,value:totalsForPlayer.goals + totalsForPlayer.assists});
+        matchdayPlayerRecords.potm.push({...base,value:totalsForPlayer.potm});
+        if(totalsForPlayer.ratingCount){
+          matchdayPlayerRecords.averageRating.push({
+            ...base,
+            value:totalsForPlayer.ratingTotal / totalsForPlayer.ratingCount,
+            appearances:totalsForPlayer.ratingCount
+          });
         }
+      });
+
+      const passing = matchdayPassingForSession(session);
+      if(passing){
+        (session.players || []).forEach(item => {
+          const player = players.find(p => p.id === item.playerKey);
+          const value = Number(passing.passes?.[item.playerKey]);
+          if(player && Number.isFinite(value)){
+            matchdayPlayerRecords.passes.push({player,session,value,gamesPlayed});
+          }
+        });
+      }
+
+      matchdayClubRecords.push({
+        session,
+        gamesPlayed,
+        goals:st.gf,
+        wins:st.wins,
+        winRate:st.winRate
       });
     });
 
-  function renderPassingSessionRecord(records){
+  function uniqueMatchdayHolders(records,max){
+    return records
+      .filter(record => Math.abs(record.value - max) < .0001)
+      .filter((record,index,array) =>
+        array.findIndex(item => item.player.id === record.player.id) === index
+      );
+  }
+
+  function renderMatchdayPlayerRecord(title,records,display,options={}){
     if(!records.length){
       return `
         <div class="single-record-card">
-          <div class="single-record-title">Most Completed Passes in One Matchday Session</div>
-          <div class="single-record-name">No Matchday passing data added yet</div>
+          <div class="single-record-title">${title}</div>
+          <div class="single-record-name">No Matchday record yet</div>
         </div>
       `;
     }
 
     const max = Math.max(...records.map(record => record.value));
-    const tied = records.filter(record => record.value === max);
-    const holders = tied.filter((record,index,array) =>
-      array.findIndex(item => item.player.id === record.player.id) === index
-    );
+    if(options.requirePositive && max <= 0){
+      return `
+        <div class="single-record-card">
+          <div class="single-record-title">${title}</div>
+          <div class="single-record-name">No Matchday record yet</div>
+        </div>
+      `;
+    }
 
+    const holders = uniqueMatchdayHolders(records,max);
     return `
       <div class="single-record-card">
-        <div class="single-record-title">Most Completed Passes in One Matchday Session</div>
+        <div class="single-record-title">${title}</div>
         <div class="single-record-name">
           ${holders.map(record => `#${record.player.number} ${escapeHTML(record.player.name)}`).join(" / ")}
         </div>
-        <div class="single-record-value">${max} completed passes</div>
+        <div class="single-record-value">${display(max)}</div>
         <div class="single-record-meta">
-          ${holders.map(record => `${record.gamesPlayed} game${record.gamesPlayed===1?"":"s"} · ${formatDate(record.session.sessionDate)}${activeSeason === "ALL_TIME" ? " · " + record.session.season : ""}`).join(" / ")}
+          ${holders.map(record => {
+            const countText = options.useAppearances
+              ? `${record.appearances} appearance${record.appearances===1?"":"s"}`
+              : `${record.gamesPlayed} game${record.gamesPlayed===1?"":"s"}`;
+            return `${countText} · ${formatDate(record.session.sessionDate)}${activeSeason === "ALL_TIME" ? " · " + record.session.season : ""}`;
+          }).join(" / ")}
         </div>
       </div>
     `;
   }
 
-  el("matchdayRecords").innerHTML = renderPassingSessionRecord(passingSessionRecords);
+  function renderMatchdayClubRecord(title,field,display){
+    if(!matchdayClubRecords.length){
+      return `
+        <div class="single-record-card">
+          <div class="single-record-title">${title}</div>
+          <div class="single-record-name">No Matchday record yet</div>
+        </div>
+      `;
+    }
+    const max = Math.max(...matchdayClubRecords.map(record => record[field]));
+    const tied = matchdayClubRecords.filter(record => record[field] === max);
+    return `
+      <div class="single-record-card">
+        <div class="single-record-title">${title}</div>
+        <div class="single-record-name">Olympus FC</div>
+        <div class="single-record-value">${display(max)}</div>
+        <div class="single-record-meta">
+          ${tied.map(record => `${record.gamesPlayed} game${record.gamesPlayed===1?"":"s"} · ${formatDate(record.session.sessionDate)}${activeSeason === "ALL_TIME" ? " · " + record.session.season : ""}`).join(" / ")}
+        </div>
+      </div>
+    `;
+  }
+
+  el("matchdayRecords").innerHTML =
+    renderMatchdayPlayerRecord("Most Goals in One Matchday Session",matchdayPlayerRecords.goals,value => `${value} goals`,{requirePositive:true}) +
+    renderMatchdayPlayerRecord("Most Assists in One Matchday Session",matchdayPlayerRecords.assists,value => `${value} assists`,{requirePositive:true}) +
+    renderMatchdayPlayerRecord("Most Goal Contributions in One Matchday Session",matchdayPlayerRecords.contributions,value => `${value} G/A`,{requirePositive:true}) +
+    renderMatchdayPlayerRecord("Most POTM Awards in One Matchday Session",matchdayPlayerRecords.potm,value => `${value} POTM`,{requirePositive:true}) +
+    renderMatchdayPlayerRecord("Highest Average Rating in One Matchday Session",matchdayPlayerRecords.averageRating,value => value.toFixed(2),{useAppearances:true}) +
+    renderMatchdayPlayerRecord("Most Completed Passes in One Matchday Session",matchdayPlayerRecords.passes,value => `${value} completed passes`) +
+    renderMatchdayClubRecord("Most Olympus FC Goals in One Matchday Session","goals",value => `${value} goals`) +
+    renderMatchdayClubRecord("Most Wins in One Matchday Session","wins",value => `${value} wins`) +
+    renderMatchdayClubRecord("Best Matchday Win Rate","winRate",value => `${value}%`);
 
   let biggestWin = null;
   let biggestDefeat = null;
