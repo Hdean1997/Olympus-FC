@@ -592,6 +592,10 @@ h1{
 .matchday-potn-select{height:40px;padding:7px 9px;border:1px solid #29425f;border-radius:10px;background:#07111f;color:#fff;min-width:0;}
 .matchday-potn-save{width:100%;margin-top:10px;min-height:43px;border:1px solid #315d9d;border-radius:11px;background:#10233b;color:#fff;font-weight:bold;}
 .matchday-potn-note{margin-top:7px;color:#8392a6;font-size:10px;line-height:1.45;}
+.matchday-potn-spotlight{margin:14px 16px 18px;padding:18px;border-radius:18px;background:#101d2e;border:1px solid #29425f;}
+.matchday-potn-spotlight .matchday-potn{margin:0;padding:0;border-top:0;}
+.matchday-potn-spotlight-eyebrow{margin-bottom:11px;color:#6f9dff;font-size:10px;font-weight:bold;letter-spacing:.8px;text-transform:uppercase;}
+#matchdayHistory .matchday-card{margin:0 16px 18px;}
 @media(max-width:390px){.matchday-potn-row{grid-template-columns:1fr}.matchday-potn-select{width:100%}}
 .matchday-squad-row{display:grid;grid-template-columns:auto 1fr 110px;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #25384f;}
 .matchday-squad-row:last-child{border-bottom:0;}
@@ -3477,6 +3481,8 @@ textarea.bug-form-control{
     + Add Match
   </button>
 
+  <div id="matchdayPotnTop" style="display:none"></div>
+
   <div id="allTimeMatchMessage" class="all-time-message">
     All Time combines FC26 and FC27. To add a new match, select the season the match belongs to first.
   </div>
@@ -5757,7 +5763,6 @@ function matchdaySummaryHTML(session,compact=false){
     ? `<details class="matchday-squad-details"><summary>View squad & positions</summary><div class="matchday-squad-list">${squadRows}</div></details>`
     : "";
   const duration = matchdayDurationMs(session);
-  const potnSection = (!compact && session.status === "ended") ? matchdayPotnHTML(session) : "";
   return `
     <div class="matchday-card ${session.status === "active" ? "live" : ""}">
       <div class="matchday-eyebrow">${session.status === "active" ? "🔴 MATCHDAY LIVE" : "MATCHDAY REPORT"}</div>
@@ -5777,7 +5782,6 @@ function matchdaySummaryHTML(session,compact=false){
         🎯 Top assister — ${st.topAssister ? `${escapeHTML(st.topAssister.player.name)} (${st.topAssister.value})` : "No assists"}<br>
         ⭐ Most POTM — ${st.topPotm ? `${escapeHTML(st.topPotm.player.name)} (${st.topPotm.value})` : "No POTM"}
       </div>` : ""}
-      ${potnSection}
       ${isAdmin ? `<div class="matchday-actions">
         ${session.status === "active" ? `<button class="matchday-action primary" onclick="event.stopPropagation();endMatchday(${session.id})">End Matchday</button>` : ""}
         <button class="matchday-action danger" onclick="event.stopPropagation();deleteMatchday(${session.id})">Delete Matchday</button>
@@ -5790,13 +5794,16 @@ function renderMatchday(){
   const history = el("matchdayHistory");
   const historyTitle = el("matchdayHistoryTitle");
   const home = el("homeMatchdayLive");
-  if(!controls || !history || !historyTitle || !home) return;
+  const potnTop = el("matchdayPotnTop");
+  if(!controls || !history || !historyTitle || !home || !potnTop) return;
 
   if(activeSeason === "ALL_TIME"){
     controls.innerHTML = "";
     history.innerHTML = "";
     historyTitle.style.display = "none";
     home.style.display = "none";
+    potnTop.innerHTML = "";
+    potnTop.style.display = "none";
     return;
   }
 
@@ -5815,6 +5822,20 @@ function renderMatchday(){
   const sessions = matchdaySessions
     .filter(s => s.season === activeSeason && s.status === "ended")
     .sort((a,b) => Number(b.id)-Number(a.id));
+
+  const latestEndedMatchday = sessions[0] || null;
+  if(latestEndedMatchday){
+    potnTop.innerHTML = `
+      <div class="matchday-potn-spotlight">
+        <div class="matchday-potn-spotlight-eyebrow">Latest Matchday · ${formatDate(latestEndedMatchday.sessionDate)}</div>
+        ${matchdayPotnHTML(latestEndedMatchday)}
+      </div>`;
+    potnTop.style.display = "block";
+  }else{
+    potnTop.innerHTML = "";
+    potnTop.style.display = "none";
+  }
+
   historyTitle.style.display = sessions.length ? "block" : "none";
   history.innerHTML = sessions.map(session => matchdaySummaryHTML(session,false)).join("");
   updateMatchdayTimers();
