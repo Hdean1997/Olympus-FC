@@ -5064,6 +5064,39 @@ const FC26_BASELINE = {
   juanny:{appearances:11,goals:2,assists:2,averageRating:6.7,potm:0,passes:87,passCompletion:76}
 };
 
+// Passing is not captured in the Add Match form, so Matchday passing totals
+// are added here after a session from the updated in-game Club Squad screen.
+// These figures are for session reports/records only; FC26_BASELINE already
+// contains the latest cumulative passing totals and must not be added again.
+const MATCHDAY_PASSING = [
+  {
+    season:"FC26",
+    sessionDate:"2026-09-08",
+    passes:{tyrone:209,baganor:133,kenny:122,deano:126,juanny:0}
+  }
+];
+
+function matchdayPassingForSession(session){
+  return MATCHDAY_PASSING.find(entry =>
+    entry.season === session.season && entry.sessionDate === session.sessionDate
+  ) || null;
+}
+
+function matchdayPassingLeader(session){
+  const entry = matchdayPassingForSession(session);
+  if(!entry) return null;
+
+  const eligible = (session.players || []).map(item => {
+    const player = players.find(p => p.id === item.playerKey);
+    const value = Number(entry.passes?.[item.playerKey]);
+    return player && Number.isFinite(value) ? {player,value} : null;
+  }).filter(Boolean);
+
+  if(!eligible.length) return null;
+  const max = Math.max(...eligible.map(item => item.value));
+  return {value:max,holders:eligible.filter(item => item.value === max)};
+}
+
 const divisions = [
   "Division 5","Division 4","Division 3",
   "Division 2","Division 1","Elite"
@@ -5779,6 +5812,7 @@ function matchdaySummaryHTML(session,compact=false){
     ? `<details class="matchday-squad-details"><summary>View squad & positions</summary><div class="matchday-squad-list">${squadRows}</div></details>`
     : "";
   const duration = matchdayDurationMs(session);
+  const passingLeader = matchdayPassingLeader(session);
   return `
     <div class="matchday-card ${session.status === "active" ? "live" : ""}">
       <div class="matchday-eyebrow">${session.status === "active" ? "🔴 MATCHDAY LIVE" : "MATCHDAY REPORT"}</div>
@@ -5797,7 +5831,8 @@ function matchdaySummaryHTML(session,compact=false){
         ⚽ Top scorer — ${st.topScorer ? `${escapeHTML(st.topScorer.player.name)} (${st.topScorer.value})` : "No goals"}<br>
         🎯 Top assister — ${st.topAssister ? `${escapeHTML(st.topAssister.player.name)} (${st.topAssister.value})` : "No assists"}<br>
         ⭐ Most POTM — ${st.topPotm ? `${escapeHTML(st.topPotm.player.name)} (${st.topPotm.value})` : "No POTM"}<br>
-        📊 Highest avg rating — ${st.topAverageRating ? `${escapeHTML(st.topAverageRating.player.name)} (${st.topAverageRating.value.toFixed(2)})` : "No ratings"}
+        📊 Highest avg rating — ${st.topAverageRating ? `${escapeHTML(st.topAverageRating.player.name)} (${st.topAverageRating.value.toFixed(2)})` : "No ratings"}<br>
+        🎯 Most completed passes — ${passingLeader ? `${passingLeader.holders.map(item => escapeHTML(item.player.name)).join(" / ")} (${passingLeader.value})` : "Not added for this session"}
       </div>` : ""}
       ${!compact && session.status === "ended" ? matchdayPotnHTML(session) : ""}
       ${isAdmin ? `<div class="matchday-actions">
@@ -7715,6 +7750,57 @@ function renderRecordsPage(){
       ratings,
       value => value.toFixed(1)
     );
+
+  const passingSessionRecords = [];
+  matchdaySessions
+    .filter(session =>
+      session.status === "ended" &&
+      (activeSeason === "ALL_TIME" || session.season === activeSeason)
+    )
+    .forEach(session => {
+      const passing = matchdayPassingForSession(session);
+      if(!passing) return;
+      const gamesPlayed = calculateMatchdayStats(session).matches.length;
+      (session.players || []).forEach(item => {
+        const player = players.find(p => p.id === item.playerKey);
+        const value = Number(passing.passes?.[item.playerKey]);
+        if(player && Number.isFinite(value)){
+          passingSessionRecords.push({player,session,value,gamesPlayed});
+        }
+      });
+    });
+
+  function renderPassingSessionRecord(records){
+    if(!records.length){
+      return `
+        <div class="single-record-card">
+          <div class="single-record-title">Most Completed Passes in One Matchday Session</div>
+          <div class="single-record-name">No Matchday passing data added yet</div>
+        </div>
+      `;
+    }
+
+    const max = Math.max(...records.map(record => record.value));
+    const tied = records.filter(record => record.value === max);
+    const holders = tied.filter((record,index,array) =>
+      array.findIndex(item => item.player.id === record.player.id) === index
+    );
+
+    return `
+      <div class="single-record-card">
+        <div class="single-record-title">Most Completed Passes in One Matchday Session</div>
+        <div class="single-record-name">
+          ${holders.map(record => `#${record.player.number} ${escapeHTML(record.player.name)}`).join(" / ")}
+        </div>
+        <div class="single-record-value">${max} completed passes</div>
+        <div class="single-record-meta">
+          ${holders.map(record => `${record.gamesPlayed} game${record.gamesPlayed===1?"":"s"} · ${formatDate(record.session.sessionDate)}${activeSeason === "ALL_TIME" ? " · " + record.session.season : ""}`).join(" / ")}
+        </div>
+      </div>
+    `;
+  }
+
+  el("singleMatchRecords").innerHTML += renderPassingSessionRecord(passingSessionRecords);
 
   let biggestWin = null;
   let biggestDefeat = null;
