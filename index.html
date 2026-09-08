@@ -5048,11 +5048,14 @@ const PLAYER_PROFILE_IMAGES = {
 };
 
 const FC26_BASELINE = {
-  tyrone:{appearances:60,goals:20,assists:33,averageRating:8.4,potm:7,passes:630,passCompletion:89},
-  baganor:{appearances:60,goals:25,assists:60,averageRating:8.5,potm:12,passes:556,passCompletion:80},
-  deano:{appearances:60,goals:95,assists:34,averageRating:8.5,potm:21,passes:429,passCompletion:90},
-  kenny:{appearances:46,goals:49,assists:39,averageRating:8.2,potm:5,passes:404,passCompletion:89},
-  juanny:{appearances:11,goals:2,assists:2,averageRating:6.7,potm:0,passes:null,passCompletion:null}
+  // Latest in-game Olympus FC historical snapshot — 8 Sep 2026.
+  // Rating/POTM values are retained from the previous baseline because the
+  // supplied Club Squad screens do not show updated figures for those fields.
+  tyrone:{appearances:69,goals:22,assists:45,averageRating:8.4,potm:7,passes:1533,passCompletion:87},
+  baganor:{appearances:69,goals:37,assists:66,averageRating:8.5,potm:12,passes:1256,passCompletion:78},
+  deano:{appearances:69,goals:106,assists:38,averageRating:8.5,potm:21,passes:983,passCompletion:89},
+  kenny:{appearances:46,goals:49,assists:39,averageRating:8.2,potm:5,passes:726,passCompletion:87},
+  juanny:{appearances:11,goals:2,assists:2,averageRating:6.7,potm:0,passes:87,passCompletion:76}
 };
 
 const divisions = [
@@ -6958,7 +6961,7 @@ function renderStatsPage(){
           ${activeSeason === "FC26" ? `
             <div class="stats-box">
               <div class="stats-box-number">${FC26_BASELINE[player.id].passes ?? "—"}</div>
-              <div class="stats-box-label">PASSES</div>
+              <div class="stats-box-label">PASSES COMPLETED</div>
             </div>
 
             <div class="stats-box">
