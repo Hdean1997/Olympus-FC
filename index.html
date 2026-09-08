@@ -5561,13 +5561,18 @@ function calculateMatchdayStats(session){
   const ga = matches.reduce((t,m) => t + Number(m.opponentScore || 0),0);
   const winRate = matches.length ? Math.round((wins / matches.length) * 100) : 0;
   const playerTotals = {};
-  players.forEach(p => { playerTotals[p.id] = {goals:0,assists:0,potm:0}; });
+  players.forEach(p => { playerTotals[p.id] = {goals:0,assists:0,potm:0,ratingTotal:0,ratingCount:0}; });
   matches.forEach(match => {
     players.forEach(p => {
       const st = match.playerStats?.[p.id];
       if(st?.played){
         playerTotals[p.id].goals += Number(st.goals || 0);
         playerTotals[p.id].assists += Number(st.assists || 0);
+        const rating = Number(st.rating);
+        if(Number.isFinite(rating)){
+          playerTotals[p.id].ratingTotal += rating;
+          playerTotals[p.id].ratingCount += 1;
+        }
       }
     });
     if(match.potmPlayerId && playerTotals[match.potmPlayerId]) playerTotals[match.potmPlayerId].potm++;
@@ -5576,7 +5581,18 @@ function calculateMatchdayStats(session){
     const ranked = players.map(p => ({player:p,value:playerTotals[p.id][key]})).sort((a,b) => b.value-a.value);
     return ranked[0]?.value > 0 ? ranked[0] : null;
   };
-  return {matches,wins,draws,losses,gf,ga,winRate,topScorer:topBy("goals"),topAssister:topBy("assists"),topPotm:topBy("potm")};
+  const topAverageRating = players
+    .map(p => {
+      const totals = playerTotals[p.id];
+      return {
+        player:p,
+        value:totals.ratingCount ? totals.ratingTotal / totals.ratingCount : null,
+        ratedMatches:totals.ratingCount
+      };
+    })
+    .filter(item => item.value !== null)
+    .sort((a,b) => b.value-a.value)[0] || null;
+  return {matches,wins,draws,losses,gf,ga,winRate,topScorer:topBy("goals"),topAssister:topBy("assists"),topPotm:topBy("potm"),topAverageRating};
 }
 
 function formatSessionDuration(ms,clock=false){
@@ -5775,7 +5791,8 @@ function matchdaySummaryHTML(session,compact=false){
       ${!compact && session.status === "ended" ? `<div class="matchday-report-leaders">
         ⚽ Top scorer — ${st.topScorer ? `${escapeHTML(st.topScorer.player.name)} (${st.topScorer.value})` : "No goals"}<br>
         🎯 Top assister — ${st.topAssister ? `${escapeHTML(st.topAssister.player.name)} (${st.topAssister.value})` : "No assists"}<br>
-        ⭐ Most POTM — ${st.topPotm ? `${escapeHTML(st.topPotm.player.name)} (${st.topPotm.value})` : "No POTM"}
+        ⭐ Most POTM — ${st.topPotm ? `${escapeHTML(st.topPotm.player.name)} (${st.topPotm.value})` : "No POTM"}<br>
+        📊 Highest avg rating — ${st.topAverageRating ? `${escapeHTML(st.topAverageRating.player.name)} (${st.topAverageRating.value.toFixed(2)})` : "No ratings"}
       </div>` : ""}
       ${!compact && session.status === "ended" ? matchdayPotnHTML(session) : ""}
       ${isAdmin ? `<div class="matchday-actions">
