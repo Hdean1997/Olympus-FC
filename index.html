@@ -8634,6 +8634,121 @@ function renderClubhouseSessionHome(){
   }
 }
 
+async function shareClubhouseSession(){
+  if(!clubhouseSession){
+    alert("There is no active session to share yet.");
+    return;
+  }
+
+  const source = el("clubhouseSessionCard");
+  if(!source){
+    alert("The session card could not be found.");
+    return;
+  }
+
+  if(typeof html2canvas !== "function"){
+    alert("The share image tool has not loaded yet. Refresh the app and try again.");
+    return;
+  }
+
+  const shareButton = source.querySelector(".clubhouse-session-button.share");
+  const oldShareText = shareButton?.innerHTML;
+  if(shareButton){
+    shareButton.disabled = true;
+    shareButton.textContent = "Creating…";
+  }
+
+  let stage = null;
+  try{
+    stage = document.createElement("div");
+    stage.style.cssText = "position:fixed;left:-10000px;top:0;width:760px;background:#071322;padding:28px;z-index:-1;";
+
+    const clone = source.cloneNode(true);
+    clone.removeAttribute("id");
+    clone.style.width = "704px";
+    clone.style.maxWidth = "704px";
+    clone.querySelectorAll("[id]").forEach(node => node.removeAttribute("id"));
+    clone.querySelectorAll(".clubhouse-session-admin-actions,.attendance-my-actions,.clubhouse-session-editor,.clubhouse-session-no-actions").forEach(node => node.remove());
+
+    const footer = document.createElement("div");
+    footer.style.cssText = "padding:22px 8px 2px;text-align:center;color:#d9b94e;font-weight:800;letter-spacing:.12em;font-size:16px;";
+    footer.textContent = "OLYMPUS FC · MOUNT OLYMPUS";
+    clone.appendChild(footer);
+
+    stage.appendChild(clone);
+    document.body.appendChild(stage);
+
+    if(document.fonts?.ready){
+      try{ await document.fonts.ready; }catch(_){ }
+    }
+
+    const canvas = await html2canvas(clone,{
+      backgroundColor:"#071322",
+      scale:2,
+      useCORS:true,
+      logging:false,
+      scrollX:0,
+      scrollY:0,
+      windowWidth:760
+    });
+
+    const blob = await new Promise(resolve => canvas.toBlob(resolve,"image/png",0.96));
+    if(!blob) throw new Error("Could not create image");
+
+    const datePart = clubhouseSession.session_date || new Date().toISOString().slice(0,10);
+    const file = new File([blob],`olympus-next-session-${datePart}.png`,{type:"image/png"});
+
+    if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
+      try{
+        await navigator.share({
+          title:"Olympus FC — Next Session",
+          text:"Olympus FC next session availability",
+          files:[file]
+        });
+        return;
+      }catch(error){
+        if(error?.name === "AbortError") return;
+        console.warn("Direct share unavailable, using preview fallback", error);
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const overlay = document.createElement("div");
+    overlay.style.cssText = "position:fixed;inset:0;background:rgba(2,8,18,.94);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;";
+    overlay.innerHTML = `<div style="width:min(92vw,430px);max-height:90vh;overflow:auto;background:#101f34;border:1px solid #355071;border-radius:24px;padding:16px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)">
+      <div style="font-size:20px;font-weight:900;color:#fff;margin:4px 0 12px">Session image ready</div>
+      <img src="${url}" alt="Olympus FC session" style="display:block;width:100%;border-radius:16px;background:#071322;margin-bottom:14px">
+      <button id="olympusSharePreparedImage" type="button" style="width:100%;border:0;border-radius:14px;padding:15px;background:#4778f6;color:#fff;font-size:17px;font-weight:900">↗️ Share Image</button>
+      <button id="olympusClosePreparedImage" type="button" style="width:100%;border:0;background:transparent;color:#9fb0c9;padding:14px;font-size:16px;font-weight:700">Close</button>
+    </div>`;
+    document.body.appendChild(overlay);
+
+    overlay.querySelector("#olympusSharePreparedImage").onclick = async () => {
+      if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
+        try{
+          await navigator.share({title:"Olympus FC — Next Session",files:[file]});
+          return;
+        }catch(error){ if(error?.name === "AbortError") return; }
+      }
+      const a=document.createElement("a");
+      a.href=url; a.download=file.name; document.body.appendChild(a); a.click(); a.remove();
+    };
+    overlay.querySelector("#olympusClosePreparedImage").onclick = () => {
+      overlay.remove();
+      URL.revokeObjectURL(url);
+    };
+  }catch(error){
+    console.error("Session share failed:",error);
+    alert("The session image could not be created. Please refresh the app and try again.");
+  }finally{
+    stage?.remove();
+    if(shareButton){
+      shareButton.disabled = false;
+      shareButton.innerHTML = oldShareText || "↗️ Share";
+    }
+  }
+}
+
 function openClubhouseSessionEditor(editing=false){
   if(!isAdmin) return;
   const editor = el("clubhouseSessionEditor");
