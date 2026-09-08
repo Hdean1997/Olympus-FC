@@ -3983,6 +3983,11 @@ textarea.bug-form-control{
   </div>
 
   <div class="records-section">
+    <div class="records-section-title">RECORDED MATCHDAY RECORDS</div>
+    <div id="matchdayRecords"></div>
+  </div>
+
+  <div class="records-section">
     <div class="records-section-title">RECORDED CLUB RECORDS</div>
     <div id="clubRecords"></div>
   </div>
@@ -7800,7 +7805,7 @@ function renderRecordsPage(){
     `;
   }
 
-  el("singleMatchRecords").innerHTML += renderPassingSessionRecord(passingSessionRecords);
+  el("matchdayRecords").innerHTML = renderPassingSessionRecord(passingSessionRecords);
 
   let biggestWin = null;
   let biggestDefeat = null;
