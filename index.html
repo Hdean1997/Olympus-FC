@@ -3478,6 +3478,8 @@ textarea.bug-form-control{
     + Add Match
   </button>
 
+  <div id="matchdayHistoryTitle" class="matchday-history-title" style="display:none">Matchday Sessions</div>
+  <div id="matchdayHistory"></div>
 
   <div id="allTimeMatchMessage" class="all-time-message">
     All Time combines FC26 and FC27. To add a new match, select the season the match belongs to first.
@@ -3486,9 +3488,6 @@ textarea.bug-form-control{
   <div class="match-list-title">Recorded Match History</div>
 
   <div id="matchHistory"></div>
-
-  <div id="matchdayHistoryTitle" class="matchday-history-title" style="display:none">Matchday Sessions</div>
-  <div id="matchdayHistory"></div>
 </div>
 
 <!-- STATS -->
@@ -5765,7 +5764,6 @@ function matchdaySummaryHTML(session,compact=false){
       <div class="matchday-title">${formatDate(session.sessionDate)}</div>
       <div class="matchday-sub">${session.status === "active" ? liveSquad : reportSquad}</div>
       ${!compact && session.status === "ended" ? squadDetails : ""}
-      ${!compact && session.status === "ended" ? matchdayPotnHTML(session) : ""}
       ${session.status === "active" ? `<div class="matchday-timer"><span class="matchday-timer-label">⏱ SESSION TIME</span><span class="matchday-timer-value" data-matchday-timer="${session.id}">${formatSessionDuration(duration,true)}</span></div>` : `<div class="matchday-duration">⏱ Session duration — ${formatSessionDuration(duration,false)}</div>`}
       <div class="matchday-grid">
         <div class="matchday-stat"><div class="matchday-stat-value">${st.matches.length}</div><div class="matchday-stat-label">MATCHES</div></div>
@@ -5779,6 +5777,7 @@ function matchdaySummaryHTML(session,compact=false){
         🎯 Top assister — ${st.topAssister ? `${escapeHTML(st.topAssister.player.name)} (${st.topAssister.value})` : "No assists"}<br>
         ⭐ Most POTM — ${st.topPotm ? `${escapeHTML(st.topPotm.player.name)} (${st.topPotm.value})` : "No POTM"}
       </div>` : ""}
+      ${!compact && session.status === "ended" ? matchdayPotnHTML(session) : ""}
       ${isAdmin ? `<div class="matchday-actions">
         ${session.status === "active" ? `<button class="matchday-action primary" onclick="event.stopPropagation();endMatchday(${session.id})">End Matchday</button>` : ""}
         <button class="matchday-action danger" onclick="event.stopPropagation();deleteMatchday(${session.id})">Delete Matchday</button>
