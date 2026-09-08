@@ -592,9 +592,6 @@ h1{
 .matchday-potn-select{height:40px;padding:7px 9px;border:1px solid #29425f;border-radius:10px;background:#07111f;color:#fff;min-width:0;}
 .matchday-potn-save{width:100%;margin-top:10px;min-height:43px;border:1px solid #315d9d;border-radius:11px;background:#10233b;color:#fff;font-weight:bold;}
 .matchday-potn-note{margin-top:7px;color:#8392a6;font-size:10px;line-height:1.45;}
-.matchday-potn-spotlight{margin:14px 16px 18px;padding:18px;border-radius:18px;background:#101d2e;border:1px solid #29425f;}
-.matchday-potn-spotlight .matchday-potn{margin:0;padding:0;border-top:0;}
-.matchday-potn-spotlight-eyebrow{margin-bottom:11px;color:#6f9dff;font-size:10px;font-weight:bold;letter-spacing:.8px;text-transform:uppercase;}
 #matchdayHistory .matchday-card{margin:0 16px 18px;}
 @media(max-width:390px){.matchday-potn-row{grid-template-columns:1fr}.matchday-potn-select{width:100%}}
 .matchday-squad-row{display:grid;grid-template-columns:auto 1fr 110px;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #25384f;}
@@ -3481,7 +3478,6 @@ textarea.bug-form-control{
     + Add Match
   </button>
 
-  <div id="matchdayPotnTop" style="display:none"></div>
 
   <div id="allTimeMatchMessage" class="all-time-message">
     All Time combines FC26 and FC27. To add a new match, select the season the match belongs to first.
@@ -5769,6 +5765,7 @@ function matchdaySummaryHTML(session,compact=false){
       <div class="matchday-title">${formatDate(session.sessionDate)}</div>
       <div class="matchday-sub">${session.status === "active" ? liveSquad : reportSquad}</div>
       ${!compact && session.status === "ended" ? squadDetails : ""}
+      ${!compact && session.status === "ended" ? matchdayPotnHTML(session) : ""}
       ${session.status === "active" ? `<div class="matchday-timer"><span class="matchday-timer-label">⏱ SESSION TIME</span><span class="matchday-timer-value" data-matchday-timer="${session.id}">${formatSessionDuration(duration,true)}</span></div>` : `<div class="matchday-duration">⏱ Session duration — ${formatSessionDuration(duration,false)}</div>`}
       <div class="matchday-grid">
         <div class="matchday-stat"><div class="matchday-stat-value">${st.matches.length}</div><div class="matchday-stat-label">MATCHES</div></div>
@@ -5794,16 +5791,13 @@ function renderMatchday(){
   const history = el("matchdayHistory");
   const historyTitle = el("matchdayHistoryTitle");
   const home = el("homeMatchdayLive");
-  const potnTop = el("matchdayPotnTop");
-  if(!controls || !history || !historyTitle || !home || !potnTop) return;
+  if(!controls || !history || !historyTitle || !home) return;
 
   if(activeSeason === "ALL_TIME"){
     controls.innerHTML = "";
     history.innerHTML = "";
     historyTitle.style.display = "none";
     home.style.display = "none";
-    potnTop.innerHTML = "";
-    potnTop.style.display = "none";
     return;
   }
 
@@ -5822,19 +5816,6 @@ function renderMatchday(){
   const sessions = matchdaySessions
     .filter(s => s.season === activeSeason && s.status === "ended")
     .sort((a,b) => Number(b.id)-Number(a.id));
-
-  const latestEndedMatchday = sessions[0] || null;
-  if(latestEndedMatchday){
-    potnTop.innerHTML = `
-      <div class="matchday-potn-spotlight">
-        <div class="matchday-potn-spotlight-eyebrow">Latest Matchday · ${formatDate(latestEndedMatchday.sessionDate)}</div>
-        ${matchdayPotnHTML(latestEndedMatchday)}
-      </div>`;
-    potnTop.style.display = "block";
-  }else{
-    potnTop.innerHTML = "";
-    potnTop.style.display = "none";
-  }
 
   historyTitle.style.display = sessions.length ? "block" : "none";
   history.innerHTML = sessions.map(session => matchdaySummaryHTML(session,false)).join("");
