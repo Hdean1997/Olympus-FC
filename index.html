@@ -7653,9 +7653,15 @@ function renderRecordsPage(){
 
     const max = Math.max(...records.map(record => record.value));
 
-    const holders = records.filter(record => record.value === max);
+    const tiedRecords = records.filter(record => record.value === max);
 
-    const first = holders[0];
+    // A player may equal the same single-match record more than once.
+    // Show each tied player only once in the record-holder list.
+    const holders = tiedRecords.filter((record,index,array) =>
+      array.findIndex(item => item.player.id === record.player.id) === index
+    );
+
+    const first = tiedRecords[0];
 
     return `
       <div class="single-record-card">
