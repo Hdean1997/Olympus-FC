@@ -9887,6 +9887,28 @@ document.addEventListener("visibilitychange", () => {
 renderEverything();
 initSupabase();
 
+
+// Definitive cleanup: Clips is a main bottom-nav tab, so never show a Clips promo card on Home.
+function removeOlympusClipsFromHome(){
+  const home=document.getElementById("home");
+  if(!home) return;
+  home.querySelectorAll(".olympus-clips-home-card").forEach(node=>node.remove());
+  home.querySelectorAll("button, a, div").forEach(node=>{
+    const text=(node.textContent||"").replace(/\s+/g," ").trim();
+    if(text.includes("OLYMPUS SOCIAL") && text.includes("Olympus Clips")){
+      const card=node.closest(".card, .home-card, .session-card, .olympus-clips-home-card") || node;
+      if(card && card!==home) card.remove();
+    }
+  });
+}
+document.addEventListener("DOMContentLoaded", removeOlympusClipsFromHome);
+window.addEventListener("load", removeOlympusClipsFromHome);
+const olympusHomeTarget=document.getElementById("home");
+if(olympusHomeTarget){
+  const olympusHomeObserver=new MutationObserver(removeOlympusClipsFromHome);
+  olympusHomeObserver.observe(olympusHomeTarget,{childList:true,subtree:true});
+}
+removeOlympusClipsFromHome();
 </script>
 
 </body>
