@@ -2983,6 +2983,9 @@ textarea.bug-form-control{
   vertical-align:middle;
 }
 
+
+/* OLYMPUS CLIPS */
+.clips-top{padding:8px 0 18px}.clips-title{margin:0;font-size:34px}.clips-subtitle{color:#91a0b4;margin:7px 0 0}.clips-card{background:#101f32;border:1px solid #29415d;border-radius:18px;padding:16px;margin:0 0 16px}.clips-upload-button{width:100%;border:0;border-radius:14px;padding:16px;background:#3477ff;color:white;font-size:17px;font-weight:800}.clips-file{display:none}.clips-field{width:100%;box-sizing:border-box;background:#081423;border:1px solid #29415d;color:#fff;border-radius:12px;padding:13px;font:inherit;margin-top:10px}.clips-preview{width:100%;max-height:360px;border-radius:14px;background:#000;margin-top:12px}.clips-feed-card{background:#101f32;border:1px solid #29415d;border-radius:18px;overflow:hidden;margin-bottom:18px}.clips-feed-head{padding:14px 16px;display:flex;align-items:center;justify-content:space-between}.clips-player{font-weight:800}.clips-time{color:#8495aa;font-size:12px}.clips-video{width:100%;display:block;background:#000;max-height:520px}.clips-caption{padding:14px 16px 5px;font-size:15px;line-height:1.45}.clips-category{display:inline-block;margin:8px 16px 15px;padding:5px 9px;border-radius:999px;background:#0a1728;border:1px solid #29415d;color:#e8bd4b;font-size:11px;font-weight:800;text-transform:uppercase}.clips-empty{border:1px dashed #304966;border-radius:18px;padding:34px 20px;text-align:center;color:#8fa0b5}.clips-message{font-size:12px;color:#9aa9bc;margin-top:10px}.clips-delete{border:0;background:transparent;color:#e27c83;font-weight:700}.clips-progress{height:6px;background:#07111e;border-radius:99px;overflow:hidden;margin-top:12px;display:none}.clips-progress>div{height:100%;width:0;background:#3477ff}.clips-back{margin-bottom:12px}.clips-section-heading{color:#91a0b4;font-size:12px;font-weight:800;letter-spacing:1.3px;margin:22px 0 12px}
 </style>
 </head>
 
@@ -3610,6 +3613,19 @@ textarea.bug-form-control{
   </div>
 
   <div class="hub-section">
+    <div class="hub-heading">OLYMPUS SOCIAL</div>
+    <div class="hub-card">
+      <button class="hub-action gold" onclick="openClipsPage()">
+        <div>
+          <div class="hub-action-main">🎥 Olympus Clips</div>
+          <div class="hub-action-sub">Share goals, skills and moments with the squad</div>
+        </div>
+        <div class="hub-action-arrow">›</div>
+      </button>
+    </div>
+  </div>
+
+  <div class="hub-section">
     <div class="hub-heading">SUPPORT</div>
     <div class="hub-card">
       <button class="hub-action blue" onclick="openBugReportPage()">
@@ -3634,6 +3650,32 @@ textarea.bug-form-control{
       </button>
     </div>
   </div>
+</div>
+
+<!-- OLYMPUS CLIPS -->
+<div id="clips" class="page">
+  <div class="clips-top">
+    <button class="app-back-button clips-back" onclick="closeClipsPage()"><span class="app-back-icon">‹</span><span>Back</span></button>
+    <h2 class="clips-title">Olympus Clips</h2>
+    <p class="clips-subtitle">Goals. Skills. Team play. Olympus moments.</p>
+  </div>
+  <div id="clipsSignedOut" class="clips-card">Sign in through <b>More → Club Access</b> to upload clips. You can still watch the squad feed below.</div>
+  <div id="clipsComposer" class="clips-card" style="display:none">
+    <div style="font-weight:800;font-size:18px">Share a clip</div>
+    <div style="color:#91a0b4;font-size:13px;margin-top:4px">Choose a PS5 clip saved on your phone.</div>
+    <input id="clipFileInput" class="clips-file" type="file" accept="video/*" onchange="prepareClipPreview(event)">
+    <button class="clips-upload-button" style="margin-top:14px" onclick="document.getElementById('clipFileInput').click()">＋ Choose Video</button>
+    <video id="clipPreview" class="clips-preview" controls playsinline style="display:none"></video>
+    <textarea id="clipCaption" class="clips-field" maxlength="280" rows="3" placeholder="Add a caption…"></textarea>
+    <select id="clipCategory" class="clips-field">
+      <option value="Goal">⚽ Goal</option><option value="Assist">🎯 Assist</option><option value="Team Play">🤝 Team Play</option><option value="Skill">✨ Skill</option><option value="Save">🧤 Save</option><option value="Funny">😂 Funny</option><option value="Other">🏔️ Other</option>
+    </select>
+    <button id="clipPostButton" class="clips-upload-button" style="margin-top:12px" onclick="uploadOlympusClip()">Post to Olympus</button>
+    <div id="clipUploadProgress" class="clips-progress"><div></div></div>
+    <div id="clipUploadMessage" class="clips-message"></div>
+  </div>
+  <div class="clips-section-heading">SQUAD FEED</div>
+  <div id="clipsFeed"><div class="clips-empty">Loading Olympus Clips…</div></div>
 </div>
 
 <!-- BUG REPORT -->
@@ -4231,6 +4273,8 @@ let remoteReady = false;
 let matchdaySessions = [];
 let matchdayPotnVotes = [];
 let bugReports = [];
+let olympusClips = [];
+let pendingClipFile = null;
 const APP_VERSION = "2026.09.06-achievements-stage3-account-filter-fix";
 
 const OLYMPUS_ACHIEVEMENTS = [
@@ -9178,6 +9222,7 @@ function updateAdminUI(){
     ownerBugSection.style.display = isOwner ? "block" : "none";
   }
   updateBugOpenBadge();
+  updateClipsAuthUI();
 }
 
 async function ensureRemoteLookups(){
@@ -9669,6 +9714,93 @@ async function uploadLocalDataToSupabase(){
     console.error(error);
     if(message) message.textContent = "Upload failed. Your local data and backup are still safe.";
   }
+}
+
+function openClipsPage(){
+  document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
+  el("clips").classList.add("active");
+  document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
+  if(document.querySelectorAll(".nav-item")[4]) document.querySelectorAll(".nav-item")[4].classList.add("active");
+  el("bottomNav").classList.remove("hidden");
+  updateClipsAuthUI();
+  loadOlympusClips();
+  window.scrollTo(0,0);
+}
+function closeClipsPage(){ showPage("more",document.querySelectorAll(".nav-item")[4]); }
+function updateClipsAuthUI(){
+  const signed=Boolean(currentClubRole);
+  if(el("clipsComposer")) el("clipsComposer").style.display=signed?"block":"none";
+  if(el("clipsSignedOut")) el("clipsSignedOut").style.display=signed?"none":"block";
+}
+function prepareClipPreview(event){
+  pendingClipFile=event.target.files?.[0]||null;
+  const preview=el("clipPreview"), msg=el("clipUploadMessage");
+  if(!pendingClipFile){ if(preview) preview.style.display="none"; return; }
+  if(!String(pendingClipFile.type||"").startsWith("video/")){ pendingClipFile=null; if(msg) msg.textContent="Please choose a video file."; return; }
+  if(preview){ preview.src=URL.createObjectURL(pendingClipFile); preview.style.display="block"; }
+  if(msg) msg.textContent=`Ready to post: ${pendingClipFile.name}`;
+}
+function clipPlayerName(row){
+  const p=players.find(x=>x.id===row.player_key);
+  return p?.name || row.reporter_username || row.username || "Olympus Player";
+}
+function clipPublicUrl(row){
+  if(row.video_url) return row.video_url;
+  const path=row.storage_path || row.video_path || row.file_path || "";
+  if(!path || !supabaseClient) return "";
+  return supabaseClient.storage.from("olympus-clips").getPublicUrl(path).data.publicUrl;
+}
+function renderOlympusClips(){
+  const feed=el("clipsFeed"); if(!feed) return;
+  if(!olympusClips.length){ feed.innerHTML='<div class="clips-empty"><div style="font-size:34px;margin-bottom:8px">🎥</div><b>No clips yet</b><div style="margin-top:6px">Be the first to post an Olympus moment.</div></div>'; return; }
+  feed.innerHTML=olympusClips.map(row=>{
+    const url=clipPublicUrl(row); const mine=currentClubPlayerKey && row.player_key===currentClubPlayerKey;
+    const canDelete=mine||isOwner; const when=row.created_at?new Date(row.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
+    return `<article class="clips-feed-card"><div class="clips-feed-head"><div><div class="clips-player">${escapeHtml(clipPlayerName(row))}</div><div class="clips-time">${escapeHtml(when)}</div></div>${canDelete?`<button class="clips-delete" onclick="deleteOlympusClip('${row.id}')">Delete</button>`:""}</div>${url?`<video class="clips-video" src="${escapeHtml(url)}" controls playsinline preload="metadata"></video>`:""}${row.caption?`<div class="clips-caption">${escapeHtml(row.caption)}</div>`:""}<span class="clips-category">${escapeHtml(row.category||"Other")}</span></article>`;
+  }).join("");
+}
+async function loadOlympusClips(){
+  if(!supabaseClient) return;
+  try{
+    const {data,error}=await supabaseClient.from("clips").select("*").order("created_at",{ascending:false});
+    if(error) throw error; olympusClips=data||[]; renderOlympusClips();
+  }catch(error){ console.error("Clips load failed:",error); if(el("clipsFeed")) el("clipsFeed").innerHTML='<div class="clips-empty">Clips could not be loaded yet.</div>'; }
+}
+async function uploadOlympusClip(){
+  const msg=el("clipUploadMessage"), btn=el("clipPostButton");
+  if(!currentClubRole){ if(msg) msg.textContent="Sign in first to post a clip."; return; }
+  if(!pendingClipFile){ if(msg) msg.textContent="Choose a video first."; return; }
+  try{
+    btn.disabled=true; btn.textContent="Uploading…"; if(msg) msg.textContent="Uploading your Olympus clip…";
+    const ext=(pendingClipFile.name.split(".").pop()||"mp4").replace(/[^a-z0-9]/gi,"").toLowerCase();
+    const safePlayer=(currentClubPlayerKey||"player").replace(/[^a-z0-9_-]/gi,"");
+    const path=`${safePlayer}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+    const {error:storageError}=await supabaseClient.storage.from("olympus-clips").upload(path,pendingClipFile,{contentType:pendingClipFile.type||"video/mp4",upsert:false});
+    if(storageError) throw storageError;
+    const caption=el("clipCaption")?.value.trim()||""; const category=el("clipCategory")?.value||"Other";
+    const {data:{user}}=await supabaseClient.auth.getUser();
+    const row={user_id:user?.id,player_key:currentClubPlayerKey,caption,category,storage_path:path};
+    let result=await supabaseClient.from("clips").insert(row).select().single();
+    if(result.error){
+      // Compatibility with the original Step 1 schema if it used video_path instead of storage_path.
+      delete row.storage_path; row.video_path=path;
+      result=await supabaseClient.from("clips").insert(row).select().single();
+    }
+    if(result.error) throw result.error;
+    pendingClipFile=null; el("clipFileInput").value=""; el("clipCaption").value=""; el("clipPreview").removeAttribute("src"); el("clipPreview").style.display="none";
+    if(msg) msg.textContent="Posted to Olympus Clips. ✅"; await loadOlympusClips();
+  }catch(error){ console.error("Clip upload failed:",error); if(msg) msg.textContent=`Upload failed: ${error.message||"Please try again."}`; }
+  finally{ btn.disabled=false; btn.textContent="Post to Olympus"; }
+}
+async function deleteOlympusClip(id){
+  const row=olympusClips.find(x=>String(x.id)===String(id)); if(!row) return;
+  if(!confirm("Delete this clip from Olympus?")) return;
+  try{
+    const path=row.storage_path||row.video_path||row.file_path||"";
+    const {error}=await supabaseClient.from("clips").delete().eq("id",id); if(error) throw error;
+    if(path) await supabaseClient.storage.from("olympus-clips").remove([path]);
+    await loadOlympusClips();
+  }catch(error){ console.error(error); alert("That clip could not be deleted."); }
 }
 
 async function initSupabase(){
