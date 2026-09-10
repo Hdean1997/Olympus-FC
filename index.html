@@ -2508,7 +2508,7 @@ async function setMyClubhouseAttendance(response){
 .spotify-jam-field-label{display:block;margin-bottom:6px;font-size:10px;font-weight:800;letter-spacing:.6px;color:#8ea0b8;text-transform:uppercase;}
 .spotify-jam-input-wrap{display:flex;align-items:center;gap:8px;padding:4px 4px 4px 12px;border-radius:12px;background:#101f32;border:1px solid #31506f;}
 .spotify-jam-input-wrap:focus-within{border-color:#5d8fd3;box-shadow:0 0 0 2px rgba(93,143,211,.12);}
-.spotify-jam-input{min-width:0;flex:1;padding:10px 0;background:transparent;border:0;outline:0;color:#fff;font-size:13px;font-family:inherit;}
+.spotify-jam-input{min-width:0;flex:1;padding:10px 0;background:transparent;border:0;outline:0;color:#fff;font-size:16px;font-family:inherit;}
 .spotify-jam-input::placeholder{color:#66788f;}
 .spotify-jam-clear{flex:0 0 auto;width:34px;height:34px;border:0;border-radius:9px;background:#192b40;color:#aab8c9;font-size:16px;font-weight:900;}
 .spotify-jam-editor-actions{display:flex;gap:8px;margin-top:13px;}
@@ -6017,7 +6017,7 @@ function completedPlayoffReportsForSeason(season){
   if(!season || season === "ALL_TIME") return [];
   return allPlayoffEventsForSeason(season).map(event => {
     const matches = playoffMatchesForEvent(season,event).slice(0,event.totalGames);
-    const complete = matches.length >= Number(event.totalGames || 15);
+    const complete = matches.length >= Number(event.totalGames || 25);
     const deadlinePassed = new Date(event.deadline).getTime() < Date.now();
     return {event,matches,complete,deadlinePassed};
   }).filter(item => item.complete || item.deadlinePassed)
@@ -7116,7 +7116,7 @@ function renderSquad(){
 const PLAYOFF_EVENTS = {
   FC26:{
     name:"Division 1 Playoffs",
-    totalGames:15,
+    totalGames:25,
     startDate:"2026-09-10",
     endDate:"2026-09-16",
     deadline:"2026-09-16T23:59:59+01:00"
@@ -7252,7 +7252,7 @@ function renderPlayoffTracker(){
           <div class="playoff-final-icon">🏆</div>
           <div class="playoff-final-kicker">FC26 DIVISION 1 PLAYOFFS</div>
           <div class="playoff-final-title">Final Playoff Report</div>
-          <div class="playoff-final-subtitle">All 15 playoff games completed</div>
+          <div class="playoff-final-subtitle">All ${event.totalGames} playoff games completed</div>
         </div>
 
         <div class="playoff-final-grid">
@@ -7283,7 +7283,7 @@ function renderPlayoffTracker(){
           ${bestAvg ? `<div>📊 Highest avg rating — <strong>${escapeHTML(bestAvg.player.name)} (${bestAvg.value.toFixed(2)})</strong></div>` : ""}
         </div>
 
-        <div class="playoff-final-footer">15/15 COMPLETE · MOUNT OLYMPUS</div>
+        <div class="playoff-final-footer">${event.totalGames}/${event.totalGames} COMPLETE · MOUNT OLYMPUS</div>
       </div>`;
     return;
   }
@@ -7294,7 +7294,7 @@ function renderPlayoffTracker(){
         <div>
           <div class="playoff-tracker-kicker">🏆 FC26 PLAYOFF TRACKER</div>
           <div class="playoff-tracker-title">${escapeHTML(event.name)}</div>
-          <div class="playoff-tracker-deadline">15 games · Ends Wed 16 Sep at 23:59</div>
+          <div class="playoff-tracker-deadline">${event.totalGames} games · Ends Wed 16 Sep at 23:59</div>
         </div>
         <div class="playoff-live-badge">${closed ? "CLOSED" : "LIVE"}</div>
       </div>
@@ -7323,7 +7323,7 @@ function renderPlayoffTracker(){
       <div class="playoff-game-slots">${slots}</div>
       <div class="playoff-record">
         <span>Goals <strong>${gf}-${ga}</strong></span>
-        <span>${remaining ? `${remaining} playoff game${remaining===1?"":"s"} left` : "All 15 games logged"}</span>
+        <span>${remaining ? `${remaining} playoff game${remaining===1?"":"s"} left` : "All ${event.totalGames} games logged"}</span>
       </div>
     </div>`;
 
