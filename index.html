@@ -674,7 +674,7 @@ h1{
 .matchday-potn-select{height:40px;padding:7px 9px;border:1px solid #29425f;border-radius:10px;background:#07111f;color:#fff;min-width:0;}
 .matchday-potn-save{width:100%;margin-top:10px;min-height:43px;border:1px solid #315d9d;border-radius:11px;background:#10233b;color:#fff;font-weight:bold;}
 .matchday-potn-note{margin-top:7px;color:#8392a6;font-size:10px;line-height:1.45;}
-#matchdayHistory .matchday-card{margin:0 16px 18px;}
+#matchdayHistory .matchday-card,#playoffHistory .matchday-card{margin:0 16px 18px;}
 @media(max-width:390px){.matchday-potn-row{grid-template-columns:1fr}.matchday-potn-select{width:100%}}
 .matchday-squad-row{display:grid;grid-template-columns:auto 1fr 110px;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #25384f;}
 .matchday-squad-row:last-child{border-bottom:0;}
@@ -5727,6 +5727,12 @@ function matchesForMatchday(sessionId){
   return all.filter(match => String(match.matchdaySessionId || "") === String(sessionId));
 }
 
+function isPlayoffOnlyMatchdaySession(session){
+  if(!session) return false;
+  const matches = matchesForMatchday(session.id);
+  return matches.length > 0 && matches.every(match => String(match.type || "").trim().toLowerCase() === "playoffs");
+}
+
 function calculateMatchdayStats(session){
   const matches = matchesForMatchday(session.id);
   const wins = matches.filter(m => m.result === "W").length;
@@ -5952,7 +5958,7 @@ function matchdaySummaryHTML(session,compact=false){
   const passingLeader = matchdayPassingLeader(session);
   return `
     <div class="matchday-card ${session.status === "active" ? "live" : ""}">
-      <div class="matchday-eyebrow">${session.status === "active" ? "🔴 MATCHDAY LIVE" : `${escapeHTML(session.season || "")} · MATCHDAY REPORT`}</div>
+      <div class="matchday-eyebrow">${session.status === "active" ? "🔴 MATCHDAY LIVE" : `${escapeHTML(session.season || "")} · ${isPlayoffOnlyMatchdaySession(session) ? "PLAYOFF MATCHDAY REPORT" : "MATCHDAY REPORT"}`}</div>
       <div class="matchday-title">${formatDate(session.sessionDate)}</div>
       <div class="matchday-sub">${session.status === "active" ? liveSquad : reportSquad}</div>
       ${!compact && session.status === "ended" ? squadDetails : ""}
@@ -6024,13 +6030,13 @@ function completedPlayoffReportsForSeason(season){
     const matches = playoffMatchesForEvent(season,event).slice(0,event.totalGames);
     const complete = matches.length >= Number(event.totalGames || 25);
     const deadlinePassed = new Date(event.deadline).getTime() < Date.now();
-    return {event,matches,complete,deadlinePassed};
+    return {season,event,matches,complete,deadlinePassed};
   }).filter(item => item.complete || item.deadlinePassed)
     .sort((a,b) => String(b.event.endDate || "").localeCompare(String(a.event.endDate || "")));
 }
 
 function previousPlayoffReportHTML(item){
-  const {event,matches} = item;
+  const {season,event,matches} = item;
   const wins = matches.filter(m => m.result === "W").length;
   const losses = matches.filter(m => m.result === "L").length;
   const gf = matches.reduce((sum,m) => sum + Number(m.olympusScore || 0),0);
@@ -6040,7 +6046,7 @@ function previousPlayoffReportHTML(item){
     <div class="previous-playoff-card">
       <div class="previous-playoff-head">
         <div>
-          <div class="previous-playoff-kicker">🏆 ${escapeHTML(activeSeason)} PLAYOFF REPORT</div>
+          <div class="previous-playoff-kicker">🏆 ${escapeHTML(season || activeSeason)} FINAL PLAYOFF REPORT</div>
           <div class="previous-playoff-title">${escapeHTML(event.name || "Playoffs")}</div>
           <div class="previous-playoff-date">${escapeHTML(formatDate(event.endDate || event.startDate || ""))}</div>
         </div>
@@ -6065,22 +6071,35 @@ function renderReportArchive(){
   // because a different season is selected elsewhere in the app.
   archive.style.display = "block";
 
-  const endedSessions = matchdaySessions
+  const allEndedSessions = matchdaySessions
     .filter(s => s.status === "ended")
     .sort((a,b) => {
       const dateCompare = String(b.sessionDate || "").localeCompare(String(a.sessionDate || ""));
       return dateCompare || (Number(b.id || 0) - Number(a.id || 0));
     });
 
+  // A session belongs in the playoff archive when every match attached to
+  // that Matchday was logged as Playoffs. Mixed sessions stay in Matchday.
+  const playoffMatchdaySessions = allEndedSessions.filter(isPlayoffOnlyMatchdaySession);
+  const regularMatchdaySessions = allEndedSessions.filter(session => !isPlayoffOnlyMatchdaySession(session));
+
   const playoffReports = ["FC27","FC26"]
     .flatMap(season => completedPlayoffReportsForSeason(season))
     .sort((a,b) => String(b.event.endDate || b.event.startDate || "").localeCompare(String(a.event.endDate || a.event.startDate || "")));
 
-  matchCountNode.textContent = String(endedSessions.length);
-  playoffCountNode.textContent = String(playoffReports.length);
-  playoffHistory.innerHTML = playoffReports.length
+  matchCountNode.textContent = String(regularMatchdaySessions.length);
+  playoffCountNode.textContent = String(playoffMatchdaySessions.length + playoffReports.length);
+
+  const playoffSessionHTML = playoffMatchdaySessions.length
+    ? playoffMatchdaySessions.map(session => matchdaySummaryHTML(session,false)).join("")
+    : "";
+  const finalCampaignHTML = playoffReports.length
     ? playoffReports.map(previousPlayoffReportHTML).join("")
-    : `<div class="report-history-empty">No completed playoff reports yet.</div>`;
+    : "";
+
+  playoffHistory.innerHTML = playoffSessionHTML || finalCampaignHTML
+    ? `${playoffSessionHTML}${finalCampaignHTML}`
+    : `<div class="report-history-empty">No previous playoff reports yet.</div>`;
 
   const matchOpen = openReportArchive === "matchday";
   const playoffOpen = openReportArchive === "playoff";
@@ -6131,7 +6150,7 @@ function renderMatchday(){
   // Previous Matchday Reports is a true archive across seasons. This means
   // an FC26 report remains available even while FC27 is selected.
   const sessions = matchdaySessions
-    .filter(s => s.status === "ended")
+    .filter(s => s.status === "ended" && !isPlayoffOnlyMatchdaySession(s))
     .sort((a,b) => {
       const dateCompare = String(b.sessionDate || "").localeCompare(String(a.sessionDate || ""));
       return dateCompare || (Number(b.id || 0) - Number(a.id || 0));
