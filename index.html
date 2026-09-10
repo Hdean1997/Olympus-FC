@@ -585,6 +585,32 @@ h1{
 .matchday-start{width:100%;min-height:54px;border:0;border-radius:14px;background:#326eff;color:#fff;font-size:16px;font-weight:bold;}
 .matchday-history-title{margin:26px 16px 12px;font-size:20px;}
 
+.report-archive{margin:20px 16px 18px;}
+.report-archive-heading{margin-bottom:10px;color:#91a0b4;font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;}
+.report-archive-card{overflow:hidden;border:1px solid #29425f;border-radius:16px;background:#101d2e;}
+.report-archive-button{width:100%;min-height:68px;padding:14px 16px;border:0;background:transparent;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;font:inherit;}
+.report-archive-button+.report-archive-button{border-top:1px solid #29425f;}
+.report-archive-copy{min-width:0;}
+.report-archive-title{font-size:15px;font-weight:800;color:#dce6f4;}
+.report-archive-sub{margin-top:3px;font-size:11px;color:#8392a6;}
+.report-archive-right{display:flex;align-items:center;gap:10px;flex:none;}
+.report-archive-count{min-width:28px;height:28px;padding:0 8px;border-radius:999px;background:#182b45;color:#a9c2e8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
+.report-archive-arrow{color:#6fa1ee;font-size:22px;line-height:1;transition:transform .2s ease;}
+.report-archive-button.open .report-archive-arrow{transform:rotate(90deg);}
+.report-history-panel{display:none;margin-top:14px;}
+.report-history-panel.open{display:block;}
+.report-history-empty{margin:0 16px 18px;padding:18px;border:1px dashed #29425f;border-radius:16px;color:#8392a6;text-align:center;font-size:12px;}
+.previous-playoff-card{margin:0 16px 18px;padding:16px;border-radius:16px;background:#101d2e;border:1px solid #37506e;}
+.previous-playoff-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;}
+.previous-playoff-kicker{color:#e8bb36;font-size:10px;font-weight:800;letter-spacing:1px;}
+.previous-playoff-title{margin-top:4px;color:#fff;font-size:17px;font-weight:800;}
+.previous-playoff-date{margin-top:4px;color:#8392a6;font-size:11px;}
+.previous-playoff-record{color:#e8bb36;font-size:18px;font-weight:800;white-space:nowrap;}
+.previous-playoff-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px;}
+.previous-playoff-stat{padding:9px 6px;border-radius:11px;background:#07111f;text-align:center;}
+.previous-playoff-stat strong{display:block;color:#fff;font-size:15px;}
+.previous-playoff-stat span{display:block;margin-top:2px;color:#8392a6;font-size:8px;font-weight:800;text-transform:uppercase;}
+
 .playoff-tracker{margin:0 16px 18px;padding:18px;border-radius:18px;background:#101d2e;border:1px solid #8e6d17;box-shadow:0 0 0 1px rgba(232,187,54,.08) inset;}
 .playoff-tracker-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
 .playoff-tracker-kicker{color:#e8bb36;font-size:11px;font-weight:800;letter-spacing:1px;}
@@ -3536,8 +3562,30 @@ textarea.bug-form-control{
     + Add Match
   </button>
 
-  <div id="matchdayHistoryTitle" class="matchday-history-title" style="display:none">Matchday Sessions</div>
-  <div id="matchdayHistory"></div>
+  <div id="reportArchive" class="report-archive">
+    <div class="report-archive-heading">REPORT ARCHIVE</div>
+    <div class="report-archive-card">
+      <button id="matchdayArchiveButton" class="report-archive-button" type="button" onclick="toggleReportArchive('matchday')">
+        <div class="report-archive-copy">
+          <div class="report-archive-title">📋 Previous Matchday Reports</div>
+          <div class="report-archive-sub">View completed Matchday session reports</div>
+        </div>
+        <div class="report-archive-right"><span id="matchdayArchiveCount" class="report-archive-count">0</span><span class="report-archive-arrow">›</span></div>
+      </button>
+      <button id="playoffArchiveButton" class="report-archive-button" type="button" onclick="toggleReportArchive('playoff')">
+        <div class="report-archive-copy">
+          <div class="report-archive-title">🏆 Previous Playoff Reports</div>
+          <div class="report-archive-sub">View completed playoff campaigns</div>
+        </div>
+        <div class="report-archive-right"><span id="playoffArchiveCount" class="report-archive-count">0</span><span class="report-archive-arrow">›</span></div>
+      </button>
+    </div>
+  </div>
+
+  <div id="matchdayHistoryTitle" class="matchday-history-title" style="display:none">Previous Matchday Reports</div>
+  <div id="matchdayHistory" class="report-history-panel"></div>
+  <div id="playoffHistoryTitle" class="matchday-history-title" style="display:none">Previous Playoff Reports</div>
+  <div id="playoffHistory" class="report-history-panel"></div>
 
   <div id="allTimeMatchMessage" class="all-time-message">
     All Time combines FC26 and FC27. To add a new match, select the season the match belongs to first.
@@ -5925,10 +5973,123 @@ function matchdaySummaryHTML(session,compact=false){
     </div>`;
 }
 
+let openReportArchive = null;
+
+function toggleReportArchive(type){
+  openReportArchive = openReportArchive === type ? null : type;
+  const matchPanel = el("matchdayHistory");
+  const playoffPanel = el("playoffHistory");
+  const matchTitle = el("matchdayHistoryTitle");
+  const playoffTitle = el("playoffHistoryTitle");
+  const matchBtn = el("matchdayArchiveButton");
+  const playoffBtn = el("playoffArchiveButton");
+
+  const matchOpen = openReportArchive === "matchday";
+  const playoffOpen = openReportArchive === "playoff";
+  if(matchPanel) matchPanel.classList.toggle("open",matchOpen);
+  if(playoffPanel) playoffPanel.classList.toggle("open",playoffOpen);
+  if(matchTitle) matchTitle.style.display = matchOpen ? "block" : "none";
+  if(playoffTitle) playoffTitle.style.display = playoffOpen ? "block" : "none";
+  if(matchBtn) matchBtn.classList.toggle("open",matchOpen);
+  if(playoffBtn) playoffBtn.classList.toggle("open",playoffOpen);
+}
+
+function allPlayoffEventsForSeason(season){
+  const raw = PLAYOFF_EVENTS[season];
+  if(!raw) return [];
+  return Array.isArray(raw) ? raw : [raw];
+}
+
+function playoffMatchesForEvent(season,event){
+  if(!event || !seasonData[season]) return [];
+  return (seasonData[season].matches || [])
+    .filter(match => isPlayoffMatchForEvent(match,event))
+    .sort((a,b) => {
+      const da = String(a.date || "");
+      const db = String(b.date || "");
+      if(da !== db) return da.localeCompare(db);
+      return Number(a.id || 0) - Number(b.id || 0);
+    });
+}
+
+function completedPlayoffReportsForSeason(season){
+  if(!season || season === "ALL_TIME") return [];
+  return allPlayoffEventsForSeason(season).map(event => {
+    const matches = playoffMatchesForEvent(season,event).slice(0,event.totalGames);
+    const complete = matches.length >= Number(event.totalGames || 15);
+    const deadlinePassed = new Date(event.deadline).getTime() < Date.now();
+    return {event,matches,complete,deadlinePassed};
+  }).filter(item => item.complete || item.deadlinePassed)
+    .sort((a,b) => String(b.event.endDate || "").localeCompare(String(a.event.endDate || "")));
+}
+
+function previousPlayoffReportHTML(item){
+  const {event,matches} = item;
+  const wins = matches.filter(m => m.result === "W").length;
+  const losses = matches.filter(m => m.result === "L").length;
+  const gf = matches.reduce((sum,m) => sum + Number(m.olympusScore || 0),0);
+  const ga = matches.reduce((sum,m) => sum + Number(m.opponentScore || 0),0);
+  const winRate = matches.length ? Math.round((wins / matches.length) * 100) : 0;
+  return `
+    <div class="previous-playoff-card">
+      <div class="previous-playoff-head">
+        <div>
+          <div class="previous-playoff-kicker">🏆 ${escapeHTML(activeSeason)} PLAYOFF REPORT</div>
+          <div class="previous-playoff-title">${escapeHTML(event.name || "Playoffs")}</div>
+          <div class="previous-playoff-date">${escapeHTML(formatDate(event.endDate || event.startDate || ""))}</div>
+        </div>
+        <div class="previous-playoff-record">${wins}-${losses}</div>
+      </div>
+      <div class="previous-playoff-stats">
+        <div class="previous-playoff-stat"><strong>${matches.length}/${event.totalGames}</strong><span>Games</span></div>
+        <div class="previous-playoff-stat"><strong>${winRate}%</strong><span>Win Rate</span></div>
+        <div class="previous-playoff-stat"><strong>${gf}-${ga}</strong><span>Goals F-A</span></div>
+      </div>
+    </div>`;
+}
+
+function renderReportArchive(){
+  const archive = el("reportArchive");
+  const matchCountNode = el("matchdayArchiveCount");
+  const playoffCountNode = el("playoffArchiveCount");
+  const playoffHistory = el("playoffHistory");
+  if(!archive || !matchCountNode || !playoffCountNode || !playoffHistory) return;
+
+  if(activeSeason === "ALL_TIME"){
+    archive.style.display = "none";
+    return;
+  }
+  archive.style.display = "block";
+
+  const endedSessions = matchdaySessions.filter(s => s.season === activeSeason && s.status === "ended");
+  const playoffReports = completedPlayoffReportsForSeason(activeSeason);
+  matchCountNode.textContent = String(endedSessions.length);
+  playoffCountNode.textContent = String(playoffReports.length);
+  playoffHistory.innerHTML = playoffReports.length
+    ? playoffReports.map(previousPlayoffReportHTML).join("")
+    : `<div class="report-history-empty">No completed playoff reports yet for ${escapeHTML(activeSeason)}.</div>`;
+
+  const matchOpen = openReportArchive === "matchday";
+  const playoffOpen = openReportArchive === "playoff";
+  const matchPanel = el("matchdayHistory");
+  const playoffPanel = el("playoffHistory");
+  const matchTitle = el("matchdayHistoryTitle");
+  const playoffTitle = el("playoffHistoryTitle");
+  const matchBtn = el("matchdayArchiveButton");
+  const playoffBtn = el("playoffArchiveButton");
+  if(matchPanel) matchPanel.classList.toggle("open",matchOpen);
+  if(playoffPanel) playoffPanel.classList.toggle("open",playoffOpen);
+  if(matchTitle) matchTitle.style.display = matchOpen ? "block" : "none";
+  if(playoffTitle) playoffTitle.style.display = playoffOpen ? "block" : "none";
+  if(matchBtn) matchBtn.classList.toggle("open",matchOpen);
+  if(playoffBtn) playoffBtn.classList.toggle("open",playoffOpen);
+}
+
 function renderMatchday(){
   const controls = el("matchdayControls");
   const history = el("matchdayHistory");
   const historyTitle = el("matchdayHistoryTitle");
+  const playoffHistoryTitle = el("playoffHistoryTitle");
   const home = el("homeMatchdayLive");
   if(!controls || !history || !historyTitle || !home) return;
 
@@ -5936,7 +6097,9 @@ function renderMatchday(){
     controls.innerHTML = "";
     history.innerHTML = "";
     historyTitle.style.display = "none";
+    if(playoffHistoryTitle) playoffHistoryTitle.style.display = "none";
     home.style.display = "none";
+    renderReportArchive();
     return;
   }
 
@@ -5956,8 +6119,10 @@ function renderMatchday(){
     .filter(s => s.season === activeSeason && s.status === "ended")
     .sort((a,b) => Number(b.id)-Number(a.id));
 
-  historyTitle.style.display = sessions.length ? "block" : "none";
-  history.innerHTML = sessions.map(session => matchdaySummaryHTML(session,false)).join("");
+  history.innerHTML = sessions.length
+    ? sessions.map(session => matchdaySummaryHTML(session,false)).join("")
+    : `<div class="report-history-empty">No previous Matchday reports yet for ${escapeHTML(activeSeason)}.</div>`;
+  renderReportArchive();
   updateMatchdayTimers();
 }
 
