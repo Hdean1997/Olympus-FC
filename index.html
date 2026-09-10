@@ -584,6 +584,35 @@ h1{
 .matchday-action.danger{background:#35171d;border-color:#71303a;color:#ffadb4;}
 .matchday-start{width:100%;min-height:54px;border:0;border-radius:14px;background:#326eff;color:#fff;font-size:16px;font-weight:bold;}
 .matchday-history-title{margin:26px 16px 12px;font-size:20px;}
+
+.playoff-tracker{margin:0 16px 18px;padding:18px;border-radius:18px;background:#101d2e;border:1px solid #8e6d17;box-shadow:0 0 0 1px rgba(232,187,54,.08) inset;}
+.playoff-tracker-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.playoff-tracker-kicker{color:#e8bb36;font-size:11px;font-weight:800;letter-spacing:1px;}
+.playoff-tracker-title{margin-top:4px;font-size:20px;font-weight:800;color:#fff;}
+.playoff-tracker-deadline{margin-top:5px;color:#91a0b4;font-size:12px;line-height:1.4;}
+.playoff-live-badge{flex:none;padding:6px 9px;border-radius:999px;background:#2d2510;color:#f1c94f;border:1px solid #6c5719;font-size:9px;font-weight:800;letter-spacing:.5px;}
+.playoff-countdown-card{margin-top:14px;padding:12px 13px;border-radius:13px;background:#081525;border:1px solid #29425f;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.playoff-countdown-label{color:#91a0b4;font-size:10px;font-weight:800;letter-spacing:.6px;}
+.playoff-countdown-value{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;color:#fff;text-align:right;}
+.playoff-progress-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;}
+.playoff-progress-stat{padding:10px 6px;border-radius:12px;background:#07111f;text-align:center;}
+.playoff-progress-number{font-size:20px;font-weight:800;color:#fff;}
+.playoff-progress-number.gold{color:#e8bb36;}
+.playoff-progress-label{margin-top:3px;color:#8392a6;font-size:9px;font-weight:800;text-transform:uppercase;}
+.playoff-progress-bar{height:8px;border-radius:999px;background:#07111f;overflow:hidden;margin-top:13px;border:1px solid #1f334b;}
+.playoff-progress-fill{height:100%;background:linear-gradient(90deg,#c99a19,#f0c94f);border-radius:999px;transition:width .25s ease;}
+.playoff-game-slots{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:13px;}
+.playoff-game-slot{min-height:34px;border-radius:10px;border:1px solid #29425f;background:#081525;color:#71839a;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
+.playoff-game-slot.w{background:#123821;border-color:#286d42;color:#83e6a2;}
+.playoff-game-slot.d{background:#2f2a17;border-color:#716331;color:#f0d87b;}
+.playoff-game-slot.l{background:#3a1b22;border-color:#7e3543;color:#ff9ba6;}
+.playoff-record{margin-top:11px;color:#c7d0dc;font-size:12px;font-weight:700;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.playoff-record strong{color:#fff;}
+.playoff-tracker.finished{border-color:#37506e;box-shadow:none;}
+.playoff-tracker.finished .playoff-live-badge{background:#152237;border-color:#37506e;color:#aab8ca;}
+.playoff-match-hint{display:none;margin-top:8px;padding:9px 10px;border-radius:10px;background:#211b0b;border:1px solid #5d4a15;color:#e9c658;font-size:11px;line-height:1.4;font-weight:700;}
+@media(max-width:380px){.playoff-tracker{margin-left:12px;margin-right:12px;padding:15px}.playoff-game-slots{gap:5px}.playoff-countdown-value{font-size:16px}}
+
 .matchday-report{margin:0 16px 12px;padding:17px;border-radius:18px;background:#101d2e;border:1px solid #1c314c;}
 .matchday-report-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;}
 .matchday-report-date{font-size:17px;font-weight:bold;}
@@ -3483,6 +3512,8 @@ textarea.bug-form-control{
     </div>
   </div>
 
+  <div id="playoffTracker"></div>
+
   <div id="matchdayControls" class="matchday-wrap"></div>
 
   <button id="addMatchButton" class="add-match-button" onclick="openMatchForm()">
@@ -4295,12 +4326,13 @@ textarea.bug-form-control{
       <div class="form-group">
         <label class="form-label">Match Type</label>
 
-        <select id="matchType" class="form-control">
+        <select id="matchType" class="form-control" onchange="updatePlayoffMatchHint()">
           <option>League</option>
           <option>Promotion</option>
           <option>Playoffs</option>
           <option>Friendly</option>
         </select>
+        <div id="playoffMatchHint" class="playoff-match-hint"></div>
       </div>
 
       <div class="score-inputs">
@@ -6071,6 +6103,7 @@ function openMatchForm(){
   el("opponent").value = "";
   el("matchDate").value = localDate();
   el("matchType").value = "League";
+  updatePlayoffMatchHint();
   el("olympusScore").value = "";
   el("opponentScore").value = "";
 
@@ -6111,6 +6144,7 @@ function openMatchForEdit(season,id){
   el("opponent").value = match.opponent || "";
   el("matchDate").value = match.date || localDate();
   el("matchType").value = match.type || "League";
+  updatePlayoffMatchHint();
   el("olympusScore").value = match.olympusScore ?? "";
   el("opponentScore").value = match.opponentScore ?? "";
 
@@ -6864,6 +6898,163 @@ function renderSquad(){
     ${nonControlledPlayers.map(playerCard).join("")}
   `;
 }
+/* PLAYOFF TRACKER */
+
+const PLAYOFF_EVENTS = {
+  FC26:{
+    name:"Division 1 Playoffs",
+    totalGames:15,
+    startDate:"2026-09-10",
+    endDate:"2026-09-16",
+    deadline:"2026-09-16T23:59:59+01:00"
+  }
+};
+
+let playoffCountdownTimer = null;
+
+function playoffEventForSeason(season){
+  return PLAYOFF_EVENTS[season] || null;
+}
+
+function isPlayoffMatchForEvent(match,event){
+  if(!match || !event) return false;
+  const type = String(match.type || "").trim().toLowerCase();
+  const date = String(match.date || "");
+  return type === "playoffs" && date >= event.startDate && date <= event.endDate;
+}
+
+function playoffMatchesForSeason(season){
+  const event = playoffEventForSeason(season);
+  if(!event || !seasonData[season]) return [];
+  return (seasonData[season].matches || [])
+    .filter(match => isPlayoffMatchForEvent(match,event))
+    .sort((a,b) => {
+      const da = String(a.date || "");
+      const db = String(b.date || "");
+      if(da !== db) return da.localeCompare(db);
+      return Number(a.id || 0) - Number(b.id || 0);
+    });
+}
+
+function playoffCountdownText(deadline){
+  const ms = new Date(deadline).getTime() - Date.now();
+  if(!Number.isFinite(ms)) return "—";
+  if(ms <= 0) return "PLAYOFFS CLOSED";
+  const totalSeconds = Math.floor(ms / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  if(days > 0) return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  return `${hours}h ${minutes}m ${seconds}s`;
+}
+
+function updatePlayoffCountdownOnly(){
+  const node = el("playoffCountdownValue");
+  if(!node) return;
+  const event = playoffEventForSeason(activeSeason);
+  if(!event) return;
+  node.textContent = playoffCountdownText(event.deadline);
+}
+
+function renderPlayoffTracker(){
+  const host = el("playoffTracker");
+  if(!host) return;
+  const event = activeSeason === "ALL_TIME" ? null : playoffEventForSeason(activeSeason);
+  if(!event){
+    host.innerHTML = "";
+    if(playoffCountdownTimer){ clearInterval(playoffCountdownTimer); playoffCountdownTimer = null; }
+    return;
+  }
+
+  const matches = playoffMatchesForSeason(activeSeason);
+  const played = Math.min(matches.length,event.totalGames);
+  const remaining = Math.max(0,event.totalGames - played);
+  const wins = matches.filter(m => m.result === "W").length;
+  const draws = matches.filter(m => m.result === "D").length;
+  const losses = matches.filter(m => m.result === "L").length;
+  const gf = matches.reduce((sum,m) => sum + Number(m.olympusScore || 0),0);
+  const ga = matches.reduce((sum,m) => sum + Number(m.opponentScore || 0),0);
+  const now = Date.now();
+  const deadline = new Date(event.deadline).getTime();
+  const closed = Number.isFinite(deadline) && now > deadline;
+  const complete = played >= event.totalGames;
+  const finished = closed || complete;
+  const progress = Math.min(100,(played / event.totalGames) * 100);
+
+  const slots = Array.from({length:event.totalGames},(_,i) => {
+    const match = matches[i];
+    if(!match) return `<div class="playoff-game-slot">${i+1}</div>`;
+    const cls = match.result === "W" ? "w" : match.result === "D" ? "d" : "l";
+    return `<div class="playoff-game-slot ${cls}" title="${escapeHTML(match.opponent || "Playoff match")}">${match.result}</div>`;
+  }).join("");
+
+  host.innerHTML = `
+    <div class="playoff-tracker ${finished ? "finished" : ""}">
+      <div class="playoff-tracker-head">
+        <div>
+          <div class="playoff-tracker-kicker">🏆 FC26 PLAYOFF TRACKER</div>
+          <div class="playoff-tracker-title">${escapeHTML(event.name)}</div>
+          <div class="playoff-tracker-deadline">15 games · Ends Wed 16 Sep at 23:59</div>
+        </div>
+        <div class="playoff-live-badge">${complete ? "COMPLETE" : closed ? "CLOSED" : "LIVE"}</div>
+      </div>
+
+      <div class="playoff-countdown-card">
+        <div class="playoff-countdown-label">TIME REMAINING</div>
+        <div id="playoffCountdownValue" class="playoff-countdown-value">${playoffCountdownText(event.deadline)}</div>
+      </div>
+
+      <div class="playoff-progress-row">
+        <div class="playoff-progress-stat">
+          <div class="playoff-progress-number gold">${played}/${event.totalGames}</div>
+          <div class="playoff-progress-label">Played</div>
+        </div>
+        <div class="playoff-progress-stat">
+          <div class="playoff-progress-number">${remaining}</div>
+          <div class="playoff-progress-label">Remaining</div>
+        </div>
+        <div class="playoff-progress-stat">
+          <div class="playoff-progress-number">${wins}-${draws}-${losses}</div>
+          <div class="playoff-progress-label">W-D-L</div>
+        </div>
+      </div>
+
+      <div class="playoff-progress-bar"><div class="playoff-progress-fill" style="width:${progress}%"></div></div>
+      <div class="playoff-game-slots">${slots}</div>
+      <div class="playoff-record">
+        <span>Goals <strong>${gf}-${ga}</strong></span>
+        <span>${remaining ? `${remaining} playoff game${remaining===1?"":"s"} left` : "All 15 games logged"}</span>
+      </div>
+    </div>`;
+
+  if(playoffCountdownTimer) clearInterval(playoffCountdownTimer);
+  playoffCountdownTimer = setInterval(updatePlayoffCountdownOnly,1000);
+}
+
+function updatePlayoffMatchHint(){
+  const hint = el("playoffMatchHint");
+  const typeNode = el("matchType");
+  if(!hint || !typeNode) return;
+  const event = playoffEventForSeason(activeSeason);
+  if(typeNode.value !== "Playoffs" || !event){
+    hint.style.display = "none";
+    hint.textContent = "";
+    return;
+  }
+  const matches = playoffMatchesForSeason(activeSeason);
+  const remainingBefore = Math.max(0,event.totalGames - matches.length);
+  const isEditingPlayoff = Boolean(editContext && (() => {
+    const found = findStoredMatch(editContext.season,editContext.id);
+    return found && isPlayoffMatchForEvent(found.match,event);
+  })());
+  const gameNumber = Math.min(event.totalGames, matches.length + (isEditingPlayoff ? 0 : 1));
+  hint.style.display = "block";
+  hint.textContent = remainingBefore > 0
+    ? `🏆 This will count as Playoff Game ${gameNumber} of ${event.totalGames}.`
+    : `🏆 All ${event.totalGames} playoff games are already recorded.`;
+}
+
 /* MATCH LIST */
 
 function renderMatches(){
@@ -6874,6 +7065,8 @@ function renderMatches(){
   el("matchesPlayed").textContent = club.played;
   el("matchesWins").textContent = club.wins;
   el("matchesGoals").textContent = club.goalsFor;
+
+  renderPlayoffTracker();
 
   el("addMatchButton").style.display =
     activeSeason === "ALL_TIME" ? "none" : "block";
