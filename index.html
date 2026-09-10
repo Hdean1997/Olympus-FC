@@ -5946,7 +5946,7 @@ function matchdaySummaryHTML(session,compact=false){
   const passingLeader = matchdayPassingLeader(session);
   return `
     <div class="matchday-card ${session.status === "active" ? "live" : ""}">
-      <div class="matchday-eyebrow">${session.status === "active" ? "🔴 MATCHDAY LIVE" : "MATCHDAY REPORT"}</div>
+      <div class="matchday-eyebrow">${session.status === "active" ? "🔴 MATCHDAY LIVE" : `${escapeHTML(session.season || "")} · MATCHDAY REPORT`}</div>
       <div class="matchday-title">${formatDate(session.sessionDate)}</div>
       <div class="matchday-sub">${session.status === "active" ? liveSquad : reportSquad}</div>
       ${!compact && session.status === "ended" ? squadDetails : ""}
@@ -6055,19 +6055,26 @@ function renderReportArchive(){
   const playoffHistory = el("playoffHistory");
   if(!archive || !matchCountNode || !playoffCountNode || !playoffHistory) return;
 
-  if(activeSeason === "ALL_TIME"){
-    archive.style.display = "none";
-    return;
-  }
+  // The report archive is club history, so do not hide older reports just
+  // because a different season is selected elsewhere in the app.
   archive.style.display = "block";
 
-  const endedSessions = matchdaySessions.filter(s => s.season === activeSeason && s.status === "ended");
-  const playoffReports = completedPlayoffReportsForSeason(activeSeason);
+  const endedSessions = matchdaySessions
+    .filter(s => s.status === "ended")
+    .sort((a,b) => {
+      const dateCompare = String(b.sessionDate || "").localeCompare(String(a.sessionDate || ""));
+      return dateCompare || (Number(b.id || 0) - Number(a.id || 0));
+    });
+
+  const playoffReports = ["FC27","FC26"]
+    .flatMap(season => completedPlayoffReportsForSeason(season))
+    .sort((a,b) => String(b.event.endDate || b.event.startDate || "").localeCompare(String(a.event.endDate || a.event.startDate || "")));
+
   matchCountNode.textContent = String(endedSessions.length);
   playoffCountNode.textContent = String(playoffReports.length);
   playoffHistory.innerHTML = playoffReports.length
     ? playoffReports.map(previousPlayoffReportHTML).join("")
-    : `<div class="report-history-empty">No completed playoff reports yet for ${escapeHTML(activeSeason)}.</div>`;
+    : `<div class="report-history-empty">No completed playoff reports yet.</div>`;
 
   const matchOpen = openReportArchive === "matchday";
   const playoffOpen = openReportArchive === "playoff";
@@ -6115,13 +6122,18 @@ function renderMatchday(){
       : "";
   }
 
+  // Previous Matchday Reports is a true archive across seasons. This means
+  // an FC26 report remains available even while FC27 is selected.
   const sessions = matchdaySessions
-    .filter(s => s.season === activeSeason && s.status === "ended")
-    .sort((a,b) => Number(b.id)-Number(a.id));
+    .filter(s => s.status === "ended")
+    .sort((a,b) => {
+      const dateCompare = String(b.sessionDate || "").localeCompare(String(a.sessionDate || ""));
+      return dateCompare || (Number(b.id || 0) - Number(a.id || 0));
+    });
 
   history.innerHTML = sessions.length
     ? sessions.map(session => matchdaySummaryHTML(session,false)).join("")
-    : `<div class="report-history-empty">No previous Matchday reports yet for ${escapeHTML(activeSeason)}.</div>`;
+    : `<div class="report-history-empty">No previous Matchday reports yet.</div>`;
   renderReportArchive();
   updateMatchdayTimers();
 }
@@ -10692,17 +10704,19 @@ async function handleAuthUI(){
     signed.textContent = `Signed in as ${displayName} • ${roleLabel}`;
   }
 
-  await loadClubhouseSession();
-  await loadSpotifyJam();
-  await startPresenceTracking();
+  // These are supporting features. A problem with one of them should never
+  // make the core Supabase connection appear to have failed.
+  try{ await loadClubhouseSession(); }catch(error){ console.warn("Clubhouse refresh failed:",error); }
+  try{ await loadSpotifyJam(); }catch(error){ console.warn("Spotify Jam refresh failed:",error); }
+  try{ await startPresenceTracking(); }catch(error){ console.warn("Presence refresh failed:",error); }
   if(isOwner){
-    await loadOwnerBugReports();
+    try{ await loadOwnerBugReports(); }catch(error){ console.warn("Bug report refresh failed:",error); }
   }else{
     bugReports = [];
   }
   updateAdminUI();
   renderEverything();
-  await loadPendingAchievementNotifications();
+  try{ await loadPendingAchievementNotifications(); }catch(error){ console.warn("Achievement notification refresh failed:",error); }
 }
 
 async function uploadLocalDataToSupabase(){
@@ -10991,7 +11005,13 @@ async function initSupabase(){
     await handleAuthUI();
   }catch(error){
     console.error(error);
-    setOnlineStatus("Connection failed","#ff9ea6");
+    // If the main data load already succeeded, an optional account feature
+    // must not overwrite the healthy database status with a false failure.
+    if(remoteReady){
+      setOnlineStatus("Connected","#67d894");
+    }else{
+      setOnlineStatus("Connection failed","#ff9ea6");
+    }
   }
 }
 
