@@ -5205,6 +5205,16 @@ const MATCHDAY_PASSING = [
     season:"FC26",
     sessionDate:"2026-09-08",
     passes:{tyrone:209,baganor:133,kenny:122,deano:126,juanny:0}
+  },
+  {
+    season:"FC26",
+    sessionDate:"2026-09-10",
+    passes:{tyrone:241,baganor:204,kenny:0,deano:132,juanny:0}
+  },
+  {
+    season:"FC26",
+    sessionDate:"2026-09-11",
+    passes:{tyrone:248,baganor:155,kenny:0,deano:189,juanny:0}
   }
 ];
 
@@ -5722,6 +5732,12 @@ function matchesForMatchday(sessionId){
   return all.filter(match => String(match.matchdaySessionId || "") === String(sessionId));
 }
 
+function isPlayoffOnlyMatchday(session){
+  if(!session) return false;
+  const matches = matchesForMatchday(session.id);
+  return matches.length > 0 && matches.every(match => match.type === "Playoffs");
+}
+
 function calculateMatchdayStats(session){
   const matches = matchesForMatchday(session.id);
   const wins = matches.filter(m => m.result === "W").length;
@@ -5947,7 +5963,7 @@ function matchdaySummaryHTML(session,compact=false){
   const passingLeader = matchdayPassingLeader(session);
   return `
     <div class="matchday-card ${session.status === "active" ? "live" : ""}">
-      <div class="matchday-eyebrow">${session.status === "active" ? "🔴 MATCHDAY LIVE" : `${escapeHTML(session.season || "")} · MATCHDAY REPORT`}</div>
+      <div class="matchday-eyebrow">${session.status === "active" ? "🔴 MATCHDAY LIVE" : `${escapeHTML(session.season || "")} · ${isPlayoffOnlyMatchday(session) ? "PLAYOFF MATCHDAY REPORT" : "MATCHDAY REPORT"}`}</div>
       <div class="matchday-title">${formatDate(session.sessionDate)}</div>
       <div class="matchday-sub">${session.status === "active" ? liveSquad : reportSquad}</div>
       ${!compact && session.status === "ended" ? squadDetails : ""}
@@ -6067,15 +6083,25 @@ function renderReportArchive(){
       return dateCompare || (Number(b.id || 0) - Number(a.id || 0));
     });
 
+  // A Matchday made up entirely of Playoff games belongs in the Playoff archive,
+  // not in Previous Matchday Reports. Mixed/league sessions stay as Matchday reports.
+  const playoffMatchdaySessions = endedSessions.filter(isPlayoffOnlyMatchday);
+  const normalMatchdaySessions = endedSessions.filter(session => !isPlayoffOnlyMatchday(session));
+
   const playoffReports = ["FC27","FC26"]
     .flatMap(season => completedPlayoffReportsForSeason(season))
     .sort((a,b) => String(b.event.endDate || b.event.startDate || "").localeCompare(String(a.event.endDate || a.event.startDate || "")));
 
-  matchCountNode.textContent = String(endedSessions.length);
-  playoffCountNode.textContent = String(playoffReports.length);
-  playoffHistory.innerHTML = playoffReports.length
-    ? playoffReports.map(previousPlayoffReportHTML).join("")
-    : `<div class="report-history-empty">No completed playoff reports yet.</div>`;
+  matchCountNode.textContent = String(normalMatchdaySessions.length);
+  playoffCountNode.textContent = String(playoffMatchdaySessions.length + playoffReports.length);
+
+  const playoffArchiveItems = [
+    ...playoffMatchdaySessions.map(session => matchdaySummaryHTML(session,false)),
+    ...playoffReports.map(previousPlayoffReportHTML)
+  ];
+  playoffHistory.innerHTML = playoffArchiveItems.length
+    ? playoffArchiveItems.join("")
+    : `<div class="report-history-empty">No previous Playoff reports yet.</div>`;
 
   const matchOpen = openReportArchive === "matchday";
   const playoffOpen = openReportArchive === "playoff";
@@ -6126,7 +6152,7 @@ function renderMatchday(){
   // Previous Matchday Reports is a true archive across seasons. This means
   // an FC26 report remains available even while FC27 is selected.
   const sessions = matchdaySessions
-    .filter(s => s.status === "ended")
+    .filter(s => s.status === "ended" && !isPlayoffOnlyMatchday(s))
     .sort((a,b) => {
       const dateCompare = String(b.sessionDate || "").localeCompare(String(a.sessionDate || ""));
       return dateCompare || (Number(b.id || 0) - Number(a.id || 0));
