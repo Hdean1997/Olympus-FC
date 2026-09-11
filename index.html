@@ -600,6 +600,15 @@ h1{
 .report-history-panel{display:none;margin-top:14px;}
 .report-history-panel.open{display:block;}
 .report-history-empty{margin:0 16px 18px;padding:18px;border:1px dashed #29425f;border-radius:16px;color:#8392a6;text-align:center;font-size:12px;}
+.report-history-panel > .matchday-card{margin:0 16px 18px;}
+.report-history-panel > .matchday-card + .matchday-card{margin-top:0;}
+.playoff-history-page{padding-bottom:30px;}
+.playoff-history-top{padding:18px 16px 8px;}
+.playoff-history-title{margin:18px 0 4px;font-size:28px;}
+.playoff-history-subtitle{color:#91a0b4;font-size:13px;}
+.playoff-history-section{margin:18px 0 0;}
+.playoff-history-section-title{margin:0 16px 10px;color:#91a0b4;font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;}
+.playoff-history-empty{margin:0 16px 18px;padding:18px;border:1px dashed #29425f;border-radius:16px;color:#8392a6;text-align:center;font-size:12px;}
 .previous-playoff-card{margin:0 16px 18px;padding:16px;border-radius:16px;background:#101d2e;border:1px solid #37506e;}
 .previous-playoff-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;}
 .previous-playoff-kicker{color:#e8bb36;font-size:10px;font-weight:800;letter-spacing:1px;}
@@ -3575,7 +3584,7 @@ textarea.bug-form-control{
       <button id="playoffArchiveButton" class="report-archive-button" type="button" onclick="toggleReportArchive('playoff')">
         <div class="report-archive-copy">
           <div class="report-archive-title">🏆 Previous Playoff Reports</div>
-          <div class="report-archive-sub">View completed playoff campaigns</div>
+          <div class="report-archive-sub">View completed Playoff Matchday reports</div>
         </div>
         <div class="report-archive-right"><span id="playoffArchiveCount" class="report-archive-count">0</span><span class="report-archive-arrow">›</span></div>
       </button>
@@ -3771,6 +3780,19 @@ textarea.bug-form-control{
     </div>
   </div>
 
+  <div class="hub-section">
+    <div class="hub-heading">CLUB HISTORY</div>
+    <div class="hub-card">
+      <button class="hub-action gold" onclick="openPlayoffHistoryPage()">
+        <div>
+          <div class="hub-action-main">🏆 Playoffs History</div>
+          <div class="hub-action-sub">View completed FC26 and FC27 playoff campaigns</div>
+        </div>
+        <div class="hub-action-arrow">›</div>
+      </button>
+    </div>
+  </div>
+
   <div id="seasonSettingsSection" class="hub-section">
     <div class="hub-heading">SEASON SETTINGS</div>
 
@@ -3864,6 +3886,22 @@ textarea.bug-form-control{
         <div class="hub-action-arrow">›</div>
       </button>
     </div>
+  </div>
+</div>
+
+<!-- PLAYOFF HISTORY -->
+<div id="playoffHistoryPage" class="page playoff-history-page">
+  <div class="playoff-history-top">
+    <button class="app-back-button" onclick="closePlayoffHistoryPage()">
+      <span class="app-back-icon">‹</span>
+      <span>Back</span>
+    </button>
+    <h2 class="playoff-history-title">Playoffs History</h2>
+    <div class="playoff-history-subtitle">Olympus FC · completed playoff campaigns</div>
+  </div>
+  <div class="playoff-history-section">
+    <div class="playoff-history-section-title">COMPLETED PLAYOFF CAMPAIGNS</div>
+    <div id="playoffCampaignHistory"></div>
   </div>
 </div>
 
@@ -6035,13 +6073,13 @@ function completedPlayoffReportsForSeason(season){
     const matches = playoffMatchesForEvent(season,event).slice(0,event.totalGames);
     const complete = matches.length >= Number(event.totalGames || 25);
     const deadlinePassed = new Date(event.deadline).getTime() < Date.now();
-    return {event,matches,complete,deadlinePassed};
+    return {season,event,matches,complete,deadlinePassed};
   }).filter(item => item.complete || item.deadlinePassed)
     .sort((a,b) => String(b.event.endDate || "").localeCompare(String(a.event.endDate || "")));
 }
 
 function previousPlayoffReportHTML(item){
-  const {event,matches} = item;
+  const {season,event,matches} = item;
   const wins = matches.filter(m => m.result === "W").length;
   const losses = matches.filter(m => m.result === "L").length;
   const gf = matches.reduce((sum,m) => sum + Number(m.olympusScore || 0),0);
@@ -6051,7 +6089,7 @@ function previousPlayoffReportHTML(item){
     <div class="previous-playoff-card">
       <div class="previous-playoff-head">
         <div>
-          <div class="previous-playoff-kicker">🏆 ${escapeHTML(activeSeason)} PLAYOFF REPORT</div>
+          <div class="previous-playoff-kicker">🏆 ${escapeHTML(season || "")} PLAYOFF REPORT</div>
           <div class="previous-playoff-title">${escapeHTML(event.name || "Playoffs")}</div>
           <div class="previous-playoff-date">${escapeHTML(formatDate(event.endDate || event.startDate || ""))}</div>
         </div>
@@ -6088,17 +6126,12 @@ function renderReportArchive(){
   const playoffMatchdaySessions = endedSessions.filter(isPlayoffOnlyMatchday);
   const normalMatchdaySessions = endedSessions.filter(session => !isPlayoffOnlyMatchday(session));
 
-  const playoffReports = ["FC27","FC26"]
-    .flatMap(season => completedPlayoffReportsForSeason(season))
-    .sort((a,b) => String(b.event.endDate || b.event.startDate || "").localeCompare(String(a.event.endDate || a.event.startDate || "")));
-
   matchCountNode.textContent = String(normalMatchdaySessions.length);
-  playoffCountNode.textContent = String(playoffMatchdaySessions.length + playoffReports.length);
+  playoffCountNode.textContent = String(playoffMatchdaySessions.length);
 
-  const playoffArchiveItems = [
-    ...playoffMatchdaySessions.map(session => matchdaySummaryHTML(session,false)),
-    ...playoffReports.map(previousPlayoffReportHTML)
-  ];
+  // This archive is for individual Matchday reports made up entirely of Playoff games.
+  // Overall completed playoff campaigns live under More → Playoffs History.
+  const playoffArchiveItems = playoffMatchdaySessions.map(session => matchdaySummaryHTML(session,false));
   playoffHistory.innerHTML = playoffArchiveItems.length
     ? playoffArchiveItems.join("")
     : `<div class="report-history-empty">No previous Playoff reports yet.</div>`;
@@ -8066,6 +8099,37 @@ function renderMorePage(){
   }
 
   updateAdminUI();
+}
+
+/* PLAYOFF HISTORY */
+
+function renderPlayoffHistoryPage(){
+  const host = el("playoffCampaignHistory");
+  if(!host) return;
+
+  const reports = ["FC27","FC26"]
+    .flatMap(season => completedPlayoffReportsForSeason(season))
+    .sort((a,b) => String(b.event.endDate || b.event.startDate || "").localeCompare(String(a.event.endDate || a.event.startDate || "")));
+
+  host.innerHTML = reports.length
+    ? reports.map(previousPlayoffReportHTML).join("")
+    : `<div class="playoff-history-empty">No completed playoff campaigns yet.</div>`;
+}
+
+function openPlayoffHistoryPage(){
+  renderPlayoffHistoryPage();
+  document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
+  el("playoffHistoryPage").classList.add("active");
+  el("bottomNav").classList.add("hidden");
+  window.scrollTo(0,0);
+}
+
+function closePlayoffHistoryPage(){
+  el("playoffHistoryPage").classList.remove("active");
+  el("more").classList.add("active");
+  el("bottomNav").classList.remove("hidden");
+  activateNavForPage("more");
+  window.scrollTo(0,0);
 }
 
 /* RECORDS */
