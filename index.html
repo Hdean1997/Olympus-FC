@@ -619,6 +619,19 @@ h1{
 .previous-playoff-stat{padding:9px 6px;border-radius:11px;background:#07111f;text-align:center;}
 .previous-playoff-stat strong{display:block;color:#fff;font-size:15px;}
 .previous-playoff-stat span{display:block;margin-top:2px;color:#8392a6;font-size:8px;font-weight:800;text-transform:uppercase;}
+.playoff-start-card{margin:0 16px 18px;padding:16px;border-radius:18px;background:#101d2e;border:1px dashed #8e6d17;}
+.playoff-start-title{font-size:17px;font-weight:800;color:#f2c94c;}
+.playoff-start-copy{margin-top:5px;color:#91a0b4;font-size:12px;line-height:1.45;}
+.playoff-start-button{width:100%;min-height:48px;margin-top:13px;border:1px solid #8e6d17;border-radius:13px;background:#2b240f;color:#f2c94c;font-weight:900;}
+.playoff-history-details{margin:0 16px 18px;border:1px solid #37506e;border-radius:18px;background:#101d2e;overflow:hidden;}
+.playoff-history-details summary{list-style:none;cursor:pointer;padding:16px;}
+.playoff-history-details summary::-webkit-details-marker{display:none;}
+.playoff-history-details[open] summary{border-bottom:1px solid #29425f;}
+.playoff-history-expanded{padding:0 16px 16px;}
+.playoff-history-results{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:14px;}
+.playoff-history-highlights{margin-top:14px;padding-top:13px;border-top:1px solid #29425f;display:grid;gap:7px;color:#c7d0dc;font-size:12px;}
+.playoff-history-highlights strong{color:#fff;}
+
 
 .playoff-tracker{margin:0 16px 18px;padding:18px;border-radius:18px;background:#101d2e;border:1px solid #8e6d17;box-shadow:0 0 0 1px rgba(232,187,54,.08) inset;}
 .playoff-tracker-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
@@ -3786,7 +3799,7 @@ textarea.bug-form-control{
       <button class="hub-action gold" onclick="openPlayoffHistoryPage()">
         <div>
           <div class="hub-action-main">🏆 Playoffs History</div>
-          <div class="hub-action-sub">View completed FC26 and FC27 playoff campaigns</div>
+          <div class="hub-action-sub">View full reports from completed playoff campaigns</div>
         </div>
         <div class="hub-action-arrow">›</div>
       </button>
@@ -4395,6 +4408,30 @@ textarea.bug-form-control{
       <button class="save-button" onclick="saveDivision()">Save Division</button>
     </div>
 
+  </div>
+</div>
+
+<!-- BEGIN PLAYOFFS MODAL -->
+<div id="beginPlayoffsModal" class="modal">
+  <div class="modal-card small-modal-card">
+    <div class="step-indicator">PLAYOFF SETUP</div>
+    <div class="modal-title">Begin Playoffs</div>
+    <div id="beginPlayoffsSubtitle" class="modal-subtitle">Set up the next Olympus FC playoff campaign.</div>
+    <div class="form-group">
+      <label class="form-label">Division Playoffs</label>
+      <select id="playoffDivisionSelect" class="form-control">
+        <option>Division 5</option><option>Division 4</option><option>Division 3</option><option>Division 2</option><option>Division 1</option><option>Elite</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Number of Games</label>
+      <input id="playoffGamesInput" class="form-control" type="number" inputmode="numeric" min="1" max="100" value="25">
+    </div>
+    <div id="beginPlayoffsError" class="form-error"></div>
+    <div class="form-buttons">
+      <button class="cancel-button" onclick="closeBeginPlayoffsModal()">Cancel</button>
+      <button class="save-button" onclick="startPlayoffCampaign()">Start Playoffs</button>
+    </div>
   </div>
 </div>
 
@@ -6055,9 +6092,10 @@ function toggleReportArchive(type){
 }
 
 function allPlayoffEventsForSeason(season){
-  const raw = PLAYOFF_EVENTS[season];
-  if(!raw) return [];
-  return Array.isArray(raw) ? raw : [raw];
+  const legacyRaw = PLAYOFF_EVENTS[season];
+  const legacy = !legacyRaw ? [] : (Array.isArray(legacyRaw) ? legacyRaw : [legacyRaw]);
+  const custom = (customPlayoffCampaigns || []).filter(event => event.season === season);
+  return [...legacy,...custom];
 }
 
 function playoffMatchesForEvent(season,event){
@@ -6075,37 +6113,92 @@ function playoffMatchesForEvent(season,event){
 function completedPlayoffReportsForSeason(season){
   if(!season || season === "ALL_TIME") return [];
   return allPlayoffEventsForSeason(season).map(event => {
-    const matches = playoffMatchesForEvent(season,event).slice(0,event.totalGames);
+    const matches = playoffMatchesForEvent(season,event).slice(0,Number(event.totalGames || 25));
     const complete = matches.length >= Number(event.totalGames || 25);
-    const deadlinePassed = new Date(event.deadline).getTime() < Date.now();
-    return {season,event,matches,complete,deadlinePassed};
-  }).filter(item => item.complete || item.deadlinePassed)
-    .sort((a,b) => String(b.event.endDate || "").localeCompare(String(a.event.endDate || "")));
+    const deadlinePassed = Boolean(event.deadline) && new Date(event.deadline).getTime() < Date.now();
+    const archived = event.status === "archived" || event.legacyArchived === true;
+    return {season,event,matches,complete,deadlinePassed,archived};
+  }).filter(item => item.archived || item.complete || item.deadlinePassed)
+    .sort((a,b) => String(b.event.endDate || b.event.startDate || "").localeCompare(String(a.event.endDate || a.event.startDate || "")));
 }
 
-function previousPlayoffReportHTML(item){
-  const {season,event,matches} = item;
+function playoffReportStats(item){
+  const {matches} = item;
   const wins = matches.filter(m => m.result === "W").length;
   const losses = matches.filter(m => m.result === "L").length;
   const gf = matches.reduce((sum,m) => sum + Number(m.olympusScore || 0),0);
   const ga = matches.reduce((sum,m) => sum + Number(m.opponentScore || 0),0);
   const winRate = matches.length ? Math.round((wins / matches.length) * 100) : 0;
+  const totals = {};
+  players.forEach(player => totals[player.id] = {goals:0,assists:0,potm:0,ratingTotal:0,ratingCount:0});
+  matches.forEach(match => players.forEach(player => {
+    const st = match.playerStats?.[player.id];
+    if(!st?.played) return;
+    totals[player.id].goals += Number(st.goals || 0);
+    totals[player.id].assists += Number(st.assists || 0);
+    if(match.potmPlayerId === player.id) totals[player.id].potm += 1;
+    const rating = Number(st.rating);
+    if(Number.isFinite(rating) && rating > 0){ totals[player.id].ratingTotal += rating; totals[player.id].ratingCount += 1; }
+  }));
+  const leader = key => {
+    const ranked = players.map(player => ({player,value:totals[player.id][key]})).sort((x,y)=>y.value-x.value);
+    return ranked[0] || null;
+  };
+  const ratingLeader = players.map(player => ({player,value:totals[player.id].ratingCount ? totals[player.id].ratingTotal/totals[player.id].ratingCount : 0}))
+    .sort((x,y)=>y.value-x.value)[0] || null;
+  return {wins,losses,gf,ga,winRate,goalDiff:gf-ga,topScorer:leader("goals"),topAssister:leader("assists"),topPotm:leader("potm"),ratingLeader};
+}
+
+function previousPlayoffReportHTML(item){
+  const {season,event,matches} = item;
+  const st = playoffReportStats(item);
   return `
     <div class="previous-playoff-card">
-      <div class="previous-playoff-head">
-        <div>
-          <div class="previous-playoff-kicker">🏆 ${escapeHTML(season || "")} PLAYOFF REPORT</div>
-          <div class="previous-playoff-title">${escapeHTML(event.name || "Playoffs")}</div>
-          <div class="previous-playoff-date">${escapeHTML(formatDate(event.endDate || event.startDate || ""))}</div>
-        </div>
-        <div class="previous-playoff-record">${wins}-${losses}</div>
-      </div>
+      <div class="previous-playoff-head"><div>
+        <div class="previous-playoff-kicker">🏆 ${escapeHTML(season || "")} PLAYOFF REPORT</div>
+        <div class="previous-playoff-title">${escapeHTML(event.name || "Playoffs")}</div>
+        <div class="previous-playoff-date">${escapeHTML(formatDate(event.endDate || event.startDate || ""))}</div>
+      </div><div class="previous-playoff-record">${st.wins}-${st.losses}</div></div>
       <div class="previous-playoff-stats">
         <div class="previous-playoff-stat"><strong>${matches.length}/${event.totalGames}</strong><span>Games</span></div>
-        <div class="previous-playoff-stat"><strong>${winRate}%</strong><span>Win Rate</span></div>
-        <div class="previous-playoff-stat"><strong>${gf}-${ga}</strong><span>Goals F-A</span></div>
+        <div class="previous-playoff-stat"><strong>${st.winRate}%</strong><span>Win Rate</span></div>
+        <div class="previous-playoff-stat"><strong>${st.gf}-${st.ga}</strong><span>Goals F-A</span></div>
       </div>
     </div>`;
+}
+
+function playoffCampaignHistoryHTML(item){
+  const {season,event,matches} = item;
+  const st = playoffReportStats(item);
+  const slots = Array.from({length:Number(event.totalGames || matches.length)},(_,i) => {
+    const match = matches[i];
+    if(!match) return `<div class="playoff-game-slot">${i+1}</div>`;
+    return `<div class="playoff-game-slot ${match.result === "W" ? "w" : "l"}">${match.result}</div>`;
+  }).join("");
+  return `<details class="playoff-history-details">
+    <summary>
+      <div class="previous-playoff-head"><div>
+        <div class="previous-playoff-kicker">🏆 ${escapeHTML(season)} · ${escapeHTML(event.division || event.name || "PLAYOFFS")}</div>
+        <div class="previous-playoff-title">${escapeHTML(event.name || "Playoffs")}</div>
+        <div class="previous-playoff-date">${escapeHTML(formatDate(event.endDate || event.startDate || ""))} · Tap to view full report</div>
+      </div><div class="previous-playoff-record">${st.wins}-${st.losses}</div></div>
+      <div class="previous-playoff-stats">
+        <div class="previous-playoff-stat"><strong>${matches.length}/${event.totalGames}</strong><span>Games</span></div>
+        <div class="previous-playoff-stat"><strong>${st.winRate}%</strong><span>Win Rate</span></div>
+        <div class="previous-playoff-stat"><strong>${st.gf}-${st.ga}</strong><span>Goals F-A</span></div>
+      </div>
+    </summary>
+    <div class="playoff-history-expanded">
+      <div class="playoff-history-results">${slots}</div>
+      <div class="playoff-history-highlights">
+        <div>⚽ Top scorer — <strong>${st.topScorer ? `${escapeHTML(st.topScorer.player.name)} (${st.topScorer.value})` : "—"}</strong></div>
+        <div>🎯 Top assister — <strong>${st.topAssister ? `${escapeHTML(st.topAssister.player.name)} (${st.topAssister.value})` : "—"}</strong></div>
+        <div>⭐ Most POTM — <strong>${st.topPotm ? `${escapeHTML(st.topPotm.player.name)} (${st.topPotm.value})` : "—"}</strong></div>
+        <div>📊 Highest avg rating — <strong>${st.ratingLeader && st.ratingLeader.value ? `${escapeHTML(st.ratingLeader.player.name)} (${st.ratingLeader.value.toFixed(2)})` : "—"}</strong></div>
+        <div>➕ Goal difference — <strong>${st.goalDiff >= 0 ? "+" : ""}${st.goalDiff}</strong></div>
+      </div>
+    </div>
+  </details>`;
 }
 
 function renderReportArchive(){
@@ -6476,6 +6569,10 @@ function continueToPlayerStats(){
     }
 
     const event = playoffEventForSeason(season);
+    if(!event && !editContext){
+      showMatchError("No playoff campaign is active. Go back to Matches and choose Begin Playoffs first.");
+      return;
+    }
     if(event){
       const existingPlayoff = Boolean(editContext && (() => {
         const found = findStoredMatch(editContext.season, editContext.id);
@@ -7177,222 +7274,179 @@ function renderSquad(){
 }
 /* PLAYOFF TRACKER */
 
+// The original FC26 campaign is kept as permanent history. New campaigns are
+// created from Matches > Begin Playoffs and are stored on the owner's device.
 const PLAYOFF_EVENTS = {
-  FC26:{
+  FC26:[{
+    id:"fc26-division1-final",
+    season:"FC26",
+    division:"Division 1",
     name:"Division 1 Playoffs",
     totalGames:25,
     startDate:"2026-09-10",
     endDate:"2026-09-16",
-    deadline:"2026-09-16T23:59:59+01:00"
-  }
+    deadline:"2026-09-16T23:59:59+01:00",
+    legacyArchived:true,
+    status:"archived"
+  }]
 };
+
+const PLAYOFF_CAMPAIGN_KEY = "olympusFCPlayoffCampaignsV1";
+let customPlayoffCampaigns = [];
+try{
+  const savedCampaigns = JSON.parse(localStorage.getItem(PLAYOFF_CAMPAIGN_KEY) || "[]");
+  if(Array.isArray(savedCampaigns)) customPlayoffCampaigns = savedCampaigns;
+}catch{}
+
+function savePlayoffCampaigns(){
+  localStorage.setItem(PLAYOFF_CAMPAIGN_KEY,JSON.stringify(customPlayoffCampaigns));
+}
 
 let playoffCountdownTimer = null;
 
 function playoffEventForSeason(season){
-  return PLAYOFF_EVENTS[season] || null;
+  return [...customPlayoffCampaigns]
+    .filter(event => event.season === season && event.status === "active")
+    .sort((a,b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))[0] || null;
 }
 
 function isPlayoffMatchForEvent(match,event){
-  if(!match || !event) return false;
-  const type = String(match.type || "").trim().toLowerCase();
+  if(!match || !event || String(match.type || "").trim().toLowerCase() !== "playoffs") return false;
+  const id = Number(match.id || 0);
+  if(event.startAfterId !== undefined && event.startAfterId !== null){
+    if(id <= Number(event.startAfterId || 0)) return false;
+    if(event.endMatchId !== undefined && event.endMatchId !== null && id > Number(event.endMatchId)) return false;
+    return true;
+  }
   const date = String(match.date || "");
-  return type === "playoffs" && date >= event.startDate && date <= event.endDate;
+  return date >= String(event.startDate || "") && (!event.endDate || date <= String(event.endDate));
 }
 
 function playoffMatchesForSeason(season){
   const event = playoffEventForSeason(season);
-  if(!event || !seasonData[season]) return [];
-  return (seasonData[season].matches || [])
-    .filter(match => isPlayoffMatchForEvent(match,event))
-    .sort((a,b) => {
-      const da = String(a.date || "");
-      const db = String(b.date || "");
-      if(da !== db) return da.localeCompare(db);
-      return Number(a.id || 0) - Number(b.id || 0);
-    });
+  return event ? playoffMatchesForEvent(season,event) : [];
 }
 
-function playoffCountdownText(deadline){
-  const ms = new Date(deadline).getTime() - Date.now();
-  if(!Number.isFinite(ms)) return "—";
-  if(ms <= 0) return "PLAYOFFS CLOSED";
-  const totalSeconds = Math.floor(ms / 1000);
-  const days = Math.floor(totalSeconds / 86400);
-  const hours = Math.floor((totalSeconds % 86400) / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  if(days > 0) return `${days}d ${hours}h ${minutes}m ${seconds}s`;
-  return `${hours}h ${minutes}m ${seconds}s`;
+function openBeginPlayoffsModal(){
+  if(!isOwner){ alert("Owner access is required to begin a playoff campaign."); return; }
+  if(activeSeason === "ALL_TIME") return;
+  if(playoffEventForSeason(activeSeason)){ alert("There is already an active playoff campaign for this season."); return; }
+  el("beginPlayoffsSubtitle").textContent = `Set up the next ${activeSeason} playoff campaign.`;
+  el("playoffDivisionSelect").value = seasonData[activeSeason]?.division || "Division 5";
+  el("playoffGamesInput").value = Number(seasonData[activeSeason]?.playoffGames || 25);
+  el("beginPlayoffsError").textContent = "";
+  el("beginPlayoffsModal").classList.add("open");
+  document.body.style.overflow = "hidden";
 }
 
-function updatePlayoffCountdownOnly(){
-  const node = el("playoffCountdownValue");
-  if(!node) return;
-  const event = playoffEventForSeason(activeSeason);
-  if(!event) return;
-  node.textContent = playoffCountdownText(event.deadline);
+function closeBeginPlayoffsModal(){
+  el("beginPlayoffsModal").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+async function startPlayoffCampaign(){
+  if(!isOwner || activeSeason === "ALL_TIME") return;
+  const division = el("playoffDivisionSelect").value;
+  const totalGames = Number(el("playoffGamesInput").value);
+  if(!Number.isInteger(totalGames) || totalGames < 1 || totalGames > 100){
+    el("beginPlayoffsError").textContent = "Choose between 1 and 100 playoff games.";
+    return;
+  }
+  const existingIds = (seasonData[activeSeason]?.matches || []).map(m => Number(m.id || 0)).filter(Number.isFinite);
+  const campaign = {
+    id:`${activeSeason.toLowerCase()}-${Date.now()}`,
+    season:activeSeason,
+    division,
+    name:`${division} Playoffs`,
+    totalGames,
+    startDate:localDate(),
+    startAfterId:existingIds.length ? Math.max(...existingIds) : 0,
+    status:"active",
+    createdAt:Date.now()
+  };
+  customPlayoffCampaigns.push(campaign);
+  seasonData[activeSeason].playoffGames = totalGames;
+  savePlayoffCampaigns();
+  saveSeasonData();
+  try{
+    await ensureRemoteLookups();
+    const seasonId = remoteSeasonIds[activeSeason];
+    if(seasonId){
+      await supabaseClient.from("seasons").update({playoff_games:totalGames}).eq("id",seasonId);
+    }
+  }catch(error){ console.warn("Playoff game count could not be synced:",error); }
+  closeBeginPlayoffsModal();
+  renderEverything();
+}
+
+function archiveCompletedPlayoffCampaign(event,matches){
+  if(!event || event.status !== "active" || matches.length < Number(event.totalGames || 0)) return false;
+  const last = matches[Math.min(matches.length,Number(event.totalGames))-1];
+  event.status = "archived";
+  event.endDate = last?.date || localDate();
+  event.endMatchId = Number(last?.id || 0);
+  event.completedAt = Date.now();
+  savePlayoffCampaigns();
+  return true;
 }
 
 function renderPlayoffTracker(){
   const host = el("playoffTracker");
   if(!host) return;
-  const event = activeSeason === "ALL_TIME" ? null : playoffEventForSeason(activeSeason);
-  if(!event){
+  if(activeSeason === "ALL_TIME"){
     host.innerHTML = "";
-    if(playoffCountdownTimer){ clearInterval(playoffCountdownTimer); playoffCountdownTimer = null; }
     return;
   }
 
-  const matches = playoffMatchesForSeason(activeSeason).slice(0,event.totalGames);
+  const event = playoffEventForSeason(activeSeason);
+  if(!event){
+    host.innerHTML = isOwner ? `<div class="playoff-start-card">
+      <div class="playoff-start-title">🏆 Playoffs</div>
+      <div class="playoff-start-copy">No playoff campaign is currently active for ${escapeHTML(activeSeason)}. Choose the division and number of games when you're ready to begin.</div>
+      <button class="playoff-start-button" onclick="openBeginPlayoffsModal()">+ Begin Playoffs</button>
+    </div>` : "";
+    return;
+  }
+
+  const matches = playoffMatchesForEvent(activeSeason,event).slice(0,event.totalGames);
   const played = matches.length;
+  if(archiveCompletedPlayoffCampaign(event,matches)){
+    host.innerHTML = `<div class="playoff-start-card">
+      <div class="playoff-start-title">🏆 ${escapeHTML(event.name)} complete</div>
+      <div class="playoff-start-copy">The full campaign report has been moved to More → Playoffs History.</div>
+      ${isOwner ? `<button class="playoff-start-button" onclick="openBeginPlayoffsModal()">+ Begin New Playoffs</button>` : ""}
+    </div>`;
+    renderPlayoffHistoryPage();
+    return;
+  }
+
   const remaining = Math.max(0,event.totalGames - played);
   const wins = matches.filter(m => m.result === "W").length;
-  const draws = matches.filter(m => m.result === "D").length;
   const losses = matches.filter(m => m.result === "L").length;
   const gf = matches.reduce((sum,m) => sum + Number(m.olympusScore || 0),0);
   const ga = matches.reduce((sum,m) => sum + Number(m.opponentScore || 0),0);
-  const now = Date.now();
-  const deadline = new Date(event.deadline).getTime();
-  const closed = Number.isFinite(deadline) && now > deadline;
-  const complete = played >= event.totalGames;
-  const finished = closed || complete;
   const progress = Math.min(100,(played / event.totalGames) * 100);
-
   const slots = Array.from({length:event.totalGames},(_,i) => {
     const match = matches[i];
     if(!match) return `<div class="playoff-game-slot">${i+1}</div>`;
-    const cls = match.result === "W" ? "w" : "l";
-    return `<div class="playoff-game-slot ${cls}" title="${escapeHTML(match.opponent || "Playoff match")}">${match.result}</div>`;
+    return `<div class="playoff-game-slot ${match.result === "W" ? "w" : "l"}" title="${escapeHTML(match.opponent || "Playoff match")}">${match.result}</div>`;
   }).join("");
 
-  if(complete){
-    if(playoffCountdownTimer){ clearInterval(playoffCountdownTimer); playoffCountdownTimer = null; }
-
-    const winRate = played ? Math.round((wins / played) * 100) : 0;
-    const goalDiff = gf - ga;
-    const totals = {};
-    players.forEach(player => {
-      totals[player.id] = {goals:0,assists:0,potm:0,ratingTotal:0,ratingCount:0};
-    });
-    matches.forEach(match => {
-      players.forEach(player => {
-        const st = match.playerStats?.[player.id];
-        if(!st || !st.played) return;
-        totals[player.id].goals += Number(st.goals || 0);
-        totals[player.id].assists += Number(st.assists || 0);
-        if(match.potmPlayerId === player.id) totals[player.id].potm += 1;
-        const rating = Number(st.rating);
-        if(Number.isFinite(rating) && rating > 0){
-          totals[player.id].ratingTotal += rating;
-          totals[player.id].ratingCount += 1;
-        }
-      });
-    });
-
-    const leader = (key) => {
-      let best = null;
-      players.forEach(player => {
-        const value = totals[player.id]?.[key] || 0;
-        if(!best || value > best.value) best = {player,value};
-      });
-      return best && best.value > 0 ? best : null;
-    };
-    let bestAvg = null;
-    players.forEach(player => {
-      const t = totals[player.id];
-      if(!t || !t.ratingCount) return;
-      const avg = t.ratingTotal / t.ratingCount;
-      if(!bestAvg || avg > bestAvg.value) bestAvg = {player,value:avg};
-    });
-
-    const topScorer = leader("goals");
-    const topAssister = leader("assists");
-    const topPotm = leader("potm");
-
-    host.innerHTML = `
-      <div class="playoff-final-report">
-        <div class="playoff-final-banner">
-          <div class="playoff-final-icon">🏆</div>
-          <div class="playoff-final-kicker">FC26 DIVISION 1 PLAYOFFS</div>
-          <div class="playoff-final-title">Final Playoff Report</div>
-          <div class="playoff-final-subtitle">All ${event.totalGames} playoff games completed</div>
-        </div>
-
-        <div class="playoff-final-grid">
-          <div class="playoff-final-stat">
-            <div class="playoff-final-stat-value gold">${wins}-${losses}</div>
-            <div class="playoff-final-stat-label">W-L</div>
-          </div>
-          <div class="playoff-final-stat">
-            <div class="playoff-final-stat-value">${winRate}%</div>
-            <div class="playoff-final-stat-label">Win Rate</div>
-          </div>
-          <div class="playoff-final-stat">
-            <div class="playoff-final-stat-value">${gf}-${ga}</div>
-            <div class="playoff-final-stat-label">Goals F-A</div>
-          </div>
-          <div class="playoff-final-stat">
-            <div class="playoff-final-stat-value">${goalDiff > 0 ? "+" : ""}${goalDiff}</div>
-            <div class="playoff-final-stat-label">Goal Difference</div>
-          </div>
-        </div>
-
-        <div class="playoff-final-results">${slots}</div>
-
-        <div class="playoff-final-highlights">
-          ${topScorer ? `<div>⚽ Top scorer — <strong>${escapeHTML(topScorer.player.name)} (${topScorer.value})</strong></div>` : ""}
-          ${topAssister ? `<div>🎯 Top assister — <strong>${escapeHTML(topAssister.player.name)} (${topAssister.value})</strong></div>` : ""}
-          ${topPotm ? `<div>⭐ Most POTM — <strong>${escapeHTML(topPotm.player.name)} (${topPotm.value})</strong></div>` : ""}
-          ${bestAvg ? `<div>📊 Highest avg rating — <strong>${escapeHTML(bestAvg.player.name)} (${bestAvg.value.toFixed(2)})</strong></div>` : ""}
-        </div>
-
-        <div class="playoff-final-footer">${event.totalGames}/${event.totalGames} COMPLETE · MOUNT OLYMPUS</div>
-      </div>`;
-    return;
-  }
-
-  host.innerHTML = `
-    <div class="playoff-tracker ${finished ? "finished" : ""}">
-      <div class="playoff-tracker-head">
-        <div>
-          <div class="playoff-tracker-kicker">🏆 FC26 PLAYOFF TRACKER</div>
-          <div class="playoff-tracker-title">${escapeHTML(event.name)}</div>
-          <div class="playoff-tracker-deadline">${event.totalGames} games · Ends Wed 16 Sep at 23:59</div>
-        </div>
-        <div class="playoff-live-badge">${closed ? "CLOSED" : "LIVE"}</div>
-      </div>
-
-      <div class="playoff-countdown-card">
-        <div class="playoff-countdown-label">TIME REMAINING</div>
-        <div id="playoffCountdownValue" class="playoff-countdown-value">${playoffCountdownText(event.deadline)}</div>
-      </div>
-
-      <div class="playoff-progress-row">
-        <div class="playoff-progress-stat">
-          <div class="playoff-progress-number gold">${played}/${event.totalGames}</div>
-          <div class="playoff-progress-label">Played</div>
-        </div>
-        <div class="playoff-progress-stat">
-          <div class="playoff-progress-number">${remaining}</div>
-          <div class="playoff-progress-label">Remaining</div>
-        </div>
-        <div class="playoff-progress-stat">
-          <div class="playoff-progress-number">${wins}-${losses}</div>
-          <div class="playoff-progress-label">W-L</div>
-        </div>
-      </div>
-
-      <div class="playoff-progress-bar"><div class="playoff-progress-fill" style="width:${progress}%"></div></div>
-      <div class="playoff-game-slots">${slots}</div>
-      <div class="playoff-record">
-        <span>Goals <strong>${gf}-${ga}</strong></span>
-        <span>${remaining ? `${remaining} playoff game${remaining===1?"":"s"} left` : "All ${event.totalGames} games logged"}</span>
-      </div>
-    </div>`;
-
-  if(playoffCountdownTimer) clearInterval(playoffCountdownTimer);
-  playoffCountdownTimer = setInterval(updatePlayoffCountdownOnly,1000);
+  host.innerHTML = `<div class="playoff-tracker">
+    <div class="playoff-tracker-head"><div>
+      <div class="playoff-tracker-kicker">🏆 ${escapeHTML(activeSeason)} · ACTIVE PLAYOFFS</div>
+      <div class="playoff-tracker-title">${escapeHTML(event.name)}</div>
+      <div class="playoff-tracker-deadline">Started ${escapeHTML(formatDate(event.startDate))}</div>
+    </div><div class="playoff-live-badge">LIVE</div></div>
+    <div class="playoff-progress-row">
+      <div class="playoff-progress-stat"><div class="playoff-progress-number gold">${played}/${event.totalGames}</div><div class="playoff-progress-label">Played</div></div>
+      <div class="playoff-progress-stat"><div class="playoff-progress-number">${remaining}</div><div class="playoff-progress-label">Remaining</div></div>
+      <div class="playoff-progress-stat"><div class="playoff-progress-number">${wins}-${losses}</div><div class="playoff-progress-label">W-L</div></div>
+    </div>
+    <div class="playoff-progress-bar"><div class="playoff-progress-fill" style="width:${progress}%"></div></div>
+    <div class="playoff-game-slots">${slots}</div>
+    <div class="playoff-record"><span>Goals <strong>${gf}-${ga}</strong></span><span>${played ? Math.round((wins/played)*100) : 0}% win rate</span></div>
+  </div>`;
 }
 
 function updatePlayoffMatchHint(){
@@ -7400,9 +7454,12 @@ function updatePlayoffMatchHint(){
   const typeNode = el("matchType");
   if(!hint || !typeNode) return;
   const event = playoffEventForSeason(activeSeason);
-  if(typeNode.value !== "Playoffs" || !event){
-    hint.style.display = "none";
-    hint.textContent = "";
+  if(typeNode.value !== "Playoffs"){
+    hint.style.display = "none"; hint.textContent = ""; return;
+  }
+  if(!event){
+    hint.style.display = "block";
+    hint.textContent = "🏆 No active playoff campaign. Use Begin Playoffs on the Matches screen first.";
     return;
   }
   const matches = playoffMatchesForSeason(activeSeason);
@@ -7414,7 +7471,7 @@ function updatePlayoffMatchHint(){
   const gameNumber = Math.min(event.totalGames, matches.length + (isEditingPlayoff ? 0 : 1));
   hint.style.display = "block";
   hint.textContent = remainingBefore > 0
-    ? `🏆 This will count as Playoff Game ${gameNumber} of ${event.totalGames}. Playoff games cannot end in a draw.`
+    ? `🏆 This will count as ${event.name} Game ${gameNumber} of ${event.totalGames}. Playoff games cannot end in a draw.`
     : `🏆 All ${event.totalGames} playoff games are already recorded.`;
 }
 
@@ -8117,7 +8174,7 @@ function renderPlayoffHistoryPage(){
     .sort((a,b) => String(b.event.endDate || b.event.startDate || "").localeCompare(String(a.event.endDate || a.event.startDate || "")));
 
   host.innerHTML = reports.length
-    ? reports.map(previousPlayoffReportHTML).join("")
+    ? reports.map(playoffCampaignHistoryHTML).join("")
     : `<div class="playoff-history-empty">No completed playoff campaigns yet.</div>`;
 }
 
