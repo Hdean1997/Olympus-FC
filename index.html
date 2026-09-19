@@ -3720,6 +3720,7 @@ textarea.bug-form-control{
     FC26 historical totals are not used here. Goals, assists, appearances, streaks and match feats all begin from the first FC27 match.
   </div>
 
+  <div id="achievementStatusFilters" class="achievement-filters"></div>
   <div id="achievementFilters" class="achievement-filters"></div>
   <div id="achievementsCatalogue"></div>
 </div>
@@ -4648,6 +4649,7 @@ const OLYMPUS_ACHIEVEMENTS = [
 ];
 
 let achievementCategoryFilter = "All";
+let achievementStatusFilter = "All";
 let selectedAchievementPlayerId = "tyrone";
 
 function achievementCategoryLabel(category){
@@ -5126,6 +5128,7 @@ async function advanceAchievementUnlock(){
 
 function renderAchievementsPage(){
   const filters = el("achievementFilters");
+  const statusFilters = el("achievementStatusFilters");
   const catalogue = el("achievementsCatalogue");
   const picker = el("achievementPlayerSelect");
   if(!filters || !catalogue) return;
@@ -5156,6 +5159,18 @@ function renderAchievementsPage(){
   if(el("achievementProgressFill")) el("achievementProgressFill").style.width = `${completion}%`;
   if(el("achievementsSubtitle")) el("achievementsSubtitle").textContent = "Olympus FC · FC27";
 
+  const statusCounts = {
+    All: OLYMPUS_ACHIEVEMENTS.length,
+    Completed: OLYMPUS_ACHIEVEMENTS.filter(item => results[item.id]?.unlocked).length,
+    Locked: OLYMPUS_ACHIEVEMENTS.filter(item => !results[item.id]?.unlocked).length
+  };
+  if(statusFilters){
+    statusFilters.innerHTML = ["All","Completed","Locked"].map(status => `
+      <button class="achievement-filter ${achievementStatusFilter === status ? "active" : ""}" onclick="setAchievementStatusFilter('${status}')">
+        ${status === "All" ? "All" : status} (${statusCounts[status]})
+      </button>`).join("");
+  }
+
   const categories = ["All","Goals","Assists","Contributions","Appearances","Streaks","Club","Secret"];
   filters.innerHTML = categories.map(category => `
     <button class="achievement-filter ${achievementCategoryFilter === category ? "active" : ""}" onclick="setAchievementFilter('${category}')">
@@ -5167,7 +5182,14 @@ function renderAchievementsPage(){
     : [achievementCategoryFilter];
 
   catalogue.innerHTML = shownCategories.map(category => {
-    const items = OLYMPUS_ACHIEVEMENTS.filter(item => item.category === category);
+    const items = OLYMPUS_ACHIEVEMENTS.filter(item => {
+      if(item.category !== category) return false;
+      const unlocked = Boolean(results[item.id]?.unlocked);
+      if(achievementStatusFilter === "Completed") return unlocked;
+      if(achievementStatusFilter === "Locked") return !unlocked;
+      return true;
+    });
+    if(!items.length) return "";
     return `
       <div class="achievement-category">
         <div class="achievement-category-title">${achievementCategoryLabel(category)} · ${items.length}</div>
@@ -5201,6 +5223,12 @@ function setAchievementFilter(category){
   achievementCategoryFilter = category;
   renderAchievementsPage();
   window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function setAchievementStatusFilter(status){
+  if(!["All","Completed","Locked"].includes(status)) return;
+  achievementStatusFilter = status;
+  renderAchievementsPage();
 }
 
 function openAchievementsPage(){
