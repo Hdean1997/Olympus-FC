@@ -1398,6 +1398,16 @@ h1{
 .achievement-unlock-button:active{transform:scale(.985)}
 
 
+/* SOCIAL POST CAPTION EDITING */
+.clips-post-actions{display:flex;align-items:center;gap:9px;}
+.clips-edit-post{border:0;background:transparent;color:#79a9ff;font-weight:800;font-size:11px;padding:5px 0;}
+.clips-post-edit-form{padding:0 16px 14px;}
+.clips-post-edit-input{width:100%;min-height:82px;resize:vertical;padding:11px 12px;border:1px solid #31567e;border-radius:11px;background:#07111f;color:#fff;font:inherit;font-size:16px;line-height:1.4;}
+.clips-post-edit-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;}
+.clips-post-save,.clips-post-cancel{min-height:39px;padding:0 12px;border-radius:9px;font-weight:800;}
+.clips-post-save{border:1px solid #315d9d;background:#10233b;color:#9fc1ff;}
+.clips-post-cancel{border:1px solid #29415d;background:transparent;color:#9aa9bc;}
+
 /* SOCIAL COMMENT EDITING */
 .clips-comment-actions{display:flex;align-items:center;gap:8px;}
 .clips-comment-edit,.clips-comment-save,.clips-comment-cancel{border:0;background:transparent;padding:4px 0;font-size:10px;font-weight:800;}
@@ -4599,6 +4609,7 @@ let clipReactions = [];
 let clipComments = [];
 const expandedClipComments = new Set();
 let editingClipCommentId = null;
+let editingClipPostId = null;
 let pendingClipFile = null;
 const APP_VERSION = "2026.09.06-achievements-stage3-account-filter-fix";
 
@@ -11117,13 +11128,18 @@ function renderOlympusClips(){
   if(!olympusClips.length){ feed.innerHTML='<div class="clips-empty"><div style="font-size:34px;margin-bottom:8px">📸</div><b>No posts yet</b><div style="margin-top:6px">Be the first to share an Olympus moment.</div></div>'; return; }
   feed.innerHTML=olympusClips.map(row=>{
     const url=clipPublicUrl(row); const mine=currentClubPlayerKey && row.player_key===currentClubPlayerKey;
-    const canDelete=mine||isOwner; const when=row.created_at?new Date(row.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
+    const canDelete=mine||isOwner; const canEdit=mine; const editing=String(editingClipPostId||"")===String(row.id);
+    const when=row.created_at?new Date(row.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
     const avatar=clipPlayerAvatar(row.player_key);
     const mediaType=clipMediaType(row);
     const mediaHtml=url ? (mediaType==="image"
       ? `<img class="clips-image" src="${escapeHTML(url)}" alt="Olympus post by ${escapeHTML(clipPlayerName(row))}" loading="lazy">`
       : `<video class="clips-video" src="${escapeHTML(url)}" controls playsinline preload="metadata"></video>`) : "";
-    return `<article class="clips-feed-card"><div class="clips-feed-head"><div class="clips-user">${avatar?`<img class="clips-avatar" src="${escapeHTML(avatar)}" alt="">`:""}<div class="clips-user-copy"><div class="clips-player">${escapeHTML(clipPlayerName(row))}</div><div class="clips-time">${escapeHTML(when)}</div></div></div>${canDelete?`<button class="clips-delete" onclick="deleteOlympusClip('${row.id}')">Delete</button>`:""}</div>${mediaHtml}<span class="clips-category">${escapeHTML(row.category||"Other")}</span>${row.caption?`<div class="clips-caption"><span class="clips-caption-name">${escapeHTML(clipPlayerName(row))}</span><span class="clips-caption-sep">—</span>${escapeHTML(row.caption)}</div>`:""}${clipSocialHTML(row)}</article>`;
+    const postActions=(canEdit||canDelete)?`<div class="clips-post-actions">${canEdit?`<button class="clips-edit-post" onclick="startEditOlympusPost('${row.id}')">Edit</button>`:""}${canDelete?`<button class="clips-delete" onclick="deleteOlympusClip('${row.id}')">Delete</button>`:""}</div>`:"";
+    const captionHtml=editing
+      ? `<div class="clips-post-edit-form"><textarea id="clip-post-edit-${row.id}" class="clips-post-edit-input" maxlength="280" placeholder="Add a caption…">${escapeHTML(row.caption||"")}</textarea><div class="clips-post-edit-actions"><button class="clips-post-cancel" onclick="cancelEditOlympusPost()">Cancel</button><button class="clips-post-save" onclick="saveOlympusPostEdit('${row.id}')">Save</button></div></div>`
+      : (row.caption?`<div class="clips-caption"><span class="clips-caption-name">${escapeHTML(clipPlayerName(row))}</span><span class="clips-caption-sep">—</span>${escapeHTML(row.caption)}</div>`:"");
+    return `<article class="clips-feed-card"><div class="clips-feed-head"><div class="clips-user">${avatar?`<img class="clips-avatar" src="${escapeHTML(avatar)}" alt="">`:""}<div class="clips-user-copy"><div class="clips-player">${escapeHTML(clipPlayerName(row))}</div><div class="clips-time">${escapeHTML(when)}</div></div></div>${postActions}</div>${mediaHtml}<span class="clips-category">${escapeHTML(row.category||"Other")}</span>${captionHtml}${clipSocialHTML(row)}</article>`;
   }).join("");
 }
 async function loadOlympusClips(){
@@ -11237,6 +11253,36 @@ async function uploadOlympusClip(){
     if(msg) msg.textContent="Posted to Olympus Social. ✅"; await loadOlympusClips();
   }catch(error){ console.error("Clip upload failed:",error); if(msg) msg.textContent=`Upload failed: ${error.message||"Please try again."}`; }
   finally{ btn.disabled=false; btn.textContent="Post to Olympus"; }
+}
+function startEditOlympusPost(postId){
+  const post=olympusClips.find(row=>String(row.id)===String(postId));
+  if(!post || !currentClubPlayerKey || post.player_key!==currentClubPlayerKey) return;
+  editingClipPostId=postId;
+  renderOlympusClips();
+  requestAnimationFrame(()=>{
+    const input=el(`clip-post-edit-${postId}`);
+    if(input){ input.focus(); input.setSelectionRange(input.value.length,input.value.length); }
+  });
+}
+function cancelEditOlympusPost(){
+  editingClipPostId=null;
+  renderOlympusClips();
+}
+async function saveOlympusPostEdit(postId){
+  const post=olympusClips.find(row=>String(row.id)===String(postId));
+  if(!post || !currentClubPlayerKey || post.player_key!==currentClubPlayerKey) return;
+  const input=el(`clip-post-edit-${postId}`);
+  const caption=(input?.value||"").trim();
+  try{
+    // Supabase RLS is the final ownership check.
+    const {error}=await supabaseClient.from("clips").update({caption}).eq("id",postId);
+    if(error) throw error;
+    editingClipPostId=null;
+    await loadOlympusClips();
+  }catch(error){
+    console.error("Post edit failed:",error);
+    alert(`That post could not be edited.${error?.message ? "\n\n" + error.message : ""}`);
+  }
 }
 async function deleteOlympusClip(id){
   const row=olympusClips.find(x=>String(x.id)===String(id)); if(!row) return;
