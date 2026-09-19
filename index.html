@@ -5288,7 +5288,7 @@ const FC26_BASELINE = {
 const MATCHDAY_PASSING = [
   {
     season:"FC27",
-    sessionDate:"2026-09-19",
+    sessionDate:"2026-09-18",
     passes:{tyrone:241,baganor:234,kenny:101,deano:204,juanny:0}
   },
   {
@@ -7711,14 +7711,14 @@ function renderStatsPage(){
             <div class="stats-box-label">POTN</div>
           </div>
 
-          ${activeSeason === "FC26" ? `
+          ${activeSeason === "FC26" || activeSeason === "FC27" ? `
             <div class="stats-box">
-              <div class="stats-box-number">${FC26_BASELINE[player.id].passes ?? "—"}</div>
+              <div class="stats-box-number">${stat.passes ?? "—"}</div>
               <div class="stats-box-label">PASSES COMPLETED</div>
             </div>
 
             <div class="stats-box">
-              <div class="stats-box-number">${FC26_BASELINE[player.id].passCompletion === null ? "—" : FC26_BASELINE[player.id].passCompletion + "%"}</div>
+              <div class="stats-box-number">${stat.passCompletion === null || stat.passCompletion === undefined ? "—" : stat.passCompletion + "%"}</div>
               <div class="stats-box-label">PASS %</div>
             </div>
 
@@ -8015,14 +8015,14 @@ function renderPlayerProfile(){
       <div class="profile-stat-label">POTN</div>
     </div>
 
-    ${activeSeason === "FC26" ? `
+    ${activeSeason === "FC26" || activeSeason === "FC27" ? `
       <div class="profile-stat-card">
-        <div class="profile-stat-value">${FC26_BASELINE[player.id].passes ?? "—"}</div>
+        <div class="profile-stat-value">${stat.passes ?? "—"}</div>
         <div class="profile-stat-label">PASSES COMPLETED</div>
       </div>
 
       <div class="profile-stat-card">
-        <div class="profile-stat-value">${FC26_BASELINE[player.id].passCompletion === null ? "—" : FC26_BASELINE[player.id].passCompletion + "%"}</div>
+        <div class="profile-stat-value">${stat.passCompletion === null || stat.passCompletion === undefined ? "—" : stat.passCompletion + "%"}</div>
         <div class="profile-stat-label">PASS COMPLETION</div>
       </div>
 
