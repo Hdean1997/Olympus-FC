@@ -1397,6 +1397,18 @@ h1{
 
 .achievement-unlock-button:active{transform:scale(.985)}
 
+
+/* SOCIAL COMMENT EDITING */
+.clips-comment-actions{display:flex;align-items:center;gap:8px;}
+.clips-comment-edit,.clips-comment-save,.clips-comment-cancel{border:0;background:transparent;padding:4px 0;font-size:10px;font-weight:800;}
+.clips-comment-edit{color:#79a9ff;}
+.clips-comment-delete{color:#ff9aa4;}
+.clips-comment-edit-form{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:7px;margin-top:8px;align-items:center;}
+.clips-comment-edit-input{width:100%;min-width:0;min-height:40px;padding:9px 10px;border:1px solid #31567e;border-radius:10px;background:#07111f;color:#fff;font-size:16px;}
+.clips-comment-save{min-height:40px;padding:0 10px;border:1px solid #315d9d;border-radius:9px;background:#10233b;color:#9fc1ff;}
+.clips-comment-cancel{min-height:40px;padding:0 8px;color:#9aa9bc;}
+@media(max-width:390px){.clips-comment-edit-form{grid-template-columns:1fr auto}.clips-comment-edit-input{grid-column:1/-1;}}
+
 /* MORE */
 
 .more-hero{
@@ -4586,6 +4598,7 @@ let olympusClips = [];
 let clipReactions = [];
 let clipComments = [];
 const expandedClipComments = new Set();
+let editingClipCommentId = null;
 let pendingClipFile = null;
 const APP_VERSION = "2026.09.06-achievements-stage3-account-filter-fix";
 
@@ -6102,7 +6115,7 @@ function matchdaySummaryHTML(session,compact=false){
         ⚽ Top scorer — ${st.topScorer ? `${escapeHTML(st.topScorer.player.name)} (${st.topScorer.value})` : "No goals"}<br>
         🎯 Top assister — ${st.topAssister ? `${escapeHTML(st.topAssister.player.name)} (${st.topAssister.value})` : "No assists"}<br>
         ⭐ Most POTM — ${st.topPotm ? `${escapeHTML(st.topPotm.player.name)} (${st.topPotm.value})` : "No POTM"}<br>
-        📊 Highest avg rating — ${st.topAverageRating ? `${escapeHTML(st.topAverageRating.player.name)} (${st.topAverageRating.value.toFixed(2)})` : "No ratings"}<br>
+        📊 Highest avg rating — ${st.topAverageRating ? `${escapeHTML(st.topAverageRating.player.name)} (${st.topAverageRating.value.toFixed(1)})` : "No ratings"}<br>
         🎯 Most completed passes — ${passingLeader ? `${passingLeader.holders.map(item => escapeHTML(item.player.name)).join(" / ")} (${passingLeader.value})` : "Not added for this session"}
       </div>` : ""}
       ${!compact && session.status === "ended" ? matchdayPotnHTML(session) : ""}
@@ -8727,7 +8740,7 @@ function renderRecordsPage(){
     renderMatchdayPlayerRecord("Most Assists in One Matchday Session",matchdayPlayerRecords.assists,value => `${value} assists`,{requirePositive:true}) +
     renderMatchdayPlayerRecord("Most Goal Contributions in One Matchday Session",matchdayPlayerRecords.contributions,value => `${value} G/A`,{requirePositive:true}) +
     renderMatchdayPlayerRecord("Most POTM Awards in One Matchday Session",matchdayPlayerRecords.potm,value => `${value} POTM`,{requirePositive:true}) +
-    renderMatchdayPlayerRecord("Highest Average Rating in One Matchday Session",matchdayPlayerRecords.averageRating,value => value.toFixed(2),{useAppearances:true}) +
+    renderMatchdayPlayerRecord("Highest Average Rating in One Matchday Session",matchdayPlayerRecords.averageRating,value => value.toFixed(1),{useAppearances:true}) +
     renderMatchdayPlayerRecord("Most Completed Passes in One Matchday Session",matchdayPlayerRecords.passes,value => `${value} completed passes`) +
     renderMatchdayClubRecord("Most Olympus FC Goals in One Matchday Session","goals",value => `${value} goals`) +
     renderMatchdayClubRecord("Most Wins in One Matchday Session","wins",value => `${value} wins`) +
@@ -11085,9 +11098,15 @@ function clipSocialHTML(row){
   const commentsHtml=visibleComments.length?visibleComments.map(c=>{
     const mine=currentClubPlayerKey && c.player_key===currentClubPlayerKey;
     const canDelete=mine||isOwner;
+    const canEdit=mine;
+    const editing=String(editingClipCommentId||"")===String(c.id);
     const when=c.created_at?new Date(c.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
     const avatar=clipPlayerAvatar(c.player_key);
-    return `<div class="clips-comment"><div class="clips-comment-head"><div class="clips-comment-user">${avatar?`<img class="clips-comment-avatar" src="${escapeHTML(avatar)}" alt="">`:""}<div class="clips-comment-copy"><div class="clips-comment-name">${escapeHTML(clipCommentPlayerName(c))}</div><div class="clips-comment-time">${escapeHTML(when)}</div></div></div>${canDelete?`<button class="clips-comment-delete" onclick="deleteClipComment('${c.id}')">Delete</button>`:""}</div><div class="clips-comment-body">${escapeHTML(c.body||"")}</div></div>`;
+    const actions=(canEdit||canDelete)?`<div class="clips-comment-actions">${canEdit?`<button class="clips-comment-edit" onclick="startEditClipComment('${c.id}')">Edit</button>`:""}${canDelete?`<button class="clips-comment-delete" onclick="deleteClipComment('${c.id}')">Delete</button>`:""}</div>`:"";
+    const body=editing
+      ? `<div class="clips-comment-edit-form"><input id="clip-comment-edit-${c.id}" class="clips-comment-edit-input" maxlength="300" value="${escapeHTML(c.body||"")}"><button class="clips-comment-save" onclick="saveClipCommentEdit('${c.id}')">Save</button><button class="clips-comment-cancel" onclick="cancelClipCommentEdit()">Cancel</button></div>`
+      : `<div class="clips-comment-body">${escapeHTML(c.body||"")}</div>`;
+    return `<div class="clips-comment"><div class="clips-comment-head"><div class="clips-comment-user">${avatar?`<img class="clips-comment-avatar" src="${escapeHTML(avatar)}" alt="">`:""}<div class="clips-comment-copy"><div class="clips-comment-name">${escapeHTML(clipCommentPlayerName(c))}</div><div class="clips-comment-time">${escapeHTML(when)}</div></div></div>${actions}</div>${body}</div>`;
   }).join(""):'<div class="clips-comment-note">No comments yet.</div>';
   const commentToggle=comments.length>2?`<button class="clips-comments-toggle" onclick="toggleClipComments('${row.id}')">${expanded?"Show recent comments":`View all ${comments.length} comments`}</button>`:"";
   const form=currentClubRole?`<div class="clips-comment-form"><input id="clip-comment-${row.id}" class="clips-comment-input" maxlength="300" placeholder="Write a comment…"><button class="clips-comment-post" onclick="postClipComment('${row.id}')">Post</button></div>`:'<div class="clips-comment-note">Sign in to react or comment.</div>';
@@ -11149,6 +11168,38 @@ async function postClipComment(clipId){
     if(input) input.value="";
     await loadOlympusClips();
   }catch(error){ console.error("Comment failed:",error); alert("That comment could not be posted."); }
+}
+function startEditClipComment(commentId){
+  const comment=clipComments.find(row=>String(row.id)===String(commentId));
+  if(!comment || !currentClubPlayerKey || comment.player_key!==currentClubPlayerKey) return;
+  editingClipCommentId=commentId;
+  renderOlympusClips();
+  requestAnimationFrame(()=>{
+    const input=el(`clip-comment-edit-${commentId}`);
+    if(input){ input.focus(); input.setSelectionRange(input.value.length,input.value.length); }
+  });
+}
+function cancelClipCommentEdit(){
+  editingClipCommentId=null;
+  renderOlympusClips();
+}
+async function saveClipCommentEdit(commentId){
+  const comment=clipComments.find(row=>String(row.id)===String(commentId));
+  if(!comment || !currentClubPlayerKey || comment.player_key!==currentClubPlayerKey) return;
+  const input=el(`clip-comment-edit-${commentId}`);
+  const body=(input?.value||"").trim();
+  if(!body){ alert("A comment cannot be empty."); return; }
+  try{
+    const {data:{user}}=await supabaseClient.auth.getUser();
+    if(!user?.id || comment.user_id!==user.id){ alert("You can only edit your own comment."); return; }
+    const {error}=await supabaseClient.from("clip_comments").update({body}).eq("id",commentId).eq("user_id",user.id);
+    if(error) throw error;
+    editingClipCommentId=null;
+    await loadOlympusClips();
+  }catch(error){
+    console.error("Comment edit failed:",error);
+    alert("That comment could not be edited. The clip_comments table may need an UPDATE RLS policy.");
+  }
 }
 async function deleteClipComment(commentId){
   if(!confirm("Delete this comment?")) return;
