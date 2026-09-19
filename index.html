@@ -11190,15 +11190,18 @@ async function saveClipCommentEdit(commentId){
   const body=(input?.value||"").trim();
   if(!body){ alert("A comment cannot be empty."); return; }
   try{
-    const {data:{user}}=await supabaseClient.auth.getUser();
-    if(!user?.id || comment.user_id!==user.id){ alert("You can only edit your own comment."); return; }
-    const {error}=await supabaseClient.from("clip_comments").update({body}).eq("id",commentId).eq("user_id",user.id);
+    // Ownership is enforced by Supabase RLS (auth.uid() = user_id).
+    // Do not depend on user_id being present in the locally loaded comment row.
+    const {error}=await supabaseClient
+      .from("clip_comments")
+      .update({body})
+      .eq("id",commentId);
     if(error) throw error;
     editingClipCommentId=null;
     await loadOlympusClips();
   }catch(error){
     console.error("Comment edit failed:",error);
-    alert("That comment could not be edited. The clip_comments table may need an UPDATE RLS policy.");
+    alert(`That comment could not be edited.${error?.message ? "\n\n" + error.message : ""}`);
   }
 }
 async function deleteClipComment(commentId){
