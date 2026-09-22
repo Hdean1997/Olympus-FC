@@ -9170,20 +9170,6 @@ function renderComparison(){
       rightDisplay:completedPassesPerGame(right) === null ? "—" : completedPassesPerGame(right).toFixed(1)
     },
     {
-      name:"Est. Passes Attempted",
-      leftValue:estimatedPassAttempts(left),
-      rightValue:estimatedPassAttempts(right),
-      leftDisplay:estimatedPassAttempts(left) === null ? "—" : Math.round(estimatedPassAttempts(left)),
-      rightDisplay:estimatedPassAttempts(right) === null ? "—" : Math.round(estimatedPassAttempts(right))
-    },
-    {
-      name:"Est. Attempts Per Game",
-      leftValue:estimatedPassAttemptsPerGame(left),
-      rightValue:estimatedPassAttemptsPerGame(right),
-      leftDisplay:estimatedPassAttemptsPerGame(left) === null ? "—" : estimatedPassAttemptsPerGame(left).toFixed(1),
-      rightDisplay:estimatedPassAttemptsPerGame(right) === null ? "—" : estimatedPassAttemptsPerGame(right).toFixed(1)
-    },
-    {
       name:"Average Rating",
       leftValue:left.averageRating === null ? -1 : left.averageRating,
       rightValue:right.averageRating === null ? -1 : right.averageRating,
