@@ -582,6 +582,7 @@ h1{
 .matchday-action{min-height:45px;border-radius:12px;border:1px solid #315d9d;background:#10233b;color:#fff;font-weight:bold;}
 .matchday-action.primary{background:#326eff;border-color:#326eff;}
 .matchday-action.danger{background:#35171d;border-color:#71303a;color:#ffadb4;}
+.matchday-action.secondary{background:#10233b;border-color:#315d9d;color:#b9d2ff;}
 .matchday-start{width:100%;min-height:54px;border:0;border-radius:14px;background:#326eff;color:#fff;font-size:16px;font-weight:bold;}
 .matchday-history-title{margin:26px 16px 12px;font-size:20px;}
 
@@ -4405,6 +4406,21 @@ textarea.bug-form-control{
   </div>
 </div>
 
+<!-- EDIT MATCHDAY SQUAD MODAL -->
+<div id="editMatchdaySquadModal" class="modal">
+  <div class="modal-card">
+    <div class="step-indicator">MATCHDAY SQUAD</div>
+    <div class="modal-title">Edit Matchday Squad</div>
+    <div class="modal-subtitle">Correct who took part and their positions. Removing a player also removes any POTN vote they cast, or any vote cast for them.</div>
+    <div id="editMatchdaySquadPicker"></div>
+    <div id="editMatchdaySquadError" class="form-error"></div>
+    <div class="form-buttons">
+      <button class="cancel-button" onclick="closeEditMatchdaySquadModal()">Cancel</button>
+      <button class="save-button" onclick="saveMatchdaySquadEdit()">Save Squad</button>
+    </div>
+  </div>
+</div>
+
 <!-- DIVISION MODAL -->
 
 <div id="divisionModal" class="modal">
@@ -5313,11 +5329,11 @@ const PLAYER_PROFILE_IMAGES = {
 };
 
 const FC27_PASSING = {
-  // FC27 passing snapshot from the in-game Club Squad screen — 19 Sep 2026.
+  // FC27 passing snapshot from the in-game Club Squad screen — 22 Sep 2026.
   // Passing only: match-entered appearances, goals, assists, ratings and POTM are untouched.
-  tyrone:{passes:241,passCompletion:86},
-  baganor:{passes:234,passCompletion:76},
-  deano:{passes:204,passCompletion:88},
+  tyrone:{passes:454,passCompletion:84},
+  baganor:{passes:410,passCompletion:74},
+  deano:{passes:349,passCompletion:87},
   kenny:{passes:101,passCompletion:75},
   juanny:{passes:0,passCompletion:null}
 };
@@ -5338,6 +5354,11 @@ const FC26_BASELINE = {
 // These figures are for session reports/records only; FC26_BASELINE already
 // contains the latest cumulative passing totals and must not be added again.
 const MATCHDAY_PASSING = [
+  {
+    season:"FC27",
+    sessionDate:"2026-09-22",
+    passes:{tyrone:213,baganor:176,kenny:0,deano:145,juanny:0}
+  },
   {
     season:"FC27",
     sessionDate:"2026-09-18",
@@ -6131,6 +6152,7 @@ function matchdaySummaryHTML(session,compact=false){
       </div>` : ""}
       ${!compact && session.status === "ended" ? matchdayPotnHTML(session) : ""}
       ${isAdmin ? `<div class="matchday-actions">
+        <button class="matchday-action secondary" onclick="event.stopPropagation();openEditMatchdaySquadModal(${session.id})">Edit Squad</button>
         ${session.status === "active" ? `<button class="matchday-action primary" onclick="event.stopPropagation();endMatchday(${session.id})">End Matchday</button>` : ""}
         <button class="matchday-action danger" onclick="event.stopPropagation();deleteMatchday(${session.id})">Delete Matchday</button>
       </div>` : ""}
@@ -6361,6 +6383,81 @@ function renderMatchday(){
     : `<div class="report-history-empty">No previous Matchday reports yet.</div>`;
   renderReportArchive();
   updateMatchdayTimers();
+}
+
+let editingMatchdaySessionId = null;
+
+function openEditMatchdaySquadModal(sessionId){
+  if(!isAdmin) return;
+  const session=matchdaySessions.find(item=>String(item.id)===String(sessionId));
+  if(!session) return;
+  editingMatchdaySessionId=Number(session.id);
+  const selected=new Map((session.players||[]).map(item=>[item.playerKey,item.position||""]));
+  const positions=["GK","RB","CB","LB","CDM","CM","CAM","RM","LM","RW","LW","ST"];
+  el("editMatchdaySquadPicker").innerHTML=players.map(player=>{
+    const checked=selected.has(player.id);
+    const currentPosition=selected.get(player.id)||player.position;
+    return `<div class="matchday-squad-row">
+      <input id="edit-matchday-player-${player.id}" type="checkbox" ${checked?"checked":""}>
+      <label class="matchday-player-name" for="edit-matchday-player-${player.id}">#${player.number} ${escapeHTML(player.name)}</label>
+      <select id="edit-matchday-position-${player.id}" class="matchday-position">
+        ${positions.map(pos=>`<option value="${pos}" ${pos===currentPosition?"selected":""}>${pos}</option>`).join("")}
+      </select>
+    </div>`;
+  }).join("");
+  el("editMatchdaySquadError").classList.remove("show");
+  el("editMatchdaySquadModal").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+
+function closeEditMatchdaySquadModal(){
+  el("editMatchdaySquadModal").classList.remove("open");
+  document.body.style.overflow="";
+  editingMatchdaySessionId=null;
+}
+
+async function saveMatchdaySquadEdit(){
+  if(!isAdmin || !editingMatchdaySessionId) return;
+  const session=matchdaySessions.find(item=>String(item.id)===String(editingMatchdaySessionId));
+  if(!session) return;
+  const selected=players.filter(player=>el(`edit-matchday-player-${player.id}`)?.checked);
+  if(!selected.length){
+    el("editMatchdaySquadError").textContent="Select at least one player.";
+    el("editMatchdaySquadError").classList.add("show");
+    return;
+  }
+  try{
+    await ensureRemoteLookups();
+    const selectedKeys=new Set(selected.map(player=>player.id));
+    const removedKeys=(session.players||[]).map(item=>item.playerKey).filter(key=>!selectedKeys.has(key));
+    const removedIds=removedKeys.map(key=>Number(remotePlayerIds[key])).filter(Number.isFinite);
+
+    // Remove POTN votes cast by removed players and votes for removed players.
+    if(removedIds.length){
+      const {error:voterError}=await supabaseClient.from("matchday_potn_votes").delete().eq("session_id",Number(session.id)).in("voter_player_id",removedIds);
+      if(voterError) throw voterError;
+      const {error:candidateError}=await supabaseClient.from("matchday_potn_votes").delete().eq("session_id",Number(session.id)).in("voted_for_player_id",removedIds);
+      if(candidateError) throw candidateError;
+    }
+
+    const {error:deleteError}=await supabaseClient.from("matchday_session_players").delete().eq("session_id",Number(session.id));
+    if(deleteError) throw deleteError;
+    const rows=selected.map(player=>({
+      session_id:Number(session.id),
+      player_id:Number(remotePlayerIds[player.id]),
+      position:el(`edit-matchday-position-${player.id}`)?.value||player.position
+    })).filter(row=>Number.isFinite(row.player_id));
+    const {error:insertError}=await supabaseClient.from("matchday_session_players").insert(rows);
+    if(insertError) throw insertError;
+
+    closeEditMatchdaySquadModal();
+    await loadRemoteData();
+  }catch(error){
+    console.error("Edit Matchday squad failed:",error);
+    const box=el("editMatchdaySquadError");
+    box.textContent=error?.message||"The Matchday squad could not be updated.";
+    box.classList.add("show");
+  }
 }
 
 function openMatchdayModal(){
