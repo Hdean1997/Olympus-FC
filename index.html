@@ -3961,6 +3961,13 @@ textarea.bug-form-control{
     <img id="clipImagePreview" class="clips-image-preview" alt="Selected photo preview" style="display:none">
     <video id="clipPreview" class="clips-preview" controls playsinline style="display:none"></video>
     <textarea id="clipCaption" class="clips-field" maxlength="280" rows="3" placeholder="Add a caption…"></textarea>
+    <div id="clipPostAsWrap" style="display:none;margin-top:10px">
+      <div style="color:#91a0b4;font-size:12px;font-weight:800;margin-bottom:6px">POST AS</div>
+      <select id="clipPostAs" class="clips-field">
+        <option value="player">Tyrone Dean</option>
+        <option value="fabrizzzo">FabrizzzoRomanno · PARODY</option>
+      </select>
+    </div>
     <select id="clipCategory" class="clips-field">
       <option value="Goal">⚽ Goal</option><option value="Assist">🎯 Assist</option><option value="Team Play">🤝 Team Play</option><option value="Skill">✨ Skill</option><option value="Save">🧤 Save</option><option value="Funny">😂 Funny</option><option value="Other">🏔️ Other</option>
     </select>
@@ -11124,6 +11131,8 @@ function updateClipsAuthUI(){
   const signed=Boolean(currentClubRole);
   if(el("clipsComposer")) el("clipsComposer").style.display=signed?"block":"none";
   if(el("clipsSignedOut")) el("clipsSignedOut").style.display=signed?"none":"block";
+  if(el("clipPostAsWrap")) el("clipPostAsWrap").style.display=(signed&&isOwner)?"block":"none";
+  if(el("clipPostAs") && !isOwner) el("clipPostAs").value="player";
 }
 function prepareClipPreview(event){
   pendingClipFile=event.target.files?.[0]||null;
@@ -11152,11 +11161,16 @@ function clipMediaType(row){
   if(/\.(jpg|jpeg|png|gif|webp|heic|heif|avif)$/.test(path)) return "image";
   return "video";
 }
+const FABRIZZZO_SOCIAL_KEY="fabrizzzoromanno";
+const FABRIZZZO_SOCIAL_NAME="FabrizzzoRomanno";
+const FABRIZZZO_SOCIAL_AVATAR="data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><rect width="128" height="128" rx="64" fill="#0b1b2f"/><circle cx="64" cy="64" r="58" fill="none" stroke="#d7ad4a" stroke-width="6"/><text x="64" y="75" text-anchor="middle" font-family="Arial,sans-serif" font-size="38" font-weight="800" fill="#ffffff">FR</text></svg>`);
 function clipPlayerName(row){
+  if(row?.player_key===FABRIZZZO_SOCIAL_KEY) return FABRIZZZO_SOCIAL_NAME;
   const p=players.find(x=>x.id===row.player_key);
   return p?.name || row.reporter_username || row.username || "Olympus Player";
 }
 function clipPlayerAvatar(playerKey){
+  if(playerKey===FABRIZZZO_SOCIAL_KEY) return FABRIZZZO_SOCIAL_AVATAR;
   return PLAYER_PROFILE_IMAGES[playerKey] || "";
 }
 function clipPublicUrl(row){
@@ -11211,7 +11225,8 @@ function renderOlympusClips(){
   if(!olympusClips.length){ feed.innerHTML='<div class="clips-empty"><div style="font-size:34px;margin-bottom:8px">📸</div><b>No posts yet</b><div style="margin-top:6px">Be the first to share an Olympus moment.</div></div>'; return; }
   feed.innerHTML=olympusClips.map(row=>{
     const url=clipPublicUrl(row); const mine=currentClubPlayerKey && row.player_key===currentClubPlayerKey;
-    const canDelete=mine||isOwner; const canEdit=mine; const editing=String(editingClipPostId||"")===String(row.id);
+    const parodyPost=row.player_key===FABRIZZZO_SOCIAL_KEY;
+    const canDelete=mine||isOwner; const canEdit=mine||(isOwner&&parodyPost); const editing=String(editingClipPostId||"")===String(row.id);
     const when=row.created_at?new Date(row.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
     const avatar=clipPlayerAvatar(row.player_key);
     const mediaType=clipMediaType(row);
@@ -11222,7 +11237,7 @@ function renderOlympusClips(){
     const captionHtml=editing
       ? `<div class="clips-post-edit-form"><textarea id="clip-post-edit-${row.id}" class="clips-post-edit-input" maxlength="280" placeholder="Add a caption…">${escapeHTML(row.caption||"")}</textarea><div class="clips-post-edit-actions"><button class="clips-post-cancel" onclick="cancelEditOlympusPost()">Cancel</button><button class="clips-post-save" onclick="saveOlympusPostEdit('${row.id}')">Save</button></div></div>`
       : (row.caption?`<div class="clips-caption"><span class="clips-caption-name">${escapeHTML(clipPlayerName(row))}</span><span class="clips-caption-sep">—</span>${escapeHTML(row.caption)}</div>`:"");
-    return `<article class="clips-feed-card"><div class="clips-feed-head"><div class="clips-user">${avatar?`<img class="clips-avatar" src="${escapeHTML(avatar)}" alt="">`:""}<div class="clips-user-copy"><div class="clips-player">${escapeHTML(clipPlayerName(row))}</div><div class="clips-time">${escapeHTML(when)}</div></div></div>${postActions}</div>${mediaHtml}<span class="clips-category">${escapeHTML(row.category||"Other")}</span>${captionHtml}${clipSocialHTML(row)}</article>`;
+    return `<article class="clips-feed-card"><div class="clips-feed-head"><div class="clips-user">${avatar?`<img class="clips-avatar" src="${escapeHTML(avatar)}" alt="">`:""}<div class="clips-user-copy"><div class="clips-player">${escapeHTML(clipPlayerName(row))}${parodyPost?` <span style="display:inline-block;margin-left:5px;padding:2px 6px;border:1px solid #d7ad4a;border-radius:999px;color:#d7ad4a;font-size:9px;font-weight:900;vertical-align:2px">PARODY</span>`:""}</div><div class="clips-time">${escapeHTML(when)}</div></div></div>${postActions}</div>${mediaHtml}<span class="clips-category">${escapeHTML(row.category||"Other")}</span>${captionHtml}${clipSocialHTML(row)}</article>`;
   }).join("");
 }
 async function loadOlympusClips(){
@@ -11323,8 +11338,10 @@ async function uploadOlympusClip(){
     const {error:storageError}=await supabaseClient.storage.from("olympus-clips").upload(path,pendingClipFile,{contentType:pendingClipFile.type||(String(pendingClipFile.type||"").startsWith("image/")?"image/jpeg":"video/mp4"),upsert:false});
     if(storageError) throw storageError;
     const caption=el("clipCaption")?.value.trim()||""; const category=el("clipCategory")?.value||"Other";
+    const postAsFabrizzzo=isOwner && el("clipPostAs")?.value==="fabrizzzo";
+    const postingPlayerKey=postAsFabrizzzo?FABRIZZZO_SOCIAL_KEY:currentClubPlayerKey;
     const {data:{user}}=await supabaseClient.auth.getUser();
-    const row={user_id:user?.id,player_key:currentClubPlayerKey,caption,category,storage_path:path};
+    const row={user_id:user?.id,player_key:postingPlayerKey,caption,category,storage_path:path};
     let result=await supabaseClient.from("clips").insert(row).select().single();
     if(result.error){
       // Compatibility with the original Step 1 schema if it used video_path instead of storage_path.
@@ -11332,14 +11349,15 @@ async function uploadOlympusClip(){
       result=await supabaseClient.from("clips").insert(row).select().single();
     }
     if(result.error) throw result.error;
-    pendingClipFile=null; if(el("clipPhotoInput")) el("clipPhotoInput").value=""; if(el("clipVideoInput")) el("clipVideoInput").value=""; el("clipCaption").value=""; if(el("clipPreview")){ el("clipPreview").removeAttribute("src"); el("clipPreview").style.display="none"; } if(el("clipImagePreview")){ el("clipImagePreview").removeAttribute("src"); el("clipImagePreview").style.display="none"; }
+    pendingClipFile=null; if(el("clipPhotoInput")) el("clipPhotoInput").value=""; if(el("clipVideoInput")) el("clipVideoInput").value=""; el("clipCaption").value=""; if(el("clipPostAs")) el("clipPostAs").value="player"; if(el("clipPreview")){ el("clipPreview").removeAttribute("src"); el("clipPreview").style.display="none"; } if(el("clipImagePreview")){ el("clipImagePreview").removeAttribute("src"); el("clipImagePreview").style.display="none"; }
     if(msg) msg.textContent="Posted to Olympus Social. ✅"; await loadOlympusClips();
   }catch(error){ console.error("Clip upload failed:",error); if(msg) msg.textContent=`Upload failed: ${error.message||"Please try again."}`; }
   finally{ btn.disabled=false; btn.textContent="Post to Olympus"; }
 }
 function startEditOlympusPost(postId){
   const post=olympusClips.find(row=>String(row.id)===String(postId));
-  if(!post || !currentClubPlayerKey || post.player_key!==currentClubPlayerKey) return;
+  const canEditPost=post && currentClubPlayerKey && (post.player_key===currentClubPlayerKey || (isOwner&&post.player_key===FABRIZZZO_SOCIAL_KEY));
+  if(!canEditPost) return;
   editingClipPostId=postId;
   renderOlympusClips();
   requestAnimationFrame(()=>{
@@ -11353,7 +11371,8 @@ function cancelEditOlympusPost(){
 }
 async function saveOlympusPostEdit(postId){
   const post=olympusClips.find(row=>String(row.id)===String(postId));
-  if(!post || !currentClubPlayerKey || post.player_key!==currentClubPlayerKey) return;
+  const canEditPost=post && currentClubPlayerKey && (post.player_key===currentClubPlayerKey || (isOwner&&post.player_key===FABRIZZZO_SOCIAL_KEY));
+  if(!canEditPost) return;
   const input=el(`clip-post-edit-${postId}`);
   const caption=(input?.value||"").trim();
   try{
