@@ -5307,7 +5307,7 @@ const players = [
   {id:"baganor",name:"Baganor Jamba",number:78,position:"CM",nation:"DR Congo",captain:true},
   {id:"kenny",name:"Kenny Kitbag",number:26,position:"RM",nation:"England",captain:false},
   {id:"deano",name:"Deano",number:7,position:"ST",nation:"England",captain:false},
-  {id:"juanny",name:"Juanny P",number:23,position:"CDM",nation:"Mexico",captain:false}
+  {id:"juanny",name:"Juanny P",number:23,position:"ST",nation:"Mexico",captain:false}
 ];
 
 const nonControlledPlayers = [
@@ -6806,12 +6806,16 @@ function renderPlayerEntry(existingMatch = null){
       ? activeSession.players.some(item => item.playerKey === player.id)
       : true;
 
+    const defaultMatchPosition = player.position;
     const existing = existingStats[player.id] || {
       played:selectedForMatchday,
       goals:0,
       assists:0,
-      rating:null
+      rating:null,
+      position:defaultMatchPosition
     };
+    const matchPositions = ["GK","LB","RB","CB","LM","RM","CM","CDM","CAM","ST"];
+    const selectedPosition = existing.position || defaultMatchPosition;
 
     const played = existing.played !== false;
 
@@ -6841,6 +6845,13 @@ function renderPlayerEntry(existingMatch = null){
             Played
           </label>
 
+        </div>
+
+        <div class="form-group" style="margin-top:10px;margin-bottom:10px">
+          <label class="small-input-label">Position played</label>
+          <select id="position-${player.id}" class="form-control" ${played ? "" : "disabled"}>
+            ${matchPositions.map(pos => `<option value="${pos}" ${pos===selectedPosition ? "selected" : ""}>${pos}</option>`).join("")}
+          </select>
         </div>
 
         <div class="player-entry-inputs">
@@ -6912,7 +6923,7 @@ function togglePlayer(playerId){
 
   const played = el("played-" + playerId).checked;
 
-  ["goals-","assists-","rating-","potm-"].forEach(prefix => {
+  ["position-","goals-","assists-","rating-","potm-"].forEach(prefix => {
 
     const control = el(prefix + playerId);
 
@@ -6974,7 +6985,8 @@ async function finishMatch(){
       played,
       goals,
       assists,
-      rating
+      rating,
+      position:played ? (el("position-" + player.id)?.value || player.position) : null
     };
   }
 
@@ -10689,7 +10701,7 @@ async function loadRemoteData(){
     loadStage = "player performances";
     const {data:performances,error:perfError} = await supabaseClient
       .from("player_performances")
-      .select("id,match_id,player_id,played,goals,assists,rating,potm");
+      .select("id,match_id,player_id,played,goals,assists,rating,potm,position");
     if(perfError) throw perfError;
 
     // Matchday/reporting features are useful but non-core. If one of these
@@ -10792,7 +10804,7 @@ async function loadRemoteData(){
       const playerStats = {};
       let potmPlayerId = null;
       players.forEach(player => {
-        playerStats[player.id] = {played:false,goals:0,assists:0,rating:null};
+        playerStats[player.id] = {played:false,goals:0,assists:0,rating:null,position:null};
       });
 
       (perfByMatch[String(row.id)] || []).forEach(perf => {
@@ -10802,7 +10814,8 @@ async function loadRemoteData(){
           played:Boolean(perf.played),
           goals:Number(perf.goals || 0),
           assists:Number(perf.assists || 0),
-          rating:perf.rating === null || perf.rating === undefined ? null : Number(perf.rating)
+          rating:perf.rating === null || perf.rating === undefined ? null : Number(perf.rating),
+          position:perf.position || null
         };
         if(perf.potm) potmPlayerId = playerKey;
       });
@@ -10901,6 +10914,7 @@ async function saveMatchToSupabase(match,season){
       goals:Number(stat.goals || 0),
       assists:Number(stat.assists || 0),
       rating:stat.rating === null || stat.rating === undefined || stat.rating === "" ? null : Number(stat.rating),
+      position:stat.played ? (stat.position || player.position) : null,
       potm:match.potmPlayerId === player.id
     };
   }).filter(row => row.player_id);
