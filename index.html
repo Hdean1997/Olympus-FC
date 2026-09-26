@@ -4278,6 +4278,7 @@ textarea.bug-form-control{
     <div id="matchDetailPlayers"></div>
 
     <div class="detail-actions">
+      <button class="edit-match-button" onclick="openEditMatchPositionsModal()">📍 Edit Positions</button>
       <button class="edit-match-button" onclick="editSelectedMatch()">✏️ Edit Match</button>
       <button class="delete-match-button" onclick="deleteSelectedMatch()">🗑 Delete Match</button>
     </div>
@@ -4439,6 +4440,21 @@ textarea.bug-form-control{
     <div class="form-buttons">
       <button class="cancel-button" onclick="closeEditMatchdaySquadModal()">Cancel</button>
       <button class="save-button" onclick="saveMatchdaySquadEdit()">Save Squad</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT HISTORICAL MATCH POSITIONS MODAL -->
+<div id="editMatchPositionsModal" class="modal">
+  <div class="modal-card">
+    <div class="step-indicator">MATCH POSITIONS</div>
+    <div class="modal-title">Edit Player Positions</div>
+    <div class="modal-subtitle">Set the position each player played in this match. This only updates positions — goals, assists, ratings, POTM and the match result stay unchanged.</div>
+    <div id="editMatchPositionsPicker"></div>
+    <div id="editMatchPositionsError" class="form-error"></div>
+    <div class="form-buttons">
+      <button class="cancel-button" onclick="closeEditMatchPositionsModal()">Cancel</button>
+      <button class="save-button" onclick="saveHistoricalMatchPositions()">Save Positions</button>
     </div>
   </div>
 </div>
@@ -9463,8 +9479,13 @@ function renderMatchDetails(){
 
         <div class="detail-player-top">
 
-          <div class="detail-player-name">
-            #${player.number} ${player.name}
+          <div>
+            <div class="detail-player-name">
+              #${player.number} ${player.name}
+            </div>
+            <div class="match-date" style="margin-top:3px">
+              Position: ${stat.position ? escapeHTML(stat.position) : "Not recorded"}
+            </div>
           </div>
 
           ${
@@ -9498,6 +9519,101 @@ function renderMatchDetails(){
     `;
 
   }).join("");
+}
+
+let historicalPositionDraft = null;
+
+function openEditMatchPositionsModal(){
+  if(!selectedMatchRef) return;
+  const stored=findStoredMatch(selectedMatchRef.season,selectedMatchRef.id);
+  if(!stored) return;
+
+  const match=stored.match;
+  const playedPlayers=players.filter(player => match.playerStats?.[player.id]?.played);
+  if(!playedPlayers.length){
+    alert("No player performances were recorded for this match.");
+    return;
+  }
+
+  historicalPositionDraft={
+    season:selectedMatchRef.season,
+    id:selectedMatchRef.id
+  };
+
+  const positionOptions=["GK","LB","RB","CB","LM","RM","CM","CDM","CAM","ST"];
+
+  el("editMatchPositionsPicker").innerHTML=playedPlayers.map(player=>{
+    const stat=match.playerStats[player.id];
+    const current=stat.position || "";
+    return `
+      <div class="form-group" style="margin-bottom:12px">
+        <label class="form-label">${escapeHTML(player.name)}</label>
+        <select class="form-control historical-position-select" data-player-id="${player.id}">
+          <option value="" ${current===""?"selected":""}>Not recorded</option>
+          ${positionOptions.map(pos=>`<option value="${pos}" ${current===pos?"selected":""}>${pos}</option>`).join("")}
+        </select>
+      </div>`;
+  }).join("");
+
+  el("editMatchPositionsError").textContent="";
+  el("editMatchPositionsError").classList.remove("show");
+  el("editMatchPositionsModal").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+
+function closeEditMatchPositionsModal(){
+  el("editMatchPositionsModal").classList.remove("open");
+  document.body.style.overflow="";
+  historicalPositionDraft=null;
+}
+
+async function saveHistoricalMatchPositions(){
+  if(!historicalPositionDraft) return;
+
+  const stored=findStoredMatch(historicalPositionDraft.season,historicalPositionDraft.id);
+  if(!stored) return;
+
+  const originalMatch=stored.match;
+  const updatedMatch={
+    ...originalMatch,
+    playerStats:{...originalMatch.playerStats}
+  };
+
+  document.querySelectorAll(".historical-position-select").forEach(select=>{
+    const playerId=select.dataset.playerId;
+    const oldStat=originalMatch.playerStats?.[playerId];
+    if(!oldStat) return;
+    updatedMatch.playerStats[playerId]={
+      ...oldStat,
+      position:select.value || null
+    };
+  });
+
+  const errorBox=el("editMatchPositionsError");
+  try{
+    // Reuse the existing match save path. It rewrites the same performance rows
+    // with identical goals/assists/ratings/POTM and only the edited position values.
+    await saveMatchToSupabase(updatedMatch,historicalPositionDraft.season);
+  }catch(error){
+    console.error("Historical position update failed:",error);
+    errorBox.textContent="Positions could not be saved online. "+(error?.message || "");
+    errorBox.classList.add("show");
+    return;
+  }
+
+  seasonData[historicalPositionDraft.season].matches[stored.index]=updatedMatch;
+  saveSeasonData();
+
+  el("editMatchPositionsModal").classList.remove("open");
+  document.body.style.overflow="";
+  historicalPositionDraft=null;
+
+  renderMatchDetails();
+  renderMatches();
+
+  if(selectedProfilePlayerId){
+    renderPlayerProfile();
+  }
 }
 
 function closeMatchDetails(){
