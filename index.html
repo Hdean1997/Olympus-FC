@@ -2082,6 +2082,12 @@ h1{
 
 /* PLAYER PROFILE */
 
+.position-analysis-summary{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px}
+.position-analysis-highlight{display:flex;gap:9px;align-items:center;background:#09182a;border:1px solid #2a4668;border-radius:14px;padding:12px}
+.position-analysis-highlight-icon{font-size:20px}
+.position-analysis-highlight-label{font-size:9px;font-weight:900;color:#91a0b4;letter-spacing:.04em;line-height:1.25}
+.position-analysis-highlight-value{font-size:22px;font-weight:900;color:#fff;line-height:1.15;margin-top:3px}
+.position-analysis-highlight-sub{font-size:11px;color:#91a0b4;margin-top:2px}
 .position-analysis-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .position-analysis-chip{border:1px solid #314d70;background:#09182a;color:#cbd6e5;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:800}
 .position-analysis-chip.active{border-color:#78a2ff;background:#17325b;color:#fff}
@@ -8077,52 +8083,75 @@ function renderProfilePositionAnalysis(player){
   const wrap=el("profilePositionAnalysis");
   const section=el("profilePositionAnalysisSection");
   if(!wrap || !section) return;
-
-  if(player.manager || player.nonControlled){
-    section.style.display="none";
-    return;
-  }
+  if(player.manager || player.nonControlled){ section.style.display="none"; return; }
   section.style.display="block";
 
   const matches=positionAnalysisMatchesForPlayer(player.id);
   if(!matches.length){
-    wrap.innerHTML=`<div class="detail-none">Position analysis will appear here once matches have been recorded with the new per-match position selector.</div>`;
+    wrap.innerHTML=`<div class="detail-none">Position analysis will appear here once matches have been recorded with the per-match position selector.</div>`;
     return;
   }
 
   const positions=["GK","LB","RB","CB","LM","RM","CM","CDM","CAM","ST"];
-  const used=positions.filter(pos => matches.some(match => match.playerStats?.[player.id]?.position===pos));
-  const selected=(window.profilePositionFilter?.[player.id] && used.includes(window.profilePositionFilter[player.id]))
-    ? window.profilePositionFilter[player.id] : used[0];
-  window.profilePositionFilter=window.profilePositionFilter || {};
-  window.profilePositionFilter[player.id]=selected;
+  const used=positions.filter(pos=>matches.some(match=>match.playerStats?.[player.id]?.position===pos));
 
-  const filtered=matches.filter(match => match.playerStats[player.id].position===selected);
-  let goals=0,assists=0,potm=0,ratingTotal=0,ratingCount=0;
-  filtered.forEach(match => {
-    const stat=match.playerStats[player.id];
-    goals+=Number(stat.goals||0);
-    assists+=Number(stat.assists||0);
-    if(match.potmPlayerId===player.id) potm++;
-    if(stat.rating!==null && stat.rating!==undefined && stat.rating!==""){
-      ratingTotal+=Number(stat.rating); ratingCount++;
-    }
-  });
-  const avgRating=ratingCount ? ratingTotal/ratingCount : null;
+  function metricsFor(pos){
+    const filtered=matches.filter(match=>match.playerStats[player.id].position===pos);
+    let goals=0,assists=0,potm=0,ratingTotal=0,ratingCount=0;
+    filtered.forEach(match=>{
+      const stat=match.playerStats[player.id];
+      goals+=Number(stat.goals||0); assists+=Number(stat.assists||0);
+      if(match.potmPlayerId===player.id) potm++;
+      if(stat.rating!==null && stat.rating!==undefined && stat.rating!==""){
+        ratingTotal+=Number(stat.rating); ratingCount++;
+      }
+    });
+    const games=filtered.length, contributions=goals+assists;
+    const avgRating=ratingCount ? ratingTotal/ratingCount : null;
+    const gaPerGame=games ? contributions/games : 0;
+    const potmRate=games ? potm/games : 0;
+    const score=(avgRating??0)+(gaPerGame*1.5)+potmRate;
+    return {pos,games,goals,assists,contributions,avgRating,potm,score};
+  }
+
+  const metrics=used.map(metricsFor);
+  const mostPlayed=[...metrics].sort((a,b)=>b.games-a.games || positions.indexOf(a.pos)-positions.indexOf(b.pos))[0];
+  const qualified=metrics.filter(item=>item.games>=5 && item.avgRating!==null);
+  const best=qualified.length ? [...qualified].sort((a,b)=>b.score-a.score || b.games-a.games)[0] : null;
+
+  const selected=(window.profilePositionFilter?.[player.id] && used.includes(window.profilePositionFilter[player.id]))
+    ? window.profilePositionFilter[player.id] : mostPlayed.pos;
+  window.profilePositionFilter=window.profilePositionFilter||{};
+  window.profilePositionFilter[player.id]=selected;
+  const stat=metrics.find(item=>item.pos===selected)||mostPlayed;
 
   wrap.innerHTML=`
+    <div class="position-analysis-summary">
+      <div class="position-analysis-highlight">
+        <div class="position-analysis-highlight-icon">📍</div>
+        <div><div class="position-analysis-highlight-label">MOST PLAYED POSITION</div>
+        <div class="position-analysis-highlight-value">${mostPlayed.pos}</div>
+        <div class="position-analysis-highlight-sub">${mostPlayed.games} match${mostPlayed.games===1?"":"es"}</div></div>
+      </div>
+      <div class="position-analysis-highlight">
+        <div class="position-analysis-highlight-icon">⭐</div>
+        <div><div class="position-analysis-highlight-label">BEST STATISTICAL POSITION</div>
+        <div class="position-analysis-highlight-value">${best?best.pos:"—"}</div>
+        <div class="position-analysis-highlight-sub">${best?`${best.games} matches`:"Minimum 5 matches required"}</div></div>
+      </div>
+    </div>
     <select class="position-analysis-select" onchange="setProfilePositionFilter('${player.id}',this.value)">
-      ${used.map(pos=>`<option value="${pos}" ${pos===selected?"selected":""}>${pos} · ${matches.filter(m=>m.playerStats[player.id].position===pos).length} match${matches.filter(m=>m.playerStats[player.id].position===pos).length===1?"":"es"}</option>`).join("")}
+      ${metrics.map(item=>`<option value="${item.pos}" ${item.pos===selected?"selected":""}>${item.pos} · ${item.games} match${item.games===1?"":"es"}</option>`).join("")}
     </select>
     <div class="position-analysis-grid">
-      <div class="position-analysis-stat"><div class="position-analysis-value">${filtered.length}</div><div class="position-analysis-label">GAMES AT ${selected}</div></div>
-      <div class="position-analysis-stat"><div class="position-analysis-value">${goals}</div><div class="position-analysis-label">GOALS</div></div>
-      <div class="position-analysis-stat"><div class="position-analysis-value">${assists}</div><div class="position-analysis-label">ASSISTS</div></div>
-      <div class="position-analysis-stat"><div class="position-analysis-value">${(goals+assists)}</div><div class="position-analysis-label">GOAL CONTRIBUTIONS</div></div>
-      <div class="position-analysis-stat"><div class="position-analysis-value">${avgRating===null?"—":avgRating.toFixed(2)}</div><div class="position-analysis-label">AVG RATING</div></div>
-      <div class="position-analysis-stat"><div class="position-analysis-value">${potm}</div><div class="position-analysis-label">POTM</div></div>
+      <div class="position-analysis-stat"><div class="position-analysis-value">${stat.games}</div><div class="position-analysis-label">GAMES AT ${selected}</div></div>
+      <div class="position-analysis-stat"><div class="position-analysis-value">${stat.goals}</div><div class="position-analysis-label">GOALS</div></div>
+      <div class="position-analysis-stat"><div class="position-analysis-value">${stat.assists}</div><div class="position-analysis-label">ASSISTS</div></div>
+      <div class="position-analysis-stat"><div class="position-analysis-value">${stat.contributions}</div><div class="position-analysis-label">GOAL CONTRIBUTIONS</div></div>
+      <div class="position-analysis-stat"><div class="position-analysis-value">${stat.avgRating===null?"—":stat.avgRating.toFixed(2)}</div><div class="position-analysis-label">AVG RATING</div></div>
+      <div class="position-analysis-stat"><div class="position-analysis-value">${stat.potm}</div><div class="position-analysis-label">POTM</div></div>
     </div>
-    <div class="position-analysis-note">Based only on ${seasonLabel(activeSeason)} matches where a match-specific position has been recorded.</div>`;
+    <div class="position-analysis-note">Best Statistical Position requires at least 5 matches and balances average rating, goal contributions per game and POTM rate. Based on ${seasonLabel(activeSeason)} recorded match positions.</div>`;
 }
 
 function setProfilePositionFilter(playerId,position){
