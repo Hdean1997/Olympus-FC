@@ -2082,6 +2082,15 @@ h1{
 
 /* PLAYER PROFILE */
 
+.position-analysis-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.position-analysis-chip{border:1px solid #314d70;background:#09182a;color:#cbd6e5;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:800}
+.position-analysis-chip.active{border-color:#78a2ff;background:#17325b;color:#fff}
+.position-analysis-select{width:100%;min-height:44px;border:1px solid #314d70;border-radius:12px;background:#09182a;color:#fff;padding:0 12px;font-size:16px;margin-bottom:12px}
+.position-analysis-note{color:#91a0b4;font-size:12px;line-height:1.45;margin-top:9px}
+.position-analysis-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.position-analysis-stat{background:#09182a;border:1px solid #223c5b;border-radius:13px;padding:12px;text-align:center}
+.position-analysis-value{font-size:22px;font-weight:900;color:#fff}
+.position-analysis-label{font-size:10px;font-weight:800;color:#91a0b4;margin-top:4px;letter-spacing:.04em}
 .player-profile-hero{
   margin:8px 16px 16px;
   padding:24px 18px;
@@ -4328,6 +4337,11 @@ textarea.bug-form-control{
   <div class="player-profile-section">
     <div id="profileStatsSectionTitle" class="profile-section-title">PLAYER STATISTICS</div>
     <div id="profileStats" class="profile-stat-grid"></div>
+  </div>
+
+  <div id="profilePositionAnalysisSection" class="player-profile-section">
+    <div class="profile-section-title">POSITION ANALYSIS</div>
+    <div id="profilePositionAnalysis"></div>
   </div>
 
   <div class="player-profile-section">
@@ -8036,6 +8050,72 @@ async function clearMyPlayerStatus(){
   await saveMyPlayerStatus();
 }
 
+function positionAnalysisMatchesForPlayer(playerId){
+  return currentMatches().filter(match => {
+    const stat=match.playerStats?.[playerId];
+    return stat?.played && stat.position;
+  });
+}
+
+function renderProfilePositionAnalysis(player){
+  const wrap=el("profilePositionAnalysis");
+  const section=el("profilePositionAnalysisSection");
+  if(!wrap || !section) return;
+
+  if(player.manager || player.nonControlled){
+    section.style.display="none";
+    return;
+  }
+  section.style.display="block";
+
+  const matches=positionAnalysisMatchesForPlayer(player.id);
+  if(!matches.length){
+    wrap.innerHTML=`<div class="detail-none">Position analysis will appear here once matches have been recorded with the new per-match position selector.</div>`;
+    return;
+  }
+
+  const positions=["GK","LB","RB","CB","LM","RM","CM","CDM","CAM","ST"];
+  const used=positions.filter(pos => matches.some(match => match.playerStats?.[player.id]?.position===pos));
+  const selected=(window.profilePositionFilter?.[player.id] && used.includes(window.profilePositionFilter[player.id]))
+    ? window.profilePositionFilter[player.id] : used[0];
+  window.profilePositionFilter=window.profilePositionFilter || {};
+  window.profilePositionFilter[player.id]=selected;
+
+  const filtered=matches.filter(match => match.playerStats[player.id].position===selected);
+  let goals=0,assists=0,potm=0,ratingTotal=0,ratingCount=0;
+  filtered.forEach(match => {
+    const stat=match.playerStats[player.id];
+    goals+=Number(stat.goals||0);
+    assists+=Number(stat.assists||0);
+    if(match.potmPlayerId===player.id) potm++;
+    if(stat.rating!==null && stat.rating!==undefined && stat.rating!==""){
+      ratingTotal+=Number(stat.rating); ratingCount++;
+    }
+  });
+  const avgRating=ratingCount ? ratingTotal/ratingCount : null;
+
+  wrap.innerHTML=`
+    <select class="position-analysis-select" onchange="setProfilePositionFilter('${player.id}',this.value)">
+      ${used.map(pos=>`<option value="${pos}" ${pos===selected?"selected":""}>${pos} · ${matches.filter(m=>m.playerStats[player.id].position===pos).length} match${matches.filter(m=>m.playerStats[player.id].position===pos).length===1?"":"es"}</option>`).join("")}
+    </select>
+    <div class="position-analysis-grid">
+      <div class="position-analysis-stat"><div class="position-analysis-value">${filtered.length}</div><div class="position-analysis-label">GAMES AT ${selected}</div></div>
+      <div class="position-analysis-stat"><div class="position-analysis-value">${goals}</div><div class="position-analysis-label">GOALS</div></div>
+      <div class="position-analysis-stat"><div class="position-analysis-value">${assists}</div><div class="position-analysis-label">ASSISTS</div></div>
+      <div class="position-analysis-stat"><div class="position-analysis-value">${(goals+assists)}</div><div class="position-analysis-label">GOAL CONTRIBUTIONS</div></div>
+      <div class="position-analysis-stat"><div class="position-analysis-value">${avgRating===null?"—":avgRating.toFixed(2)}</div><div class="position-analysis-label">AVG RATING</div></div>
+      <div class="position-analysis-stat"><div class="position-analysis-value">${potm}</div><div class="position-analysis-label">POTM</div></div>
+    </div>
+    <div class="position-analysis-note">Based only on ${seasonLabel(activeSeason)} matches where a match-specific position has been recorded.</div>`;
+}
+
+function setProfilePositionFilter(playerId,position){
+  window.profilePositionFilter=window.profilePositionFilter || {};
+  window.profilePositionFilter[playerId]=position;
+  const player=getPlayer(playerId);
+  if(player) renderProfilePositionAnalysis(player);
+}
+
 function renderPlayerProfile(){
 
   if(!selectedProfilePlayerId){
@@ -8092,6 +8172,7 @@ function renderPlayerProfile(){
         <div class="non-controlled-profile-copy">Solís leads Olympus FC with a possession-focused, combination-play philosophy. His manager record above is calculated from the matches currently being viewed in the app.</div>
       </div>`;
     el("profilePotnHistory").innerHTML = `<div class="detail-none">Player of the Night awards apply to the playing squad.</div>`;
+    if(el("profilePositionAnalysisSection")) el("profilePositionAnalysisSection").style.display="none";
     return;
   }
 
@@ -8111,6 +8192,7 @@ function renderPlayerProfile(){
     el("profileStats").innerHTML = `<div class="non-controlled-profile-note"><div class="non-controlled-profile-kicker">NON-CONTROLLED PLAYER</div><div class="non-controlled-profile-title">Individual statistics are not tracked</div><div class="non-controlled-profile-copy">This player is part of the Olympus FC squad, but individual match statistics are not tracked for this squad member.</div></div>`;
     el("profilePerformances").innerHTML = `<div class="detail-none">Logged match performances are only recorded for controlled Olympus FC players.</div>`;
     el("profilePotnHistory").innerHTML = `<div class="detail-none">Player of the Night tracking is reserved for controlled Olympus FC players.</div>`;
+    if(el("profilePositionAnalysisSection")) el("profilePositionAnalysisSection").style.display="none";
     return;
   }
 
@@ -8140,6 +8222,7 @@ function renderPlayerProfile(){
     player.captain ? "inline-block" : "none";
 
   renderProfileStatus(player.id);
+  renderProfilePositionAnalysis(player);
 
   el("profileStats").innerHTML = `
     <div class="profile-stat-card">
@@ -8282,6 +8365,7 @@ function renderPlayerProfile(){
         : Number(playerStat.rating).toFixed(1);
 
     const isPotm = match.potmPlayerId === player.id;
+    const matchPosition = playerStat.position || "";
 
     const resultClass =
       match.result === "W"
