@@ -3297,6 +3297,50 @@ textarea.bug-form-control{
     min-height:46px;
     padding:10px 12px;
   }
+  .match-draft-points{
+    margin-top:14px;
+    padding:13px 14px;
+    border-radius:13px;
+    background:#07111f;
+    border:1px solid #8d712a;
+  }
+  .match-draft-points-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    color:#e8bd4b;
+    font-size:11px;
+    font-weight:bold;
+    letter-spacing:.6px;
+  }
+  .match-draft-total{
+    font-size:16px;
+    white-space:nowrap;
+  }
+  .match-draft-breakdown{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+    margin-top:11px;
+  }
+  .match-draft-row{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    color:#d8e0ea;
+    font-size:11px;
+  }
+  .match-draft-row > div:last-child{
+    color:#e8bd4b;
+    font-weight:bold;
+  }
+  .match-draft-note{
+    margin-top:10px;
+    color:#8392a6;
+    font-size:9px;
+    line-height:1.4;
+  }
 </style>
 
 </head>
@@ -3752,11 +3796,14 @@ textarea.bug-form-control{
     <div class="draft-card">
       <div class="draft-leader-preview">
         <div class="draft-leader-row"><div class="draft-rank">🏃</div><div class="draft-leader-name">Play in a match</div><div class="draft-leader-points">+1</div></div>
-        <div class="draft-leader-row"><div class="draft-rank">⚽</div><div class="draft-leader-name">ST goal</div><div class="draft-leader-points">+4</div></div>
-        <div class="draft-leader-row"><div class="draft-rank">⚽</div><div class="draft-leader-name">LM / RM / CAM / CM / CDM goal</div><div class="draft-leader-points">+5</div></div>
-        <div class="draft-leader-row"><div class="draft-rank">⚽</div><div class="draft-leader-name">LB / RB / CB goal</div><div class="draft-leader-points">+6</div></div>
+        <div class="draft-leader-row"><div class="draft-rank">⚽</div><div class="draft-leader-name">ST goal</div><div class="draft-leader-points">+2</div></div>
+        <div class="draft-leader-row"><div class="draft-rank">⚽</div><div class="draft-leader-name">CM / LM / RM / CAM goal</div><div class="draft-leader-points">+4</div></div>
+        <div class="draft-leader-row"><div class="draft-rank">⚽</div><div class="draft-leader-name">LB / RB / CB / CDM goal</div><div class="draft-leader-points">+5</div></div>
         <div class="draft-leader-row"><div class="draft-rank">🧤</div><div class="draft-leader-name">GK goal</div><div class="draft-leader-points">+10</div></div>
-        <div class="draft-leader-row"><div class="draft-rank">🎯</div><div class="draft-leader-name">Assist</div><div class="draft-leader-points">+3</div></div>
+        <div class="draft-leader-row"><div class="draft-rank">🎯</div><div class="draft-leader-name">ST assist</div><div class="draft-leader-points">+3</div></div>
+        <div class="draft-leader-row"><div class="draft-rank">🎯</div><div class="draft-leader-name">CM / LM / RM / CAM assist</div><div class="draft-leader-points">+2</div></div>
+        <div class="draft-leader-row"><div class="draft-rank">🎯</div><div class="draft-leader-name">LB / RB / CB / CDM assist</div><div class="draft-leader-points">+4</div></div>
+        <div class="draft-leader-row"><div class="draft-rank">🎯</div><div class="draft-leader-name">GK assist</div><div class="draft-leader-points">+3</div></div>
         <div class="draft-leader-row"><div class="draft-rank">👑</div><div class="draft-leader-name">POTM</div><div class="draft-leader-points">+3</div></div>
         <div class="draft-leader-row"><div class="draft-rank">🎩</div><div class="draft-leader-name">3+ goals in one match</div><div class="draft-leader-points">+2</div></div>
         <div class="draft-leader-row"><div class="draft-rank">🪄</div><div class="draft-leader-name">3+ assists in one match</div><div class="draft-leader-points">+2</div></div>
@@ -9687,6 +9734,8 @@ function renderMatchDetails(){
         ? "—"
         : Number(stat.rating).toFixed(1);
 
+    const draftMatchScore = calculateSingleMatchDraftScore(match, player.id);
+
     return `
       <div class="detail-player">
 
@@ -9727,6 +9776,8 @@ function renderMatchDetails(){
           </div>
 
         </div>
+
+        ${singleMatchDraftBreakdownHTML(draftMatchScore)}
 
       </div>
     `;
@@ -11914,9 +11965,16 @@ function draftParticipantChips(list){
 function draftGoalPointsForPosition(position){
   const pos=String(position||"").toUpperCase();
   if(pos==="GK") return 10;
-  if(["LB","RB","CB"].includes(pos)) return 6;
-  if(["LM","RM","CAM","CM","CDM"].includes(pos)) return 5;
-  return 4; // ST and any unrecorded attacking position
+  if(["LB","RB","CB","CDM"].includes(pos)) return 5;
+  if(["LM","RM","CAM","CM"].includes(pos)) return 4;
+  return 2; // ST and any unrecorded attacking position
+}
+
+function draftAssistPointsForPosition(position){
+  const pos=String(position||"").toUpperCase();
+  if(["LB","RB","CB","CDM"].includes(pos)) return 4;
+  if(["LM","RM","CAM","CM"].includes(pos)) return 2;
+  return 3; // ST, GK and any unrecorded position
 }
 
 function draftRatingPoints(rating){
@@ -11926,6 +11984,58 @@ function draftRatingPoints(rating){
   if(value>=9) return 3;
   if(value>=8) return 2;
   return 1;
+}
+
+function calculateSingleMatchDraftScore(match, playerId){
+  const result={
+    appearancePoints:0,goals:0,goalPoints:0,assists:0,assistPoints:0,
+    ratingPoints:0,potmPoints:0,hatTrickPoints:0,playmakerPoints:0,total:0
+  };
+  const st=match?.playerStats?.[playerId];
+  if(!st?.played) return result;
+
+  const player=players.find(p=>p.id===playerId);
+  const position=st.position || player?.position || "";
+  const goals=Number(st.goals||0);
+  const assists=Number(st.assists||0);
+
+  result.appearancePoints=1;
+  result.goals=goals;
+  result.goalPoints=goals*draftGoalPointsForPosition(position);
+  result.assists=assists;
+  result.assistPoints=assists*draftAssistPointsForPosition(position);
+  result.ratingPoints=draftRatingPoints(st.rating);
+  result.potmPoints=match.potmPlayerId===playerId ? 3 : 0;
+  result.hatTrickPoints=goals>=3 ? 2 : 0;
+  result.playmakerPoints=assists>=3 ? 2 : 0;
+  result.total=result.appearancePoints+result.goalPoints+result.assistPoints+
+    result.ratingPoints+result.potmPoints+result.hatTrickPoints+result.playmakerPoints;
+  return result;
+}
+
+function singleMatchDraftBreakdownHTML(score){
+  const rows=[
+    ["🏃","Appearance",score.appearancePoints],
+    ["⚽",`${score.goals} goal${score.goals===1?"":"s"}`,score.goalPoints],
+    ["🎯",`${score.assists} assist${score.assists===1?"":"s"}`,score.assistPoints],
+    ["⭐","Match rating",score.ratingPoints],
+    ["👑","POTM",score.potmPoints],
+    ["🎩","Hat-trick bonus",score.hatTrickPoints],
+    ["🪄","Playmaker bonus",score.playmakerPoints]
+  ].filter(row=>row[2]>0);
+
+  return `<div class="match-draft-points">
+    <div class="match-draft-points-top">
+      <div><span class="match-draft-icon">🎲</span> DRAFT POINTS</div>
+      <div class="match-draft-total">${score.total} PTS</div>
+    </div>
+    <div class="match-draft-breakdown">${rows.map(row=>`
+      <div class="match-draft-row">
+        <div>${row[0]} ${escapeHTML(row[1])}</div>
+        <div>+${row[2]}</div>
+      </div>`).join("")}</div>
+    <div class="match-draft-note">Completed-pass points are added at Matchday level.</div>
+  </div>`;
 }
 
 function calculateDraftScore(session, draftedPlayerId){
@@ -11953,7 +12063,7 @@ function calculateDraftScore(session, draftedPlayerId){
     result.goalPoints += goals * draftGoalPointsForPosition(st.position || players.find(p=>p.id===draftedPlayerId)?.position);
 
     result.assists += assists;
-    result.assistPoints += assists * 3;
+    result.assistPoints += assists * draftAssistPointsForPosition(st.position || players.find(p=>p.id===draftedPlayerId)?.position);
 
     result.ratingPoints += draftRatingPoints(st.rating);
 
