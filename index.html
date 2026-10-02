@@ -2804,6 +2804,28 @@ input[type="date"]::-webkit-date-and-time-value{
   opacity:.45;
 }
 
+
+/* DRAFT - STAGE 1 */
+.draft-hero{margin:8px 16px 18px;padding:22px 18px;border-radius:22px;background:linear-gradient(145deg,#132944,#0d1c30);border:1px solid #8d712a;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.draft-kicker{color:#e8bd4b;font-size:10px;font-weight:900;letter-spacing:1.2px}
+.draft-title{margin-top:7px;font-size:27px;font-weight:900}
+.draft-copy{margin-top:7px;color:#9aa9bc;font-size:12px;line-height:1.5}
+.draft-season-pill{display:inline-flex;align-items:center;min-height:28px;margin-top:14px;padding:0 11px;border-radius:999px;background:#07111f;border:1px solid #315d9d;color:#9fc1ff;font-size:10px;font-weight:900;letter-spacing:.7px}
+.draft-section{margin:0 16px 18px}
+.draft-section-heading{margin:0 0 10px;color:#91a0b4;font-size:11px;font-weight:900;letter-spacing:1.1px}
+.draft-card{padding:17px;border-radius:18px;background:#101d2e;border:1px solid #29425f}
+.draft-card.gold{border-color:#725d22;background:linear-gradient(145deg,#151f2c,#101d2e)}
+.draft-card-title{font-size:18px;font-weight:900}
+.draft-card-copy{margin-top:6px;color:#91a0b4;font-size:12px;line-height:1.5}
+.draft-status{display:inline-flex;align-items:center;min-height:25px;margin-top:12px;padding:0 9px;border-radius:999px;background:#0b2547;color:#79a9ff;font-size:9px;font-weight:900}
+.draft-empty{margin-top:14px;padding:17px 14px;border-radius:14px;background:#07111f;border:1px dashed #31506f;text-align:center;color:#8392a6;font-size:12px;line-height:1.5}
+.draft-leader-preview{display:grid;gap:8px;margin-top:13px}
+.draft-leader-row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 12px;border-radius:12px;background:#07111f}
+.draft-rank{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#0b2547;color:#e8bd4b;font-size:11px;font-weight:900}
+.draft-leader-name{font-size:13px;font-weight:800;color:#dce6f4}
+.draft-leader-points{font-size:13px;font-weight:900;color:#e8bd4b}
+.draft-coming{color:#63758d}
+
 /* NAV */
 
 .nav{
@@ -2824,7 +2846,7 @@ input[type="date"]::-webkit-date-and-time-value{
 .nav.hidden{display:none}
 
 .nav-item{
-  width:16.6667%;
+  width:14.2857%;
   text-align:center;
   color:#8392a6;
   font-size:12px;
@@ -3656,6 +3678,50 @@ textarea.bug-form-control{
   <div id="matchHistory"></div>
 </div>
 
+
+<!-- DRAFT -->
+<div id="draft" class="page">
+  <div class="page-header">
+    <h2>Draft</h2>
+    <p id="draftSeasonSubtitle">Olympus FC · FC27</p>
+  </div>
+  <div class="draft-hero">
+    <div class="draft-kicker">OLYMPUS DRAFT</div>
+    <div class="draft-title">Their performance. Your points.</div>
+    <div class="draft-copy">Each Matchday, participating controlled players will be assigned another controlled Olympus player. Support your draw, earn points from their performance and climb the season leaderboard.</div>
+    <div class="draft-season-pill">FC27 DRAFT SEASON</div>
+  </div>
+  <div class="draft-section">
+    <div class="draft-section-heading">TONIGHT'S DRAFT</div>
+    <div class="draft-card gold">
+      <div class="draft-card-title">🎲 Matchday Draw</div>
+      <div class="draft-card-copy">When the Draft goes live, only controlled players selected for that Matchday will enter the draw. Nobody can draw themselves.</div>
+      <div class="draft-status">STAGE 1 · FOUNDATION</div>
+      <div class="draft-empty">No active Draft yet.<br>Matchday integration and player reveals are coming in Stage 2.</div>
+    </div>
+  </div>
+  <div class="draft-section">
+    <div class="draft-section-heading">FC27 SEASON LEADERBOARD</div>
+    <div class="draft-card">
+      <div class="draft-card-title">🏆 Season Standings</div>
+      <div class="draft-card-copy">Draft points will build across every completed Olympus Matchday.</div>
+      <div class="draft-leader-preview">
+        <div class="draft-leader-row"><div class="draft-rank">1</div><div class="draft-leader-name draft-coming">Waiting for first Draft</div><div class="draft-leader-points">—</div></div>
+        <div class="draft-leader-row"><div class="draft-rank">2</div><div class="draft-leader-name draft-coming">Season not started</div><div class="draft-leader-points">—</div></div>
+        <div class="draft-leader-row"><div class="draft-rank">3</div><div class="draft-leader-name draft-coming">Season not started</div><div class="draft-leader-points">—</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="draft-section">
+    <div class="draft-section-heading">MY DRAFT</div>
+    <div class="draft-card">
+      <div class="draft-card-title">👤 My Draft History</div>
+      <div class="draft-card-copy">Your Matchday assignments, points earned, best Draft and season record will appear here.</div>
+      <div class="draft-empty">No Draft history yet.</div>
+    </div>
+  </div>
+</div>
+
 <!-- STATS -->
 
 <div id="stats" class="page">
@@ -4394,6 +4460,14 @@ textarea.bug-form-control{
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m12 8 3 2.2-1.1 3.5h-3.8L9 10.2 12 8Z"/><path d="m7.2 5.8 1.8 4.4M16.8 5.8 15 10.2M4.2 12.5l5.9 1.2M19.8 12.5l-5.9 1.2M8.2 19.1l1.9-5.4M15.8 19.1l-1.9-5.4"/></svg>
     </span>
     Matches
+  </div>
+
+
+  <div class="nav-item" onclick="showPage('draft',this)">
+    <span class="nav-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="9" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="9" cy="15" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1" fill="currentColor" stroke="none"/></svg>
+    </span>
+    Draft
   </div>
 
   <div class="nav-item" onclick="showPage('stats',this)">
@@ -5242,6 +5316,7 @@ function renderAchievementsPage(){
   if(el("achievementClubCount")) el("achievementClubCount").textContent = `${clubUnlocked}/${clubItems.length}`;
   if(el("achievementProgressFill")) el("achievementProgressFill").style.width = `${completion}%`;
   if(el("achievementsSubtitle")) el("achievementsSubtitle").textContent = "Olympus FC · FC27";
+  if(el("draftSeasonSubtitle")) el("draftSeasonSubtitle").textContent = "Olympus FC · FC27";
 
   const statusCounts = {
     All: OLYMPUS_ACHIEVEMENTS.length,
@@ -5809,8 +5884,9 @@ function activateNavForPage(pageId){
     squad:1,
     clips:2,
     matches:3,
-    stats:4,
-    more:5
+    draft:4,
+    stats:5,
+    more:6
   };
 
   const index = map[pageId];
@@ -10838,7 +10914,7 @@ function renderPublicHome(){
 
 function goToClubLogin(){
   const navItems = document.querySelectorAll(".nav-item");
-  showPage("more",navItems[5] || null);
+  showPage("more",navItems[6] || null);
   setTimeout(() => {
     const panel = el("adminLoginPanel");
     if(panel) panel.scrollIntoView({behavior:"smooth",block:"center"});
