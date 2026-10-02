@@ -6656,6 +6656,7 @@ async function endMatchday(sessionId){
       .update({status:"ended",ended_at:new Date().toISOString()})
       .eq("id",Number(sessionId));
     if(error) throw error;
+    await syncDraftPointsForSession(sessionId);
     await loadRemoteData();
   }catch(error){
     console.error(error);
@@ -6669,6 +6670,10 @@ async function deleteMatchday(sessionId){
   const count = session ? matchesForMatchday(session.id).length : 0;
   if(!confirm(`Delete this Matchday session? ${count ? `Its ${count} recorded match${count===1?"":"es"} and player stats will also be deleted.` : "This cannot be undone."}`)) return;
   try{
+    // Draft must never outlive its Matchday. Deleting the Draft session also
+    // cascades every assignment, reveal and stored Draft point for this session.
+    await deleteDraftForMatchday(sessionId);
+
     const matchIds = session
       ? matchesForMatchday(session.id).map(match => Number(match.id)).filter(Number.isFinite)
       : [];
@@ -11150,6 +11155,7 @@ async function loadRemoteData(){
     saveSeasonData();
 
     await loadDraftData();
+    await cleanupOrphanedDraftSessions();
 
     remoteReady = true;
     setOnlineStatus("Connected","#67d894");
@@ -11796,6 +11802,157 @@ function draftParticipantChips(list){
   return list.map(p=>`<span class="draft-participant">#${p.number} ${escapeHTML(p.name)}</span>`).join("");
 }
 
+
+function draftGoalPointsForPosition(position){
+  const pos=String(position||"").toUpperCase();
+  if(pos==="GK") return 10;
+  if(["LB","RB","CB"].includes(pos)) return 6;
+  if(["LM","RM","CAM","CM","CDM"].includes(pos)) return 5;
+  return 4; // ST and any unrecorded attacking position
+}
+
+function draftRatingPoints(rating){
+  const value=Number(rating);
+  if(!Number.isFinite(value) || value<7) return 0;
+  if(value>=10) return 4;
+  if(value>=9) return 3;
+  if(value>=8) return 2;
+  return 1;
+}
+
+function calculateDraftScore(session, draftedPlayerId){
+  const result={
+    appearances:0,appearancePoints:0,
+    goals:0,goalPoints:0,
+    assists:0,assistPoints:0,
+    ratingPoints:0,potm:0,potmPoints:0,
+    hatTricks:0,hatTrickPoints:0,
+    playmakerBonuses:0,playmakerPoints:0,
+    passes:0,passingPoints:0,total:0
+  };
+  if(!session || !draftedPlayerId) return result;
+
+  matchesForMatchday(session.id).forEach(match=>{
+    const st=match.playerStats?.[draftedPlayerId];
+    if(!st?.played) return;
+
+    result.appearances += 1;
+    result.appearancePoints += 1;
+
+    const goals=Number(st.goals||0);
+    const assists=Number(st.assists||0);
+    result.goals += goals;
+    result.goalPoints += goals * draftGoalPointsForPosition(st.position || players.find(p=>p.id===draftedPlayerId)?.position);
+
+    result.assists += assists;
+    result.assistPoints += assists * 3;
+
+    result.ratingPoints += draftRatingPoints(st.rating);
+
+    if(match.potmPlayerId===draftedPlayerId){
+      result.potm += 1;
+      result.potmPoints += 3;
+    }
+    if(goals>=3){
+      result.hatTricks += 1;
+      result.hatTrickPoints += 2;
+    }
+    if(assists>=3){
+      result.playmakerBonuses += 1;
+      result.playmakerPoints += 2;
+    }
+  });
+
+  const passing=matchdayPassingForSession(session);
+  const completed=Number(passing?.passes?.[draftedPlayerId]);
+  if(Number.isFinite(completed) && completed>0){
+    result.passes=completed;
+    result.passingPoints=Math.floor(completed/50);
+  }
+
+  result.total =
+    result.appearancePoints +
+    result.goalPoints +
+    result.assistPoints +
+    result.ratingPoints +
+    result.potmPoints +
+    result.hatTrickPoints +
+    result.playmakerPoints +
+    result.passingPoints;
+
+  return result;
+}
+
+function draftSessionByDraftId(draftSessionId){
+  const ds=draftSessions.find(item=>String(item.id)===String(draftSessionId));
+  return ds ? matchdaySessions.find(s=>String(s.id)===String(ds.matchdaySessionId)) || null : null;
+}
+
+function liveDraftPoints(assignment){
+  const session=draftSessionByDraftId(assignment.draftSessionId);
+  return session ? calculateDraftScore(session,assignment.draftedPlayerId).total : 0;
+}
+
+function draftScoreBreakdownHTML(score){
+  const rows=[
+    ["🏃",`${score.appearances} appearance${score.appearances===1?"":"s"}`,score.appearancePoints],
+    ["⚽",`${score.goals} goal${score.goals===1?"":"s"}`,score.goalPoints],
+    ["🎯",`${score.assists} assist${score.assists===1?"":"s"}`,score.assistPoints],
+    ["⭐","Match ratings",score.ratingPoints],
+    ["👑",`${score.potm} POTM`,score.potmPoints],
+    ["🎩",`${score.hatTricks} hat-trick bonus${score.hatTricks===1?"":"es"}`,score.hatTrickPoints],
+    ["🪄",`${score.playmakerBonuses} playmaker bonus${score.playmakerBonuses===1?"":"es"}`,score.playmakerPoints],
+    ["🦶",`${score.passes} completed passes`,score.passingPoints]
+  ].filter(row=>row[2]>0);
+
+  if(!rows.length) return `<div class="draft-empty">No Draft points recorded yet.</div>`;
+  return `<div style="margin-top:14px">${rows.map(row=>`
+    <div class="draft-leader-row">
+      <div class="draft-rank">${row[0]}</div>
+      <div class="draft-leader-name">${escapeHTML(row[1])}</div>
+      <div class="draft-leader-points">+${row[2]}</div>
+    </div>`).join("")}</div>`;
+}
+
+async function syncDraftPointsForSession(matchdaySessionId){
+  const ds=draftSessionForMatchday(matchdaySessionId);
+  const session=matchdaySessions.find(s=>String(s.id)===String(matchdaySessionId));
+  if(!ds || !session) return;
+  const assignments=draftAssignmentsForSession(ds.id);
+  for(const assignment of assignments){
+    const score=calculateDraftScore(session,assignment.draftedPlayerId);
+    const {error}=await supabaseClient
+      .from("draft_assignments")
+      .update({points:score.total})
+      .eq("id",assignment.id);
+    if(error) throw error;
+  }
+}
+
+async function deleteDraftForMatchday(matchdaySessionId){
+  const ds=draftSessionForMatchday(matchdaySessionId);
+  if(!ds) return;
+  const {error}=await supabaseClient.from("draft_sessions").delete().eq("id",ds.id);
+  if(error) throw error; // assignments cascade automatically
+  draftSessions=draftSessions.filter(item=>String(item.id)!==String(ds.id));
+  draftAssignments=draftAssignments.filter(item=>String(item.draftSessionId)!==String(ds.id));
+}
+
+async function cleanupOrphanedDraftSessions(){
+  if(!isAdmin || !draftSessions.length) return;
+  const valid=new Set(matchdaySessions.map(s=>String(s.id)));
+  const orphans=draftSessions.filter(ds=>!valid.has(String(ds.matchdaySessionId)));
+  for(const ds of orphans){
+    const {error}=await supabaseClient.from("draft_sessions").delete().eq("id",ds.id);
+    if(error) throw error;
+  }
+  if(orphans.length){
+    const orphanIds=new Set(orphans.map(ds=>String(ds.id)));
+    draftSessions=draftSessions.filter(ds=>!orphanIds.has(String(ds.id)));
+    draftAssignments=draftAssignments.filter(a=>!orphanIds.has(String(a.draftSessionId)));
+  }
+}
+
 function renderDraft(){
   const body=el("draftBody"); if(!body)return;
   const active=getActiveMatchday("FC27");
@@ -11821,21 +11978,39 @@ function renderDraft(){
     tonight=`<div class="draft-card gold"><div class="draft-card-title">🎲 Your Draft is Ready</div><div class="draft-card-copy">Your Olympus player has been assigned and locked. Tap below when you're ready to reveal them.</div><button class="draft-action reveal" ${draftBusy?"disabled":""} onclick="revealMyDraftPlayer()">${draftBusy?"REVEALING…":"🎲 REVEAL MY PLAYER"}</button><div class="draft-lock">No rerolls · No self-drafts · One official assignment</div></div>`;
   }else{
     const p=players.find(x=>x.id===mine.draftedPlayerId);
-    tonight=`<div class="draft-card gold"><div class="draft-card-title">🔒 Tonight's Draft</div><div class="draft-reveal-card"><div class="draft-reveal-kicker">YOUR PLAYER TONIGHT</div><div class="draft-reveal-number">#${p?.number??""}</div><div class="draft-reveal-name">${escapeHTML(p?.name||mine.draftedPlayerId)}</div><div class="draft-reveal-meta">${escapeHTML(p?.position||"")} · ${escapeHTML(p?.nation||"")}</div><div class="draft-reveal-message">Their Matchday performance will earn your Draft points. Back them all night. 🏔️</div></div><div class="draft-lock">Draft locked · ${assignments.length} controlled players participating</div></div>`;
+    const score=calculateDraftScore(active,mine.draftedPlayerId);
+    tonight=`<div class="draft-card gold"><div class="draft-card-title">🔒 Tonight's Draft</div><div class="draft-reveal-card"><div class="draft-reveal-kicker">YOUR PLAYER TONIGHT</div><div class="draft-reveal-number">#${p?.number??""}</div><div class="draft-reveal-name">${escapeHTML(p?.name||mine.draftedPlayerId)}</div><div class="draft-reveal-meta">${escapeHTML(p?.position||"")} · ${escapeHTML(p?.nation||"")}</div><div style="font-size:34px;font-weight:900;margin-top:14px">${score.total} PTS</div><div class="draft-reveal-message">Live Draft score from this Matchday.</div></div>${draftScoreBreakdownHTML(score)}<div class="draft-lock">Draft locked · ${assignments.length} controlled players participating</div></div>`;
   }
 
+  const endedDraftAssignments=draftAssignments.filter(a=>{
+    const session=draftSessionByDraftId(a.draftSessionId);
+    return session && session.status==="ended";
+  });
   const totals={};
-  draftAssignments.forEach(a=>{totals[a.participantPlayerId]=(totals[a.participantPlayerId]||0)+Number(a.points||0);});
+  endedDraftAssignments.forEach(a=>{
+    totals[a.participantPlayerId]=(totals[a.participantPlayerId]||0)+liveDraftPoints(a);
+  });
   const standings=players.map(p=>({p,points:totals[p.id]||0})).sort((a,b)=>b.points-a.points||a.p.name.localeCompare(b.p.name));
-  const hasPoints=draftAssignments.some(a=>Number(a.points||0)!==0);
-  const standingRows=standings.map((r,i)=>`<div class="draft-leader-row"><div class="draft-rank">${i+1}</div><div class="draft-leader-name ${hasPoints?"":"draft-coming"}">${escapeHTML(r.p.name)}</div><div class="draft-leader-points">${hasPoints?r.points:"—"}</div></div>`).join("");
+  const hasCompleted=endedDraftAssignments.length>0;
+  const standingRows=standings.map((r,i)=>`<div class="draft-leader-row"><div class="draft-rank">${i+1}</div><div class="draft-leader-name ${hasCompleted?"":"draft-coming"}">${escapeHTML(r.p.name)}</div><div class="draft-leader-points">${hasCompleted?r.points:"—"}</div></div>`).join("");
 
-  const history=currentClubPlayerKey?draftAssignments.filter(a=>a.participantPlayerId===currentClubPlayerKey&&a.revealed).sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||""))):[];
-  const historyRows=history.length?history.slice(0,10).map(a=>`<div class="draft-leader-row"><div class="draft-rank">🎲</div><div><div class="draft-leader-name">${escapeHTML(draftPlayerName(a.draftedPlayerId))}</div><div class="leader-detail">Draft assignment</div></div><div class="draft-leader-points">${Number(a.points||0)} pts</div></div>`).join(""):`<div class="draft-empty">${currentClubPlayerKey?"No Draft history yet.":"Sign in to view your Draft history."}</div>`;
+  const history=currentClubPlayerKey?draftAssignments
+    .filter(a=>{
+      if(a.participantPlayerId!==currentClubPlayerKey || !a.revealed) return false;
+      return Boolean(draftSessionByDraftId(a.draftSessionId));
+    })
+    .sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||""))):[];
+
+  const historyRows=history.length?history.slice(0,10).map(a=>{
+    const session=draftSessionByDraftId(a.draftSessionId);
+    const score=calculateDraftScore(session,a.draftedPlayerId);
+    const status=session?.status==="ended"?"FINAL":"LIVE";
+    return `<div class="draft-leader-row"><div class="draft-rank">🎲</div><div><div class="draft-leader-name">${escapeHTML(draftPlayerName(a.draftedPlayerId))}</div><div class="leader-detail">${escapeHTML(session?.sessionDate||"")} · ${status}</div></div><div class="draft-leader-points">${score.total} pts</div></div>`;
+  }).join(""):`<div class="draft-empty">${currentClubPlayerKey?"No Draft history yet.":"Sign in to view your Draft history."}</div>`;
 
   body.innerHTML=`<div class="draft-section"><div class="draft-section-heading">TONIGHT'S DRAFT</div>${tonight}</div>
-  <div class="draft-section"><div class="draft-section-heading">FC27 SEASON LEADERBOARD</div><div class="draft-card"><div class="draft-card-title">🏆 Season Standings</div><div class="draft-card-copy">Scoring arrives in Stage 3. Official Draft assignments are already being stored online.</div><div class="draft-leader-preview">${standingRows}</div></div></div>
-  <div class="draft-section"><div class="draft-section-heading">MY DRAFT</div><div class="draft-card"><div class="draft-card-title">👤 My Draft History</div><div class="draft-card-copy">Your revealed assignments will build here across the season.</div><div class="draft-leader-preview">${historyRows}</div></div></div>`;
+  <div class="draft-section"><div class="draft-section-heading">FC27 SEASON LEADERBOARD</div><div class="draft-card"><div class="draft-card-title">🏆 Season Standings</div><div class="draft-card-copy">Only completed Matchdays count towards the FC27 Draft leaderboard.</div><div class="draft-leader-preview">${standingRows}</div></div></div>
+  <div class="draft-section"><div class="draft-section-heading">MY DRAFT</div><div class="draft-card"><div class="draft-card-title">👤 My Draft History</div><div class="draft-card-copy">Live and completed Draft assignments appear here. Deleted Matchdays are removed completely.</div><div class="draft-leader-preview">${historyRows}</div></div></div>`;
 }
 
 function draftHistoryCount(participant,drafted){
