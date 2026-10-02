@@ -2826,6 +2826,17 @@ input[type="date"]::-webkit-date-and-time-value{
 .draft-leader-points{font-size:13px;font-weight:900;color:#e8bd4b}
 .draft-coming{color:#63758d}
 
+
+/* DRAFT - STAGE 2B */
+.draft-action{width:100%;min-height:50px;margin-top:14px;border:1px solid #315d9d;border-radius:13px;background:#326eff;color:#fff;font-weight:900;font-size:14px}
+.draft-action:disabled{opacity:.5;cursor:not-allowed}.draft-action.reveal{background:linear-gradient(180deg,#d7ad43,#b98927);border-color:#e8bd4b;color:#07111f}
+.draft-lock{margin-top:10px;color:#7f91a9;font-size:10px;font-weight:800;text-align:center}
+.draft-participants{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}.draft-participant{padding:7px 10px;border-radius:999px;background:#07111f;border:1px solid #29425f;color:#cbd7e6;font-size:10px;font-weight:800}
+.draft-reveal-card{margin-top:14px;padding:22px 16px;border-radius:18px;background:linear-gradient(145deg,#0b2547,#101d2e);border:1px solid #8d712a;text-align:center}
+.draft-reveal-kicker{color:#e8bd4b;font-size:10px;font-weight:900;letter-spacing:1.2px}.draft-reveal-number{margin-top:13px;color:#e8bd4b;font-size:25px;font-weight:900}
+.draft-reveal-name{margin-top:4px;font-size:26px;font-weight:900}.draft-reveal-meta{margin-top:5px;color:#9fb0c5;font-size:12px}.draft-reveal-message{margin-top:13px;color:#d7e2ef;font-size:12px;line-height:1.5}
+.draft-error{margin-top:11px;color:#ff9ea6;font-size:11px;line-height:1.4}
+
 /* NAV */
 
 .nav{
@@ -3691,35 +3702,7 @@ textarea.bug-form-control{
     <div class="draft-copy">Each Matchday, participating controlled players will be assigned another controlled Olympus player. Support your draw, earn points from their performance and climb the season leaderboard.</div>
     <div class="draft-season-pill">FC27 DRAFT SEASON</div>
   </div>
-  <div class="draft-section">
-    <div class="draft-section-heading">TONIGHT'S DRAFT</div>
-    <div class="draft-card gold">
-      <div class="draft-card-title">🎲 Matchday Draw</div>
-      <div class="draft-card-copy">When the Draft goes live, only controlled players selected for that Matchday will enter the draw. Nobody can draw themselves.</div>
-      <div class="draft-status">STAGE 1 · FOUNDATION</div>
-      <div class="draft-empty">No active Draft yet.<br>Matchday integration and player reveals are coming in Stage 2.</div>
-    </div>
-  </div>
-  <div class="draft-section">
-    <div class="draft-section-heading">FC27 SEASON LEADERBOARD</div>
-    <div class="draft-card">
-      <div class="draft-card-title">🏆 Season Standings</div>
-      <div class="draft-card-copy">Draft points will build across every completed Olympus Matchday.</div>
-      <div class="draft-leader-preview">
-        <div class="draft-leader-row"><div class="draft-rank">1</div><div class="draft-leader-name draft-coming">Waiting for first Draft</div><div class="draft-leader-points">—</div></div>
-        <div class="draft-leader-row"><div class="draft-rank">2</div><div class="draft-leader-name draft-coming">Season not started</div><div class="draft-leader-points">—</div></div>
-        <div class="draft-leader-row"><div class="draft-rank">3</div><div class="draft-leader-name draft-coming">Season not started</div><div class="draft-leader-points">—</div></div>
-      </div>
-    </div>
-  </div>
-  <div class="draft-section">
-    <div class="draft-section-heading">MY DRAFT</div>
-    <div class="draft-card">
-      <div class="draft-card-title">👤 My Draft History</div>
-      <div class="draft-card-copy">Your Matchday assignments, points earned, best Draft and season record will appear here.</div>
-      <div class="draft-empty">No Draft history yet.</div>
-    </div>
-  </div>
+  <div id="draftBody"></div>
 </div>
 
 <!-- STATS -->
@@ -4721,6 +4704,9 @@ let isOwner = false;
 let currentClubUsername = "";
 let currentClubRole = "";
 let currentClubPlayerKey = "";
+let draftSessions = [];
+let draftAssignments = [];
+let draftBusy = false;
 let playerStatuses = {};
 let spotifyJam = null;
 let clubhouseSession = null;
@@ -6555,6 +6541,10 @@ async function saveMatchdaySquadEdit(){
   if(!isAdmin || !editingMatchdaySessionId) return;
   const session=matchdaySessions.find(item=>String(item.id)===String(editingMatchdaySessionId));
   if(!session) return;
+  if(draftSessionForMatchday(session.id)){
+    alert("This Matchday's Draft is already locked, so the participating squad can no longer be changed.");
+    return;
+  }
   const selected=players.filter(player=>el(`edit-matchday-player-${player.id}`)?.checked);
   if(!selected.length){
     el("editMatchdaySquadError").textContent="Select at least one player.";
@@ -11159,6 +11149,8 @@ async function loadRemoteData(){
     seasonData = remoteData;
     saveSeasonData();
 
+    await loadDraftData();
+
     remoteReady = true;
     setOnlineStatus("Connected","#67d894");
     renderEverything();
@@ -11782,6 +11774,144 @@ async function initSupabase(){
   }
 }
 
+
+/* OLYMPUS DRAFT - STAGE 2B */
+function draftSessionForMatchday(matchdayId){
+  return draftSessions.find(item=>String(item.matchdaySessionId)===String(matchdayId))||null;
+}
+function draftAssignmentsForSession(draftSessionId){
+  return draftAssignments.filter(item=>String(item.draftSessionId)===String(draftSessionId));
+}
+function draftControlledParticipants(matchday){
+  if(!matchday)return[];
+  const selected=new Set((matchday.players||[]).map(item=>item.playerKey));
+  return players.filter(player=>selected.has(player.id));
+}
+function draftAssignmentForCurrentUser(draftSession){
+  if(!draftSession||!currentClubPlayerKey)return null;
+  return draftAssignmentsForSession(draftSession.id).find(item=>item.participantPlayerId===currentClubPlayerKey)||null;
+}
+function draftPlayerName(key){return players.find(p=>p.id===key)?.name||key||"Unknown";}
+function draftParticipantChips(list){
+  return list.map(p=>`<span class="draft-participant">#${p.number} ${escapeHTML(p.name)}</span>`).join("");
+}
+
+function renderDraft(){
+  const body=el("draftBody"); if(!body)return;
+  const active=getActiveMatchday("FC27");
+  const participants=draftControlledParticipants(active);
+  const ds=active?draftSessionForMatchday(active.id):null;
+  const mine=ds?draftAssignmentForCurrentUser(ds):null;
+  const assignments=ds?draftAssignmentsForSession(ds.id):[];
+
+  let tonight="";
+  if(!active){
+    tonight=`<div class="draft-card gold"><div class="draft-card-title">🎲 Matchday Draw</div><div class="draft-card-copy">There is no active FC27 Matchday. Start one from Matches and the controlled players selected for that session will become the Draft pool.</div><div class="draft-empty">Waiting for the next Olympus Matchday.</div></div>`;
+  }else if(!ds){
+    tonight=`<div class="draft-card gold"><div class="draft-card-title">🎲 Draft Ready to Generate</div><div class="draft-card-copy">Only the controlled players selected for this Matchday can enter tonight's Draft.</div><div class="draft-participants">${draftParticipantChips(participants)}</div>${
+      participants.length<2?`<div class="draft-error">At least two controlled players are needed to run a Draft.</div>`:
+      isAdmin?`<button class="draft-action" ${draftBusy?"disabled":""} onclick="generateOlympusDraft(${Number(active.id)})">${draftBusy?"GENERATING…":"🎲 GENERATE & LOCK DRAFT"}</button><div class="draft-lock">Once generated, the Draft is locked and the Matchday squad can no longer be changed.</div>`:
+      `<div class="draft-empty">Waiting for a club admin to generate tonight's Draft.</div>`
+    }</div>`;
+  }else if(!currentClubPlayerKey){
+    tonight=`<div class="draft-card gold"><div class="draft-card-title">🔒 Tonight's Draft is Locked</div><div class="draft-card-copy">${assignments.length} controlled players are in tonight's official Draft.</div><div class="draft-empty">Sign in to your Olympus player account to reveal your player.</div></div>`;
+  }else if(!mine){
+    tonight=`<div class="draft-card gold"><div class="draft-card-title">🔒 Tonight's Draft is Locked</div><div class="draft-card-copy">You were not selected in this Matchday's controlled-player squad, so you do not have a Draft assignment tonight.</div></div>`;
+  }else if(!mine.revealed){
+    tonight=`<div class="draft-card gold"><div class="draft-card-title">🎲 Your Draft is Ready</div><div class="draft-card-copy">Your Olympus player has been assigned and locked. Tap below when you're ready to reveal them.</div><button class="draft-action reveal" ${draftBusy?"disabled":""} onclick="revealMyDraftPlayer()">${draftBusy?"REVEALING…":"🎲 REVEAL MY PLAYER"}</button><div class="draft-lock">No rerolls · No self-drafts · One official assignment</div></div>`;
+  }else{
+    const p=players.find(x=>x.id===mine.draftedPlayerId);
+    tonight=`<div class="draft-card gold"><div class="draft-card-title">🔒 Tonight's Draft</div><div class="draft-reveal-card"><div class="draft-reveal-kicker">YOUR PLAYER TONIGHT</div><div class="draft-reveal-number">#${p?.number??""}</div><div class="draft-reveal-name">${escapeHTML(p?.name||mine.draftedPlayerId)}</div><div class="draft-reveal-meta">${escapeHTML(p?.position||"")} · ${escapeHTML(p?.nation||"")}</div><div class="draft-reveal-message">Their Matchday performance will earn your Draft points. Back them all night. 🏔️</div></div><div class="draft-lock">Draft locked · ${assignments.length} controlled players participating</div></div>`;
+  }
+
+  const totals={};
+  draftAssignments.forEach(a=>{totals[a.participantPlayerId]=(totals[a.participantPlayerId]||0)+Number(a.points||0);});
+  const standings=players.map(p=>({p,points:totals[p.id]||0})).sort((a,b)=>b.points-a.points||a.p.name.localeCompare(b.p.name));
+  const hasPoints=draftAssignments.some(a=>Number(a.points||0)!==0);
+  const standingRows=standings.map((r,i)=>`<div class="draft-leader-row"><div class="draft-rank">${i+1}</div><div class="draft-leader-name ${hasPoints?"":"draft-coming"}">${escapeHTML(r.p.name)}</div><div class="draft-leader-points">${hasPoints?r.points:"—"}</div></div>`).join("");
+
+  const history=currentClubPlayerKey?draftAssignments.filter(a=>a.participantPlayerId===currentClubPlayerKey&&a.revealed).sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||""))):[];
+  const historyRows=history.length?history.slice(0,10).map(a=>`<div class="draft-leader-row"><div class="draft-rank">🎲</div><div><div class="draft-leader-name">${escapeHTML(draftPlayerName(a.draftedPlayerId))}</div><div class="leader-detail">Draft assignment</div></div><div class="draft-leader-points">${Number(a.points||0)} pts</div></div>`).join(""):`<div class="draft-empty">${currentClubPlayerKey?"No Draft history yet.":"Sign in to view your Draft history."}</div>`;
+
+  body.innerHTML=`<div class="draft-section"><div class="draft-section-heading">TONIGHT'S DRAFT</div>${tonight}</div>
+  <div class="draft-section"><div class="draft-section-heading">FC27 SEASON LEADERBOARD</div><div class="draft-card"><div class="draft-card-title">🏆 Season Standings</div><div class="draft-card-copy">Scoring arrives in Stage 3. Official Draft assignments are already being stored online.</div><div class="draft-leader-preview">${standingRows}</div></div></div>
+  <div class="draft-section"><div class="draft-section-heading">MY DRAFT</div><div class="draft-card"><div class="draft-card-title">👤 My Draft History</div><div class="draft-card-copy">Your revealed assignments will build here across the season.</div><div class="draft-leader-preview">${historyRows}</div></div></div>`;
+}
+
+function draftHistoryCount(participant,drafted){
+  return draftAssignments.filter(a=>a.participantPlayerId===participant&&a.draftedPlayerId===drafted).length;
+}
+function draftPermutations(items){
+  if(items.length<=1)return[items.slice()];
+  const result=[];
+  items.forEach((item,index)=>{
+    const rest=items.slice(0,index).concat(items.slice(index+1));
+    draftPermutations(rest).forEach(p=>result.push([item,...p]));
+  });
+  return result;
+}
+function chooseBalancedDraft(participants){
+  const ids=participants.map(p=>p.id);
+  const valid=draftPermutations(ids).filter(p=>p.every((drafted,i)=>drafted!==ids[i]));
+  if(!valid.length)throw new Error("A valid Draft could not be created.");
+  let bestScore=Infinity,best=[];
+  valid.forEach(p=>{
+    const score=p.reduce((sum,drafted,i)=>sum+draftHistoryCount(ids[i],drafted),0);
+    if(score<bestScore){bestScore=score;best=[p];}
+    else if(score===bestScore)best.push(p);
+  });
+  return best[Math.floor(Math.random()*best.length)];
+}
+
+async function generateOlympusDraft(matchdayId){
+  if(!isAdmin||draftBusy)return;
+  const active=getActiveMatchday("FC27");
+  if(!active||String(active.id)!==String(matchdayId)){alert("This Matchday is no longer active.");return;}
+  if(draftSessionForMatchday(active.id)){alert("A Draft already exists for this Matchday.");return;}
+  const participants=draftControlledParticipants(active);
+  if(participants.length<2){alert("At least two controlled players are needed for a Draft.");return;}
+  if(!confirm(`Generate and permanently lock tonight's Draft for ${participants.length} controlled players?`))return;
+  draftBusy=true;renderDraft();
+  try{
+    const drafted=chooseBalancedDraft(participants);
+    const {data:sessionRow,error:sessionError}=await supabaseClient.from("draft_sessions").insert({matchday_session_id:String(active.id),season:"FC27",status:"locked"}).select("id").single();
+    if(sessionError)throw sessionError;
+    const rows=participants.map((p,i)=>({draft_session_id:sessionRow.id,participant_player_id:p.id,drafted_player_id:drafted[i],revealed:false,points:0}));
+    const {error:assignmentError}=await supabaseClient.from("draft_assignments").insert(rows);
+    if(assignmentError)throw assignmentError;
+    await loadDraftData();
+  }catch(error){
+    console.error("Draft generation failed:",error);
+    alert("The Draft could not be generated. Please try again.");
+  }finally{draftBusy=false;renderDraft();}
+}
+
+async function revealMyDraftPlayer(){
+  if(!currentClubPlayerKey||draftBusy)return;
+  const active=getActiveMatchday("FC27"),ds=active?draftSessionForMatchday(active.id):null,mine=ds?draftAssignmentForCurrentUser(ds):null;
+  if(!mine||mine.revealed)return;
+  draftBusy=true;renderDraft();
+  try{
+    const {error}=await supabaseClient.from("draft_assignments").update({revealed:true,revealed_at:new Date().toISOString()}).eq("id",mine.id);
+    if(error)throw error;
+    await loadDraftData();
+  }catch(error){console.error("Draft reveal failed:",error);alert("Your Draft player could not be revealed. Please try again.");}
+  finally{draftBusy=false;renderDraft();}
+}
+
+async function loadDraftData(){
+  if(!supabaseClient)return;
+  try{
+    const {data:sessions,error:e1}=await supabaseClient.from("draft_sessions").select("id,matchday_session_id,season,status,created_at").order("created_at",{ascending:false});
+    if(e1)throw e1;
+    const {data:assignments,error:e2}=await supabaseClient.from("draft_assignments").select("id,draft_session_id,participant_player_id,drafted_player_id,revealed,revealed_at,points,created_at").order("created_at",{ascending:false});
+    if(e2)throw e2;
+    draftSessions=(sessions||[]).map(r=>({id:r.id,matchdaySessionId:String(r.matchday_session_id),season:r.season||"FC27",status:r.status||"locked",createdAt:r.created_at||null}));
+    draftAssignments=(assignments||[]).map(r=>({id:r.id,draftSessionId:r.draft_session_id,participantPlayerId:r.participant_player_id,draftedPlayerId:r.drafted_player_id,revealed:Boolean(r.revealed),revealedAt:r.revealed_at||null,points:Number(r.points||0),createdAt:r.created_at||null}));
+  }catch(error){console.warn("Draft data could not be loaded:",error);}
+}
+
+
 /* RENDER */
 
 function renderEverything(){
@@ -11795,6 +11925,7 @@ function renderEverything(){
   renderSquad();
   renderMatches();
   renderMatchday();
+  renderDraft();
   renderStatsPage();
   if(el("achievementsCatalogue")) renderAchievementsPage();
   renderMorePage();
