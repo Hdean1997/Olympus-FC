@@ -3284,6 +3284,21 @@ textarea.bug-form-control{
 .clips-comment-note{margin-top:7px;color:#71839b;font-size:10px}
 
 </style>
+
+<style>
+  .draft-score-breakdown{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-top:14px;
+  }
+  .draft-score-breakdown .draft-leader-row{
+    margin:0;
+    min-height:46px;
+    padding:10px 12px;
+  }
+</style>
+
 </head>
 
 <body>
@@ -11906,7 +11921,7 @@ function draftScoreBreakdownHTML(score){
   ].filter(row=>row[2]>0);
 
   if(!rows.length) return `<div class="draft-empty">No Draft points recorded yet.</div>`;
-  return `<div style="margin-top:14px">${rows.map(row=>`
+  return `<div class="draft-score-breakdown">${rows.map(row=>`
     <div class="draft-leader-row">
       <div class="draft-rank">${row[0]}</div>
       <div class="draft-leader-name">${escapeHTML(row[1])}</div>
