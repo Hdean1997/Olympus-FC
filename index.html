@@ -737,7 +737,32 @@ h1{
 .ea-player-stat strong{display:block;font-size:11px;color:#fff}
 .ea-player-stat span{display:block;margin-top:2px;color:#71839a;font-size:7px;font-weight:800}
 .ea-centre-empty{margin:0 16px;padding:22px;border:1px dashed #29425f;border-radius:16px;color:#8392a6;text-align:center;font-size:12px;line-height:1.5}
+
 @media(max-width:390px){.ea-centre-summary{grid-template-columns:repeat(2,1fr)}}
+
+.ea-analytics-launch{display:block;width:calc(100% - 32px);margin:0 16px 20px;min-height:52px;border:1px solid #315d9d;border-radius:14px;background:linear-gradient(145deg,#132a47,#10233b);color:#fff;font-weight:900;text-align:left;padding:0 15px}
+.ea-analytics-launch-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ea-analytics-launch small{display:block;margin-top:3px;color:#8fa6c5;font-size:9px;font-weight:700}
+.ea-analytics-leaders{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:0 16px 18px}
+.ea-analytics-leader{min-width:0;padding:11px 6px;border-radius:11px;background:#101d2e;border:1px solid #29425f;text-align:center}
+.ea-analytics-leader-label{color:#71839a;font-size:7px;font-weight:900;line-height:1.25}
+.ea-analytics-leader-name{margin-top:5px;color:#fff;font-size:10px;font-weight:900;overflow-wrap:anywhere}
+.ea-analytics-leader-value{margin-top:3px;color:#e8bd4b;font-size:13px;font-weight:900}
+.ea-analytics-card{margin:0 16px 14px;padding:16px;border-radius:17px;background:#101d2e;border:1px solid #29425f}
+.ea-analytics-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.ea-analytics-player{font-size:17px;font-weight:900;color:#fff}
+.ea-analytics-meta{margin-top:4px;color:#8392a6;font-size:10px}
+.ea-analytics-rating{color:#e8bd4b;font-size:20px;font-weight:900}
+.ea-analytics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:13px}
+.ea-analytics-stat{padding:10px 5px;border-radius:10px;background:#07111f;text-align:center}
+.ea-analytics-stat strong{display:block;color:#fff;font-size:14px}
+.ea-analytics-stat span{display:block;margin-top:3px;color:#71839a;font-size:7px;font-weight:900;line-height:1.25}
+.ea-analytics-derived{margin-top:10px;padding-top:10px;border-top:1px solid #25384f;display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.ea-analytics-derived .ea-analytics-stat{background:#0a1626}
+.ea-analytics-note{margin:2px 16px 18px;color:#71839a;font-size:9px;line-height:1.5}
+@media(max-width:700px){.ea-analytics-leaders{grid-template-columns:repeat(2,1fr)}.ea-analytics-grid,.ea-analytics-derived{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:390px){.ea-analytics-grid,.ea-analytics-derived{grid-template-columns:repeat(2,1fr)}}
+
 
 .ea-match-card{cursor:pointer;transition:transform .12s ease,border-color .12s ease}
 .ea-match-card:active{transform:scale(.99);border-color:#4b7bc4}
@@ -3808,8 +3833,38 @@ textarea.bug-form-control{
   </div>
 
   <div id="eaCentreSummary" class="ea-centre-summary"></div>
+
+  <button class="ea-analytics-launch" onclick="openEaPlayerAnalytics()">
+    <span class="ea-analytics-launch-row">
+      <span>
+        EA PLAYER ANALYTICS
+        <small>Totals, averages and advanced data across imported matches</small>
+      </span>
+      <span>›</span>
+    </span>
+  </button>
+
   <div class="ea-centre-heading">RECENT IMPORTED MATCHES</div>
   <div id="eaCentreMatches"></div>
+</div>
+
+<!-- EA PLAYER ANALYTICS — isolated read-only display -->
+<div id="eaPlayerAnalytics" class="page">
+  <div class="page-header">
+    <button class="app-back-button" onclick="closeEaPlayerAnalytics()">
+      <span class="app-back-icon">‹</span>
+      <span>Back to EA Match Centre</span>
+    </button>
+    <h2>EA Player Analytics</h2>
+    <p>FC27 · Across imported EA matches</p>
+  </div>
+
+  <div class="ea-centre-heading">EA DATA LEADERS</div>
+  <div id="eaAnalyticsLeaders" class="ea-analytics-leaders"></div>
+
+  <div class="ea-centre-heading">PLAYER ANALYTICS</div>
+  <div id="eaAnalyticsPlayers"></div>
+  <div class="ea-analytics-note">Read-only analytics calculated from the separate EA import tables. These figures do not alter Olympus stats, records, achievements, POTN or Matchday Reports.</div>
 </div>
 
 <!-- EA MATCH DETAIL — isolated read-only display -->
@@ -6484,6 +6539,149 @@ function eaBreakdownHtml(player){
     <div class="ea-breakdown-panel" data-breakdown="attacking">${eaAttackingHtml(player)}</div>
     <div class="ea-breakdown-panel" data-breakdown="discipline">${eaDisciplineHtml(player)}</div>
   </div>`;
+}
+
+
+function eaPlayingSecondsValue(player){
+  const raw=eaRawPlayerData(player);
+  const value=Number(raw?.secondsPlayed ?? raw?.secondsplayed);
+  return Number.isFinite(value)&&value>0 ? value : 0;
+}
+
+function eaFormatTotalMinutes(seconds){
+  if(!seconds) return "N/A";
+  return `${Math.round(seconds/60).toLocaleString("en-GB")}m`;
+}
+
+function eaAnalyticsRows(){
+  const groups=new Map();
+
+  eaMatchCentrePlayers.forEach(player=>{
+    const name=String(player.olympus_player_name||player.gamertag||"Unknown");
+    if(!groups.has(name)){
+      groups.set(name,{
+        name,
+        gamertag:player.gamertag||"",
+        matches:0,seconds:0,goals:0,assists:0,shots:0,
+        passesMade:0,passAttempts:0,tacklesMade:0,tackleAttempts:0,
+        ratingTotal:0,ratingCount:0,interceptions:0
+      });
+    }
+
+    const row=groups.get(name);
+    row.matches++;
+    row.seconds+=eaPlayingSecondsValue(player);
+    row.goals+=Number(player.goals||0);
+    row.assists+=Number(player.assists||0);
+    row.shots+=Number(player.shots||0);
+    row.passesMade+=Number(player.passes_made||0);
+    row.passAttempts+=Number(player.pass_attempts||0);
+    row.tacklesMade+=Number(player.tackles_made||0);
+    row.tackleAttempts+=Number(player.tackle_attempts||0);
+
+    if(player.rating!==null&&player.rating!==undefined&&Number.isFinite(Number(player.rating))){
+      row.ratingTotal+=Number(player.rating);
+      row.ratingCount++;
+    }
+
+    const events=eaEventCounts(player);
+    row.interceptions+=Number(events["6"]||0);
+  });
+
+  return [...groups.values()].map(row=>({
+    ...row,
+    ga:row.goals+row.assists,
+    avgRating:row.ratingCount?row.ratingTotal/row.ratingCount:0,
+    passPct:row.passAttempts?(row.passesMade/row.passAttempts)*100:0,
+    tacklePct:row.tackleAttempts?(row.tacklesMade/row.tackleAttempts)*100:0,
+    gaPerMatch:row.matches?(row.goals+row.assists)/row.matches:0,
+    passesPerMatch:row.matches?row.passesMade/row.matches:0,
+    tacklesPerMatch:row.matches?row.tacklesMade/row.matches:0,
+    interceptionsPerMatch:row.matches?row.interceptions/row.matches:0
+  })).sort((a,b)=>b.avgRating-a.avgRating);
+}
+
+function eaAnalyticsLeaderHtml(label,row,value){
+  if(!row) return `<div class="ea-analytics-leader"><div class="ea-analytics-leader-label">${label}</div><div class="ea-analytics-leader-name">—</div><div class="ea-analytics-leader-value">—</div></div>`;
+  return `<div class="ea-analytics-leader">
+    <div class="ea-analytics-leader-label">${label}</div>
+    <div class="ea-analytics-leader-name">${eaEscape(row.name)}</div>
+    <div class="ea-analytics-leader-value">${eaEscape(value)}</div>
+  </div>`;
+}
+
+function renderEaPlayerAnalytics(){
+  const rows=eaAnalyticsRows();
+  const leaders=el("eaAnalyticsLeaders");
+  const players=el("eaAnalyticsPlayers");
+
+  if(!rows.length){
+    leaders.innerHTML="";
+    players.innerHTML=`<div class="ea-centre-empty">No imported EA player data is available yet.</div>`;
+    return;
+  }
+
+  const topRated=[...rows].sort((a,b)=>b.avgRating-a.avgRating)[0];
+  const topScorer=[...rows].sort((a,b)=>b.goals-a.goals||b.assists-a.assists)[0];
+  const topCreator=[...rows].sort((a,b)=>b.assists-a.assists||b.ga-a.ga)[0];
+  const bestPass=[...rows].filter(r=>r.passAttempts>0).sort((a,b)=>b.passPct-a.passPct||b.passAttempts-a.passAttempts)[0];
+  const mostInterceptions=[...rows].sort((a,b)=>b.interceptions-a.interceptions)[0];
+
+  leaders.innerHTML=[
+    eaAnalyticsLeaderHtml("TOP RATED",topRated,topRated?topRated.avgRating.toFixed(2):"—"),
+    eaAnalyticsLeaderHtml("TOP SCORER",topScorer,topScorer?`${topScorer.goals} G`:"—"),
+    eaAnalyticsLeaderHtml("TOP CREATOR",topCreator,topCreator?`${topCreator.assists} A`:"—"),
+    eaAnalyticsLeaderHtml("BEST PASS %",bestPass,bestPass?`${Math.round(bestPass.passPct)}%`:"—"),
+    eaAnalyticsLeaderHtml("MOST INTERCEPTIONS",mostInterceptions,mostInterceptions?String(mostInterceptions.interceptions):"—")
+  ].join("");
+
+  players.innerHTML=rows.map(row=>`
+    <div class="ea-analytics-card">
+      <div class="ea-analytics-card-head">
+        <div>
+          <div class="ea-analytics-player">${eaEscape(row.name)}</div>
+          <div class="ea-analytics-meta">${eaEscape(row.gamertag)} · ${row.matches} imported match${row.matches===1?"":"es"}</div>
+        </div>
+        <div class="ea-analytics-rating">${row.avgRating.toFixed(2)}</div>
+      </div>
+
+      <div class="ea-analytics-grid">
+        <div class="ea-analytics-stat"><strong>${row.matches}</strong><span>MATCHES</span></div>
+        <div class="ea-analytics-stat"><strong>${eaFormatTotalMinutes(row.seconds)}</strong><span>PLAYING TIME</span></div>
+        <div class="ea-analytics-stat"><strong>${row.goals}</strong><span>GOALS</span></div>
+        <div class="ea-analytics-stat"><strong>${row.assists}</strong><span>ASSISTS</span></div>
+        <div class="ea-analytics-stat"><strong>${row.ga}</strong><span>G + A</span></div>
+        <div class="ea-analytics-stat"><strong>${row.avgRating.toFixed(2)}</strong><span>AVG RATING</span></div>
+        <div class="ea-analytics-stat"><strong>${row.passesMade}/${row.passAttempts}</strong><span>PASSES</span></div>
+        <div class="ea-analytics-stat"><strong>${Math.round(row.passPct)}%</strong><span>PASS %</span></div>
+        <div class="ea-analytics-stat"><strong>${row.tacklesMade}/${row.tackleAttempts}</strong><span>TACKLES</span></div>
+        <div class="ea-analytics-stat"><strong>${Math.round(row.tacklePct)}%</strong><span>TACKLE %</span></div>
+        <div class="ea-analytics-stat"><strong>${row.interceptions}</strong><span>INTERCEPTIONS</span></div>
+        <div class="ea-analytics-stat"><strong>${row.shots}</strong><span>SHOTS</span></div>
+      </div>
+
+      <div class="ea-analytics-derived">
+        <div class="ea-analytics-stat"><strong>${row.gaPerMatch.toFixed(2)}</strong><span>G+A / MATCH</span></div>
+        <div class="ea-analytics-stat"><strong>${row.passesPerMatch.toFixed(1)}</strong><span>PASSES / MATCH</span></div>
+        <div class="ea-analytics-stat"><strong>${row.tacklesPerMatch.toFixed(1)}</strong><span>TACKLES WON / MATCH</span></div>
+        <div class="ea-analytics-stat"><strong>${row.interceptionsPerMatch.toFixed(1)}</strong><span>INTERCEPTIONS / MATCH</span></div>
+      </div>
+    </div>`).join("");
+}
+
+function openEaPlayerAnalytics(){
+  document.querySelectorAll(".page").forEach(page=>page.classList.remove("active"));
+  el("eaPlayerAnalytics").classList.add("active");
+  el("bottomNav").classList.add("hidden");
+  renderEaPlayerAnalytics();
+  window.scrollTo(0,0);
+}
+
+function closeEaPlayerAnalytics(){
+  el("eaPlayerAnalytics").classList.remove("active");
+  el("eaMatchCentre").classList.add("active");
+  el("bottomNav").classList.add("hidden");
+  window.scrollTo(0,0);
 }
 
 function openEaMatchDetail(matchId){
