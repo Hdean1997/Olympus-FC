@@ -760,6 +760,19 @@ h1{
 .ea-detail-note{margin:4px 16px 18px;color:#71839a;font-size:10px;line-height:1.5}
 @media(max-width:390px){.ea-detail-grid{grid-template-columns:repeat(2,1fr)}}
 
+.ea-advanced-section{margin-top:14px;padding-top:14px;border-top:1px solid #25384f}
+.ea-advanced-title{font-size:11px;font-weight:900;letter-spacing:.8px;color:#6f9dff;margin-bottom:9px}
+.ea-advanced-subtitle{font-size:9px;font-weight:900;color:#71839a;margin:11px 0 6px}
+.ea-pass-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.ea-pass-stat{padding:9px 5px;border-radius:9px;background:#0a1626;text-align:center}
+.ea-pass-stat strong{display:block;font-size:13px;color:#fff}
+.ea-pass-stat span{display:block;margin-top:3px;font-size:7px;font-weight:900;color:#71839a}
+.ea-pass-special{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.ea-pass-chip{padding:7px 9px;border-radius:999px;background:#0a1626;border:1px solid #25384f;font-size:9px;color:#a9bad0}
+.ea-pass-chip b{color:#fff}
+.ea-event-note{margin-top:9px;color:#667a94;font-size:8px;line-height:1.45}
+
+
 
 /* MATCHES */
 
@@ -6215,6 +6228,93 @@ function closeEaMatchCentre(){
   renderMatches();
   window.scrollTo(0,0);
 }
+function eaEventCounts(player){
+  const counts={};
+  const raw=player&&player.raw_data&&typeof player.raw_data==="object" ? player.raw_data : player||{};
+  for(let bucket=0;bucket<4;bucket++){
+    const value=raw[`match_event_aggregate_${bucket}`] ?? player?.[`aggregate_${bucket}`] ?? "";
+    String(value||"").split(",").forEach(pair=>{
+      const [id,count]=pair.split(":");
+      if(id!==undefined && count!==undefined && id!==""){
+        counts[id]=(counts[id]||0)+(Number(count)||0);
+      }
+    });
+  }
+  return counts;
+}
+
+function eaAdvancedPassingHtml(player){
+  const e=eaEventCounts(player);
+  const n=id=>Number(e[String(id)]||0);
+
+  // Confirmed/high-confidence community mappings only.
+  const completed=n(215);
+  const failed=n(216);
+
+  const forwardMade=n(30), forwardFailed=n(31);
+  const backwardMade=n(32), backwardFailed=n(33);
+  const sidewaysMade=n(34), sidewaysFailed=n(35);
+
+  const shortMade=n(24), shortFailed=n(25);
+  const mediumMade=n(26), mediumFailed=n(27);
+  const longMade=n(28), longFailed=n(29);
+  const crossMade=n(36), crossFailed=n(37);
+
+  const firstTime=n(143);
+  const switches=n(144);
+  const flair=n(147);
+  const through=n(152);
+  const offside=n(153);
+
+  const directionKnown=forwardMade+backwardMade+sidewaysMade+forwardFailed+backwardFailed+sidewaysFailed;
+  const lengthKnown=shortMade+mediumMade+longMade+crossMade+shortFailed+mediumFailed+longFailed+crossFailed;
+  const specialKnown=firstTime+switches+flair+through+offside;
+
+  if(!(completed||failed||directionKnown||lengthKnown||specialKnown)){
+    return `<div class="ea-advanced-section">
+      <div class="ea-advanced-title">ADVANCED PASSING</div>
+      <div class="ea-event-note">No decoded passing events were stored for this player.</div>
+    </div>`;
+  }
+
+  return `<div class="ea-advanced-section">
+    <div class="ea-advanced-title">ADVANCED PASSING</div>
+
+    <div class="ea-advanced-subtitle">EVENT PASS TOTALS</div>
+    <div class="ea-pass-grid">
+      <div class="ea-pass-stat"><strong>${completed}</strong><span>COMPLETED*</span></div>
+      <div class="ea-pass-stat"><strong>${failed}</strong><span>FAILED*</span></div>
+      <div class="ea-pass-stat"><strong>${completed+failed}</strong><span>EVENT ATTEMPTS*</span></div>
+    </div>
+
+    <div class="ea-advanced-subtitle">DIRECTION · COMPLETED / FAILED</div>
+    <div class="ea-pass-grid">
+      <div class="ea-pass-stat"><strong>${forwardMade}/${forwardFailed}</strong><span>FORWARD</span></div>
+      <div class="ea-pass-stat"><strong>${backwardMade}/${backwardFailed}</strong><span>BACKWARD</span></div>
+      <div class="ea-pass-stat"><strong>${sidewaysMade}/${sidewaysFailed}</strong><span>SIDEWAYS</span></div>
+    </div>
+
+    <div class="ea-advanced-subtitle">LENGTH · COMPLETED / FAILED</div>
+    <div class="ea-pass-grid">
+      <div class="ea-pass-stat"><strong>${shortMade}/${shortFailed}</strong><span>SHORT</span></div>
+      <div class="ea-pass-stat"><strong>${mediumMade}/${mediumFailed}</strong><span>MEDIUM</span></div>
+      <div class="ea-pass-stat"><strong>${longMade}/${longFailed}</strong><span>LONG</span></div>
+      <div class="ea-pass-stat"><strong>${crossMade}/${crossFailed}</strong><span>CROSSES</span></div>
+    </div>
+
+    <div class="ea-advanced-subtitle">PASS TYPES</div>
+    <div class="ea-pass-special">
+      <span class="ea-pass-chip"><b>${firstTime}</b> first-time</span>
+      <span class="ea-pass-chip"><b>${through}</b> through</span>
+      <span class="ea-pass-chip"><b>${switches}</b> switches</span>
+      <span class="ea-pass-chip"><b>${flair}</b> flair</span>
+      <span class="ea-pass-chip"><b>${offside}</b> offside</span>
+    </div>
+
+    <div class="ea-event-note">*These are decoded EA event counts. EA's named passes-made figure can differ because event 215 excludes offside passes.</div>
+  </div>`;
+}
+
 function openEaMatchDetail(matchId){
   const match=eaMatchCentreRows.find(row=>String(row.match_id)===String(matchId));
   if(!match) return;
@@ -6253,6 +6353,7 @@ function openEaMatchDetail(matchId){
         <div class="ea-detail-stat"><strong>${p.rating==null?"—":Number(p.rating).toFixed(1)}</strong><span>EA RATING</span></div>
         <div class="ea-detail-stat"><strong>${p.ea_motm?"YES":"—"}</strong><span>EA MOTM</span></div>
       </div>
+      ${eaAdvancedPassingHtml(p)}
     </div>`;
   }).join("");
 
