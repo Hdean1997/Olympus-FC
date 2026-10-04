@@ -782,6 +782,19 @@ h1{
 .ea-profile-match-stat strong{display:block;color:#fff;font-size:10px}
 .ea-profile-match-stat span{display:block;margin-top:2px;color:#71839a;font-size:6px;font-weight:900}
 @media(max-width:520px){.ea-profile-form{grid-template-columns:repeat(5,1fr)}.ea-profile-match-grid{grid-template-columns:repeat(3,1fr)}}
+.ea-profile-section{margin:0 16px 12px;padding:14px;border-radius:15px;background:#101d2e;border:1px solid #29425f}
+.ea-profile-section-title{color:#6f9dff;font-size:11px;font-weight:900;margin-bottom:10px}
+.ea-profile-section-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.ea-profile-section-grid .ea-analytics-stat{background:#07111f}
+.ea-profile-history-toggle{display:flex;width:calc(100% - 32px);margin:4px 16px 14px;align-items:center;justify-content:space-between;gap:12px;padding:14px;border:1px solid #315d9d;border-radius:13px;background:#10233b;color:#fff;font-weight:900;text-align:left}
+.ea-profile-history-toggle small{display:block;margin-top:3px;color:#8392a6;font-size:8px}
+.ea-profile-history-arrow{font-size:18px;transition:transform .15s ease}
+.ea-profile-history-toggle.open .ea-profile-history-arrow{transform:rotate(90deg)}
+.ea-profile-history{display:none}
+.ea-profile-history.open{display:block}
+@media(max-width:700px){.ea-profile-section-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:390px){.ea-profile-section-grid{grid-template-columns:repeat(2,1fr)}}
+
 
 
 
@@ -6716,11 +6729,45 @@ function eaPlayerAnalyticsPerformances(name){
     .sort((a,b)=>new Date(b.match?.played_at||0)-new Date(a.match?.played_at||0));
 }
 
+function eaAggregateEvents(performances){
+  const totals={};
+  performances.forEach(item=>{
+    const events=eaEventCounts(item.player);
+    Object.entries(events).forEach(([key,value])=>{
+      totals[key]=(totals[key]||0)+Number(value||0);
+    });
+  });
+  return totals;
+}
+
+function eaProfileStat(value,label){
+  return `<div class="ea-analytics-stat"><strong>${eaEscape(String(value))}</strong><span>${eaEscape(label)}</span></div>`;
+}
+
+function toggleEaProfileHistory(button){
+  const history=el("eaProfileHistory");
+  const opening=!history.classList.contains("open");
+  history.classList.toggle("open",opening);
+  button.classList.toggle("open",opening);
+  const label=button.querySelector("[data-history-label]");
+  if(label) label.textContent=opening?"HIDE MATCH-BY-MATCH PERFORMANCES":"SHOW MATCH-BY-MATCH PERFORMANCES";
+}
+
 function openEaAnalyticsProfile(name){
   const rows=eaAnalyticsRows();
   const summary=rows.find(row=>row.name===name);
   const performances=eaPlayerAnalyticsPerformances(name);
   if(!summary||!performances.length) return;
+
+  const events=eaAggregateEvents(performances);
+  const n=id=>Number(events[String(id)]||0);
+  const rawRows=performances.map(item=>eaRawPlayerData(item.player));
+  const redCards=rawRows.reduce((sum,raw)=>sum+Number(raw?.redcards||0),0);
+  const eaMotms=performances.reduce((sum,item)=>sum+(item.player.ea_motm?1:0),0);
+
+  const eventPassMade=n(215), eventPassFailed=n(216);
+  const eventPassAttempts=eventPassMade+eventPassFailed;
+  const eventPassPct=eventPassAttempts?Math.round(eventPassMade/eventPassAttempts*100):0;
 
   const recent5=performances.slice(0,5);
   const recentAvg=recent5.length
@@ -6733,12 +6780,12 @@ function openEaAnalyticsProfile(name){
       <div class="ea-profile-name">${eaEscape(summary.name)}</div>
       <div class="ea-profile-meta">${eaEscape(summary.gamertag)} · ${summary.matches} imported matches · ${eaFormatTotalMinutes(summary.seconds)} playing time</div>
       <div class="ea-detail-grid">
-        <div class="ea-detail-stat"><strong>${summary.goals}</strong><span>GOALS</span></div>
-        <div class="ea-detail-stat"><strong>${summary.assists}</strong><span>ASSISTS</span></div>
-        <div class="ea-detail-stat"><strong>${summary.ga}</strong><span>G + A</span></div>
-        <div class="ea-detail-stat"><strong>${summary.avgRating.toFixed(2)}</strong><span>AVG RATING</span></div>
-        <div class="ea-detail-stat"><strong>${Math.round(summary.passPct)}%</strong><span>PASS %</span></div>
-        <div class="ea-detail-stat"><strong>${summary.interceptions}</strong><span>INTERCEPTIONS</span></div>
+        ${eaProfileStat(summary.goals,"GOALS")}
+        ${eaProfileStat(summary.assists,"ASSISTS")}
+        ${eaProfileStat(summary.ga,"G + A")}
+        ${eaProfileStat(summary.avgRating.toFixed(2),"AVG RATING")}
+        ${eaProfileStat(summary.shots,"SHOTS")}
+        ${eaProfileStat(eaMotms,"EA MOTM")}
       </div>
       <div class="ea-advanced-subtitle">LAST ${recent5.length} EA MATCH${recent5.length===1?"":"ES"} · AVG RATING ${recentAvg.toFixed(2)}</div>
       <div class="ea-profile-form">
@@ -6750,31 +6797,120 @@ function openEaAnalyticsProfile(name){
       </div>
     </div>
 
-    <div class="ea-centre-heading">MATCH-BY-MATCH EA PERFORMANCES</div>
-    ${performances.map(item=>{
-      const p=item.player;
-      const m=item.match;
-      const events=eaEventCounts(p);
-      const passPct=Number(p.pass_attempts||0)?Math.round(Number(p.passes_made||0)/Number(p.pass_attempts||0)*100):0;
-      const date=m?.played_at?new Date(m.played_at).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"";
-      return `<div class="ea-profile-match">
-        <div class="ea-profile-match-top">
-          <div>
-            <div class="ea-profile-match-opponent">vs ${eaEscape(m?.opponent_name||"Unknown opponent")} · ${eaEscape(String(m?.olympus_goals??""))}-${eaEscape(String(m?.opponent_goals??""))}</div>
-            <div class="ea-profile-match-date">${eaEscape(date)}</div>
+    <div class="ea-centre-heading">COMPLETE EA STAT PROFILE</div>
+
+    <div class="ea-profile-section">
+      <div class="ea-profile-section-title">PASSING</div>
+      <div class="ea-profile-section-grid">
+        ${eaProfileStat(`${summary.passesMade}/${summary.passAttempts}`,"NAMED PASSES")}
+        ${eaProfileStat(`${Math.round(summary.passPct)}%`,"NAMED PASS %")}
+        ${eaProfileStat(`${eventPassMade}/${eventPassAttempts}`,"EVENT PASSES")}
+        ${eaProfileStat(`${eventPassPct}%`,"EVENT PASS %")}
+        ${eaProfileStat(`${n(30)}/${n(31)}`,"FORWARD C/F")}
+        ${eaProfileStat(`${n(32)}/${n(33)}`,"BACKWARD C/F")}
+        ${eaProfileStat(`${n(34)}/${n(35)}`,"SIDEWAYS C/F")}
+        ${eaProfileStat(`${n(24)}/${n(25)}`,"SHORT C/F")}
+        ${eaProfileStat(`${n(26)}/${n(27)}`,"MEDIUM C/F")}
+        ${eaProfileStat(`${n(28)}/${n(29)}`,"LONG C/F")}
+        ${eaProfileStat(n(143),"FIRST-TIME PASSES")}
+        ${eaProfileStat(n(144),"SWITCHES")}
+        ${eaProfileStat(n(147),"FLAIR PASSES")}
+        ${eaProfileStat(n(152),"THROUGH BALLS")}
+        ${eaProfileStat(n(153),"OFFSIDE PASSES")}
+        ${eaProfileStat(`${n(36)}/${n(37)}`,"CROSSES C/F")}
+      </div>
+    </div>
+
+    <div class="ea-profile-section">
+      <div class="ea-profile-section-title">DEFENDING</div>
+      <div class="ea-profile-section-grid">
+        ${eaProfileStat(`${summary.tacklesMade}/${summary.tackleAttempts}`,"NAMED TACKLES")}
+        ${eaProfileStat(`${Math.round(summary.tacklePct)}%`,"TACKLE %")}
+        ${eaProfileStat(n(229),"STANDING WON")}
+        ${eaProfileStat(n(230),"SLIDING WON")}
+        ${eaProfileStat(n(164),"CLEAN TACKLES")}
+        ${eaProfileStat(n(163),"DANGEROUS TACKLES")}
+        ${eaProfileStat(n(6),"INTERCEPTIONS")}
+        ${eaProfileStat(n(158),"DISPOSSESSIONS")}
+        ${eaProfileStat(n(156),"CROSSES BLOCKED")}
+        ${eaProfileStat(n(266),"DEF. AERIAL WINS")}
+        ${eaProfileStat(n(265),"ATT. AERIAL WINS")}
+      </div>
+    </div>
+
+    <div class="ea-profile-section">
+      <div class="ea-profile-section-title">ATTACKING &amp; CHANCE CREATION</div>
+      <div class="ea-profile-section-grid">
+        ${eaProfileStat(summary.shots,"NAMED SHOTS")}
+        ${eaProfileStat(n(217),"SHOTS ON TARGET")}
+        ${eaProfileStat(n(218),"SHOTS OFF TARGET")}
+        ${eaProfileStat(n(13),"ON TARGET · INSIDE")}
+        ${eaProfileStat(n(18),"ON TARGET · OUTSIDE")}
+        ${eaProfileStat(n(14),"OFF TARGET · INSIDE")}
+        ${eaProfileStat(n(19),"OFF TARGET · OUTSIDE")}
+        ${eaProfileStat(n(202),"SHOTS SAVED")}
+        ${eaProfileStat(n(115),"SECOND ASSISTS")}
+        ${eaProfileStat(n(118),"THROUGH-BALL ASSISTS")}
+        ${eaProfileStat(n(174),"DRIBBLES COMPLETED")}
+        ${eaProfileStat(n(97),"DRIBBLES CARRIED")}
+        ${eaProfileStat(n(38),"PLAYERS BEAT · SKILL")}
+        ${eaProfileStat(Math.max(0,n(112)-n(38)),"PLAYERS BEAT · NO SKILL")}
+        ${eaProfileStat(n(128),"FIRST-TIME GOALS")}
+        ${eaProfileStat(n(131),"WEAK-FOOT GOALS")}
+        ${eaProfileStat(n(136),"GOALS OFF POST")}
+      </div>
+    </div>
+
+    <div class="ea-profile-section">
+      <div class="ea-profile-section-title">DISCIPLINE &amp; SET PIECES</div>
+      <div class="ea-profile-section-grid">
+        ${eaProfileStat(n(2)+n(3),"FOULS COMMITTED")}
+        ${eaProfileStat(n(3),"FOULS IN DEFENSIVE THIRD")}
+        ${eaProfileStat(n(4),"FOULS SUFFERED")}
+        ${eaProfileStat(n(95)+n(213),"YELLOW CARDS")}
+        ${eaProfileStat(n(95),"YELLOW · IMMEDIATE")}
+        ${eaProfileStat(n(213),"YELLOW · DELAYED")}
+        ${eaProfileStat(redCards,"RED CARDS")}
+        ${eaProfileStat(n(94),"PENALTIES CONCEDED")}
+        ${eaProfileStat(n(10),"CORNERS CONCEDED")}
+        ${eaProfileStat(n(145),"CORNERS TAKEN")}
+      </div>
+    </div>
+
+    <button class="ea-profile-history-toggle" onclick="toggleEaProfileHistory(this)">
+      <span>
+        <span data-history-label>SHOW MATCH-BY-MATCH PERFORMANCES</span>
+        <small>${performances.length} imported EA performance${performances.length===1?"":"s"}</small>
+      </span>
+      <span class="ea-profile-history-arrow">›</span>
+    </button>
+
+    <div id="eaProfileHistory" class="ea-profile-history">
+      ${performances.map(item=>{
+        const p=item.player;
+        const m=item.match;
+        const eventRow=eaEventCounts(p);
+        const passPct=Number(p.pass_attempts||0)?Math.round(Number(p.passes_made||0)/Number(p.pass_attempts||0)*100):0;
+        const date=m?.played_at?new Date(m.played_at).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"";
+        return `<div class="ea-profile-match">
+          <div class="ea-profile-match-top">
+            <div>
+              <div class="ea-profile-match-opponent">vs ${eaEscape(m?.opponent_name||"Unknown opponent")} · ${eaEscape(String(m?.olympus_goals??""))}-${eaEscape(String(m?.opponent_goals??""))}</div>
+              <div class="ea-profile-match-date">${eaEscape(date)}</div>
+            </div>
+            <div class="ea-profile-match-rating">${Number(p.rating||0).toFixed(1)}</div>
           </div>
-          <div class="ea-profile-match-rating">${Number(p.rating||0).toFixed(1)}</div>
-        </div>
-        <div class="ea-profile-match-grid">
-          <div class="ea-profile-match-stat"><strong>${Number(p.goals||0)}</strong><span>GOALS</span></div>
-          <div class="ea-profile-match-stat"><strong>${Number(p.assists||0)}</strong><span>ASSISTS</span></div>
-          <div class="ea-profile-match-stat"><strong>${Number(p.passes_made||0)}/${Number(p.pass_attempts||0)}</strong><span>PASSES</span></div>
-          <div class="ea-profile-match-stat"><strong>${passPct}%</strong><span>PASS %</span></div>
-          <div class="ea-profile-match-stat"><strong>${Number(p.tackles_made||0)}/${Number(p.tackle_attempts||0)}</strong><span>TACKLES</span></div>
-          <div class="ea-profile-match-stat"><strong>${Number(events["6"]||0)}</strong><span>INTERCEPTIONS</span></div>
-        </div>
-      </div>`;
-    }).join("")}
+          <div class="ea-profile-match-grid">
+            ${eaProfileStat(Number(p.goals||0),"GOALS")}
+            ${eaProfileStat(Number(p.assists||0),"ASSISTS")}
+            ${eaProfileStat(`${Number(p.passes_made||0)}/${Number(p.pass_attempts||0)}`,"PASSES")}
+            ${eaProfileStat(`${passPct}%`,"PASS %")}
+            ${eaProfileStat(`${Number(p.tackles_made||0)}/${Number(p.tackle_attempts||0)}`,"TACKLES")}
+            ${eaProfileStat(Number(eventRow["6"]||0),"INTERCEPTIONS")}
+          </div>
+        </div>`;
+      }).join("")}
+    </div>
   `;
 
   document.querySelectorAll(".page").forEach(page=>page.classList.remove("active"));
