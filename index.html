@@ -6451,7 +6451,7 @@ function eaDisciplineHtml(player){
     ["YELLOW CARDS",n(95)+n(213)],
     ["YELLOW · IMMEDIATE",n(95)],
     ["YELLOW · DELAYED",n(213)],
-    ["RED CARDS",number(eaRawPlayerData(player).redcards)],
+    ["RED CARDS",Number(eaRawPlayerData(player).redcards ?? 0)],
     ["PENALTIES CONCEDED",n(94)],
     ["CORNERS CONCEDED",n(10)],
     ["CORNERS TAKEN",n(145)]
