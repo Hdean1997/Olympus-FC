@@ -6670,7 +6670,7 @@ function renderEaPlayerAnalytics(){
   ].join("");
 
   players.innerHTML=rows.map(row=>`
-    <div class="ea-analytics-card" onclick="openEaAnalyticsProfile(decodeURIComponent(\'${encodeURIComponent(row.name)}\'))">
+    <div class="ea-analytics-card" data-ea-player="${eaEscape(row.name)}" onclick="openEaAnalyticsProfile(this.dataset.eaPlayer)">
       <div class="ea-analytics-card-head">
         <div>
           <div class="ea-analytics-player">${eaEscape(row.name)}</div>
