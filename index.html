@@ -3283,6 +3283,41 @@ textarea.bug-form-control{
 .clips-comment-post{height:38px;border:0;border-radius:10px;background:#326eff;color:#fff;padding:0 12px;font-size:12px;font-weight:800}
 .clips-comment-note{margin-top:7px;color:#71839b;font-size:10px}
 
+
+/* CURRENT DIVISION PROGRESSION */
+.division-progress-card{
+  margin:14px 0;
+  padding:16px;
+  border-radius:16px;
+  background:linear-gradient(145deg,#0c1b2d,#091421);
+  border:1px solid #233c5c;
+  box-shadow:0 12px 30px rgba(0,0,0,.16);
+}
+.division-progress-card.danger{border-color:#7d3038;background:linear-gradient(145deg,#251219,#101522)}
+.division-progress-card.promotion{border-color:#8d712a}
+.division-progress-card.promoted{border-color:#2e7d58}
+.division-progress-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.division-progress-kicker{color:#8ea3bd;font-size:9px;font-weight:bold;letter-spacing:1px;text-transform:uppercase}
+.division-progress-title{margin-top:4px;color:#fff;font-size:21px;font-weight:900}
+.division-progress-edit{border:1px solid #36577e;background:#10243b;color:#dbe8f7;border-radius:9px;padding:7px 10px;font-size:10px;font-weight:bold}
+.division-progress-main{margin-top:16px}
+.division-progress-big{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.division-progress-value{color:#fff;font-size:28px;font-weight:900}
+.division-progress-value span{color:#8fa1b6;font-size:13px}
+.division-progress-target{color:#b9c7d8;font-size:10px;text-align:right}
+.division-progress-bar{height:9px;margin-top:10px;border-radius:99px;background:#17273a;overflow:hidden}
+.division-progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#315e99,#e8bd4b)}
+.division-progress-sub{margin-top:8px;color:#9eafc3;font-size:10px;line-height:1.45}
+.division-chances{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:15px;padding-top:13px;border-top:1px solid #1d3149}
+.division-chances-label{color:#8fa1b6;font-size:9px;font-weight:bold;letter-spacing:.7px;text-transform:uppercase}
+.division-chances-hearts{font-size:17px;letter-spacing:3px}
+.division-promo-dots{display:flex;gap:7px;margin-top:12px}
+.division-promo-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#17273a;border:1px solid #29425f;color:#75879c;font-size:12px;font-weight:bold}
+.division-promo-dot.win{background:#143b2c;border-color:#2e7d58;color:#78dfa9}
+.division-promo-dot.used{background:#3b1820;border-color:#7d3038;color:#ff9ea6}
+.division-progress-alert{margin-top:13px;padding:11px 12px;border-radius:10px;background:#26151b;border:1px solid #65303a;color:#ffb4bc;font-size:10px;line-height:1.45}
+.division-progress-success{margin-top:13px;padding:11px 12px;border-radius:10px;background:#102d23;border:1px solid #28664d;color:#91e8ba;font-size:10px;line-height:1.45}
+
 </style>
 
 <style>
@@ -3431,6 +3466,8 @@ textarea.bug-form-control{
     </div>
   </div>
   </div>
+
+  <div id="divisionProgressCard" class="division-progress-card" style="display:none"></div>
 
   <div id="clubhouseSessionCard" class="clubhouse-session-card">
     <div class="clubhouse-session-label">⚽ Next Session</div>
@@ -4689,6 +4726,51 @@ textarea.bug-form-control{
   </div>
 </div>
 
+
+<!-- DIVISION PROGRESSION MODAL -->
+<div id="divisionProgressModal" class="modal">
+  <div class="modal-card small-modal-card">
+    <div class="step-indicator">OWNER CONTROL</div>
+    <div class="modal-title">Division Progress</div>
+    <div class="modal-subtitle">Update the live Home progression card. These values are shared with the whole squad.</div>
+
+    <div class="form-group">
+      <label class="form-label">Current Stage</label>
+      <select id="divisionProgressStage" class="form-control" onchange="syncDivisionProgressEditor()">
+        <option value="division">Division Progress</option>
+        <option value="promotion">Promotion Games</option>
+        <option value="relegation">Relegation Game</option>
+        <option value="promoted">Promoted</option>
+      </select>
+    </div>
+
+    <div id="divisionProgressNormalFields">
+      <div class="form-group"><label class="form-label">Current Points</label><input id="divisionProgressPoints" class="form-control" type="number" min="0" inputmode="numeric"></div>
+      <div class="form-group"><label class="form-label">Division Chances Remaining</label><input id="divisionProgressChances" class="form-control" type="number" min="0" max="3" inputmode="numeric"></div>
+    </div>
+
+    <div id="divisionProgressPromotionFields" style="display:none">
+      <div class="form-group"><label class="form-label">Promotion Wins</label><input id="divisionProgressPromoWins" class="form-control" type="number" min="0" max="4" inputmode="numeric"></div>
+      <div class="form-group"><label class="form-label">Promotion Games Played</label><input id="divisionProgressPromoPlayed" class="form-control" type="number" min="0" max="4" inputmode="numeric"></div>
+    </div>
+
+    <div style="margin-top:18px;padding-top:15px;border-top:1px solid #22364d">
+      <div class="form-label">Current Division Rules</div>
+      <div class="modal-subtitle" style="margin-bottom:12px">Editable in case any EA requirements turn out to be different.</div>
+      <div class="form-group"><label class="form-label">Points Required</label><input id="divisionRulePoints" class="form-control" type="number" min="0" inputmode="numeric"></div>
+      <div class="form-group"><label class="form-label">Promotion Wins Required</label><input id="divisionRuleWins" class="form-control" type="number" min="0" max="4" inputmode="numeric"></div>
+      <div class="form-group"><label class="form-label">Promotion Games Available</label><input id="divisionRuleGames" class="form-control" type="number" min="1" max="10" inputmode="numeric"></div>
+      <div class="form-group"><label class="form-label">Points After Failed Promotion (optional)</label><input id="divisionRuleFailedReset" class="form-control" type="number" min="0" inputmode="numeric" placeholder="Unknown / leave blank"></div>
+    </div>
+
+    <div id="divisionProgressError" class="form-error"></div>
+    <div class="form-buttons">
+      <button class="cancel-button" onclick="closeDivisionProgressModal()">Cancel</button>
+      <button class="save-button" onclick="saveDivisionProgress()">Save Progress</button>
+    </div>
+  </div>
+</div>
+
 <!-- BEGIN PLAYOFFS MODAL -->
 <div id="beginPlayoffsModal" class="modal">
   <div class="modal-card small-modal-card">
@@ -4845,6 +4927,14 @@ let currentClubPlayerKey = "";
 let draftSessions = [];
 let draftAssignments = [];
 let draftBusy = false;
+let divisionProgress = null;
+let divisionProgressRules = {
+  "Division 5":{points:9,promoWins:1,promoGames:4,failedReset:null},
+  "Division 4":{points:12,promoWins:2,promoGames:4,failedReset:null},
+  "Division 3":{points:15,promoWins:3,promoGames:4,failedReset:null},
+  "Division 2":{points:16,promoWins:4,promoGames:4,failedReset:12},
+  "Division 1":{points:22,promoWins:4,promoGames:4,failedReset:null}
+};
 let playerStatuses = {};
 let spotifyJam = null;
 let clubhouseSession = null;
@@ -6027,6 +6117,144 @@ function activateNavForPage(pageId){
 
 /* DIVISION */
 
+
+function divisionProgressRule(division){
+  return divisionProgressRules[division] || {points:0,promoWins:0,promoGames:4,failedReset:null};
+}
+function divisionPromotionDestination(division){
+  return {"Division 5":"Division 4","Division 4":"Division 3","Division 3":"Division 2","Division 2":"Division 1","Division 1":"Elite"}[division] || "Elite";
+}
+function defaultDivisionProgress(){
+  const division=seasonData?.FC27?.division || "Division 5";
+  return {season:"FC27",division,stage:"division",points:0,chances:3,promoWins:0,promoPlayed:0};
+}
+async function loadDivisionProgress(){
+  if(!supabaseClient){ divisionProgress=defaultDivisionProgress(); return; }
+  try{
+    const {data,error}=await supabaseClient.from("division_progress").select("season,division,stage,points,chances,promo_wins,promo_played,rules").eq("season","FC27").maybeSingle();
+    if(error) throw error;
+    if(data){
+      divisionProgress={
+        season:"FC27",division:data.division||seasonData.FC27.division||"Division 5",
+        stage:data.stage||"division",points:Number(data.points||0),chances:Number(data.chances??3),
+        promoWins:Number(data.promo_wins||0),promoPlayed:Number(data.promo_played||0)
+      };
+      if(data.rules && typeof data.rules==="object") divisionProgressRules={...divisionProgressRules,...data.rules};
+    }else{
+      divisionProgress=defaultDivisionProgress();
+    }
+  }catch(error){
+    console.warn("Division progression could not be loaded:",error);
+    divisionProgress=defaultDivisionProgress();
+  }
+}
+function renderDivisionProgress(){
+  const card=el("divisionProgressCard");
+  if(!card) return;
+  if(activeSeason!=="FC27" || !currentClubRole){ card.style.display="none"; return; }
+  const p=divisionProgress||defaultDivisionProgress();
+  const division=p.division||seasonData.FC27.division||"Division 5";
+  if(division==="Elite"){
+    card.className="division-progress-card promoted";
+    card.style.display="block";
+    card.innerHTML=`<div class="division-progress-head"><div><div class="division-progress-kicker">Current Division Progress</div><div class="division-progress-title">🏆 ELITE DIVISION</div></div>${isOwner?'<button class="division-progress-edit" onclick="openDivisionProgressModal()">Edit</button>':""}</div><div class="division-progress-success">Olympus FC have reached the summit. Elite Division.</div>`;
+    return;
+  }
+  const rule=divisionProgressRule(division);
+  const destination=divisionPromotionDestination(division);
+  const edit=isOwner?'<button class="division-progress-edit" onclick="openDivisionProgressModal()">Edit</button>':"";
+  card.style.display="block";
+
+  if(p.stage==="promotion"){
+    const games=Math.max(1,Number(rule.promoGames||4));
+    const played=Math.min(games,Math.max(0,Number(p.promoPlayed||0)));
+    const wins=Math.min(Number(rule.promoWins||0),Math.max(0,Number(p.promoWins||0)));
+    const needed=Math.max(0,Number(rule.promoWins||0)-wins);
+    card.className="division-progress-card promotion";
+    card.innerHTML=`<div class="division-progress-head"><div><div class="division-progress-kicker">Promotion Games</div><div class="division-progress-title">${escapeHTML(division)} → ${escapeHTML(destination)}</div></div>${edit}</div>
+      <div class="division-progress-main"><div class="division-progress-big"><div class="division-progress-value">${wins} <span>/ ${rule.promoWins} wins</span></div><div class="division-progress-target">${games-played} game${games-played===1?"":"s"} remaining</div></div>
+      <div class="division-promo-dots">${Array.from({length:games},(_,i)=>`<div class="division-promo-dot ${i<played?(i<wins?"win":"used"):""}">${i<played?(i<wins?"W":"•"):i+1}</div>`).join("")}</div>
+      <div class="division-progress-sub">${needed?`${needed} more win${needed===1?"":"s"} needed for ${escapeHTML(destination)}.`:`Promotion target reached.`}</div></div>`;
+    return;
+  }
+
+  if(p.stage==="relegation"){
+    card.className="division-progress-card danger";
+    card.innerHTML=`<div class="division-progress-head"><div><div class="division-progress-kicker">🚨 Relegation Game</div><div class="division-progress-title">${escapeHTML(division)}</div></div>${edit}</div>
+      <div class="division-progress-alert"><b>Olympus must WIN or DRAW to stay in ${escapeHTML(division)}.</b><br><br>Win → keep ${p.points} pts and reset to 3 chances.<br>Draw → keep ${p.points} pts and reset to 2 chances.<br>Loss → relegated.</div>`;
+    return;
+  }
+
+  if(p.stage==="promoted"){
+    card.className="division-progress-card promoted";
+    card.innerHTML=`<div class="division-progress-head"><div><div class="division-progress-kicker">Promotion Complete</div><div class="division-progress-title">🏆 PROMOTED TO ${escapeHTML(destination).toUpperCase()}</div></div>${edit}</div><div class="division-progress-success">The climb continues. Olympus FC have earned promotion from ${escapeHTML(division)}.</div>`;
+    return;
+  }
+
+  const points=Math.max(0,Number(p.points||0));
+  const target=Math.max(1,Number(rule.points||1));
+  const pct=Math.min(100,Math.round(points/target*100));
+  const remaining=Math.max(0,target-points);
+  const chances=Math.max(0,Math.min(3,Number(p.chances??3)));
+  card.className="division-progress-card";
+  card.innerHTML=`<div class="division-progress-head"><div><div class="division-progress-kicker">Current Division Progress</div><div class="division-progress-title">${escapeHTML(division)}</div></div>${edit}</div>
+    <div class="division-progress-main"><div class="division-progress-big"><div class="division-progress-value">${points} <span>/ ${target} pts</span></div><div class="division-progress-target">${remaining?`${remaining} pts needed`:"Target reached"}</div></div>
+    <div class="division-progress-bar"><div class="division-progress-fill" style="width:${pct}%"></div></div>
+    <div class="division-progress-sub">${remaining?`${remaining} point${remaining===1?"":"s"} needed to unlock ${escapeHTML(destination)} Promotion Games.`:`Promotion Games unlocked — ${rule.promoWins} win${rule.promoWins===1?"":"s"} from ${rule.promoGames} required.`}</div></div>
+    <div class="division-chances"><div><div class="division-chances-label">Division Chances</div><div class="division-progress-sub">A loss uses one chance</div></div><div class="division-chances-hearts">${"❤️".repeat(chances)}${"🤍".repeat(3-chances)}</div></div>`;
+}
+function openDivisionProgressModal(){
+  if(!isOwner) return;
+  const p=divisionProgress||defaultDivisionProgress();
+  const division=p.division||seasonData.FC27.division||"Division 5";
+  const rule=divisionProgressRule(division);
+  el("divisionProgressStage").value=p.stage||"division";
+  el("divisionProgressPoints").value=Number(p.points||0);
+  el("divisionProgressChances").value=Number(p.chances??3);
+  el("divisionProgressPromoWins").value=Number(p.promoWins||0);
+  el("divisionProgressPromoPlayed").value=Number(p.promoPlayed||0);
+  el("divisionRulePoints").value=Number(rule.points||0);
+  el("divisionRuleWins").value=Number(rule.promoWins||0);
+  el("divisionRuleGames").value=Number(rule.promoGames||4);
+  el("divisionRuleFailedReset").value=rule.failedReset===null||rule.failedReset===undefined?"":Number(rule.failedReset);
+  el("divisionProgressError").textContent="";
+  syncDivisionProgressEditor();
+  el("divisionProgressModal").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+function closeDivisionProgressModal(){el("divisionProgressModal").classList.remove("open");document.body.style.overflow="";}
+function syncDivisionProgressEditor(){
+  const stage=el("divisionProgressStage")?.value||"division";
+  el("divisionProgressNormalFields").style.display=(stage==="division"||stage==="relegation")?"block":"none";
+  el("divisionProgressPromotionFields").style.display=stage==="promotion"?"block":"none";
+}
+async function saveDivisionProgress(){
+  if(!isOwner||!supabaseClient) return;
+  const division=seasonData.FC27.division||"Division 5";
+  const stage=el("divisionProgressStage").value;
+  const points=Math.max(0,Number(el("divisionProgressPoints").value||0));
+  const chances=Math.max(0,Math.min(3,Number(el("divisionProgressChances").value||0)));
+  const promoWins=Math.max(0,Number(el("divisionProgressPromoWins").value||0));
+  const promoPlayed=Math.max(0,Number(el("divisionProgressPromoPlayed").value||0));
+  const rulePoints=Math.max(0,Number(el("divisionRulePoints").value||0));
+  const ruleWins=Math.max(0,Number(el("divisionRuleWins").value||0));
+  const ruleGames=Math.max(1,Number(el("divisionRuleGames").value||4));
+  const resetRaw=el("divisionRuleFailedReset").value.trim();
+  const failedReset=resetRaw===""?null:Math.max(0,Number(resetRaw));
+  divisionProgressRules[division]={points:rulePoints,promoWins:ruleWins,promoGames:ruleGames,failedReset};
+  try{
+    const row={season:"FC27",division,stage,points,chances,promo_wins:promoWins,promo_played:promoPlayed,rules:divisionProgressRules,updated_at:new Date().toISOString()};
+    const {error}=await supabaseClient.from("division_progress").upsert(row,{onConflict:"season"});
+    if(error) throw error;
+    divisionProgress={season:"FC27",division,stage,points,chances,promoWins,promoPlayed};
+    closeDivisionProgressModal();
+    renderDivisionProgress();
+  }catch(error){
+    console.error(error);
+    el("divisionProgressError").textContent="Progress could not be saved online. Check the division_progress table and RLS.";
+  }
+}
+
 function renderDivision(){
 
   if(activeSeason === "ALL_TIME"){
@@ -6110,6 +6338,20 @@ async function saveDivision(){
       .eq("id",seasonId);
     if(error) throw error;
 
+    if(divisionProgress){
+      divisionProgress.division=nextDivision;
+      divisionProgress.stage="division";
+      divisionProgress.points=0;
+      divisionProgress.chances=3;
+      divisionProgress.promoWins=0;
+      divisionProgress.promoPlayed=0;
+      try{
+        await supabaseClient.from("division_progress").upsert({
+          season:"FC27",division:nextDivision,stage:"division",points:0,chances:3,promo_wins:0,promo_played:0,
+          rules:divisionProgressRules,updated_at:new Date().toISOString()
+        },{onConflict:"season"});
+      }catch(progressError){ console.warn("Division progress sync skipped:",progressError); }
+    }
     closeDivisionModal();
     renderEverything();
   }catch(error){
@@ -11314,6 +11556,7 @@ async function loadRemoteData(){
     saveSeasonData();
 
     await loadDraftData();
+    await loadDivisionProgress();
     await cleanupOrphanedDraftSessions();
 
     remoteReady = true;
@@ -11908,6 +12151,7 @@ async function initSupabase(){
       await loadCurrentClubAccess(session);
       await loadClubhouseSession();
       await loadSpotifyJam();
+      await loadDivisionProgress();
       if(isOwner){
         await loadOwnerBugReports();
       }else{
@@ -12311,6 +12555,7 @@ function renderEverything(){
 
   syncSeasonSelectors();
   renderDivision();
+  renderDivisionProgress();
   renderHome();
   renderPublicHome();
   renderClubhouseSessionHome();
