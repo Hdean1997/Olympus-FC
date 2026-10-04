@@ -6362,7 +6362,7 @@ async function loadEaMatchCentre(force){
           </div>`;
         }).join("");
 
-        return `<div class="ea-match-card" role="button" tabindex="0" onclick="openEaMatchDetail(${JSON.stringify(String(match.match_id))})">
+        return `<div class="ea-match-card" role="button" tabindex="0" onclick='openEaMatchDetail(${JSON.stringify(String(match.match_id))})'>
           <div class="ea-match-top">
             <div>
               <div class="ea-match-opponent">vs ${eaEscape(match.opponent_name||"Unknown opponent")}</div>
