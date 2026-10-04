@@ -775,6 +775,19 @@ h1{
 .ea-defence-section{margin-top:14px;padding-top:14px;border-top:1px solid #25384f}
 
 .ea-attack-section{margin-top:14px;padding-top:14px;border-top:1px solid #25384f}
+
+.ea-breakdown-wrap{margin-top:14px;padding-top:14px;border-top:1px solid #25384f}
+.ea-breakdown-label{font-size:8px;font-weight:900;letter-spacing:.7px;color:#71839a;margin-bottom:7px}
+.ea-breakdown-nav{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.ea-breakdown-btn{appearance:none;border:1px solid #29415f;background:#0a1626;color:#9fb2c9;border-radius:10px;padding:10px 5px;font:inherit;font-size:8px;font-weight:900;cursor:pointer}
+.ea-breakdown-btn.active{border-color:#6f9dff;color:#fff;background:#12233a}
+.ea-breakdown-panel{display:none}
+.ea-breakdown-panel.active{display:block}
+.ea-breakdown-panel .ea-defence-section,.ea-breakdown-panel .ea-attack-section{margin-top:10px;padding-top:0;border-top:0}
+.ea-discipline-section{margin-top:10px}
+.ea-discipline-title{font-size:11px;font-weight:900;letter-spacing:.8px;color:#6f9dff;margin-bottom:9px}
+@media(max-width:430px){.ea-breakdown-nav{grid-template-columns:repeat(2,1fr)}}
+
 .ea-attack-title{font-size:11px;font-weight:900;letter-spacing:.8px;color:#6f9dff;margin-bottom:9px}
 .ea-attack-subtitle{margin:10px 0 6px;font-size:8px;font-weight:900;color:#71839a}
 
@@ -6402,6 +6415,51 @@ function eaAttackingHtml(player){
   </div>`;
 }
 
+function eaDisciplineHtml(player){
+  const e=eaEventCounts(player);
+  const n=id=>Number(e[String(id)]||0);
+
+  // Keep this panel deliberately conservative: only event IDs already stored
+  // in the aggregate data are shown, while the normal EA match fields remain authoritative.
+  const stats=[
+    ["FOULS COMMITTED",n(5)],
+    ["FOULS SUFFERED",n(4)],
+    ["YELLOW CARDS",n(7)],
+    ["RED CARDS",n(8)]
+  ];
+
+  return `<div class="ea-discipline-section">
+    <div class="ea-discipline-title">DISCIPLINE &amp; FOULS</div>
+    <div class="ea-defence-grid">
+      ${stats.map(([label,value])=>`<div class="ea-defence-stat"><strong>${value}</strong><span>${label}</span></div>`).join("")}
+    </div>
+    <div class="ea-event-note">Decoded EA event counts. Card and foul event mappings should be treated as the event-level breakdown rather than replacements for EA's named match totals.</div>
+  </div>`;
+}
+
+function setEaBreakdown(btn,key){
+  const wrap=btn.closest(".ea-breakdown-wrap");
+  if(!wrap)return;
+  wrap.querySelectorAll(".ea-breakdown-btn").forEach(b=>b.classList.toggle("active",b===btn));
+  wrap.querySelectorAll(".ea-breakdown-panel").forEach(p=>p.classList.toggle("active",p.dataset.breakdown===key));
+}
+
+function eaBreakdownHtml(player){
+  return `<div class="ea-breakdown-wrap">
+    <div class="ea-breakdown-label">STAT BREAKDOWNS</div>
+    <div class="ea-breakdown-nav">
+      <button type="button" class="ea-breakdown-btn active" onclick="setEaBreakdown(this,'passing')">PASSING</button>
+      <button type="button" class="ea-breakdown-btn" onclick="setEaBreakdown(this,'defending')">DEFENDING</button>
+      <button type="button" class="ea-breakdown-btn" onclick="setEaBreakdown(this,'attacking')">ATTACKING</button>
+      <button type="button" class="ea-breakdown-btn" onclick="setEaBreakdown(this,'discipline')">DISCIPLINE</button>
+    </div>
+    <div class="ea-breakdown-panel active" data-breakdown="passing">${eaAdvancedPassingHtml(player)}</div>
+    <div class="ea-breakdown-panel" data-breakdown="defending">${eaDefendingHtml(player)}</div>
+    <div class="ea-breakdown-panel" data-breakdown="attacking">${eaAttackingHtml(player)}</div>
+    <div class="ea-breakdown-panel" data-breakdown="discipline">${eaDisciplineHtml(player)}</div>
+  </div>`;
+}
+
 function openEaMatchDetail(matchId){
   const match=eaMatchCentreRows.find(row=>String(row.match_id)===String(matchId));
   if(!match) return;
@@ -6440,9 +6498,7 @@ function openEaMatchDetail(matchId){
         <div class="ea-detail-stat"><strong>${p.rating==null?"—":Number(p.rating).toFixed(1)}</strong><span>EA RATING</span></div>
         <div class="ea-detail-stat"><strong>${p.ea_motm?"YES":"—"}</strong><span>EA MOTM</span></div>
       </div>
-      ${eaAdvancedPassingHtml(p)}
-      ${eaDefendingHtml(p)}
-      ${eaAttackingHtml(p)}
+      ${eaBreakdownHtml(p)}
     </div>`;
   }).join("");
 
