@@ -3797,6 +3797,56 @@ textarea.bug-form-control{
   .eamd-group-grid{grid-template-columns:1fr}
 }
 
+
+/* EA PLAYER ANALYTICS SELECTOR V1 — intentionally minimal */
+.eaps-intro{
+  max-width:1100px;
+  margin:0 auto 14px;
+  padding:22px 18px;
+  text-align:center;
+  border:1px solid #294b73;
+  border-radius:18px;
+  background:radial-gradient(circle at 50% 0%,rgba(50,110,255,.18),transparent 48%),linear-gradient(135deg,#10243a,#091725);
+}
+.eaps-kicker{color:#72a6ff;font-size:8px;font-weight:950;letter-spacing:1.1px}
+.eaps-title{margin-top:6px;font-size:24px;font-weight:950}
+.eaps-copy{margin-top:5px;color:#8197b2;font-size:9px}
+.eaps-list{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:9px}
+.eaps-player{
+  appearance:none;
+  width:100%;
+  min-height:92px;
+  padding:15px 18px;
+  border:1px solid #29415d;
+  border-radius:15px;
+  background:#0e1d30;
+  color:#fff;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  transition:border-color .12s ease,background .12s ease,transform .12s ease;
+}
+.eaps-player-name{font-size:18px;font-weight:950;line-height:1.1}
+.eaps-player-meta{color:#748aa4;font-size:8px;font-weight:800}
+.eaps-player-action{margin-top:4px;color:#78a8ed;font-size:7px;font-weight:950;letter-spacing:.45px}
+.eaps-player-action b{margin-left:5px;font-size:12px}
+.eaps-note{max-width:1100px;margin:12px auto 20px;text-align:center}
+@media(hover:hover) and (pointer:fine){
+  .eaps-player:hover{transform:translateY(-1px);border-color:#4779b0;background:#10243a}
+}
+@media(max-width:1140px){
+  .eaps-intro,.eaps-list,.eaps-note{max-width:calc(100% - 28px)}
+}
+@media(max-width:520px){
+  .eaps-intro{padding:18px 14px}
+  .eaps-title{font-size:21px}
+  .eaps-player{min-height:82px}
+  .eaps-player-name{font-size:17px}
+}
+
 </style>
 
 <style>
@@ -4224,12 +4274,14 @@ textarea.bug-form-control{
     <p>FC27 · Across imported EA matches</p>
   </div>
 
-  <div class="ea-centre-heading">EA DATA LEADERS</div>
-  <div id="eaAnalyticsLeaders" class="ea-analytics-leaders"></div>
-
-  <div class="ea-centre-heading">PLAYER ANALYTICS</div>
-  <div id="eaAnalyticsPlayers"></div>
-  <div class="ea-analytics-note">Read-only analytics calculated from the separate EA import tables. These figures do not alter Olympus stats, records, achievements, POTN or Matchday Reports.</div>
+  <div class="eaps-intro">
+    <div class="eaps-kicker">EA PLAYER ANALYTICS · FC27</div>
+    <div class="eaps-title">Choose a Player</div>
+    <div class="eaps-copy">Select a player to explore their complete imported EA performance profile.</div>
+  </div>
+  <div id="eaAnalyticsLeaders" style="display:none"></div>
+  <div id="eaAnalyticsPlayers" class="eaps-list"></div>
+  <div class="ea-analytics-note eaps-note">Read-only EA analytics. Normal Olympus stats, records, achievements, POTN and Matchday Reports remain separate.</div>
 </div>
 
 <!-- EA ANALYTICS PLAYER PROFILE — isolated read-only display -->
@@ -6989,63 +7041,24 @@ function eaAnalyticsLeaderHtml(label,row,value){
 }
 
 function renderEaPlayerAnalytics(){
-  const rows=eaAnalyticsRows();
-  const leaders=el("eaAnalyticsLeaders");
-  const players=el("eaAnalyticsPlayers");
-
-  if(!rows.length){
-    leaders.innerHTML="";
-    players.innerHTML=`<div class="ea-centre-empty">No imported EA player data is available yet.</div>`;
+  const host=el("eaAnalyticsPlayers");
+  if(!host) return;
+  const grouped=eaAnalyticsBuildPlayers();
+  const players=Array.isArray(grouped)?grouped:Object.values(grouped||{});
+  if(!players.length){
+    host.innerHTML=`<div class="ea-centre-empty">No imported EA player data is available yet.</div>`;
     return;
   }
-
-  const topRated=[...rows].sort((a,b)=>b.avgRating-a.avgRating)[0];
-  const topScorer=[...rows].sort((a,b)=>b.goals-a.goals||b.assists-a.assists)[0];
-  const topCreator=[...rows].sort((a,b)=>b.assists-a.assists||b.ga-a.ga)[0];
-  const bestPass=[...rows].filter(r=>r.matches>=5&&r.passAttempts>0).sort((a,b)=>b.passPct-a.passPct||b.passAttempts-a.passAttempts)[0];
-  const mostInterceptions=[...rows].sort((a,b)=>b.interceptions-a.interceptions)[0];
-
-  leaders.innerHTML=[
-    eaAnalyticsLeaderHtml("TOP RATED",topRated,topRated?topRated.avgRating.toFixed(2):"—"),
-    eaAnalyticsLeaderHtml("TOP SCORER",topScorer,topScorer?`${topScorer.goals} G`:"—"),
-    eaAnalyticsLeaderHtml("TOP CREATOR",topCreator,topCreator?`${topCreator.assists} A`:"—"),
-    eaAnalyticsLeaderHtml("BEST PASS %",bestPass,bestPass?`${Math.round(bestPass.passPct)}%`:"—"),
-    eaAnalyticsLeaderHtml("MOST INTERCEPTIONS",mostInterceptions,mostInterceptions?String(mostInterceptions.interceptions):"—")
-  ].join("");
-
-  players.innerHTML=rows.map(row=>`
-    <div class="ea-analytics-card" data-ea-player="${eaEscape(row.name)}" onclick="openEaAnalyticsProfile(this.dataset.eaPlayer)">
-      <div class="ea-analytics-card-head">
-        <div>
-          <div class="ea-analytics-player">${eaEscape(row.name)}</div>
-          <div class="ea-analytics-meta">${eaEscape(row.gamertag)} · ${row.matches} imported match${row.matches===1?"":"es"}</div>
-        </div>
-        <div class="ea-analytics-rating">${row.avgRating.toFixed(2)}</div>
-      </div>
-
-      <div class="ea-analytics-grid">
-        <div class="ea-analytics-stat"><strong>${row.matches}</strong><span>MATCHES</span></div>
-        <div class="ea-analytics-stat"><strong>${eaFormatTotalMinutes(row.seconds)}</strong><span>PLAYING TIME</span></div>
-        <div class="ea-analytics-stat"><strong>${row.goals}</strong><span>GOALS</span></div>
-        <div class="ea-analytics-stat"><strong>${row.assists}</strong><span>ASSISTS</span></div>
-        <div class="ea-analytics-stat"><strong>${row.ga}</strong><span>G + A</span></div>
-        <div class="ea-analytics-stat"><strong>${row.avgRating.toFixed(2)}</strong><span>AVG RATING</span></div>
-        <div class="ea-analytics-stat"><strong>${row.passesMade}/${row.passAttempts}</strong><span>PASSES</span></div>
-        <div class="ea-analytics-stat"><strong>${Math.round(row.passPct)}%</strong><span>PASS %</span></div>
-        <div class="ea-analytics-stat"><strong>${row.tacklesMade}/${row.tackleAttempts}</strong><span>TACKLES</span></div>
-        <div class="ea-analytics-stat"><strong>${Math.round(row.tacklePct)}%</strong><span>TACKLE %</span></div>
-        <div class="ea-analytics-stat"><strong>${row.interceptions}</strong><span>INTERCEPTIONS</span></div>
-        <div class="ea-analytics-stat"><strong>${row.shots}</strong><span>SHOTS</span></div>
-      </div>
-
-      <div class="ea-analytics-derived">
-        <div class="ea-analytics-stat"><strong>${row.gaPerMatch.toFixed(2)}</strong><span>G+A / MATCH</span></div>
-        <div class="ea-analytics-stat"><strong>${row.passesPerMatch.toFixed(1)}</strong><span>PASSES / MATCH</span></div>
-        <div class="ea-analytics-stat"><strong>${row.tacklesPerMatch.toFixed(1)}</strong><span>TACKLES WON / MATCH</span></div>
-        <div class="ea-analytics-stat"><strong>${row.interceptionsPerMatch.toFixed(1)}</strong><span>INTERCEPTIONS / MATCH</span></div>
-      </div>
-      <div class="ea-analytics-open"><span>VIEW EA ANALYTICS PROFILE</span><span>›</span></div>
-    </div>`).join("");
+  host.innerHTML=players.map(p=>{
+    const name=p.olympus_player_name||p.name||p.gamertag||"Unknown player";
+    const tag=p.gamertag||"";
+    const matches=Number(p.matches||p.apps||p.appearances||0);
+    return `<button class="eaps-player" onclick='openEaAnalyticsProfile(${JSON.stringify(String(tag||name))})'>
+      <span class="eaps-player-name">${eaEscape(name)}</span>
+      <span class="eaps-player-meta">${matches} imported ${matches===1?"match":"matches"}</span>
+      <span class="eaps-player-action">VIEW PROFILE <b>›</b></span>
+    </button>`;
+  }).join("");
 }
 
 
