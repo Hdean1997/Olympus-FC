@@ -762,6 +762,27 @@ h1{
 .ea-analytics-note{margin:2px 16px 18px;color:#71839a;font-size:9px;line-height:1.5}
 @media(max-width:700px){.ea-analytics-leaders{grid-template-columns:repeat(2,1fr)}.ea-analytics-grid,.ea-analytics-derived{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:390px){.ea-analytics-grid,.ea-analytics-derived{grid-template-columns:repeat(2,1fr)}}
+.ea-analytics-card{cursor:pointer;transition:transform .12s ease,border-color .12s ease}
+.ea-analytics-card:active{transform:scale(.995);border-color:#4b7bc4}
+.ea-analytics-open{margin-top:11px;padding-top:10px;border-top:1px solid #25384f;color:#6f9dff;font-size:9px;font-weight:900;display:flex;justify-content:space-between;align-items:center}
+.ea-profile-hero{margin:0 16px 14px;padding:18px;border:1px solid #29425f;border-radius:18px;background:linear-gradient(145deg,#12243d,#101d2e)}
+.ea-profile-name{font-size:23px;font-weight:900}
+.ea-profile-meta{margin-top:5px;color:#8392a6;font-size:10px}
+.ea-profile-form{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:13px}
+.ea-profile-form-game{padding:9px 5px;border-radius:10px;background:#07111f;text-align:center}
+.ea-profile-form-game strong{display:block;color:#e8bd4b;font-size:14px}
+.ea-profile-form-game span{display:block;margin-top:3px;color:#71839a;font-size:7px;font-weight:900}
+.ea-profile-match{margin:0 16px 10px;padding:13px 14px;border-radius:14px;background:#101d2e;border:1px solid #29425f}
+.ea-profile-match-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.ea-profile-match-opponent{font-size:13px;font-weight:900}
+.ea-profile-match-date{margin-top:3px;color:#71839a;font-size:8px}
+.ea-profile-match-rating{color:#e8bd4b;font-size:16px;font-weight:900}
+.ea-profile-match-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:9px}
+.ea-profile-match-stat{padding:7px 3px;border-radius:8px;background:#07111f;text-align:center}
+.ea-profile-match-stat strong{display:block;color:#fff;font-size:10px}
+.ea-profile-match-stat span{display:block;margin-top:2px;color:#71839a;font-size:6px;font-weight:900}
+@media(max-width:520px){.ea-profile-form{grid-template-columns:repeat(5,1fr)}.ea-profile-match-grid{grid-template-columns:repeat(3,1fr)}}
+
 
 
 .ea-match-card{cursor:pointer;transition:transform .12s ease,border-color .12s ease}
@@ -3867,6 +3888,19 @@ textarea.bug-form-control{
   <div class="ea-analytics-note">Read-only analytics calculated from the separate EA import tables. These figures do not alter Olympus stats, records, achievements, POTN or Matchday Reports.</div>
 </div>
 
+<!-- EA ANALYTICS PLAYER PROFILE — isolated read-only display -->
+<div id="eaAnalyticsProfile" class="page">
+  <div class="page-header">
+    <button class="app-back-button" onclick="closeEaAnalyticsProfile()">
+      <span class="app-back-icon">‹</span>
+      <span>Back to Player Analytics</span>
+    </button>
+    <h2>EA Analytics Profile</h2>
+    <p>FC27 · Imported EA performances</p>
+  </div>
+  <div id="eaAnalyticsProfileContent"></div>
+</div>
+
 <!-- EA MATCH DETAIL — isolated read-only display -->
 <div id="eaMatchDetail" class="page">
   <div class="page-header">
@@ -6624,7 +6658,7 @@ function renderEaPlayerAnalytics(){
   const topRated=[...rows].sort((a,b)=>b.avgRating-a.avgRating)[0];
   const topScorer=[...rows].sort((a,b)=>b.goals-a.goals||b.assists-a.assists)[0];
   const topCreator=[...rows].sort((a,b)=>b.assists-a.assists||b.ga-a.ga)[0];
-  const bestPass=[...rows].filter(r=>r.passAttempts>0).sort((a,b)=>b.passPct-a.passPct||b.passAttempts-a.passAttempts)[0];
+  const bestPass=[...rows].filter(r=>r.matches>=5&&r.passAttempts>0).sort((a,b)=>b.passPct-a.passPct||b.passAttempts-a.passAttempts)[0];
   const mostInterceptions=[...rows].sort((a,b)=>b.interceptions-a.interceptions)[0];
 
   leaders.innerHTML=[
@@ -6636,7 +6670,7 @@ function renderEaPlayerAnalytics(){
   ].join("");
 
   players.innerHTML=rows.map(row=>`
-    <div class="ea-analytics-card">
+    <div class="ea-analytics-card" onclick="openEaAnalyticsProfile(decodeURIComponent(\'${encodeURIComponent(row.name)}\'))">
       <div class="ea-analytics-card-head">
         <div>
           <div class="ea-analytics-player">${eaEscape(row.name)}</div>
@@ -6666,7 +6700,94 @@ function renderEaPlayerAnalytics(){
         <div class="ea-analytics-stat"><strong>${row.tacklesPerMatch.toFixed(1)}</strong><span>TACKLES WON / MATCH</span></div>
         <div class="ea-analytics-stat"><strong>${row.interceptionsPerMatch.toFixed(1)}</strong><span>INTERCEPTIONS / MATCH</span></div>
       </div>
+      <div class="ea-analytics-open"><span>VIEW EA ANALYTICS PROFILE</span><span>›</span></div>
     </div>`).join("");
+}
+
+
+function eaMatchForPlayerRow(player){
+  return eaMatchCentreMatches.find(match=>String(match.match_id)===String(player.match_id))||null;
+}
+
+function eaPlayerAnalyticsPerformances(name){
+  return eaMatchCentrePlayers
+    .filter(player=>String(player.olympus_player_name||player.gamertag||"Unknown")===String(name))
+    .map(player=>({player,match:eaMatchForPlayerRow(player)}))
+    .sort((a,b)=>new Date(b.match?.played_at||0)-new Date(a.match?.played_at||0));
+}
+
+function openEaAnalyticsProfile(name){
+  const rows=eaAnalyticsRows();
+  const summary=rows.find(row=>row.name===name);
+  const performances=eaPlayerAnalyticsPerformances(name);
+  if(!summary||!performances.length) return;
+
+  const recent5=performances.slice(0,5);
+  const recentAvg=recent5.length
+    ? recent5.reduce((sum,item)=>sum+Number(item.player.rating||0),0)/recent5.length
+    : 0;
+
+  const content=el("eaAnalyticsProfileContent");
+  content.innerHTML=`
+    <div class="ea-profile-hero">
+      <div class="ea-profile-name">${eaEscape(summary.name)}</div>
+      <div class="ea-profile-meta">${eaEscape(summary.gamertag)} · ${summary.matches} imported matches · ${eaFormatTotalMinutes(summary.seconds)} playing time</div>
+      <div class="ea-detail-grid">
+        <div class="ea-detail-stat"><strong>${summary.goals}</strong><span>GOALS</span></div>
+        <div class="ea-detail-stat"><strong>${summary.assists}</strong><span>ASSISTS</span></div>
+        <div class="ea-detail-stat"><strong>${summary.ga}</strong><span>G + A</span></div>
+        <div class="ea-detail-stat"><strong>${summary.avgRating.toFixed(2)}</strong><span>AVG RATING</span></div>
+        <div class="ea-detail-stat"><strong>${Math.round(summary.passPct)}%</strong><span>PASS %</span></div>
+        <div class="ea-detail-stat"><strong>${summary.interceptions}</strong><span>INTERCEPTIONS</span></div>
+      </div>
+      <div class="ea-advanced-subtitle">LAST ${recent5.length} EA MATCH${recent5.length===1?"":"ES"} · AVG RATING ${recentAvg.toFixed(2)}</div>
+      <div class="ea-profile-form">
+        ${recent5.map(item=>`
+          <div class="ea-profile-form-game">
+            <strong>${Number(item.player.rating||0).toFixed(1)}</strong>
+            <span>${eaEscape(item.match?.opponent_name||"Opponent")}</span>
+          </div>`).join("")}
+      </div>
+    </div>
+
+    <div class="ea-centre-heading">MATCH-BY-MATCH EA PERFORMANCES</div>
+    ${performances.map(item=>{
+      const p=item.player;
+      const m=item.match;
+      const events=eaEventCounts(p);
+      const passPct=Number(p.pass_attempts||0)?Math.round(Number(p.passes_made||0)/Number(p.pass_attempts||0)*100):0;
+      const date=m?.played_at?new Date(m.played_at).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"";
+      return `<div class="ea-profile-match">
+        <div class="ea-profile-match-top">
+          <div>
+            <div class="ea-profile-match-opponent">vs ${eaEscape(m?.opponent_name||"Unknown opponent")} · ${eaEscape(String(m?.olympus_goals??""))}-${eaEscape(String(m?.opponent_goals??""))}</div>
+            <div class="ea-profile-match-date">${eaEscape(date)}</div>
+          </div>
+          <div class="ea-profile-match-rating">${Number(p.rating||0).toFixed(1)}</div>
+        </div>
+        <div class="ea-profile-match-grid">
+          <div class="ea-profile-match-stat"><strong>${Number(p.goals||0)}</strong><span>GOALS</span></div>
+          <div class="ea-profile-match-stat"><strong>${Number(p.assists||0)}</strong><span>ASSISTS</span></div>
+          <div class="ea-profile-match-stat"><strong>${Number(p.passes_made||0)}/${Number(p.pass_attempts||0)}</strong><span>PASSES</span></div>
+          <div class="ea-profile-match-stat"><strong>${passPct}%</strong><span>PASS %</span></div>
+          <div class="ea-profile-match-stat"><strong>${Number(p.tackles_made||0)}/${Number(p.tackle_attempts||0)}</strong><span>TACKLES</span></div>
+          <div class="ea-profile-match-stat"><strong>${Number(events["6"]||0)}</strong><span>INTERCEPTIONS</span></div>
+        </div>
+      </div>`;
+    }).join("")}
+  `;
+
+  document.querySelectorAll(".page").forEach(page=>page.classList.remove("active"));
+  el("eaAnalyticsProfile").classList.add("active");
+  el("bottomNav").classList.add("hidden");
+  window.scrollTo(0,0);
+}
+
+function closeEaAnalyticsProfile(){
+  el("eaAnalyticsProfile").classList.remove("active");
+  el("eaPlayerAnalytics").classList.add("active");
+  el("bottomNav").classList.add("hidden");
+  window.scrollTo(0,0);
 }
 
 function openEaPlayerAnalytics(){
