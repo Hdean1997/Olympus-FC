@@ -3644,6 +3644,21 @@ textarea.bug-form-control{
   .eap2-stat-value small{display:inline-flex;margin:0;padding:3px 6px}
 }
 
+
+/* EA MATCH CENTRE V2 — clean EA hub */
+.eamc-hero{margin:0 16px 8px;padding:20px 22px;border:1px solid #294b73;border-radius:20px;background:radial-gradient(circle at 10% 0%,rgba(50,110,255,.24),transparent 35%),linear-gradient(135deg,#112945,#091725);display:flex;justify-content:space-between;align-items:center;gap:16px}
+.eamc-kicker{color:#72a6ff;font-size:9px;font-weight:950;letter-spacing:1.2px}.eamc-title{margin-top:4px;font-size:25px;font-weight:950}.eamc-sub{margin-top:5px;color:#8297b1;font-size:9px}
+.eamc-status-wrap{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #27415f;border-radius:12px;background:#071522}.eamc-live-dot{width:8px;height:8px;border-radius:50%;background:#52d88a;box-shadow:0 0 10px rgba(82,216,138,.5)}.eamc-status{font-size:9px;font-weight:900;color:#b8c9da}.eamc-refresh{border:0;border-left:1px solid #27415f;background:transparent;color:#7fa9df;padding:2px 0 2px 9px;font-size:8px;font-weight:900}
+.eamc-nav{margin:0 16px 12px;padding:6px;border:1px solid #263f5d;border-radius:14px;background:#091725;display:grid;grid-template-columns:1fr 1fr;gap:6px}.eamc-nav-item{min-height:39px;border:0;border-radius:9px;background:transparent;color:#8fa3bc;font-size:9px;font-weight:950}.eamc-nav-item.active{background:#326eff;color:#fff}.eamc-nav-item span{margin-left:7px;font-size:14px}
+.eamc-summary{margin:0 16px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.eamc-summary .ea-centre-summary-box{margin:0;padding:11px;border:1px solid #263f5d;border-radius:12px;background:#0c1a2b;text-align:center}.eamc-summary .ea-centre-summary-value{font-size:19px;font-weight:950}.eamc-summary .ea-centre-summary-label{margin-top:3px;color:#7187a2;font-size:7px;font-weight:900}
+.eamc-latest{margin:0 16px 14px;padding:18px 20px;border:1px solid #31577f;border-radius:18px;background:linear-gradient(135deg,#10233a,#0b1929);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px}.eamc-latest-label{color:#72a6ff;font-size:8px;font-weight:950;letter-spacing:1px}.eamc-latest-opponent{margin-top:5px;font-size:17px;font-weight:950}.eamc-latest-meta{margin-top:4px;color:#7489a3;font-size:8px}.eamc-latest-score{font-size:35px;font-weight:950;letter-spacing:1px;text-align:center}.eamc-latest-result{text-align:right}.eamc-result-pill{display:inline-flex;min-width:34px;justify-content:center;padding:7px 9px;border-radius:9px;font-size:10px;font-weight:950}.eamc-result-W{background:rgba(50,190,111,.15);color:#6ee39e;border:1px solid rgba(50,190,111,.35)}.eamc-result-D{background:rgba(230,181,67,.12);color:#e8c569;border:1px solid rgba(230,181,67,.3)}.eamc-result-L{background:rgba(220,73,83,.13);color:#f08389;border:1px solid rgba(220,73,83,.32)}
+.eamc-latest-open{margin-top:8px;color:#8eadd3;font-size:8px;font-weight:900}
+.eamc-section-head{margin:0 16px 8px;display:flex;justify-content:space-between;align-items:end}.eamc-section-title{font-size:15px;font-weight:950}.eamc-section-sub{margin-top:2px;color:#6f839c;font-size:8px}
+.eamc-match-grid{margin:0 16px 18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.eamc-match-item{appearance:none;width:100%;padding:13px 14px;border:1px solid #263f5d;border-radius:14px;background:#0e1d30;color:#fff;text-align:left;display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center}.eamc-match-item:hover{border-color:#3b6594;background:#102238}.eamc-match-result{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:10px;font-weight:950}.eamc-match-name{font-size:11px;font-weight:900}.eamc-match-date{margin-top:3px;color:#71869f;font-size:7px}.eamc-match-score{font-size:17px;font-weight:950}.eamc-match-arrow{margin-left:6px;color:#6d89aa}
+@media(max-width:700px){.eamc-hero{align-items:flex-start;flex-direction:column}.eamc-status-wrap{width:100%;box-sizing:border-box}.eamc-match-grid{grid-template-columns:1fr}.eamc-latest{grid-template-columns:1fr auto}.eamc-latest-result{display:none}}
+@media(max-width:430px){.eamc-summary{grid-template-columns:repeat(2,1fr)}.eamc-title{font-size:22px}.eamc-latest-score{font-size:29px}}
+
 </style>
 
 <style>
@@ -4029,29 +4044,35 @@ textarea.bug-form-control{
     <p>FC27 · Imported EA match data</p>
   </div>
 
-  <div class="ea-centre-status-card">
+  <div class="eamc-hero">
     <div>
-      <div class="ea-centre-kicker">EA DATA LINK</div>
-      <div id="eaCentreStatus" class="ea-centre-status">Ready</div>
-      <div id="eaCentreStatusSub" class="ea-centre-status-sub">Data loads only when you open this page.</div>
+      <div class="eamc-kicker">EA DATA · FC27</div>
+      <div class="eamc-title">Olympus EA Hub</div>
+      <div id="eaCentreStatusSub" class="eamc-sub">Imported match data and player performance analysis.</div>
     </div>
-    <button id="eaCentreRefresh" class="ea-centre-refresh" onclick="loadEaMatchCentre(true)">Refresh</button>
+    <div class="eamc-status-wrap">
+      <span class="eamc-live-dot"></span>
+      <span id="eaCentreStatus" class="eamc-status">Ready</span>
+      <button id="eaCentreRefresh" class="eamc-refresh" onclick="loadEaMatchCentre(true)">↻ Refresh</button>
+    </div>
   </div>
 
-  <div id="eaCentreSummary" class="ea-centre-summary"></div>
+  <div class="eamc-nav">
+    <button class="eamc-nav-item active">MATCHES</button>
+    <button class="eamc-nav-item" onclick="openEaPlayerAnalytics()">PLAYER ANALYTICS <span>›</span></button>
+  </div>
 
-  <button class="ea-analytics-launch" onclick="openEaPlayerAnalytics()">
-    <span class="ea-analytics-launch-row">
-      <span>
-        EA PLAYER ANALYTICS
-        <small>Totals, averages and advanced data across imported matches</small>
-      </span>
-      <span>›</span>
-    </span>
-  </button>
+  <div id="eaCentreSummary" class="eamc-summary"></div>
 
-  <div class="ea-centre-heading">RECENT IMPORTED MATCHES</div>
-  <div id="eaCentreMatches"></div>
+  <div id="eaCentreLatest"></div>
+
+  <div class="eamc-section-head">
+    <div>
+      <div class="eamc-section-title">Recent Matches</div>
+      <div class="eamc-section-sub">Select a match to open the full EA performance breakdown.</div>
+    </div>
+  </div>
+  <div id="eaCentreMatches" class="eamc-match-grid"></div>
 </div>
 
 <!-- EA PLAYER ANALYTICS — isolated read-only display -->
@@ -7292,47 +7313,30 @@ async function loadEaMatchCentre(force){
     const losses=matchRows.filter(m=>eaResultLetter(m)==="L").length;
 
     summary.innerHTML=`
-      <div class="ea-centre-summary-box"><div class="ea-centre-summary-value">${matchRows.length}</div><div class="ea-centre-summary-label">IMPORTED</div></div>
+      <div class="ea-centre-summary-box"><div class="ea-centre-summary-value">${matchRows.length}</div><div class="ea-centre-summary-label">MATCHES</div></div>
       <div class="ea-centre-summary-box"><div class="ea-centre-summary-value">${wins}</div><div class="ea-centre-summary-label">WINS</div></div>
       <div class="ea-centre-summary-box"><div class="ea-centre-summary-value">${draws}</div><div class="ea-centre-summary-label">DRAWS</div></div>
       <div class="ea-centre-summary-box"><div class="ea-centre-summary-value">${losses}</div><div class="ea-centre-summary-label">LOSSES</div></div>`;
 
+    const latestHost=el("eaCentreLatest");
     if(!matchRows.length){
-      list.innerHTML=`<div class="ea-centre-empty">No EA matches have been imported yet. The rest of Olympus is unaffected.</div>`;
+      latestHost.innerHTML="";
+      list.innerHTML=`<div class="ea-centre-empty" style="grid-column:1/-1">No EA matches have been imported yet. The rest of Olympus is unaffected.</div>`;
     }else{
+      const latest=matchRows[0], latestResult=eaResultLetter(latest);
+      latestHost.innerHTML=`<div class="eamc-latest" role="button" tabindex="0" onclick='openEaMatchDetail(${JSON.stringify(String(latest.match_id))})'>
+        <div><div class="eamc-latest-label">LATEST MATCH</div><div class="eamc-latest-opponent">Olympus FC vs ${eaEscape(latest.opponent_name||"Unknown opponent")}</div><div class="eamc-latest-meta">${eaDateLabel(latest.played_at)}</div></div>
+        <div class="eamc-latest-score">${Number(latest.olympus_goals||0)}–${Number(latest.opponent_goals||0)}</div>
+        <div class="eamc-latest-result"><span class="eamc-result-pill eamc-result-${latestResult}">${latestResult}</span><div class="eamc-latest-open">VIEW MATCH DATA ›</div></div>
+      </div>`;
+
       list.innerHTML=matchRows.map(match=>{
         const result=eaResultLetter(match);
-        const players=(byMatch[match.match_id]||[]).sort((a,b)=>Number(b.rating||0)-Number(a.rating||0));
-        const playerHtml=players.map(p=>{
-          const attempts=Number(p.pass_attempts||0),made=Number(p.passes_made||0);
-          const passPct=attempts?Math.round((made/attempts)*100):0;
-          return `<div class="ea-player-row">
-            <div class="ea-player-head">
-              <div class="ea-player-name">${eaEscape(p.olympus_player_name||p.gamertag)}${p.ea_motm?" · ⭐ EA MOTM":""}</div>
-              <div class="ea-player-rating">${p.rating==null?"—":Number(p.rating).toFixed(1)}</div>
-            </div>
-            <div class="ea-player-stats">
-              <div class="ea-player-stat"><strong>${Number(p.goals||0)}</strong><span>GOALS</span></div>
-              <div class="ea-player-stat"><strong>${Number(p.assists||0)}</strong><span>ASSISTS</span></div>
-              <div class="ea-player-stat"><strong>${made}/${attempts}</strong><span>PASSES</span></div>
-              <div class="ea-player-stat"><strong>${passPct}%</strong><span>PASS %</span></div>
-              <div class="ea-player-stat"><strong>${Number(p.shots||0)}</strong><span>SHOTS</span></div>
-            </div>
-          </div>`;
-        }).join("");
-
-        return `<div class="ea-match-card" role="button" tabindex="0" onclick='openEaMatchDetail(${JSON.stringify(String(match.match_id))})'>
-          <div class="ea-match-top">
-            <div>
-              <div class="ea-match-opponent">vs ${eaEscape(match.opponent_name||"Unknown opponent")}</div>
-              <div class="ea-match-date">${eaDateLabel(match.played_at)}</div>
-              <span class="ea-result-badge ea-result-${result}">${result}</span>
-            </div>
-            <div class="ea-match-score">${Number(match.olympus_goals||0)}–${Number(match.opponent_goals||0)}</div>
-          </div>
-          <div class="ea-player-list">${playerHtml||`<div class="ea-centre-empty" style="margin:12px 0 0">No player rows stored for this match.</div>`}</div>
-          <div class="ea-match-open"><span>VIEW MATCH DATA</span><span>›</span></div>
-        </div>`;
+        return `<button class="eamc-match-item" onclick='openEaMatchDetail(${JSON.stringify(String(match.match_id))})'>
+          <span class="eamc-match-result eamc-result-pill eamc-result-${result}">${result}</span>
+          <span><span class="eamc-match-name">vs ${eaEscape(match.opponent_name||"Unknown opponent")}</span><span class="eamc-match-date">${eaDateLabel(match.played_at)}</span></span>
+          <span><span class="eamc-match-score">${Number(match.olympus_goals||0)}–${Number(match.opponent_goals||0)}</span><span class="eamc-match-arrow">›</span></span>
+        </button>`;
       }).join("");
     }
 
