@@ -6706,7 +6706,7 @@ function renderEaPlayerAnalytics(){
 
 
 function eaMatchForPlayerRow(player){
-  return eaMatchCentreMatches.find(match=>String(match.match_id)===String(player.match_id))||null;
+  return eaMatchCentreRows.find(match=>String(match.match_id)===String(player.match_id))||null;
 }
 
 function eaPlayerAnalyticsPerformances(name){
