@@ -739,6 +739,28 @@ h1{
 .ea-centre-empty{margin:0 16px;padding:22px;border:1px dashed #29425f;border-radius:16px;color:#8392a6;text-align:center;font-size:12px;line-height:1.5}
 @media(max-width:390px){.ea-centre-summary{grid-template-columns:repeat(2,1fr)}}
 
+.ea-match-card{cursor:pointer;transition:transform .12s ease,border-color .12s ease}
+.ea-match-card:active{transform:scale(.99);border-color:#4b7bc4}
+.ea-match-open{margin-top:12px;padding-top:10px;border-top:1px solid #25384f;color:#6f9dff;font-size:10px;font-weight:900;display:flex;justify-content:space-between;align-items:center}
+.ea-detail-hero{margin:0 16px 14px;padding:18px;border:1px solid #29425f;border-radius:18px;background:linear-gradient(145deg,#12243d,#101d2e)}
+.ea-detail-kicker{color:#6f9dff;font-size:10px;font-weight:900;letter-spacing:1px}
+.ea-detail-score-row{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-top:7px}
+.ea-detail-opponent{font-size:22px;font-weight:900;overflow-wrap:anywhere}
+.ea-detail-score{font-size:30px;font-weight:900;white-space:nowrap}
+.ea-detail-meta{margin-top:6px;color:#8392a6;font-size:11px;line-height:1.5}
+.ea-detail-player-card{margin:0 16px 12px;padding:16px;border-radius:17px;background:#101d2e;border:1px solid #29425f}
+.ea-detail-player-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.ea-detail-player-name{font-size:16px;font-weight:900}
+.ea-detail-player-meta{margin-top:4px;color:#8392a6;font-size:10px}
+.ea-detail-rating{color:#e8bd4b;font-size:18px;font-weight:900}
+.ea-detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:13px}
+.ea-detail-stat{padding:10px 5px;border-radius:10px;background:#07111f;text-align:center}
+.ea-detail-stat strong{display:block;color:#fff;font-size:15px}
+.ea-detail-stat span{display:block;margin-top:3px;color:#71839a;font-size:8px;font-weight:800}
+.ea-detail-note{margin:4px 16px 18px;color:#71839a;font-size:10px;line-height:1.5}
+@media(max-width:390px){.ea-detail-grid{grid-template-columns:repeat(2,1fr)}}
+
+
 /* MATCHES */
 
 .matches-summary{
@@ -3750,6 +3772,22 @@ textarea.bug-form-control{
   <div id="eaCentreMatches"></div>
 </div>
 
+<!-- EA MATCH DETAIL — isolated read-only display -->
+<div id="eaMatchDetail" class="page">
+  <div class="page-header">
+    <button class="app-back-button" onclick="closeEaMatchDetail()">
+      <span class="app-back-icon">‹</span>
+      <span>Back to EA Match Centre</span>
+    </button>
+    <h2>EA Match Detail</h2>
+    <p>FC27 · Imported EA match data</p>
+  </div>
+
+  <div id="eaMatchDetailContent">
+    <div class="ea-centre-empty">Choose a match from EA Match Centre.</div>
+  </div>
+</div>
+
 <!-- MATCHES -->
 
 <div id="matches" class="page">
@@ -6142,6 +6180,8 @@ function syncSeasonSelectors(){
 */
 let eaMatchCentreLoaded=false;
 let eaMatchCentreBusy=false;
+let eaMatchCentreRows=[];
+let eaMatchCentrePlayers=[];
 
 function eaEscape(value){
   return String(value??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
@@ -6175,6 +6215,76 @@ function closeEaMatchCentre(){
   renderMatches();
   window.scrollTo(0,0);
 }
+function openEaMatchDetail(matchId){
+  const match=eaMatchCentreRows.find(row=>String(row.match_id)===String(matchId));
+  if(!match) return;
+
+  const players=eaMatchCentrePlayers
+    .filter(row=>String(row.match_id)===String(matchId))
+    .sort((a,b)=>Number(b.rating||0)-Number(a.rating||0));
+
+  const result=eaResultLetter(match);
+  const content=el("eaMatchDetailContent");
+
+  const playerHtml=players.map(p=>{
+    const attempts=Number(p.pass_attempts||0);
+    const made=Number(p.passes_made||0);
+    const passPct=attempts?Math.round((made/attempts)*100):0;
+    const tackleAttempts=Number(p.tackle_attempts||0);
+    const tacklesMade=Number(p.tackles_made||0);
+    const tacklePct=tackleAttempts?Math.round((tacklesMade/tackleAttempts)*100):0;
+
+    return `<div class="ea-detail-player-card">
+      <div class="ea-detail-player-top">
+        <div>
+          <div class="ea-detail-player-name">${eaEscape(p.olympus_player_name||p.gamertag)}${p.ea_motm?" · ⭐ EA MOTM":""}</div>
+          <div class="ea-detail-player-meta">${eaEscape(p.position||"Position unavailable")} · ${eaEscape(p.gamertag||"")}</div>
+        </div>
+        <div class="ea-detail-rating">${p.rating==null?"—":Number(p.rating).toFixed(1)}</div>
+      </div>
+      <div class="ea-detail-grid">
+        <div class="ea-detail-stat"><strong>${Number(p.goals||0)}</strong><span>GOALS</span></div>
+        <div class="ea-detail-stat"><strong>${Number(p.assists||0)}</strong><span>ASSISTS</span></div>
+        <div class="ea-detail-stat"><strong>${Number(p.shots||0)}</strong><span>SHOTS</span></div>
+        <div class="ea-detail-stat"><strong>${made}/${attempts}</strong><span>PASSES</span></div>
+        <div class="ea-detail-stat"><strong>${passPct}%</strong><span>PASS %</span></div>
+        <div class="ea-detail-stat"><strong>${tacklesMade}/${tackleAttempts}</strong><span>TACKLES</span></div>
+        <div class="ea-detail-stat"><strong>${tacklePct}%</strong><span>TACKLE %</span></div>
+        <div class="ea-detail-stat"><strong>${p.rating==null?"—":Number(p.rating).toFixed(1)}</strong><span>EA RATING</span></div>
+        <div class="ea-detail-stat"><strong>${p.ea_motm?"YES":"—"}</strong><span>EA MOTM</span></div>
+      </div>
+    </div>`;
+  }).join("");
+
+  content.innerHTML=`
+    <div class="ea-detail-hero">
+      <div class="ea-detail-kicker">IMPORTED EA MATCH</div>
+      <div class="ea-detail-score-row">
+        <div>
+          <div class="ea-detail-opponent">Olympus FC vs ${eaEscape(match.opponent_name||"Unknown opponent")}</div>
+          <div class="ea-detail-meta">${eaDateLabel(match.played_at)} · ${eaEscape(match.match_type||"League match")} · Match ID ${eaEscape(match.match_id)}</div>
+          <span class="ea-result-badge ea-result-${result}">${result}</span>
+        </div>
+        <div class="ea-detail-score">${Number(match.olympus_goals||0)}–${Number(match.opponent_goals||0)}</div>
+      </div>
+    </div>
+    <div class="ea-centre-heading">OLYMPUS PLAYER DATA</div>
+    ${playerHtml||`<div class="ea-centre-empty">No player rows stored for this match.</div>`}
+    <div class="ea-detail-note">This screen is read-only and uses the separate EA import tables. It does not alter Olympus match, POTN, achievement or report data.</div>`;
+
+  document.querySelectorAll(".page").forEach(page=>page.classList.remove("active"));
+  el("eaMatchDetail").classList.add("active");
+  el("bottomNav").classList.add("hidden");
+  window.scrollTo(0,0);
+}
+
+function closeEaMatchDetail(){
+  el("eaMatchDetail").classList.remove("active");
+  el("eaMatchCentre").classList.add("active");
+  el("bottomNav").classList.add("hidden");
+  window.scrollTo(0,0);
+}
+
 async function loadEaMatchCentre(force){
   if(eaMatchCentreBusy) return;
   if(eaMatchCentreLoaded&&!force) return;
@@ -6211,6 +6321,9 @@ async function loadEaMatchCentre(force){
       if(error) throw error;
       playerRows=data||[];
     }
+
+    eaMatchCentreRows=matchRows;
+    eaMatchCentrePlayers=playerRows;
 
     const byMatch={};
     playerRows.forEach(row=>{(byMatch[row.match_id]||=([])).push(row)});
@@ -6249,7 +6362,7 @@ async function loadEaMatchCentre(force){
           </div>`;
         }).join("");
 
-        return `<div class="ea-match-card">
+        return `<div class="ea-match-card" role="button" tabindex="0" onclick="openEaMatchDetail(${JSON.stringify(String(match.match_id))})">
           <div class="ea-match-top">
             <div>
               <div class="ea-match-opponent">vs ${eaEscape(match.opponent_name||"Unknown opponent")}</div>
@@ -6259,6 +6372,7 @@ async function loadEaMatchCentre(force){
             <div class="ea-match-score">${Number(match.olympus_goals||0)}–${Number(match.opponent_goals||0)}</div>
           </div>
           <div class="ea-player-list">${playerHtml||`<div class="ea-centre-empty" style="margin:12px 0 0">No player rows stored for this match.</div>`}</div>
+          <div class="ea-match-open"><span>VIEW MATCH DATA</span><span>›</span></div>
         </div>`;
       }).join("");
     }
