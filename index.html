@@ -772,6 +772,15 @@ h1{
 .ea-pass-chip b{color:#fff}
 .ea-event-note{margin-top:9px;color:#667a94;font-size:8px;line-height:1.45}
 
+.ea-defence-section{margin-top:14px;padding-top:14px;border-top:1px solid #25384f}
+.ea-defence-title{font-size:11px;font-weight:900;letter-spacing:.8px;color:#6f9dff;margin-bottom:9px}
+.ea-defence-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.ea-defence-stat{padding:10px 5px;border-radius:9px;background:#0a1626;text-align:center}
+.ea-defence-stat strong{display:block;font-size:13px;color:#fff}
+.ea-defence-stat span{display:block;margin-top:3px;font-size:7px;font-weight:900;color:#71839a}
+@media(max-width:390px){.ea-defence-grid{grid-template-columns:repeat(2,1fr)}}
+
+
 
 
 /* MATCHES */
@@ -6315,6 +6324,36 @@ function eaAdvancedPassingHtml(player){
   </div>`;
 }
 
+function eaDefendingHtml(player){
+  const e=eaEventCounts(player);
+  const n=id=>Number(e[String(id)]||0);
+
+  const stats=[
+    ["TACKLES WON",n(0)],
+    ["TACKLES LOST",n(1)],
+    ["STANDING WON",n(229)],
+    ["SLIDING WON",n(230)],
+    ["CLEAN TACKLES",n(164)],
+    ["DANGEROUS TACKLES",n(163)],
+    ["INTERCEPTIONS",n(6)],
+    ["DISPOSSESSIONS",n(158)],
+    ["CROSSES BLOCKED",n(156)],
+    ["DEF. AERIAL WINS",n(266)],
+    ["ATT. AERIAL WINS",n(265)],
+    ["POSSESSION WON · DEF ⅓",n(108)],
+    ["POSSESSION WON · MID ⅓",n(109)],
+    ["POSSESSION WON · ATT ⅓",n(110)]
+  ];
+
+  return `<div class="ea-defence-section">
+    <div class="ea-defence-title">ADVANCED DEFENDING</div>
+    <div class="ea-defence-grid">
+      ${stats.map(([label,value])=>`<div class="ea-defence-stat"><strong>${value}</strong><span>${label}</span></div>`).join("")}
+    </div>
+    <div class="ea-event-note">Decoded EA event counts. EA's named tackle totals above remain the authoritative match totals; these events provide the deeper breakdown.</div>
+  </div>`;
+}
+
 function openEaMatchDetail(matchId){
   const match=eaMatchCentreRows.find(row=>String(row.match_id)===String(matchId));
   if(!match) return;
@@ -6354,6 +6393,7 @@ function openEaMatchDetail(matchId){
         <div class="ea-detail-stat"><strong>${p.ea_motm?"YES":"—"}</strong><span>EA MOTM</span></div>
       </div>
       ${eaAdvancedPassingHtml(p)}
+      ${eaDefendingHtml(p)}
     </div>`;
   }).join("");
 
