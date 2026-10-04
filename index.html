@@ -7043,22 +7043,24 @@ function eaAnalyticsLeaderHtml(label,row,value){
 function renderEaPlayerAnalytics(){
   const host=el("eaAnalyticsPlayers");
   if(!host) return;
-  const grouped=eaAnalyticsBuildPlayers();
-  const players=Array.isArray(grouped)?grouped:Object.values(grouped||{});
-  if(!players.length){
+
+  const rows=eaAnalyticsRows();
+  if(!rows.length){
     host.innerHTML=`<div class="ea-centre-empty">No imported EA player data is available yet.</div>`;
     return;
   }
-  host.innerHTML=players.map(p=>{
-    const name=p.olympus_player_name||p.name||p.gamertag||"Unknown player";
-    const tag=p.gamertag||"";
-    const matches=Number(p.matches||p.apps||p.appearances||0);
-    return `<button class="eaps-player" onclick='openEaAnalyticsProfile(${JSON.stringify(String(tag||name))})'>
-      <span class="eaps-player-name">${eaEscape(name)}</span>
-      <span class="eaps-player-meta">${matches} imported ${matches===1?"match":"matches"}</span>
+
+  host.innerHTML=rows.map(row=>`
+    <button class="eaps-player" type="button" data-ea-player="${eaEscape(row.name)}">
+      <span class="eaps-player-name">${eaEscape(row.name)}</span>
+      <span class="eaps-player-meta">${row.matches} imported match${row.matches===1?"":"es"}</span>
       <span class="eaps-player-action">VIEW PROFILE <b>›</b></span>
-    </button>`;
-  }).join("");
+    </button>
+  `).join("");
+
+  host.querySelectorAll(".eaps-player").forEach(button=>{
+    button.addEventListener("click",()=>openEaAnalyticsProfile(button.dataset.eaPlayer));
+  });
 }
 
 
