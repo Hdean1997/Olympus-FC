@@ -773,6 +773,11 @@ h1{
 .ea-event-note{margin-top:9px;color:#667a94;font-size:8px;line-height:1.45}
 
 .ea-defence-section{margin-top:14px;padding-top:14px;border-top:1px solid #25384f}
+
+.ea-attack-section{margin-top:14px;padding-top:14px;border-top:1px solid #25384f}
+.ea-attack-title{font-size:11px;font-weight:900;letter-spacing:.8px;color:#6f9dff;margin-bottom:9px}
+.ea-attack-subtitle{margin:10px 0 6px;font-size:8px;font-weight:900;color:#71839a}
+
 .ea-defence-title{font-size:11px;font-weight:900;letter-spacing:.8px;color:#6f9dff;margin-bottom:9px}
 .ea-defence-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
 .ea-defence-stat{padding:10px 5px;border-radius:9px;background:#0a1626;text-align:center}
@@ -6340,9 +6345,9 @@ function eaDefendingHtml(player){
     ["CROSSES BLOCKED",n(156)],
     ["DEF. AERIAL WINS",n(266)],
     ["ATT. AERIAL WINS",n(265)],
-    ["POSSESSION WON · DEF ⅓",n(108)],
-    ["POSSESSION WON · MID ⅓",n(109)],
-    ["POSSESSION WON · ATT ⅓",n(110)]
+    ["POSSESSION WON · DEF 1/3",n(108)],
+    ["POSSESSION WON · MID 1/3",n(109)],
+    ["POSSESSION WON · ATT 1/3",n(110)]
   ];
 
   return `<div class="ea-defence-section">
@@ -6351,6 +6356,49 @@ function eaDefendingHtml(player){
       ${stats.map(([label,value])=>`<div class="ea-defence-stat"><strong>${value}</strong><span>${label}</span></div>`).join("")}
     </div>
     <div class="ea-event-note">Decoded EA event counts. EA's named tackle totals above remain the authoritative match totals; these events provide the deeper breakdown.</div>
+  </div>`;
+}
+
+function eaAttackingHtml(player){
+  const e=eaEventCounts(player);
+  const n=id=>Number(e[String(id)]||0);
+
+  const shooting=[
+    ["SHOTS ON TARGET",n(217)],
+    ["SHOTS OFF TARGET",n(218)],
+    ["ON TARGET · INSIDE BOX",n(13)],
+    ["ON TARGET · OUTSIDE BOX",n(18)],
+    ["OFF TARGET · INSIDE BOX",n(14)],
+    ["OFF TARGET · OUTSIDE BOX",n(19)],
+    ["SHOTS SAVED",n(202)]
+  ];
+
+  const creation=[
+    ["SECOND ASSISTS",n(115)],
+    ["THROUGH-BALL ASSISTS",n(118)],
+    ["DRIBBLES COMPLETED",n(174)],
+    ["DRIBBLES CARRIED",n(97)],
+    ["PLAYERS BEAT · SKILL",n(38)],
+    ["PLAYERS BEAT · NO SKILL",Math.max(0,n(112)-n(38))]
+  ];
+
+  const goals=[
+    ["FIRST-TIME GOALS",n(128)],
+    ["WEAK-FOOT GOALS",n(131)],
+    ["GOALS OFF POST",n(136)]
+  ];
+
+  const grid=rows=>`<div class="ea-defence-grid">${rows.map(([label,value])=>`<div class="ea-defence-stat"><strong>${value}</strong><span>${label}</span></div>`).join("")}</div>`;
+
+  return `<div class="ea-attack-section">
+    <div class="ea-attack-title">ADVANCED ATTACKING</div>
+    <div class="ea-attack-subtitle">SHOOTING</div>
+    ${grid(shooting)}
+    <div class="ea-attack-subtitle">CREATION &amp; DRIBBLING</div>
+    ${grid(creation)}
+    <div class="ea-attack-subtitle">GOAL TAGS</div>
+    ${grid(goals)}
+    <div class="ea-event-note">Decoded high-confidence EA event counts. EA's named goals, assists and shots above remain authoritative totals; goal tags can overlap.</div>
   </div>`;
 }
 
@@ -6394,6 +6442,7 @@ function openEaMatchDetail(matchId){
       </div>
       ${eaAdvancedPassingHtml(p)}
       ${eaDefendingHtml(p)}
+      ${eaAttackingHtml(p)}
     </div>`;
   }).join("");
 
