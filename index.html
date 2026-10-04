@@ -6332,7 +6332,7 @@ function eaAdvancedPassingHtml(player){
     <div class="ea-advanced-subtitle">PASS TYPES</div>
     <div class="ea-pass-special">
       <span class="ea-pass-chip"><b>${firstTime}</b> first-time</span>
-      <span class="ea-pass-chip"><b>${through}</b> through</span>
+      <span class="ea-pass-chip"><b>${through}</b> through balls</span>
       <span class="ea-pass-chip"><b>${switches}</b> switches</span>
       <span class="ea-pass-chip"><b>${flair}</b> flair</span>
       <span class="ea-pass-chip"><b>${offside}</b> offside</span>
@@ -6357,10 +6357,7 @@ function eaDefendingHtml(player){
     ["DISPOSSESSIONS",n(158)],
     ["CROSSES BLOCKED",n(156)],
     ["DEF. AERIAL WINS",n(266)],
-    ["ATT. AERIAL WINS",n(265)],
-    ["POSSESSION WON · DEF 1/3",n(108)],
-    ["POSSESSION WON · MID 1/3",n(109)],
-    ["POSSESSION WON · ATT 1/3",n(110)]
+    ["ATT. AERIAL WINS",n(265)]
   ];
 
   return `<div class="ea-defence-section">
@@ -6368,7 +6365,7 @@ function eaDefendingHtml(player){
     <div class="ea-defence-grid">
       ${stats.map(([label,value])=>`<div class="ea-defence-stat"><strong>${value}</strong><span>${label}</span></div>`).join("")}
     </div>
-    <div class="ea-event-note">Decoded EA event counts. EA's named tackle totals above remain the authoritative match totals; these events provide the deeper breakdown.</div>
+    <div class="ea-event-note">Decoded high-confidence EA event counts. EA's named tackle totals above remain the authoritative match totals; these events provide the deeper breakdown.</div>
   </div>`;
 }
 
@@ -6407,7 +6404,7 @@ function eaAttackingHtml(player){
     <div class="ea-attack-title">ADVANCED ATTACKING</div>
     <div class="ea-attack-subtitle">SHOOTING</div>
     ${grid(shooting)}
-    <div class="ea-attack-subtitle">CREATION &amp; DRIBBLING</div>
+    <div class="ea-attack-subtitle">CHANCE CREATION &amp; DRIBBLING</div>
     ${grid(creation)}
     <div class="ea-attack-subtitle">GOAL TAGS</div>
     ${grid(goals)}
@@ -6446,7 +6443,7 @@ function eaDisciplineHtml(player){
 
   const stats=[
     ["FOULS COMMITTED",n(2)+n(3)],
-    ["FOULS · DEF 1/3",n(3)],
+    ["FOULS IN DEFENSIVE THIRD",n(3)],
     ["FOULS SUFFERED",n(4)],
     ["YELLOW CARDS",n(95)+n(213)],
     ["YELLOW · IMMEDIATE",n(95)],
