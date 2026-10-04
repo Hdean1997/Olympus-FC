@@ -3664,6 +3664,18 @@ textarea.bug-form-control{
 .eamc-match-name{display:block;line-height:1.2}
 .eamc-match-date{display:block;margin-top:5px;line-height:1.2}
 
+
+/* EA MATCH DETAIL V2 — overview-first player analysis */
+.eamd-player{margin:0 16px 12px;border:1px solid #263f5d;border-radius:18px;background:#0e1d30;overflow:hidden}
+.eamd-player-head{padding:15px 17px;display:flex;justify-content:space-between;align-items:center;gap:12px;background:linear-gradient(135deg,#10243a,#0d1c2e)}
+.eamd-player-name{font-size:15px;font-weight:950}.eamd-player-meta{margin-top:3px;color:#71869f;font-size:8px}.eamd-rating{min-width:58px;padding:9px 10px;border:1px solid #395879;border-radius:12px;background:#071522;text-align:center}.eamd-rating strong{display:block;color:#f0c95b;font-size:20px}.eamd-rating span{display:block;margin-top:2px;color:#71869f;font-size:6px;font-weight:900}
+.eamd-summary{padding:10px 12px;display:grid;grid-template-columns:repeat(6,1fr);gap:7px}.eamd-summary-stat{padding:10px 5px;border-radius:10px;background:#071522;text-align:center}.eamd-summary-stat strong{display:block;font-size:14px}.eamd-summary-stat span{display:block;margin-top:3px;color:#71869f;font-size:6px;font-weight:900}
+.eamd-tabs{padding:7px 12px 11px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.eamd-tab{min-height:35px;border:1px solid #29415d;border-radius:9px;background:#091725;color:#8ea4bf;font-size:8px;font-weight:950}.eamd-tab.active{border-color:#3974c5;background:#15355a;color:#fff}
+.eamd-breakdown{display:none;padding:0 12px 13px}.eamd-breakdown.active{display:block}.eamd-group-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.eamd-group{padding:10px;border:1px solid #263f5d;border-radius:13px;background:#0a1929}.eamd-group-title{margin-bottom:8px;color:#6fa3ff;font-size:8px;font-weight:950;letter-spacing:.7px}.eamd-stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.eamd-stat{min-height:54px;padding:8px 9px;border:1px solid #203750;border-radius:9px;background:#071522;display:flex;flex-direction:column;justify-content:center}.eamd-stat strong{font-size:13px}.eamd-stat span{margin-top:3px;color:#71869f;font-size:6px;font-weight:900}.eamd-stat small{display:inline-flex;width:max-content;margin-top:4px;padding:3px 5px;border:1px solid #29445f;border-radius:999px;background:#10243a;color:#a9c0da;font-size:6px;font-weight:900}
+.eamd-note{margin:2px 16px 18px;color:#657b96;font-size:7px}
+@media(max-width:700px){.eamd-summary{grid-template-columns:repeat(3,1fr)}.eamd-group-grid{grid-template-columns:1fr}}
+@media(max-width:430px){.eamd-player{margin-left:12px;margin-right:12px}.eamd-summary{grid-template-columns:repeat(2,1fr)}.eamd-tabs{grid-template-columns:repeat(2,1fr)}.eamd-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style>
 
 <style>
@@ -7199,68 +7211,82 @@ function closeEaPlayerAnalytics(){
   window.scrollTo(0,0);
 }
 
+function eaMdStat(value,label,sub=""){
+  return `<div class="eamd-stat"><strong>${value}</strong><span>${eaEscape(label)}</span>${sub?`<small>${eaEscape(sub)}</small>`:""}</div>`;
+}
+function eaMdSwitchTab(playerKey,tab){
+  const root=document.querySelector(`[data-eamd-player="${CSS.escape(playerKey)}"]`);
+  if(!root) return;
+  root.querySelectorAll(".eamd-tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
+  root.querySelectorAll(".eamd-breakdown").forEach(p=>p.classList.toggle("active",p.dataset.panel===tab));
+}
 function openEaMatchDetail(matchId){
   const match=eaMatchCentreRows.find(row=>String(row.match_id)===String(matchId));
   if(!match) return;
+  const players=eaMatchCentrePlayers.filter(row=>String(row.match_id)===String(matchId)).sort((a,b)=>Number(b.rating||0)-Number(a.rating||0));
+  const result=eaResultLetter(match),content=el("eaMatchDetailContent");
 
-  const players=eaMatchCentrePlayers
-    .filter(row=>String(row.match_id)===String(matchId))
-    .sort((a,b)=>Number(b.rating||0)-Number(a.rating||0));
-
-  const result=eaResultLetter(match);
-  const content=el("eaMatchDetailContent");
-
-  const playerHtml=players.map(p=>{
-    const attempts=Number(p.pass_attempts||0);
-    const made=Number(p.passes_made||0);
-    const passPct=attempts?Math.round((made/attempts)*100):0;
-    const tackleAttempts=Number(p.tackle_attempts||0);
-    const tacklesMade=Number(p.tackles_made||0);
-    const tacklePct=tackleAttempts?Math.round((tacklesMade/tackleAttempts)*100):0;
-
-    return `<div class="ea-detail-player-card">
-      <div class="ea-detail-player-top">
-        <div>
-          <div class="ea-detail-player-name">${eaEscape(p.olympus_player_name||p.gamertag)}${p.ea_motm?" · ⭐ EA MOTM":""}</div>
-          <div class="ea-detail-player-meta">${eaEscape(p.position||"Position unavailable")} · ${eaEscape(p.gamertag||"")}</div>
-        </div>
-        <div class="ea-detail-rating">${p.rating==null?"—":Number(p.rating).toFixed(1)}</div>
+  const playerHtml=players.map((p,index)=>{
+    const attempts=Number(p.pass_attempts||0),made=Number(p.passes_made||0),passPct=attempts?Math.round(made/attempts*100):0;
+    const tackleAttempts=Number(p.tackle_attempts||0),tacklesMade=Number(p.tackles_made||0),tacklePct=tackleAttempts?Math.round(tacklesMade/tackleAttempts*100):0;
+    const ev=eaEventCounts(p),n=id=>Number(ev[String(id)]||0),raw=eaRawPlayerData(p);
+    const eventMade=n(215),eventFailed=n(216),eventAttempts=eventMade+eventFailed,eventPct=eventAttempts?Math.round(eventMade/eventAttempts*100):0;
+    const redCards=Number(raw?.redcards||0),key=`p${index}-${String(p.gamertag||"player").replace(/[^a-zA-Z0-9_-]/g,"")}`;
+    return `<div class="eamd-player" data-eamd-player="${eaEscape(key)}">
+      <div class="eamd-player-head"><div><div class="eamd-player-name">${eaEscape(p.olympus_player_name||p.gamertag)}${p.ea_motm?" · ⭐ EA MOTM":""}</div><div class="eamd-player-meta">${eaEscape(p.position||"Position unavailable")} · ${eaEscape(p.gamertag||"")}</div></div><div class="eamd-rating"><strong>${p.rating==null?"—":Number(p.rating).toFixed(1)}</strong><span>EA RATING</span></div></div>
+      <div class="eamd-summary">
+        <div class="eamd-summary-stat"><strong>${Number(p.goals||0)}</strong><span>GOALS</span></div>
+        <div class="eamd-summary-stat"><strong>${Number(p.assists||0)}</strong><span>ASSISTS</span></div>
+        <div class="eamd-summary-stat"><strong>${Number(p.shots||0)}</strong><span>SHOTS</span></div>
+        <div class="eamd-summary-stat"><strong>${passPct}%</strong><span>PASS %</span></div>
+        <div class="eamd-summary-stat"><strong>${tacklesMade}/${tackleAttempts}</strong><span>TACKLES</span></div>
+        <div class="eamd-summary-stat"><strong>${eaPlayingTimeText(p)}</strong><span>PLAYING TIME</span></div>
       </div>
-      <div class="ea-detail-grid">
-        <div class="ea-detail-stat"><strong>${Number(p.goals||0)}</strong><span>GOALS</span></div>
-        <div class="ea-detail-stat"><strong>${Number(p.assists||0)}</strong><span>ASSISTS</span></div>
-        <div class="ea-detail-stat"><strong>${Number(p.shots||0)}</strong><span>SHOTS</span></div>
-        <div class="ea-detail-stat"><strong>${made}/${attempts}</strong><span>PASSES</span></div>
-        <div class="ea-detail-stat"><strong>${passPct}%</strong><span>PASS %</span></div>
-        <div class="ea-detail-stat"><strong>${tacklesMade}/${tackleAttempts}</strong><span>TACKLES</span></div>
-        <div class="ea-detail-stat"><strong>${tacklePct}%</strong><span>TACKLE %</span></div>
-        <div class="ea-detail-stat"><strong>${p.rating==null?"—":Number(p.rating).toFixed(1)}</strong><span>EA RATING</span></div>
-        <div class="ea-detail-stat"><strong>${eaPlayingTimeText(p)}</strong><span>PLAYING TIME</span></div>
+      <div class="eamd-tabs">
+        ${["passing","defending","attacking","discipline"].map((t,i)=>`<button class="eamd-tab ${i===0?"active":""}" data-tab="${t}" onclick="eaMdSwitchTab('${eaEscape(key)}','${t}')">${t.toUpperCase()}</button>`).join("")}
       </div>
-      ${eaBreakdownHtml(p)}
+      <div class="eamd-breakdown active" data-panel="passing"><div class="eamd-group-grid">
+        <div class="eamd-group"><div class="eamd-group-title">CORE & DIRECTION</div><div class="eamd-stat-grid">
+          ${eaMdStat(`${made}/${attempts}`,"NAMED PASSES",`${passPct}% success`)}${eaMdStat(`${eventMade}/${eventAttempts}`,"EVENT PASSES",`${eventPct}% success`)}
+          ${eaMdStat(n(30),"FORWARD PASSES",`${n(31)} failed`)}${eaMdStat(n(32),"BACKWARD PASSES",`${n(33)} failed`)}${eaMdStat(n(34),"SIDEWAYS PASSES",`${n(35)} failed`)}${eaMdStat(n(36),"CROSSES",`${n(37)} failed`)}
+        </div></div>
+        <div class="eamd-group"><div class="eamd-group-title">DISTANCE & TECHNIQUE</div><div class="eamd-stat-grid">
+          ${eaMdStat(n(24),"SHORT PASSES",`${n(25)} failed`)}${eaMdStat(n(26),"MEDIUM PASSES",`${n(27)} failed`)}${eaMdStat(n(28),"LONG PASSES",`${n(29)} failed`)}
+          ${eaMdStat(n(143),"FIRST-TIME PASSES")}${eaMdStat(n(144),"SWITCHES")}${eaMdStat(n(147),"FLAIR PASSES")}${eaMdStat(n(152),"THROUGH BALLS")}${eaMdStat(n(153),"OFFSIDE PASSES")}
+        </div></div>
+      </div></div>
+      <div class="eamd-breakdown" data-panel="defending"><div class="eamd-group-grid">
+        <div class="eamd-group"><div class="eamd-group-title">TACKLING & INTERCEPTIONS</div><div class="eamd-stat-grid">
+          ${eaMdStat(`${tacklesMade}/${tackleAttempts}`,"NAMED TACKLES",`${tacklePct}% won`)}${eaMdStat(n(229),"STANDING WON")}${eaMdStat(n(230),"SLIDING WON")}${eaMdStat(n(164),"CLEAN TACKLES")}${eaMdStat(n(163),"DANGEROUS TACKLES")}${eaMdStat(n(6),"INTERCEPTIONS")}
+        </div></div>
+        <div class="eamd-group"><div class="eamd-group-title">PRESSURE & AERIALS</div><div class="eamd-stat-grid">
+          ${eaMdStat(n(158),"DISPOSSESSIONS")}${eaMdStat(n(156),"CROSSES BLOCKED")}${eaMdStat(n(266),"DEF. AERIAL WINS")}${eaMdStat(n(265),"ATT. AERIAL WINS")}
+        </div></div>
+      </div></div>
+      <div class="eamd-breakdown" data-panel="attacking"><div class="eamd-group-grid">
+        <div class="eamd-group"><div class="eamd-group-title">SHOOTING</div><div class="eamd-stat-grid">
+          ${eaMdStat(Number(p.shots||0),"NAMED SHOTS")}${eaMdStat(n(217),"SHOTS ON TARGET")}${eaMdStat(n(218),"SHOTS OFF TARGET")}${eaMdStat(n(13),"ON TARGET · INSIDE")}${eaMdStat(n(18),"ON TARGET · OUTSIDE")}${eaMdStat(n(202),"SHOTS SAVED")}
+        </div></div>
+        <div class="eamd-group"><div class="eamd-group-title">CREATION & DRIBBLING</div><div class="eamd-stat-grid">
+          ${eaMdStat(n(115),"SECOND ASSISTS")}${eaMdStat(n(118),"THROUGH-BALL ASSISTS")}${eaMdStat(n(174),"DRIBBLES COMPLETED")}${eaMdStat(n(97),"DRIBBLES CARRIED")}${eaMdStat(n(38),"PLAYERS BEAT · SKILL")}${eaMdStat(Math.max(0,n(112)-n(38)),"PLAYERS BEAT · NO SKILL")}${eaMdStat(n(128),"FIRST-TIME GOALS")}${eaMdStat(n(131),"WEAK-FOOT GOALS")}${eaMdStat(n(136),"GOALS OFF POST")}
+        </div></div>
+      </div></div>
+      <div class="eamd-breakdown" data-panel="discipline"><div class="eamd-group-grid">
+        <div class="eamd-group"><div class="eamd-group-title">FOULS & CARDS</div><div class="eamd-stat-grid">
+          ${eaMdStat(n(2)+n(3),"FOULS COMMITTED")}${eaMdStat(n(3),"FOULS · DEFENSIVE THIRD")}${eaMdStat(n(4),"FOULS SUFFERED")}${eaMdStat(n(95)+n(213),"YELLOW CARDS")}${eaMdStat(n(95),"YELLOW · IMMEDIATE")}${eaMdStat(n(213),"YELLOW · DELAYED")}${eaMdStat(redCards,"RED CARDS")}
+        </div></div>
+        <div class="eamd-group"><div class="eamd-group-title">SET PIECES & OTHER</div><div class="eamd-stat-grid">
+          ${eaMdStat(n(94),"PENALTIES CONCEDED")}${eaMdStat(n(10),"CORNERS CONCEDED")}${eaMdStat(n(145),"CORNERS TAKEN")}
+        </div></div>
+      </div></div>
     </div>`;
   }).join("");
 
-  content.innerHTML=`
-    <div class="ea-detail-hero">
-      <div class="ea-detail-kicker">IMPORTED EA MATCH</div>
-      <div class="ea-detail-score-row">
-        <div>
-          <div class="ea-detail-opponent">Olympus FC vs ${eaEscape(match.opponent_name||"Unknown opponent")}</div>
-          <div class="ea-detail-meta">${eaDateLabel(match.played_at)} · ${eaEscape(match.match_type||"League match")} · Match ID ${eaEscape(match.match_id)}</div>
-          <span class="ea-result-badge ea-result-${result}">${result}</span>
-        </div>
-        <div class="ea-detail-score">${Number(match.olympus_goals||0)}–${Number(match.opponent_goals||0)}</div>
-      </div>
-    </div>
-    <div class="ea-centre-heading">OLYMPUS PLAYER DATA</div>
-    ${playerHtml||`<div class="ea-centre-empty">No player rows stored for this match.</div>`}
-    <div class="ea-detail-note">This screen is read-only and uses the separate EA import tables. It does not alter Olympus match, POTN, achievement or report data.</div>`;
+  content.innerHTML=`<div class="ea-detail-hero"><div class="ea-detail-kicker">IMPORTED EA MATCH</div><div class="ea-detail-score-row"><div><div class="ea-detail-opponent">Olympus FC vs ${eaEscape(match.opponent_name||"Unknown opponent")}</div><div class="ea-detail-meta">${eaDateLabel(match.played_at)} · ${eaEscape(match.match_type||"League match")} · Match ID ${eaEscape(match.match_id)}</div><span class="ea-result-badge ea-result-${result}">${result}</span></div><div class="ea-detail-score">${Number(match.olympus_goals||0)}–${Number(match.opponent_goals||0)}</div></div></div>
+    <div class="ea-centre-heading">OLYMPUS PLAYER DATA</div>${playerHtml||`<div class="ea-centre-empty">No player rows stored for this match.</div>`}<div class="eamd-note">Read-only EA analysis. Normal Olympus Matchday, POTN, achievements and reports remain separate.</div>`;
 
   document.querySelectorAll(".page").forEach(page=>page.classList.remove("active"));
-  el("eaMatchDetail").classList.add("active");
-  el("bottomNav").classList.add("hidden");
-  window.scrollTo(0,0);
+  el("eaMatchDetail").classList.add("active");el("bottomNav").classList.add("hidden");window.scrollTo(0,0);
 }
 
 function closeEaMatchDetail(){
