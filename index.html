@@ -3543,6 +3543,75 @@ textarea.bug-form-control{
 @media(max-width:800px){.eap2-hero-main{grid-template-columns:1fr}.eap2-overview-grid,.eap2-detail-columns{grid-template-columns:1fr}.eap2-tabs{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:520px){.eap2-shell{margin-left:12px;margin-right:12px}.eap2-hero-main{padding:17px}.eap2-name{font-size:27px}.eap2-head-stats{grid-template-columns:repeat(2,1fr)}.eap2-tabs{grid-template-columns:repeat(3,1fr)}.eap2-kpi-grid{grid-template-columns:repeat(2,1fr)}.eap2-category-grid,.eap2-trend-grid{grid-template-columns:1fr}.eap2-tab{font-size:9px}}
 
+
+/* EA ANALYTICS PROFILE V2.1 — denser dashboard detail tabs */
+.eap2-panel:not([data-panel="overview"]):not([data-panel="trends"]){max-width:1500px;margin-left:auto;margin-right:auto}
+.eap2-detail-head{padding:2px 2px 8px;margin-bottom:6px}
+.eap2-detail-title{font-size:20px}
+.eap2-detail-copy{font-size:10px}
+.eap2-detail-columns{gap:14px}
+.eap2-stat-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  padding:12px;
+  overflow:visible;
+  border:1px solid #263f5d;
+  border-radius:17px;
+  background:#0e1d30;
+}
+.eap2-stat-list::before{
+  grid-column:1/-1;
+  display:block;
+  margin:0 2px 2px;
+  color:#6fa3ff;
+  font-size:9px;
+  font-weight:950;
+  letter-spacing:.8px;
+}
+[data-panel="passing"] .eap2-stat-list:first-child::before{content:"CORE & DIRECTION"}
+[data-panel="passing"] .eap2-stat-list:last-child::before{content:"DISTANCE & TECHNIQUE"}
+[data-panel="defending"] .eap2-stat-list:first-child::before{content:"TACKLING & INTERCEPTIONS"}
+[data-panel="defending"] .eap2-stat-list:last-child::before{content:"PRESSURE & AERIALS"}
+[data-panel="attacking"] .eap2-stat-list:first-child::before{content:"SHOOTING"}
+[data-panel="attacking"] .eap2-stat-list:last-child::before{content:"CREATION & DRIBBLING"}
+[data-panel="discipline"] .eap2-stat-list:first-child::before{content:"FOULS & CARDS"}
+[data-panel="discipline"] .eap2-stat-list:last-child::before{content:"SET PIECES & OTHER"}
+.eap2-stat-row{
+  display:flex;
+  min-height:68px;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  gap:5px;
+  padding:11px 12px;
+  border:1px solid #203750;
+  border-radius:12px;
+  background:#081725;
+}
+.eap2-stat-row:last-child{border-bottom:1px solid #203750}
+.eap2-stat-label{order:2;color:#7f94ae;font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.25px}
+.eap2-stat-value{order:1;width:100%;font-size:17px;font-weight:950;text-align:left;line-height:1.05}
+.eap2-stat-value small{display:inline;margin-left:6px;color:#647b96;font-size:7px;font-weight:800}
+.eap2-category{transition:transform .12s ease,border-color .12s ease,background .12s ease}
+.eap2-category:hover{transform:translateY(-1px);background:#0e2034}
+.eap2-history-button{max-width:1500px;display:block;margin-left:auto;margin-right:auto}
+.eap2-trend-grid{max-width:1500px;margin-left:auto;margin-right:auto}
+@media(max-width:1050px){
+  .eap2-panel:not([data-panel="overview"]):not([data-panel="trends"]){max-width:none}
+  .eap2-stat-list{grid-template-columns:1fr}
+}
+@media(max-width:800px){
+  .eap2-detail-columns{grid-template-columns:1fr}
+  .eap2-stat-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:520px){
+  .eap2-stat-list{grid-template-columns:repeat(2,minmax(0,1fr));padding:8px;gap:6px}
+  .eap2-stat-row{min-height:64px;padding:9px}
+  .eap2-stat-value{font-size:15px}
+  .eap2-stat-value small{display:block;margin:3px 0 0}
+}
+
 </style>
 
 <style>
