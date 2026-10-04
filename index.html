@@ -6525,8 +6525,7 @@ function openEaMatchDetail(matchId){
         <div class="ea-detail-stat"><strong>${tacklesMade}/${tackleAttempts}</strong><span>TACKLES</span></div>
         <div class="ea-detail-stat"><strong>${tacklePct}%</strong><span>TACKLE %</span></div>
         <div class="ea-detail-stat"><strong>${p.rating==null?"—":Number(p.rating).toFixed(1)}</strong><span>EA RATING</span></div>
-        <div class="ea-detail-stat"><strong>${p.ea_motm?"YES":"—"}</strong><span>EA MOTM</span></div>
-      <div class="ea-detail-stat"><strong>${eaPlayingTimeText(p)}</strong><span>PLAYING TIME</span></div>
+        <div class="ea-detail-stat"><strong>${eaPlayingTimeText(p)}</strong><span>PLAYING TIME</span></div>
       </div>
       ${eaBreakdownHtml(p)}
     </div>`;
