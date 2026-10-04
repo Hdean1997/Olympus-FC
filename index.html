@@ -794,6 +794,20 @@ h1{
 .ea-profile-history.open{display:block}
 @media(max-width:700px){.ea-profile-section-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:390px){.ea-profile-section-grid{grid-template-columns:repeat(2,1fr)}}
+.ea-profile-section-grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.ea-profile-pass-value{font-size:13px!important}
+.ea-profile-pass-value small{display:block;margin-top:2px;color:#71839a;font-size:7px;font-weight:900}
+.ea-trend-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.ea-trend-card{padding:11px 7px;border-radius:10px;background:#07111f;text-align:center}
+.ea-trend-label{color:#71839a;font-size:7px;font-weight:900}
+.ea-trend-values{margin-top:6px;color:#fff;font-size:11px;font-weight:900}
+.ea-trend-change{margin-top:4px;font-size:9px;font-weight:900}
+.ea-trend-change.up{color:#72d49b}
+.ea-trend-change.down{color:#ef8b8b}
+.ea-trend-change.flat{color:#8392a6}
+.ea-trend-note{margin-top:8px;color:#71839a;font-size:8px;line-height:1.4}
+@media(max-width:700px){.ea-trend-grid{grid-template-columns:repeat(2,1fr)}}
+
 
 
 
@@ -6753,6 +6767,24 @@ function toggleEaProfileHistory(button){
   if(label) label.textContent=opening?"HIDE MATCH-BY-MATCH PERFORMANCES":"SHOW MATCH-BY-MATCH PERFORMANCES";
 }
 
+
+function eaProfilePassStat(completed,failed,label){
+  return `<div class="ea-analytics-stat"><strong class="ea-profile-pass-value">${completed} completed<small>${failed} failed</small></strong><span>${eaEscape(label)}</span></div>`;
+}
+
+function eaTrendCard(label,overall,last5,suffix="",decimals=1){
+  const diff=last5-overall;
+  const epsilon=Math.pow(10,-decimals)/2;
+  const cls=Math.abs(diff)<epsilon?"flat":diff>0?"up":"down";
+  const arrow=cls==="flat"?"—":cls==="up"?"▲":"▼";
+  const fmt=value=>`${Number(value).toFixed(decimals)}${suffix}`;
+  return `<div class="ea-trend-card">
+    <div class="ea-trend-label">${eaEscape(label)}</div>
+    <div class="ea-trend-values">${fmt(overall)} overall → ${fmt(last5)} last 5</div>
+    <div class="ea-trend-change ${cls}">${arrow} ${Math.abs(diff).toFixed(decimals)}${suffix}</div>
+  </div>`;
+}
+
 function openEaAnalyticsProfile(name){
   const rows=eaAnalyticsRows();
   const summary=rows.find(row=>row.name===name);
@@ -6773,6 +6805,24 @@ function openEaAnalyticsProfile(name){
   const recentAvg=recent5.length
     ? recent5.reduce((sum,item)=>sum+Number(item.player.rating||0),0)/recent5.length
     : 0;
+
+  const recentTotals=recent5.reduce((acc,item)=>{
+    const p=item.player;
+    const ev=eaEventCounts(p);
+    acc.goals+=Number(p.goals||0);
+    acc.assists+=Number(p.assists||0);
+    acc.passesMade+=Number(p.passes_made||0);
+    acc.passAttempts+=Number(p.pass_attempts||0);
+    acc.tacklesMade+=Number(p.tackles_made||0);
+    acc.interceptions+=Number(ev["6"]||0);
+    return acc;
+  },{goals:0,assists:0,passesMade:0,passAttempts:0,tacklesMade:0,interceptions:0});
+
+  const recentCount=recent5.length||1;
+  const recentGaPerMatch=(recentTotals.goals+recentTotals.assists)/recentCount;
+  const recentPassPct=recentTotals.passAttempts?recentTotals.passesMade/recentTotals.passAttempts*100:0;
+  const recentTacklesPerMatch=recentTotals.tacklesMade/recentCount;
+  const recentInterceptionsPerMatch=recentTotals.interceptions/recentCount;
 
   const content=el("eaAnalyticsProfileContent");
   content.innerHTML=`
@@ -6806,18 +6856,18 @@ function openEaAnalyticsProfile(name){
         ${eaProfileStat(`${Math.round(summary.passPct)}%`,"NAMED PASS %")}
         ${eaProfileStat(`${eventPassMade}/${eventPassAttempts}`,"EVENT PASSES")}
         ${eaProfileStat(`${eventPassPct}%`,"EVENT PASS %")}
-        ${eaProfileStat(`${n(30)}/${n(31)}`,"FORWARD C/F")}
-        ${eaProfileStat(`${n(32)}/${n(33)}`,"BACKWARD C/F")}
-        ${eaProfileStat(`${n(34)}/${n(35)}`,"SIDEWAYS C/F")}
-        ${eaProfileStat(`${n(24)}/${n(25)}`,"SHORT C/F")}
-        ${eaProfileStat(`${n(26)}/${n(27)}`,"MEDIUM C/F")}
-        ${eaProfileStat(`${n(28)}/${n(29)}`,"LONG C/F")}
+        ${eaProfilePassStat(n(30),n(31),"FORWARD PASSES")}
+        ${eaProfilePassStat(n(32),n(33),"BACKWARD PASSES")}
+        ${eaProfilePassStat(n(34),n(35),"SIDEWAYS PASSES")}
+        ${eaProfilePassStat(n(24),n(25),"SHORT PASSES")}
+        ${eaProfilePassStat(n(26),n(27),"MEDIUM PASSES")}
+        ${eaProfilePassStat(n(28),n(29),"LONG PASSES")}
         ${eaProfileStat(n(143),"FIRST-TIME PASSES")}
         ${eaProfileStat(n(144),"SWITCHES")}
         ${eaProfileStat(n(147),"FLAIR PASSES")}
         ${eaProfileStat(n(152),"THROUGH BALLS")}
         ${eaProfileStat(n(153),"OFFSIDE PASSES")}
-        ${eaProfileStat(`${n(36)}/${n(37)}`,"CROSSES C/F")}
+        ${eaProfilePassStat(n(36),n(37),"CROSSES")}
       </div>
     </div>
 
@@ -6875,6 +6925,18 @@ function openEaAnalyticsProfile(name){
         ${eaProfileStat(n(10),"CORNERS CONCEDED")}
         ${eaProfileStat(n(145),"CORNERS TAKEN")}
       </div>
+    </div>
+
+    <div class="ea-profile-section">
+      <div class="ea-profile-section-title">LAST 5 VS OVERALL</div>
+      <div class="ea-trend-grid">
+        ${eaTrendCard("AVG RATING",summary.avgRating,recentAvg,"",2)}
+        ${eaTrendCard("G+A / MATCH",summary.gaPerMatch,recentGaPerMatch,"",2)}
+        ${eaTrendCard("PASS %",summary.passPct,recentPassPct,"%",0)}
+        ${eaTrendCard("TACKLES WON / MATCH",summary.tacklesPerMatch,recentTacklesPerMatch,"",1)}
+        ${eaTrendCard("INTERCEPTIONS / MATCH",summary.interceptionsPerMatch,recentInterceptionsPerMatch,"",1)}
+      </div>
+      <div class="ea-trend-note">Compares the player's most recent five imported EA appearances with their complete imported FC27 sample.</div>
     </div>
 
     <button class="ea-profile-history-toggle" onclick="toggleEaProfileHistory(this)">
