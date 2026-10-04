@@ -3612,6 +3612,38 @@ textarea.bug-form-control{
   .eap2-stat-value small{display:block;margin:3px 0 0}
 }
 
+
+/* EA ANALYTICS PROFILE V3 — clearer secondary values + wider dashboard */
+.eap2-panel:not([data-panel="overview"]):not([data-panel="trends"]){max-width:1680px}
+.eap2-history-button,.eap2-trend-grid{max-width:1680px}
+.eap2-stat-value{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.eap2-stat-value small{
+  display:inline-flex;
+  align-items:center;
+  margin:0;
+  padding:4px 7px;
+  border:1px solid #29445f;
+  border-radius:999px;
+  background:#10243a;
+  color:#a9c0da;
+  font-size:8px;
+  font-weight:900;
+  line-height:1;
+}
+.eap2-detail-head>.eap2-category-value{
+  padding:8px 11px;
+  border:1px solid #31577f;
+  border-radius:11px;
+  background:#0d2136;
+  font-size:16px;
+}
+[data-panel="passing"] .eap2-detail-head>.eap2-category-value::after{content:"  PASS SUCCESS";color:#7f96b0;font-size:7px;font-weight:900}
+[data-panel="defending"] .eap2-detail-head>.eap2-category-value::after{content:"  TACKLE SUCCESS";color:#7f96b0;font-size:7px;font-weight:900}
+@media(max-width:520px){
+  .eap2-stat-value{gap:5px}
+  .eap2-stat-value small{display:inline-flex;margin:0;padding:3px 6px}
+}
+
 </style>
 
 <style>
