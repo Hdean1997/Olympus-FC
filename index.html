@@ -864,33 +864,6 @@ h1{
   justify-content:space-between;
 }
 
-
-/* EA MATCH CENTRE */
-.ea-centre-hero{margin:0 16px 16px;padding:18px;border-radius:18px;background:linear-gradient(145deg,#12243d,#101d2e);border:1px solid #315d9d}
-.ea-centre-kicker{color:#75a4ff;font-size:10px;font-weight:900;letter-spacing:1px}
-.ea-centre-title{margin-top:5px;font-size:22px;font-weight:900}
-.ea-centre-copy{margin-top:7px;color:#9aa9bc;font-size:12px;line-height:1.5}
-.ea-centre-status{margin:0 16px 14px;padding:12px 14px;border-radius:12px;background:#0b1625;border:1px solid #29425f;color:#9aa9bc;font-size:11px;line-height:1.45}
-.ea-match-card{margin:0 16px 12px;padding:16px;border-radius:17px;background:#101d2e;border:1px solid #1c314c}
-.ea-match-card-button{width:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left}
-.ea-match-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.ea-match-opponent{font-size:17px;font-weight:900;overflow-wrap:anywhere}
-.ea-match-date{margin-top:4px;color:#8392a6;font-size:11px}
-.ea-match-score{margin-top:13px;font-size:21px;font-weight:900}
-.ea-match-source{margin-top:7px;color:#6f9dff;font-size:10px;font-weight:800}
-.ea-player-list{display:grid;gap:9px;margin:0 16px 20px}
-.ea-player-row{padding:14px;border-radius:14px;background:#101d2e;border:1px solid #1c314c}
-.ea-player-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.ea-player-name{font-size:15px;font-weight:900}
-.ea-player-tag{margin-top:3px;color:#8392a6;font-size:10px}
-.ea-player-rating{color:#e8bd4b;font-size:18px;font-weight:900}
-.ea-player-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:11px}
-.ea-player-stat{padding:9px 4px;border-radius:10px;background:#07111f;text-align:center}
-.ea-player-stat strong{display:block;font-size:14px}
-.ea-player-stat span{display:block;margin-top:3px;color:#8392a6;font-size:8px;font-weight:800}
-.ea-empty{margin:0 16px;padding:25px 18px;border:1px dashed #29425f;border-radius:16px;background:#0d1928;color:#9aa9bc;text-align:center;font-size:12px;line-height:1.5}
-@media(max-width:360px){.ea-player-grid{grid-template-columns:repeat(2,1fr)}}
-
 /* STATS */
 
 .leaderboard-title{
@@ -3750,14 +3723,6 @@ textarea.bug-form-control{
         </div>
         <div class="hub-action-arrow">›</div>
       </button>
-      <button class="hub-action blue" onclick="openEaMatchCentre()">
-        <div>
-          <div class="hub-action-main">⚡ EA Match Centre</div>
-          <div class="hub-action-sub">View automatically imported FC27 match and player data</div>
-        </div>
-        <div class="hub-action-arrow">›</div>
-      </button>
-
     </div>
   </div>
 
@@ -4621,35 +4586,6 @@ textarea.bug-form-control{
   </div>
 </div>
 
-</div>
-
-
-<!-- EA MATCH CENTRE -->
-<div id="eaMatchCentre" class="page">
-  <div class="page-header">
-    <button class="app-back-button" type="button" onclick="closeEaMatchCentre()"><span class="app-back-icon">‹</span><span>Matches</span></button>
-    <h2>EA Match Centre</h2>
-    <p>Olympus FC · FC27 · Read-only EA data</p>
-  </div>
-
-  <div class="ea-centre-hero">
-    <div class="ea-centre-kicker">AUTOMATIC EA IMPORT</div>
-    <div class="ea-centre-title">Recent EA Matches</div>
-    <div class="ea-centre-copy">These matches are stored separately from your normal Olympus match records. Viewing them here does not change Matchday, POTN, achievements, records or manually logged stats.</div>
-  </div>
-
-  <div id="eaMatchCentreStatus" class="ea-centre-status">Open the Match Centre to load EA data.</div>
-  <div id="eaMatchCentreList"></div>
-</div>
-
-<!-- EA MATCH DETAIL -->
-<div id="eaMatchDetail" class="page">
-  <div class="page-header">
-    <button class="app-back-button" type="button" onclick="backToEaMatchCentre()"><span class="app-back-icon">‹</span><span>EA Match Centre</span></button>
-    <h2 id="eaMatchDetailTitle">EA Match</h2>
-    <p id="eaMatchDetailSubtitle">Olympus FC · FC27</p>
-  </div>
-  <div id="eaMatchDetailBody"></div>
 </div>
 
 <!-- NAV -->
@@ -12613,126 +12549,6 @@ async function loadDraftData(){
 }
 
 
-
-
-/* EA MATCH CENTRE - READ ONLY */
-let eaImportedMatches=[];
-let eaImportedPlayerStats=[];
-let eaMatchCentreLoaded=false;
-
-function eaResultClass(result){
-  const r=String(result||'').toLowerCase();
-  if(r==='win') return 'result-win';
-  if(r==='draw') return 'result-draw';
-  return 'result-loss';
-}
-
-function eaFormatDate(value){
-  if(!value) return 'Date unavailable';
-  const d=new Date(value);
-  if(Number.isNaN(d.getTime())) return 'Date unavailable';
-  return d.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-}
-
-async function loadEaMatchCentre(force=false){
-  if(!supabaseClient) return;
-  if(eaMatchCentreLoaded && !force){renderEaMatchCentre();return;}
-  const status=el('eaMatchCentreStatus');
-  if(status) status.textContent='Loading imported EA matches…';
-  try{
-    const {data:matches,error:matchError}=await supabaseClient
-      .from('ea_matches')
-      .select('match_id,played_at,opponent_name,olympus_goals,opponent_goals,result,match_type,imported_at')
-      .order('played_at',{ascending:false,nullsFirst:false});
-    if(matchError) throw matchError;
-
-    const ids=(matches||[]).map(row=>row.match_id);
-    let playerRows=[];
-    if(ids.length){
-      const {data,error}=await supabaseClient
-        .from('ea_player_match_stats')
-        .select('match_id,ea_player_id,gamertag,olympus_player_name,position,goals,assists,rating,passes_made,pass_attempts,shots,tackles_made,tackle_attempts,ea_motm')
-        .in('match_id',ids);
-      if(error) throw error;
-      playerRows=data||[];
-    }
-    eaImportedMatches=matches||[];
-    eaImportedPlayerStats=playerRows;
-    eaMatchCentreLoaded=true;
-    renderEaMatchCentre();
-  }catch(error){
-    console.error('EA Match Centre load failed:',error);
-    if(status) status.textContent='EA data could not be read. The rest of Olympus is unaffected.';
-    const list=el('eaMatchCentreList');
-    if(list) list.innerHTML='<div class="ea-empty">The EA Match Centre could not load yet. This usually means the new EA tables need a read policy in Supabase.</div>';
-  }
-}
-
-function renderEaMatchCentre(){
-  const status=el('eaMatchCentreStatus'),list=el('eaMatchCentreList');
-  if(!status||!list) return;
-  status.textContent=`${eaImportedMatches.length} imported EA match${eaImportedMatches.length===1?'':'es'} stored in Olympus · read only`;
-  if(!eaImportedMatches.length){
-    list.innerHTML='<div class="ea-empty">No EA matches have been imported yet.</div>';
-    return;
-  }
-  list.innerHTML=eaImportedMatches.map(match=>{
-    const count=eaImportedPlayerStats.filter(row=>String(row.match_id)===String(match.match_id)).length;
-    const result=String(match.result||'').toLowerCase();
-    return `<div class="ea-match-card"><button class="ea-match-card-button" type="button" onclick="openEaMatchDetail('${escapeHTML(String(match.match_id))}')">
-      <div class="ea-match-head"><div><div class="ea-match-opponent">vs ${escapeHTML(match.opponent_name||'Unknown opponent')}</div><div class="ea-match-date">${escapeHTML(eaFormatDate(match.played_at))}</div></div><span class="result-badge ${eaResultClass(result)}">${escapeHTML((result||'—').toUpperCase())}</span></div>
-      <div class="ea-match-score">Olympus ${Number(match.olympus_goals||0)} – ${Number(match.opponent_goals||0)} ${escapeHTML(match.opponent_name||'Opponent')}</div>
-      <div class="ea-match-source">EA DATA · ${count} Olympus player${count===1?'':'s'} ›</div>
-    </button></div>`;
-  }).join('');
-}
-
-function openEaMatchCentre(){
-  document.querySelectorAll('.page').forEach(page=>page.classList.remove('active'));
-  el('eaMatchCentre').classList.add('active');
-  activateNavForPage('matches');
-  el('bottomNav').classList.remove('hidden');
-  window.scrollTo(0,0);
-  loadEaMatchCentre();
-}
-
-function closeEaMatchCentre(){
-  const nav=document.querySelectorAll('.nav-item')[3]||null;
-  showPage('matches',nav);
-}
-
-function backToEaMatchCentre(){
-  document.querySelectorAll('.page').forEach(page=>page.classList.remove('active'));
-  el('eaMatchCentre').classList.add('active');
-  activateNavForPage('matches');
-  el('bottomNav').classList.remove('hidden');
-  renderEaMatchCentre();
-  window.scrollTo(0,0);
-}
-
-function openEaMatchDetail(matchId){
-  const match=eaImportedMatches.find(row=>String(row.match_id)===String(matchId));
-  if(!match) return;
-  const rows=eaImportedPlayerStats
-    .filter(row=>String(row.match_id)===String(matchId))
-    .sort((a,b)=>Number(b.rating||0)-Number(a.rating||0));
-  el('eaMatchDetailTitle').textContent=`Olympus ${Number(match.olympus_goals||0)} – ${Number(match.opponent_goals||0)} ${match.opponent_name||'Opponent'}`;
-  el('eaMatchDetailSubtitle').textContent=`${eaFormatDate(match.played_at)} · EA FC27`;
-  const body=el('eaMatchDetailBody');
-  body.innerHTML=`<div class="ea-centre-status">EA match ID ${escapeHTML(String(match.match_id))} · ${rows.length} Olympus player${rows.length===1?'':'s'}</div>` +
-    (rows.length?`<div class="ea-player-list">${rows.map(row=>{
-      const made=Number(row.passes_made||0),attempts=Number(row.pass_attempts||0);
-      const pct=attempts?Math.round((made/attempts)*100):0;
-      return `<div class="ea-player-row"><div class="ea-player-top"><div><div class="ea-player-name">${escapeHTML(row.olympus_player_name||row.gamertag||'Unknown player')}${row.ea_motm?' ⭐':''}</div><div class="ea-player-tag">${escapeHTML(row.gamertag||'')} ${row.position?'· '+escapeHTML(row.position):''}</div></div><div class="ea-player-rating">${row.rating==null?'—':Number(row.rating).toFixed(1)}</div></div><div class="ea-player-grid"><div class="ea-player-stat"><strong>${Number(row.goals||0)}</strong><span>GOALS</span></div><div class="ea-player-stat"><strong>${Number(row.assists||0)}</strong><span>ASSISTS</span></div><div class="ea-player-stat"><strong>${made}/${attempts}</strong><span>PASSES · ${pct}%</span></div><div class="ea-player-stat"><strong>${Number(row.shots||0)}</strong><span>SHOTS</span></div><div class="ea-player-stat"><strong>${Number(row.tackles_made||0)}/${Number(row.tackle_attempts||0)}</strong><span>TACKLES</span></div><div class="ea-player-stat"><strong>${row.ea_motm?'YES':'—'}</strong><span>EA MOTM</span></div></div></div>`;
-    }).join('')}</div>`:'<div class="ea-empty">No Olympus player rows were stored for this match.</div>');
-  document.querySelectorAll('.page').forEach(page=>page.classList.remove('active'));
-  el('eaMatchDetail').classList.add('active');
-  activateNavForPage('matches');
-  el('bottomNav').classList.remove('hidden');
-  window.scrollTo(0,0);
-}
-
-
 /* RENDER */
 
 function renderEverything(){
@@ -12757,7 +12573,7 @@ function renderEverything(){
   });
 }
 
-const OLYMPUS_APP_BUILD = "20261004-ea-match-centre-stage4-v1";
+const OLYMPUS_APP_BUILD = "20260906-achievements-stage3-account-pending-fix2";
 
 async function checkForAppUpdate(){
   try{
