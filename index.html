@@ -6233,7 +6233,7 @@ function eaEventCounts(player){
   const raw=player&&player.raw_data&&typeof player.raw_data==="object" ? player.raw_data : player||{};
   for(let bucket=0;bucket<4;bucket++){
     const value=raw[`match_event_aggregate_${bucket}`] ?? player?.[`aggregate_${bucket}`] ?? "";
-    String(value||"").split(",").forEach(pair=>{
+    String(value||"").split(/[;,]/).forEach(pair=>{
       const [id,count]=pair.split(":");
       if(id!==undefined && count!==undefined && id!==""){
         counts[id]=(counts[id]||0)+(Number(count)||0);
