@@ -6419,21 +6419,24 @@ function eaDisciplineHtml(player){
   const e=eaEventCounts(player);
   const n=id=>Number(e[String(id)]||0);
 
-  // Keep this panel deliberately conservative: only event IDs already stored
-  // in the aggregate data are shown, while the normal EA match fields remain authoritative.
   const stats=[
-    ["FOULS COMMITTED",n(5)],
+    ["FOULS COMMITTED",n(2)+n(3)],
+    ["FOULS · DEF 1/3",n(3)],
     ["FOULS SUFFERED",n(4)],
-    ["YELLOW CARDS",n(7)],
-    ["RED CARDS",n(8)]
+    ["YELLOW CARDS",n(95)+n(213)],
+    ["YELLOW · IMMEDIATE",n(95)],
+    ["YELLOW · DELAYED",n(213)],
+    ["PENALTIES CONCEDED",n(94)],
+    ["CORNERS CONCEDED",n(10)],
+    ["CORNERS TAKEN",n(145)]
   ];
 
   return `<div class="ea-discipline-section">
-    <div class="ea-discipline-title">DISCIPLINE &amp; FOULS</div>
+    <div class="ea-discipline-title">DISCIPLINE &amp; SET PIECES</div>
     <div class="ea-defence-grid">
       ${stats.map(([label,value])=>`<div class="ea-defence-stat"><strong>${value}</strong><span>${label}</span></div>`).join("")}
     </div>
-    <div class="ea-event-note">Decoded EA event counts. Card and foul event mappings should be treated as the event-level breakdown rather than replacements for EA's named match totals.</div>
+    <div class="ea-event-note">Decoded high-confidence EA event counts. Red cards are intentionally not shown because the available event mapping is only partial.</div>
   </div>`;
 }
 
