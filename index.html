@@ -3741,6 +3741,62 @@ textarea.bug-form-control{
   .eamd-stat strong{font-size:15px}
 }
 
+
+/* EA MATCH DETAIL V3 — one coherent centred player dashboard */
+.eamd-player{
+  max-width:1640px;
+  margin:0 auto 14px;
+}
+.eamd-player-head,
+.eamd-summary,
+.eamd-tabs,
+.eamd-breakdown{
+  box-sizing:border-box;
+  width:100%;
+  max-width:none;
+  margin-left:0;
+  margin-right:0;
+}
+.eamd-player-head{
+  padding:17px 18px;
+}
+.eamd-summary{
+  padding:11px 14px 8px;
+}
+.eamd-tabs{
+  padding:7px 14px 11px;
+}
+.eamd-breakdown{
+  padding:0 14px 14px;
+}
+.eamd-group-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.eamd-group{
+  padding:12px;
+}
+.eamd-stat{
+  min-height:62px;
+}
+@media(max-width:1680px){
+  .eamd-player{
+    max-width:calc(100% - 32px);
+  }
+}
+@media(max-width:700px){
+  .eamd-player{
+    max-width:none;
+    margin-left:12px;
+    margin-right:12px;
+  }
+  .eamd-player-head,.eamd-summary,.eamd-tabs,.eamd-breakdown{
+    width:100%;
+    max-width:none;
+  }
+  .eamd-group-grid{grid-template-columns:1fr}
+}
+
 </style>
 
 <style>
