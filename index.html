@@ -3886,6 +3886,46 @@ textarea.bug-form-control{
   .eaps-player{min-height:70px;padding:10px 14px}
 }
 
+
+/* EA PLAYER COMPARISON V1 */
+.eacmp-hero{max-width:1180px;margin:0 auto 14px;padding:22px 20px;text-align:center;border:1px solid #1d3b59;border-radius:18px;background:radial-gradient(circle at 50% 0%,rgba(48,113,179,.14),transparent 58%),#091523}
+.eacmp-kicker{font-size:10px;font-weight:900;letter-spacing:1.2px;color:#69a9ff}
+.eacmp-title{margin-top:5px;font-size:27px;font-weight:900;color:#fff}
+.eacmp-copy{margin:7px auto 0;max-width:680px;color:#8da2b8;font-size:12px;line-height:1.5}
+.eacmp-picker{max-width:1180px;margin:0 auto 12px;display:grid;grid-template-columns:1fr 52px 1fr;gap:10px;align-items:end}
+.eacmp-picker label{font-size:9px;font-weight:900;letter-spacing:.9px;color:#738aa2}
+.eacmp-picker select{width:100%;margin-top:6px;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid #284764;background:#0b1a29;color:#fff;font-size:16px;font-weight:800;text-align:center}
+.eacmp-vs{height:48px;display:flex;align-items:center;justify-content:center;color:#5d7893;font-size:11px;font-weight:900}
+.eacmp-mode{max-width:1180px;margin:0 auto 12px;display:flex;justify-content:center;gap:6px}
+.eacmp-mode button,.eacmp-tabs button{border:1px solid #203d59;background:#0b1928;color:#71869b;border-radius:999px;font-size:9px;font-weight:900;letter-spacing:.65px;padding:9px 13px}
+.eacmp-mode button.active,.eacmp-tabs button.active{border-color:#376fa7;background:#102b46;color:#8cc0ff}
+.eacmp-summary{max-width:1180px;margin:0 auto 12px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:16px;border:1px solid #1c3853;border-radius:16px;background:#0a1724}
+.eacmp-summary-player{text-align:center;min-width:0}
+.eacmp-summary-name{font-size:18px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eacmp-summary-sub{margin-top:4px;color:#72879b;font-size:10px}
+.eacmp-summary-score{font-size:10px;font-weight:900;color:#63809c;text-align:center}
+.eacmp-summary-score strong{display:block;font-size:23px;color:#fff}
+.eacmp-tabs{max-width:1180px;margin:0 auto 10px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.eacmp-table{max-width:1180px;margin:0 auto;border:1px solid #1b354e;border-radius:16px;overflow:hidden;background:#081522}
+.eacmp-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(145px,.75fr) minmax(0,1fr);align-items:center;min-height:66px;border-bottom:1px solid #142a3e}
+.eacmp-row:last-child{border-bottom:0}
+.eacmp-val{padding:11px 16px;text-align:center;font-size:18px;font-weight:900;color:#dbe8f5}
+.eacmp-val.win{color:#65d99a}
+.eacmp-label{text-align:center;color:#71869b;font-size:9px;font-weight:900;letter-spacing:.65px}
+.eacmp-label small{display:block;margin-top:3px;color:#4f667c;font-size:8px;letter-spacing:0}
+.eacmp-bar{height:3px;margin:7px auto 0;max-width:120px;background:#132c42;border-radius:999px;overflow:hidden}
+.eacmp-bar span{display:block;height:100%;background:#4d87c1;border-radius:999px}
+.eacmp-note{max-width:1180px;margin-left:auto;margin-right:auto}
+@media(max-width:620px){
+  .eacmp-picker{grid-template-columns:1fr 34px 1fr}
+  .eacmp-picker select{font-size:13px;padding:0 7px}
+  .eacmp-row{grid-template-columns:minmax(0,1fr) 112px minmax(0,1fr)}
+  .eacmp-val{font-size:15px;padding:10px 6px}
+  .eacmp-label{font-size:8px}
+  .eacmp-summary{grid-template-columns:1fr 54px 1fr;padding:12px 8px}
+  .eacmp-summary-name{font-size:14px}
+}
+
 </style>
 
 <style>
@@ -4287,6 +4327,7 @@ textarea.bug-form-control{
   <div class="eamc-nav">
     <button class="eamc-nav-item active">MATCHES</button>
     <button class="eamc-nav-item" onclick="openEaPlayerAnalytics()">PLAYER ANALYTICS <span>›</span></button>
+    <button class="eamc-nav-item" onclick="openEaPlayerComparison()">PLAYER COMPARISON <span>›</span></button>
   </div>
 
   <div id="eaCentreSummary" class="eamc-summary"></div>
@@ -4300,6 +4341,49 @@ textarea.bug-form-control{
     </div>
   </div>
   <div id="eaCentreMatches" class="eamc-match-grid"></div>
+</div>
+
+
+<!-- EA PLAYER COMPARISON — isolated read-only display -->
+<div id="eaPlayerComparison" class="page">
+  <div class="page-header">
+    <button class="app-back-button" onclick="closeEaPlayerComparison()">
+      <span class="app-back-icon">‹</span>
+      <span>Back to EA Match Centre</span>
+    </button>
+    <h2>EA Player Comparison</h2>
+    <p>FC27 · Head-to-head imported EA performances</p>
+  </div>
+
+  <div class="eacmp-hero">
+    <div class="eacmp-kicker">EA PLAYER COMPARISON · FC27</div>
+    <div class="eacmp-title">Head-to-Head</div>
+    <div class="eacmp-copy">Compare two Olympus players using the EA match data already imported into the app.</div>
+  </div>
+
+  <div class="eacmp-picker">
+    <label>PLAYER ONE<select id="eaComparePlayerA" onchange="renderEaPlayerComparison()"></select></label>
+    <div class="eacmp-vs">VS</div>
+    <label>PLAYER TWO<select id="eaComparePlayerB" onchange="renderEaPlayerComparison()"></select></label>
+  </div>
+
+  <div class="eacmp-mode" role="group" aria-label="Comparison mode">
+    <button type="button" class="active" data-eacmp-mode="totals" onclick="setEaComparisonMode('totals')">TOTALS</button>
+    <button type="button" data-eacmp-mode="permatch" onclick="setEaComparisonMode('permatch')">PER MATCH</button>
+  </div>
+
+  <div id="eaComparisonSummary"></div>
+
+  <div class="eacmp-tabs">
+    <button type="button" class="active" data-eacmp-tab="overview" onclick="setEaComparisonTab('overview')">OVERVIEW</button>
+    <button type="button" data-eacmp-tab="passing" onclick="setEaComparisonTab('passing')">PASSING</button>
+    <button type="button" data-eacmp-tab="defending" onclick="setEaComparisonTab('defending')">DEFENDING</button>
+    <button type="button" data-eacmp-tab="attacking" onclick="setEaComparisonTab('attacking')">ATTACKING</button>
+    <button type="button" data-eacmp-tab="discipline" onclick="setEaComparisonTab('discipline')">DISCIPLINE</button>
+  </div>
+
+  <div id="eaComparisonRows"></div>
+  <div class="ea-analytics-note eacmp-note">Read-only comparison from imported EA match data. Normal Olympus stats, records, achievements, POTN and Matchday Reports remain separate.</div>
 </div>
 
 <!-- EA PLAYER ANALYTICS — isolated read-only display -->
@@ -7369,6 +7453,146 @@ function closeEaAnalyticsProfile(){
   el("eaPlayerAnalytics").classList.add("active");
   el("bottomNav").classList.add("hidden");
   window.scrollTo(0,0);
+}
+
+
+let eaComparisonMode="totals";
+let eaComparisonTab="overview";
+
+function openEaPlayerComparison(){
+  document.querySelectorAll(".page").forEach(page=>page.classList.remove("active"));
+  el("eaPlayerComparison").classList.add("active");
+  el("bottomNav").classList.add("hidden");
+  populateEaComparisonPlayers();
+  renderEaPlayerComparison();
+  window.scrollTo(0,0);
+}
+function closeEaPlayerComparison(){
+  el("eaPlayerComparison").classList.remove("active");
+  el("eaMatchCentre").classList.add("active");
+  el("bottomNav").classList.add("hidden");
+  window.scrollTo(0,0);
+}
+function populateEaComparisonPlayers(){
+  const rows=eaAnalyticsRows();
+  const a=el("eaComparePlayerA"),b=el("eaComparePlayerB");
+  if(!a||!b) return;
+  const oldA=a.value,oldB=b.value;
+  const options=rows.map(r=>`<option value="${eaEscape(r.name)}">${eaEscape(r.name)}</option>`).join("");
+  a.innerHTML=options;b.innerHTML=options;
+  if(rows.length){
+    a.value=rows.some(r=>r.name===oldA)?oldA:rows[0].name;
+    b.value=rows.some(r=>r.name===oldB&&r.name!==a.value)?oldB:(rows.find(r=>r.name!==a.value)?.name||rows[0].name);
+  }
+}
+function setEaComparisonMode(mode){
+  eaComparisonMode=mode==="permatch"?"permatch":"totals";
+  document.querySelectorAll("[data-eacmp-mode]").forEach(btn=>btn.classList.toggle("active",btn.dataset.eacmpMode===eaComparisonMode));
+  renderEaPlayerComparison();
+}
+function setEaComparisonTab(tab){
+  eaComparisonTab=tab;
+  document.querySelectorAll("[data-eacmp-tab]").forEach(btn=>btn.classList.toggle("active",btn.dataset.eacmpTab===tab));
+  renderEaPlayerComparison();
+}
+function eaComparisonData(name){
+  const perf=eaPlayerAnalyticsPerformances(name);
+  if(!perf.length) return null;
+  const events=eaAggregateEvents(perf),n=id=>Number(events[String(id)]||0);
+  const base=perf.reduce((a,item)=>{
+    const p=item.player,raw=eaRawPlayerData(p);
+    a.matches++;a.seconds+=eaPlayingSecondsValue(p);a.goals+=Number(p.goals||0);a.assists+=Number(p.assists||0);
+    a.shots+=Number(p.shots||0);a.passesMade+=Number(p.passes_made||0);a.passAttempts+=Number(p.pass_attempts||0);
+    a.tacklesMade+=Number(p.tackles_made||0);a.tackleAttempts+=Number(p.tackle_attempts||0);
+    a.rating+=Number(p.rating||0);a.ratingCount+=Number.isFinite(Number(p.rating))?1:0;
+    a.motm+=p.ea_motm?1:0;a.reds+=Number(raw.redcards||0);
+    return a;
+  },{matches:0,seconds:0,goals:0,assists:0,shots:0,passesMade:0,passAttempts:0,tacklesMade:0,tackleAttempts:0,rating:0,ratingCount:0,motm:0,reds:0});
+  return {
+    name,matches:base.matches,minutes:base.seconds/60,goals:base.goals,assists:base.assists,ga:base.goals+base.assists,
+    avgRating:base.ratingCount?base.rating/base.ratingCount:0,motm:base.motm,shots:base.shots,
+    passesMade:base.passesMade,passAttempts:base.passAttempts,passPct:base.passAttempts?base.passesMade/base.passAttempts*100:0,
+    tacklesMade:base.tacklesMade,tackleAttempts:base.tackleAttempts,tacklePct:base.tackleAttempts?base.tacklesMade/base.tackleAttempts*100:0,
+    eventPass:n(215),eventPassFail:n(216),forward:n(30),backward:n(32),sideways:n(34),short:n(24),medium:n(26),long:n(28),
+    crosses:n(36),firstTime:n(143),switches:n(144),flair:n(147),throughBalls:n(152),
+    standing:n(229),sliding:n(230),cleanTackles:n(164),dangerousTackles:n(163),interceptions:n(6),dispossessions:n(158),blockedCrosses:n(156),
+    defAerial:n(266),attAerial:n(265),shotsOn:n(217),shotsOff:n(218),insideOn:n(13),outsideOn:n(18),
+    secondAssists:n(115),throughAssists:n(118),dribbles:n(174),playersBeat:n(38),
+    fouls:n(2)+n(3),foulsDefThird:n(3),fouled:n(4),yellows:n(95)+n(213),reds:base.reds,penalties:n(94)
+  };
+}
+function eaCmpMetric(label,key,opts={}){
+  return {label,key,...opts};
+}
+function eaComparisonMetrics(tab){
+  if(tab==="passing") return [
+    eaCmpMetric("Pass Success","passPct",{pct:true,rate:false}),
+    eaCmpMetric("Passes Completed","passesMade"),eaCmpMetric("Forward Passes","forward"),eaCmpMetric("Backward Passes","backward"),
+    eaCmpMetric("Sideways Passes","sideways"),eaCmpMetric("Short Passes","short"),eaCmpMetric("Medium Passes","medium"),eaCmpMetric("Long Passes","long"),
+    eaCmpMetric("Through Balls","throughBalls"),eaCmpMetric("First-time Passes","firstTime"),eaCmpMetric("Flair Passes","flair"),eaCmpMetric("Switches","switches"),eaCmpMetric("Crosses","crosses")
+  ];
+  if(tab==="defending") return [
+    eaCmpMetric("Tackle Success","tacklePct",{pct:true,rate:false}),eaCmpMetric("Tackles Won","tacklesMade"),eaCmpMetric("Interceptions","interceptions"),
+    eaCmpMetric("Dispossessions","dispossessions"),eaCmpMetric("Standing Tackles","standing"),eaCmpMetric("Sliding Tackles","sliding"),
+    eaCmpMetric("Clean Tackles","cleanTackles"),eaCmpMetric("Crosses Blocked","blockedCrosses"),eaCmpMetric("Defensive Aerial Wins","defAerial"),eaCmpMetric("Attacking Aerial Wins","attAerial")
+  ];
+  if(tab==="attacking") return [
+    eaCmpMetric("Goals","goals"),eaCmpMetric("Assists","assists"),eaCmpMetric("G+A","ga"),eaCmpMetric("Shots","shots"),
+    eaCmpMetric("Shots On Target","shotsOn"),eaCmpMetric("Shots Off Target","shotsOff"),eaCmpMetric("On Target Inside Box","insideOn"),eaCmpMetric("On Target Outside Box","outsideOn"),
+    eaCmpMetric("Second Assists","secondAssists"),eaCmpMetric("Through-ball Assists","throughAssists"),eaCmpMetric("Dribbles Completed","dribbles"),eaCmpMetric("Players Beat With Skill","playersBeat")
+  ];
+  if(tab==="discipline") return [
+    eaCmpMetric("Fouls Committed","fouls",{lower:true}),eaCmpMetric("Fouls in Defensive Third","foulsDefThird",{lower:true}),
+    eaCmpMetric("Fouls Suffered","fouled"),eaCmpMetric("Yellow Cards","yellows",{lower:true}),eaCmpMetric("Red Cards","reds",{lower:true}),eaCmpMetric("Penalties Conceded","penalties",{lower:true})
+  ];
+  return [
+    eaCmpMetric("Average Rating","avgRating",{dec:2,rate:false}),eaCmpMetric("Matches","matches",{rate:false}),eaCmpMetric("Minutes","minutes",{dec:0,rate:false}),
+    eaCmpMetric("EA MOTM","motm"),eaCmpMetric("Goals","goals"),eaCmpMetric("Assists","assists"),eaCmpMetric("G+A","ga"),
+    eaCmpMetric("Pass Success","passPct",{pct:true,rate:false}),eaCmpMetric("Tackle Success","tacklePct",{pct:true,rate:false}),
+    eaCmpMetric("Interceptions","interceptions"),eaCmpMetric("Shots","shots")
+  ];
+}
+function eaCmpValue(data,metric){
+  let value=Number(data[metric.key]||0);
+  const fixedRateKeys=["avgRating","passPct","tacklePct","matches","minutes"];
+  if(eaComparisonMode==="permatch"&&metric.rate!==false&&!fixedRateKeys.includes(metric.key)){
+    value=data.matches?value/data.matches:0;
+  }
+  return value;
+}
+function eaCmpDisplay(value,metric){
+  if(metric.pct) return `${Math.round(value)}%`;
+  const dec=metric.dec!==undefined?metric.dec:(eaComparisonMode==="permatch"&&metric.rate!==false?2:0);
+  return Number(value).toFixed(dec);
+}
+function renderEaPlayerComparison(){
+  const aSel=el("eaComparePlayerA"),bSel=el("eaComparePlayerB"),rowsHost=el("eaComparisonRows"),sumHost=el("eaComparisonSummary");
+  if(!aSel||!bSel||!rowsHost||!sumHost) return;
+  if(!aSel.options.length) populateEaComparisonPlayers();
+  const A=eaComparisonData(aSel.value),B=eaComparisonData(bSel.value);
+  if(!A||!B){rowsHost.innerHTML=`<div class="ea-centre-empty">Not enough imported EA player data to compare yet.</div>`;sumHost.innerHTML="";return;}
+  const metrics=eaComparisonMetrics(eaComparisonTab);
+  let leadsA=0,leadsB=0;
+  const rendered=metrics.map(metric=>{
+    const av=eaCmpValue(A,metric),bv=eaCmpValue(B,metric);
+    let aWin=false,bWin=false;
+    if(Math.abs(av-bv)>0.0001){
+      if(metric.lower){aWin=av<bv;bWin=bv<av;}else{aWin=av>bv;bWin=bv>av;}
+      if(aWin)leadsA++;if(bWin)leadsB++;
+    }
+    const max=Math.max(Math.abs(av),Math.abs(bv),1);
+    return `<div class="eacmp-row">
+      <div class="eacmp-val ${aWin?"win":""}">${eaCmpDisplay(av,metric)}<div class="eacmp-bar"><span style="width:${Math.min(100,Math.abs(av)/max*100)}%"></span></div></div>
+      <div class="eacmp-label">${eaEscape(metric.label)}<small>${eaComparisonMode==="permatch"&&metric.rate!==false&&!["avgRating","passPct","tacklePct","matches","minutes"].includes(metric.key)?"PER MATCH":""}</small></div>
+      <div class="eacmp-val ${bWin?"win":""}">${eaCmpDisplay(bv,metric)}<div class="eacmp-bar"><span style="width:${Math.min(100,Math.abs(bv)/max*100)}%"></span></div></div>
+    </div>`;
+  }).join("");
+  sumHost.innerHTML=`<div class="eacmp-summary">
+    <div class="eacmp-summary-player"><div class="eacmp-summary-name">${eaEscape(A.name)}</div><div class="eacmp-summary-sub">${A.matches} imported matches</div></div>
+    <div class="eacmp-summary-score"><strong>${leadsA}–${leadsB}</strong>CATEGORY LEADS</div>
+    <div class="eacmp-summary-player"><div class="eacmp-summary-name">${eaEscape(B.name)}</div><div class="eacmp-summary-sub">${B.matches} imported matches</div></div>
+  </div>`;
+  rowsHost.innerHTML=`<div class="eacmp-table">${rendered}</div>`;
 }
 
 function openEaPlayerAnalytics(){
