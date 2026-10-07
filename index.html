@@ -14381,8 +14381,9 @@ function draftChipTimerText(ds){const n=draftChipSecondsLeft(ds),m=Math.floor(n/
 async function ensureDraftChipWindow(ds,assignments){
   if(!ds||ds.chipWindowStartedAt||!draftKnownState(assignments).allKnown||draftBusy)return;
   try{
-    const start=new Date(),end=new Date(start.getTime()+5*60*1000);
-    const {error}=await supabaseClient.from("draft_sessions").update({chip_window_started_at:start.toISOString(),chip_window_ends_at:end.toISOString()}).eq("id",ds.id).is("chip_window_started_at",null);
+    // Open the shared five-minute window on the database server.
+    // This avoids browser clock differences and does not rely on direct UPDATE access to draft_sessions.
+    const {error}=await supabaseClient.rpc("open_draft_chip_window",{p_draft_session_id:ds.id});
     if(error)throw error;
     await loadDraftData(); renderDraft();
   }catch(e){console.warn("Chip window could not be opened:",e);}
@@ -14453,7 +14454,7 @@ async function confirmDraftChip(type,targetParticipantId=null){
   const c=DRAFT_CHIPS[type]; if(!confirm(`Lock in ${c?.name||type}? This cannot be undone.`))return;
   draftBusy=true;closeDraftChipModal();renderDraft();
   try{
-    const {error}=await supabaseClient.rpc("use_draft_chip",{p_draft_session_id:Number(ds.id),p_participant_player_id:mine.participantPlayerId,p_chip_type:type,p_target_participant_player_id:targetParticipantId});
+    const {error}=await supabaseClient.rpc("use_draft_chip",{p_draft_session_id:ds.id,p_participant_player_id:mine.participantPlayerId,p_chip_type:type,p_target_participant_player_id:targetParticipantId});
     if(error)throw error;
     await loadDraftData();
   }catch(e){console.error("Chip activation failed:",e);alert(e?.message?.includes("Draft changed")?"The Draft changed before your Steal was confirmed. Your chip has not been used — choose again.":"That chip could not be activated. Your chip has not been used.");}
