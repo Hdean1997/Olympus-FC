@@ -3006,6 +3006,11 @@ input[type="date"]::-webkit-date-and-time-value{
 .draft-reveal-name{margin-top:4px;font-size:26px;font-weight:900}.draft-reveal-meta{margin-top:5px;color:#9fb0c5;font-size:12px}.draft-reveal-message{margin-top:13px;color:#d7e2ef;font-size:12px;line-height:1.5}
 .draft-error{margin-top:11px;color:#ff9ea6;font-size:11px;line-height:1.4}
 
+
+/* DRAFT CHIPS - 2026 */
+.draft-full-board{display:grid;gap:7px;margin-top:14px}.draft-board-row{display:grid;grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);align-items:center;gap:8px;padding:10px 11px;border-radius:11px;background:#07111f;border:1px solid #203650}.draft-board-manager,.draft-board-pick{font-size:11px;font-weight:850;min-width:0}.draft-board-manager{color:#cbd7e6}.draft-board-pick{color:#e8bd4b;text-align:right}.draft-board-arrow{text-align:center;color:#607a9a}.draft-board-hidden{color:#64758b}.draft-board-auto{display:block;margin-top:2px;color:#6f9dff;font-size:7px;font-weight:900;letter-spacing:.4px}.draft-chip-window{margin-top:14px;padding:14px;border-radius:16px;background:linear-gradient(145deg,#102742,#0a1829);border:1px solid #326eff}.draft-chip-window.closed{border-color:#33445a;background:#0b1625}.draft-chip-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.draft-chip-title{font-size:15px;font-weight:900}.draft-chip-timer{font-size:22px;font-weight:950;color:#e8bd4b;font-variant-numeric:tabular-nums}.draft-chip-copy{margin-top:5px;color:#91a0b4;font-size:10px;line-height:1.45}.draft-chip-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.draft-chip-card{min-width:0;padding:12px 9px;border-radius:13px;background:#07111f;border:1px solid #29425f;text-align:left;color:#fff}.draft-chip-card:disabled{opacity:.42}.draft-chip-icon{font-size:20px}.draft-chip-name{margin-top:5px;font-size:11px;font-weight:900}.draft-chip-stock{margin-top:3px;color:#75a4ff;font-size:8px;font-weight:900}.draft-chip-desc{margin-top:6px;color:#8392a6;font-size:8px;line-height:1.35}.draft-chip-locked{margin-top:12px;padding:13px;border-radius:13px;background:#10243b;border:1px solid #315d9d;text-align:center}.draft-chip-locked strong{display:block;color:#e8bd4b;font-size:14px}.draft-chip-locked span{display:block;margin-top:4px;color:#a9b9cc;font-size:9px}.draft-chip-wallet{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.draft-wallet-item{padding:11px;border-radius:12px;background:#07111f;border:1px solid #29425f}.draft-wallet-name{font-size:10px;font-weight:900}.draft-wallet-count{margin-top:4px;color:#e8bd4b;font-size:15px;font-weight:900}.draft-chip-bonus{margin-top:8px;color:#72d49b;font-size:11px;font-weight:900}.draft-chip-modal{position:fixed;inset:0;z-index:1200;display:none;align-items:flex-end;justify-content:center;background:rgba(2,8,15,.78);padding:16px}.draft-chip-modal.show{display:flex}.draft-chip-sheet{width:min(100%,520px);max-height:82vh;overflow:auto;padding:18px;border-radius:20px;background:#101d2e;border:1px solid #315d9d;box-shadow:0 20px 60px rgba(0,0,0,.5)}.draft-chip-sheet h3{margin:0;font-size:20px}.draft-chip-sheet p{color:#91a0b4;font-size:11px;line-height:1.5}.draft-chip-confirm{width:100%;min-height:48px;margin-top:10px;border:0;border-radius:12px;background:#326eff;color:#fff;font-weight:900}.draft-chip-cancel{width:100%;min-height:42px;margin-top:8px;border:1px solid #29425f;border-radius:12px;background:transparent;color:#9fb0c5;font-weight:800}.draft-steal-target{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:8px;padding:11px;border:1px solid #29425f;border-radius:11px;background:#07111f;color:#fff;text-align:left}.draft-steal-target:disabled{opacity:.38}.draft-steal-target b{font-size:11px}.draft-steal-target span{font-size:8px;color:#8392a6}.draft-chip-history-tag{display:inline-block;margin-top:3px;color:#75a4ff;font-size:8px;font-weight:900}.draft-no-chip{width:100%;min-height:40px;margin-top:9px;border:1px solid #29425f;border-radius:11px;background:transparent;color:#91a0b4;font-size:10px;font-weight:800}
+@media(max-width:380px){.draft-chip-grid,.draft-chip-wallet{gap:6px}.draft-chip-card{padding:10px 7px}.draft-board-row{padding:9px 8px}}
+
 /* NAV */
 
 .nav{
@@ -4754,6 +4759,7 @@ textarea.bug-form-control{
   <div id="draftBody"></div>
 </div>
 
+<div id="draftChipModal" class="draft-chip-modal" onclick="if(event.target===this)closeDraftChipModal()"><div id="draftChipModalSheet" class="draft-chip-sheet"></div></div>
 
 <!-- DRAFT RULES -->
 <div id="draftRules" class="page">
@@ -5879,7 +5885,10 @@ let currentClubRole = "";
 let currentClubPlayerKey = "";
 let draftSessions = [];
 let draftAssignments = [];
+let draftChipUses = [];
 let draftBusy = false;
+let draftChipTimerHandle = null;
+let draftChipRefreshHandle = null;
 let divisionProgress = null;
 let divisionProgressRules = {
   "Division 5":{points:9,promoWins:1,promoGames:4,failedReset:null},
@@ -14268,7 +14277,7 @@ function draftSessionByDraftId(draftSessionId){
 
 function liveDraftPoints(assignment){
   const session=draftSessionByDraftId(assignment.draftSessionId);
-  return session ? calculateDraftScore(session,assignment.draftedPlayerId).total : 0;
+  return session ? calculateDraftFinalScore(session,assignment).total : 0;
 }
 
 function draftScoreBreakdownHTML(score){
@@ -14298,7 +14307,7 @@ async function syncDraftPointsForSession(matchdaySessionId){
   if(!ds || !session) return;
   const assignments=draftAssignmentsForSession(ds.id);
   for(const assignment of assignments){
-    const score=calculateDraftScore(session,assignment.draftedPlayerId);
+    const score=calculateDraftFinalScore(session,assignment);
     const {error}=await supabaseClient
       .from("draft_assignments")
       .update({points:score.total})
@@ -14331,6 +14340,126 @@ async function cleanupOrphanedDraftSessions(){
   }
 }
 
+
+function draftChipPeriodStart(date=new Date()){
+  const d=new Date(date);
+  return d>=new Date("2027-01-01T00:00:00") ? `${d.getFullYear()}-01-01T00:00:00` : "2026-09-25T00:00:00";
+}
+const DRAFT_CHIPS={
+  double:{icon:"⚡",name:"Double Points",desc:"Double goals, assists, ratings, POTM and performance bonuses."},
+  insurance:{icon:"🛡️",name:"Insurance",desc:"Guaranteed +40 points on top of the normal Draft score."},
+  steal:{icon:"🥷",name:"Steal",desc:"Force a valid swap with another player's drafted player."},
+  hot_streak:{icon:"🔥",name:"Hot Streak",desc:"9.0–9.9 = +5 · 10.0 = +10 for every qualifying match."}
+};
+function draftChipUseForSession(ds,playerId){return draftChipUses.find(x=>String(x.draftSessionId)===String(ds?.id)&&x.participantPlayerId===playerId)||null;}
+function draftChipStock(playerId,type){
+  const start=new Date(draftChipPeriodStart());
+  const used=draftChipUses.some(x=>x.participantPlayerId===playerId&&x.chipType===type&&new Date(x.usedAt)>=start);
+  return used?0:1;
+}
+function draftKnownState(assignments){
+  const revealed=assignments.filter(a=>a.revealed);
+  const allKnown=assignments.length>0 && revealed.length>=assignments.length-1;
+  const autoId=allKnown&&revealed.length===assignments.length-1 ? assignments.find(a=>!a.revealed)?.id : null;
+  return {allKnown,autoId};
+}
+function draftBoardHTML(assignments,mine){
+  if(!mine?.revealed)return "";
+  const known=draftKnownState(assignments);
+  return `<div class="draft-full-board">${assignments.map(a=>{
+    const visible=a.revealed||String(a.id)===String(known.autoId);
+    return `<div class="draft-board-row"><div class="draft-board-manager">${escapeHTML(draftPlayerName(a.participantPlayerId))}</div><div class="draft-board-arrow">→</div><div class="draft-board-pick ${visible?"":"draft-board-hidden"}">${visible?escapeHTML(draftPlayerName(a.draftedPlayerId)):"Not revealed"}${String(a.id)===String(known.autoId)?'<span class="draft-board-auto">AUTO-DETERMINED</span>':""}</div></div>`;
+  }).join("")}</div>`;
+}
+function draftChipWindowOpen(ds,active,assignments){
+  if(!ds?.chipWindowEndsAt||!draftKnownState(assignments).allKnown)return false;
+  if(matchesForMatchday(active?.id).length>0)return false;
+  return Date.now()<new Date(ds.chipWindowEndsAt).getTime();
+}
+function draftChipSecondsLeft(ds){return Math.max(0,Math.ceil((new Date(ds?.chipWindowEndsAt||0).getTime()-Date.now())/1000));}
+function draftChipTimerText(ds){const n=draftChipSecondsLeft(ds),m=Math.floor(n/60),sec=n%60;return `${m}:${String(sec).padStart(2,"0")}`;}
+async function ensureDraftChipWindow(ds,assignments){
+  if(!ds||ds.chipWindowStartedAt||!draftKnownState(assignments).allKnown||draftBusy)return;
+  try{
+    const start=new Date(),end=new Date(start.getTime()+5*60*1000);
+    const {error}=await supabaseClient.from("draft_sessions").update({chip_window_started_at:start.toISOString(),chip_window_ends_at:end.toISOString()}).eq("id",ds.id).is("chip_window_started_at",null);
+    if(error)throw error;
+    await loadDraftData(); renderDraft();
+  }catch(e){console.warn("Chip window could not be opened:",e);}
+}
+async function refreshLiveDraftChips(){
+  const page=el("draft");
+  if(!page?.classList.contains("active")||draftBusy)return;
+  const active=getActiveMatchday("FC27");
+  if(!active)return;
+  await loadDraftData();
+  renderDraft();
+}
+function ensureDraftChipRefresh(){
+  if(draftChipRefreshHandle)return;
+  draftChipRefreshHandle=setInterval(refreshLiveDraftChips,5000);
+}
+
+function startDraftChipTimer(){
+  clearInterval(draftChipTimerHandle);draftChipTimerHandle=null;
+  const active=getActiveMatchday("FC27"),ds=active?draftSessionForMatchday(active.id):null;
+  if(!ds?.chipWindowEndsAt)return;
+  if(Date.now()>=new Date(ds.chipWindowEndsAt).getTime())return;
+  draftChipTimerHandle=setInterval(()=>{
+    const node=el("draftChipTimer"); if(node)node.textContent=draftChipTimerText(ds);
+    if(draftChipSecondsLeft(ds)<=0){clearInterval(draftChipTimerHandle);draftChipTimerHandle=null;renderDraft();}
+  },1000);
+}
+function draftHotStreakBonus(session,playerId){
+  let bonus=0;
+  matchesForMatchday(session?.id).forEach(match=>{const st=match.playerStats?.[playerId];if(!st?.played)return;const r=Number(st.rating);if(r>=10)bonus+=10;else if(r>=9)bonus+=5;});
+  return bonus;
+}
+function calculateDraftFinalScore(session,assignment){
+  const normal=calculateDraftScore(session,assignment?.draftedPlayerId),use=assignment?draftChipUseForSession(draftSessionForMatchday(session?.id),assignment.participantPlayerId):null;
+  let bonus=0;
+  if(use?.chipType==="double") bonus=normal.goalPoints+normal.assistPoints+normal.ratingPoints+normal.potmPoints+normal.hatTrickPoints+normal.playmakerPoints;
+  else if(use?.chipType==="insurance") bonus=40;
+  else if(use?.chipType==="hot_streak") bonus=draftHotStreakBonus(session,assignment.draftedPlayerId);
+  return {normal,bonus,total:normal.total+bonus,use};
+}
+function draftWalletHTML(playerId){
+  return `<div class="draft-chip-wallet">${Object.entries(DRAFT_CHIPS).map(([type,c])=>`<div class="draft-wallet-item"><div class="draft-wallet-name">${c.icon} ${c.name}</div><div class="draft-wallet-count">×${draftChipStock(playerId,type)}</div></div>`).join("")}</div><div class="draft-lock">Next reset: 1 January 2027 · Unused chips expire</div>`;
+}
+function draftChipWindowHTML(ds,active,assignments,mine){
+  if(!mine?.revealed||!draftKnownState(assignments).allKnown)return "";
+  const use=draftChipUseForSession(ds,mine.participantPlayerId),open=draftChipWindowOpen(ds,active,assignments);
+  if(use){const c=DRAFT_CHIPS[use.chipType];return `<div class="draft-chip-window"><div class="draft-chip-locked"><strong>${c?.icon||"🎴"} ${escapeHTML(c?.name||use.chipType)} ACTIVE</strong><span>Locked for this Matchday · cannot be changed</span></div></div>`;}
+  if(!open){return `<div class="draft-chip-window closed"><div class="draft-chip-head"><div class="draft-chip-title">🔒 CHIP WINDOW CLOSED</div></div><div class="draft-chip-copy">No chip can be activated for this Matchday now.</div></div>`;}
+  return `<div class="draft-chip-window"><div class="draft-chip-head"><div><div class="draft-chip-title">🔥 CHIP WINDOW OPEN</div><div class="draft-chip-copy">Choose ONE chip. Once confirmed, it is locked.</div></div><div id="draftChipTimer" class="draft-chip-timer">${draftChipTimerText(ds)}</div></div><div class="draft-chip-grid">${Object.entries(DRAFT_CHIPS).map(([type,c])=>{const stock=draftChipStock(mine.participantPlayerId,type);return `<button class="draft-chip-card" ${stock?"":"disabled"} onclick="openDraftChipModal('${type}')"><div class="draft-chip-icon">${c.icon}</div><div class="draft-chip-name">${c.name}</div><div class="draft-chip-stock">${stock?"×1 AVAILABLE":"USED"}</div><div class="draft-chip-desc">${c.desc}</div></button>`}).join("")}</div></div>`;
+}
+function closeDraftChipModal(){el("draftChipModal")?.classList.remove("show");}
+function openDraftChipModal(type){
+  const active=getActiveMatchday("FC27"),ds=active?draftSessionForMatchday(active.id):null,mine=ds?draftAssignmentForCurrentUser(ds):null,assignments=ds?draftAssignmentsForSession(ds.id):[];
+  if(!mine||!draftChipWindowOpen(ds,active,assignments)||draftChipStock(mine.participantPlayerId,type)<1)return;
+  const c=DRAFT_CHIPS[type],sheet=el("draftChipModalSheet"); if(!sheet)return;
+  if(type==="steal"){
+    const targets=assignments.filter(a=>a.participantPlayerId!==mine.participantPlayerId).map(a=>{
+      const valid=a.draftedPlayerId!==mine.participantPlayerId && mine.draftedPlayerId!==a.participantPlayerId;
+      return `<button class="draft-steal-target" ${valid?"":"disabled"} onclick="confirmDraftChip('steal','${String(a.participantPlayerId).replace(/'/g,"\\'")}')"><div><b>${escapeHTML(draftPlayerName(a.draftedPlayerId))}</b><br><span>Currently drafted by ${escapeHTML(draftPlayerName(a.participantPlayerId))}</span></div><b>${valid?"STEAL":"🔒"}</b></button>`;
+    }).join("");
+    sheet.innerHTML=`<h3>🥷 Choose Your Steal</h3><p>You currently have <b>${escapeHTML(draftPlayerName(mine.draftedPlayerId))}</b>. Choose a valid player to force a swap. Self-drafts are blocked.</p>${targets}<button class="draft-chip-cancel" onclick="closeDraftChipModal()">Cancel</button>`;
+  }else sheet.innerHTML=`<h3>${c.icon} Activate ${c.name}?</h3><p>${c.desc}</p><p><b>Drafted player:</b> ${escapeHTML(draftPlayerName(mine.draftedPlayerId))}<br>This is your one chip for this Matchday. Once confirmed it cannot be changed.</p><button class="draft-chip-confirm" onclick="confirmDraftChip('${type}')">CONFIRM ${c.name.toUpperCase()}</button><button class="draft-chip-cancel" onclick="closeDraftChipModal()">Cancel</button>`;
+  el("draftChipModal")?.classList.add("show");
+}
+async function confirmDraftChip(type,targetParticipantId=null){
+  const active=getActiveMatchday("FC27"),ds=active?draftSessionForMatchday(active.id):null,mine=ds?draftAssignmentForCurrentUser(ds):null,assignments=ds?draftAssignmentsForSession(ds.id):[];
+  if(!mine||!draftChipWindowOpen(ds,active,assignments))return;
+  const c=DRAFT_CHIPS[type]; if(!confirm(`Lock in ${c?.name||type}? This cannot be undone.`))return;
+  draftBusy=true;closeDraftChipModal();renderDraft();
+  try{
+    const {error}=await supabaseClient.rpc("use_draft_chip",{p_draft_session_id:Number(ds.id),p_participant_player_id:mine.participantPlayerId,p_chip_type:type,p_target_participant_player_id:targetParticipantId});
+    if(error)throw error;
+    await loadDraftData();
+  }catch(e){console.error("Chip activation failed:",e);alert(e?.message?.includes("Draft changed")?"The Draft changed before your Steal was confirmed. Your chip has not been used — choose again.":"That chip could not be activated. Your chip has not been used.");}
+  finally{draftBusy=false;renderDraft();}
+}
+
 function renderDraft(){
   const body=el("draftBody"); if(!body)return;
   const active=getActiveMatchday("FC27");
@@ -14338,16 +14467,13 @@ function renderDraft(){
   const ds=active?draftSessionForMatchday(active.id):null;
   const mine=ds?draftAssignmentForCurrentUser(ds):null;
   const assignments=ds?draftAssignmentsForSession(ds.id):[];
+  if(ds && draftKnownState(assignments).allKnown && !ds.chipWindowStartedAt) setTimeout(()=>ensureDraftChipWindow(ds,assignments),0);
 
   let tonight="";
   if(!active){
     tonight=`<div class="draft-card gold"><div class="draft-card-title">🎲 Matchday Draw</div><div class="draft-card-copy">There is no active FC27 Matchday. Start one from Matches and the controlled players selected for that session will become the Draft pool.</div><div class="draft-empty">Waiting for the next Olympus Matchday.</div></div>`;
   }else if(!ds){
-    tonight=`<div class="draft-card gold"><div class="draft-card-title">🎲 Draft Ready to Generate</div><div class="draft-card-copy">Only the controlled players selected for this Matchday can enter tonight's Draft.</div><div class="draft-participants">${draftParticipantChips(participants)}</div>${
-      participants.length<2?`<div class="draft-error">At least two controlled players are needed to run a Draft.</div>`:
-      isAdmin?`<button class="draft-action" ${draftBusy?"disabled":""} onclick="generateOlympusDraft(${Number(active.id)})">${draftBusy?"GENERATING…":"🎲 GENERATE & LOCK DRAFT"}</button><div class="draft-lock">Once generated, the Draft is locked and the Matchday squad can no longer be changed.</div>`:
-      `<div class="draft-empty">Waiting for a club admin to generate tonight's Draft.</div>`
-    }</div>`;
+    tonight=`<div class="draft-card gold"><div class="draft-card-title">🎲 Draft Ready to Generate</div><div class="draft-card-copy">Only the controlled players selected for this Matchday can enter tonight's Draft.</div><div class="draft-participants">${draftParticipantChips(participants)}</div>${participants.length<2?`<div class="draft-error">At least two controlled players are needed to run a Draft.</div>`:isAdmin?`<button class="draft-action" ${draftBusy?"disabled":""} onclick="generateOlympusDraft(${Number(active.id)})">${draftBusy?"GENERATING…":"🎲 GENERATE & LOCK DRAFT"}</button><div class="draft-lock">Once generated, the Draft is locked and the Matchday squad can no longer be changed.</div>`:`<div class="draft-empty">Waiting for a club admin to generate tonight's Draft.</div>`}</div>`;
   }else if(!currentClubPlayerKey){
     tonight=`<div class="draft-card gold"><div class="draft-card-title">🔒 Tonight's Draft is Locked</div><div class="draft-card-copy">${assignments.length} controlled players are in tonight's official Draft.</div><div class="draft-empty">Sign in to your Olympus player account to reveal your player.</div></div>`;
   }else if(!mine){
@@ -14355,40 +14481,22 @@ function renderDraft(){
   }else if(!mine.revealed){
     tonight=`<div class="draft-card gold"><div class="draft-card-title">🎲 Your Draft is Ready</div><div class="draft-card-copy">Your Olympus player has been assigned and locked. Tap below when you're ready to reveal them.</div><button class="draft-action reveal" ${draftBusy?"disabled":""} onclick="revealMyDraftPlayer()">${draftBusy?"REVEALING…":"🎲 REVEAL MY PLAYER"}</button><div class="draft-lock">No rerolls · No self-drafts · One official assignment</div></div>`;
   }else{
-    const p=players.find(x=>x.id===mine.draftedPlayerId);
-    const score=calculateDraftScore(active,mine.draftedPlayerId);
-    tonight=`<div class="draft-card gold"><div class="draft-card-title">🔒 Tonight's Draft</div><div class="draft-reveal-card"><div class="draft-reveal-kicker">YOUR PLAYER TONIGHT</div><div class="draft-reveal-number">#${p?.number??""}</div><div class="draft-reveal-name">${escapeHTML(p?.name||mine.draftedPlayerId)}</div><div class="draft-reveal-meta">${escapeHTML(p?.position||"")} · ${escapeHTML(p?.nation||"")}</div><div style="font-size:34px;font-weight:900;margin-top:14px">${score.total} PTS</div><div class="draft-reveal-message">Live Draft score from this Matchday.</div></div>${draftScoreBreakdownHTML(score)}<div class="draft-lock">Draft locked · ${assignments.length} controlled players participating</div></div>`;
+    const p=players.find(x=>x.id===mine.draftedPlayerId),finalScore=calculateDraftFinalScore(active,mine),score=finalScore.normal;
+    const chipLine=finalScore.use?`<div class="draft-chip-bonus">${DRAFT_CHIPS[finalScore.use.chipType]?.icon||"🎴"} ${escapeHTML(DRAFT_CHIPS[finalScore.use.chipType]?.name||finalScore.use.chipType)}${finalScore.bonus?` · +${finalScore.bonus} bonus`:" · ACTIVE"}</div>`:"";
+    tonight=`<div class="draft-card gold"><div class="draft-card-title">🔒 Tonight's Draft</div><div class="draft-reveal-card"><div class="draft-reveal-kicker">YOUR PLAYER TONIGHT</div><div class="draft-reveal-number">#${p?.number??""}</div><div class="draft-reveal-name">${escapeHTML(p?.name||mine.draftedPlayerId)}</div><div class="draft-reveal-meta">${escapeHTML(p?.position||"")} · ${escapeHTML(p?.nation||"")}</div><div style="font-size:34px;font-weight:900;margin-top:14px">${finalScore.total} PTS</div>${chipLine}<div class="draft-reveal-message">${finalScore.use?`Normal ${score.total} pts${finalScore.bonus?` · Chip bonus +${finalScore.bonus}`:""}`:"Live Draft score from this Matchday."}</div></div>${draftBoardHTML(assignments,mine)}${draftChipWindowHTML(ds,active,assignments,mine)}${draftScoreBreakdownHTML(score)}<div class="draft-lock">Draft locked · ${assignments.length} controlled players participating</div></div>`;
   }
 
-  const endedDraftAssignments=draftAssignments.filter(a=>{
-    const session=draftSessionByDraftId(a.draftSessionId);
-    return session && session.status==="ended";
-  });
-  const totals={};
-  endedDraftAssignments.forEach(a=>{
-    totals[a.participantPlayerId]=(totals[a.participantPlayerId]||0)+liveDraftPoints(a);
-  });
+  const endedDraftAssignments=draftAssignments.filter(a=>{const session=draftSessionByDraftId(a.draftSessionId);return session&&session.status==="ended";});
+  const totals={}; endedDraftAssignments.forEach(a=>{totals[a.participantPlayerId]=(totals[a.participantPlayerId]||0)+liveDraftPoints(a);});
   const standings=players.map(p=>({p,points:totals[p.id]||0})).sort((a,b)=>b.points-a.points||a.p.name.localeCompare(b.p.name));
   const hasCompleted=endedDraftAssignments.length>0;
   const standingRows=standings.map((r,i)=>`<div class="draft-leader-row"><div class="draft-rank">${i+1}</div><div class="draft-leader-name ${hasCompleted?"":"draft-coming"}">${escapeHTML(r.p.name)}</div><div class="draft-leader-points">${hasCompleted?r.points:"—"}</div></div>`).join("");
-
-  const history=currentClubPlayerKey?draftAssignments
-    .filter(a=>{
-      if(a.participantPlayerId!==currentClubPlayerKey || !a.revealed) return false;
-      return Boolean(draftSessionByDraftId(a.draftSessionId));
-    })
-    .sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||""))):[];
-
-  const historyRows=history.length?history.slice(0,10).map(a=>{
-    const session=draftSessionByDraftId(a.draftSessionId);
-    const score=calculateDraftScore(session,a.draftedPlayerId);
-    const status=session?.status==="ended"?"FINAL":"LIVE";
-    return `<div class="draft-leader-row"><div class="draft-rank">🎲</div><div><div class="draft-leader-name">${escapeHTML(draftPlayerName(a.draftedPlayerId))}</div><div class="leader-detail">${escapeHTML(session?.sessionDate||"")} · ${status}</div></div><div class="draft-leader-points">${score.total} pts</div></div>`;
-  }).join(""):`<div class="draft-empty">${currentClubPlayerKey?"No Draft history yet.":"Sign in to view your Draft history."}</div>`;
-
-  body.innerHTML=`<div class="draft-section"><div class="draft-section-heading">TONIGHT'S DRAFT</div>${tonight}</div>
-  <div class="draft-section"><div class="draft-section-heading">FC27 SEASON LEADERBOARD</div><div class="draft-card"><div class="draft-card-title">🏆 Season Standings</div><div class="draft-card-copy">Only completed Matchdays count towards the FC27 Draft leaderboard.</div><div class="draft-leader-preview">${standingRows}</div></div></div>
-  <div class="draft-section"><div class="draft-section-heading">MY DRAFT</div><div class="draft-card"><div class="draft-card-title">👤 My Draft History</div><div class="draft-card-copy">Live and completed Draft assignments appear here. Deleted Matchdays are removed completely.</div><div class="draft-leader-preview">${historyRows}</div></div></div>`;
+  const history=currentClubPlayerKey?draftAssignments.filter(a=>a.participantPlayerId===currentClubPlayerKey&&a.revealed&&Boolean(draftSessionByDraftId(a.draftSessionId))).sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||""))):[];
+  const historyRows=history.length?history.slice(0,10).map(a=>{const session=draftSessionByDraftId(a.draftSessionId),f=calculateDraftFinalScore(session,a),status=session?.status==="ended"?"FINAL":"LIVE",tag=f.use?`<div class="draft-chip-history-tag">${DRAFT_CHIPS[f.use.chipType]?.icon||"🎴"} ${escapeHTML(DRAFT_CHIPS[f.use.chipType]?.name||f.use.chipType)}${f.bonus?` · +${f.bonus}`:""}</div>`:"";return `<div class="draft-leader-row"><div class="draft-rank">🎲</div><div><div class="draft-leader-name">${escapeHTML(draftPlayerName(a.draftedPlayerId))}</div><div class="leader-detail">${escapeHTML(session?.sessionDate||"")} · ${status}</div>${tag}</div><div class="draft-leader-points">${f.total} pts</div></div>`;}).join(""):`<div class="draft-empty">${currentClubPlayerKey?"No Draft history yet.":"Sign in to view your Draft history."}</div>`;
+  const wallet=currentClubPlayerKey?`<div class="draft-section"><div class="draft-section-heading">MY CHIPS</div><div class="draft-card"><div class="draft-card-title">🎴 Chip Wallet</div><div class="draft-card-copy">One chip maximum per Matchday. Confirmed chips cannot be changed.</div>${draftWalletHTML(currentClubPlayerKey)}</div></div>`:"";
+  body.innerHTML=`<div class="draft-section"><div class="draft-section-heading">TONIGHT'S DRAFT</div>${tonight}</div>${wallet}<div class="draft-section"><div class="draft-section-heading">FC27 SEASON LEADERBOARD</div><div class="draft-card"><div class="draft-card-title">🏆 Season Standings</div><div class="draft-card-copy">Only completed Matchdays count towards the FC27 Draft leaderboard.</div><div class="draft-leader-preview">${standingRows}</div></div></div><div class="draft-section"><div class="draft-section-heading">MY DRAFT</div><div class="draft-card"><div class="draft-card-title">👤 My Draft History</div><div class="draft-card-copy">Live and completed Draft assignments appear here. Deleted Matchdays are removed completely.</div><div class="draft-leader-preview">${historyRows}</div></div></div>`;
+  startDraftChipTimer();
+  ensureDraftChipRefresh();
 }
 
 function draftHistoryCount(participant,drafted){
@@ -14455,12 +14563,15 @@ async function revealMyDraftPlayer(){
 async function loadDraftData(){
   if(!supabaseClient)return;
   try{
-    const {data:sessions,error:e1}=await supabaseClient.from("draft_sessions").select("id,matchday_session_id,season,status,created_at").order("created_at",{ascending:false});
+    const {data:sessions,error:e1}=await supabaseClient.from("draft_sessions").select("id,matchday_session_id,season,status,created_at,chip_window_started_at,chip_window_ends_at").order("created_at",{ascending:false});
     if(e1)throw e1;
     const {data:assignments,error:e2}=await supabaseClient.from("draft_assignments").select("id,draft_session_id,participant_player_id,drafted_player_id,revealed,revealed_at,points,created_at").order("created_at",{ascending:false});
     if(e2)throw e2;
-    draftSessions=(sessions||[]).map(r=>({id:r.id,matchdaySessionId:String(r.matchday_session_id),season:r.season||"FC27",status:r.status||"locked",createdAt:r.created_at||null}));
+    draftSessions=(sessions||[]).map(r=>({id:r.id,matchdaySessionId:String(r.matchday_session_id),season:r.season||"FC27",status:r.status||"locked",createdAt:r.created_at||null,chipWindowStartedAt:r.chip_window_started_at||null,chipWindowEndsAt:r.chip_window_ends_at||null}));
     draftAssignments=(assignments||[]).map(r=>({id:r.id,draftSessionId:r.draft_session_id,participantPlayerId:r.participant_player_id,draftedPlayerId:r.drafted_player_id,revealed:Boolean(r.revealed),revealedAt:r.revealed_at||null,points:Number(r.points||0),createdAt:r.created_at||null}));
+    const {data:chipRows,error:e3}=await supabaseClient.from("draft_chip_uses").select("id,draft_session_id,participant_player_id,chip_type,used_at,target_participant_player_id").order("used_at",{ascending:false});
+    if(e3)throw e3;
+    draftChipUses=(chipRows||[]).map(r=>({id:r.id,draftSessionId:r.draft_session_id,participantPlayerId:r.participant_player_id,chipType:r.chip_type,usedAt:r.used_at,targetParticipantPlayerId:r.target_participant_player_id||null}));
   }catch(error){console.warn("Draft data could not be loaded:",error);}
 }
 
