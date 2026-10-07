@@ -14379,7 +14379,7 @@ function draftChipWindowOpen(ds,active,assignments){
 function draftChipSecondsLeft(ds){return Math.max(0,Math.ceil((new Date(ds?.chipWindowEndsAt||0).getTime()-Date.now())/1000));}
 function draftChipTimerText(ds){const n=draftChipSecondsLeft(ds),m=Math.floor(n/60),sec=n%60;return `${m}:${String(sec).padStart(2,"0")}`;}
 async function ensureDraftChipWindow(ds,assignments){
-  if(!ds||ds.chipWindowStartedAt||!draftKnownState(assignments).allKnown||draftBusy)return;
+  if(!ds||ds.chipWindowOpened||ds.chipWindowStartedAt||!draftKnownState(assignments).allKnown||draftBusy)return;
   try{
     // Open the shared five-minute window on the database server.
     // This avoids browser clock differences and does not rely on direct UPDATE access to draft_sessions.
@@ -14564,11 +14564,11 @@ async function revealMyDraftPlayer(){
 async function loadDraftData(){
   if(!supabaseClient)return;
   try{
-    const {data:sessions,error:e1}=await supabaseClient.from("draft_sessions").select("id,matchday_session_id,season,status,created_at,chip_window_started_at,chip_window_ends_at").order("created_at",{ascending:false});
+    const {data:sessions,error:e1}=await supabaseClient.from("draft_sessions").select("id,matchday_session_id,season,status,created_at,chip_window_opened,chip_window_started_at,chip_window_ends_at").order("created_at",{ascending:false});
     if(e1)throw e1;
     const {data:assignments,error:e2}=await supabaseClient.from("draft_assignments").select("id,draft_session_id,participant_player_id,drafted_player_id,revealed,revealed_at,points,created_at").order("created_at",{ascending:false});
     if(e2)throw e2;
-    draftSessions=(sessions||[]).map(r=>({id:r.id,matchdaySessionId:String(r.matchday_session_id),season:r.season||"FC27",status:r.status||"locked",createdAt:r.created_at||null,chipWindowStartedAt:r.chip_window_started_at||null,chipWindowEndsAt:r.chip_window_ends_at||null}));
+    draftSessions=(sessions||[]).map(r=>({id:r.id,matchdaySessionId:String(r.matchday_session_id),season:r.season||"FC27",status:r.status||"locked",createdAt:r.created_at||null,chipWindowOpened:!!r.chip_window_opened,chipWindowStartedAt:r.chip_window_started_at||null,chipWindowEndsAt:r.chip_window_ends_at||null}));
     draftAssignments=(assignments||[]).map(r=>({id:r.id,draftSessionId:r.draft_session_id,participantPlayerId:r.participant_player_id,draftedPlayerId:r.drafted_player_id,revealed:Boolean(r.revealed),revealedAt:r.revealed_at||null,points:Number(r.points||0),createdAt:r.created_at||null}));
     const {data:chipRows,error:e3}=await supabaseClient.from("draft_chip_uses").select("id,draft_session_id,participant_player_id,chip_type,used_at,target_participant_player_id").order("used_at",{ascending:false});
     if(e3)throw e3;
