@@ -4188,6 +4188,24 @@ textarea.bug-form-control{
   }
 }
 
+
+/* Estimated xG data quality audit — EA analytics only */
+.ea-xg-diagnostics{margin-top:12px;border:1px solid #29425f;border-radius:10px;background:#081525;overflow:hidden}
+.ea-xg-diagnostics summary{cursor:pointer;list-style:none;padding:12px;color:#b9d2ff;font-size:10px;font-weight:900;display:flex;justify-content:space-between;gap:8px}
+.ea-xg-diagnostics summary::-webkit-details-marker{display:none}
+.ea-xg-diagnostics[open] summary{border-bottom:1px solid #29425f}
+.ea-xg-diagnostics-body{padding:12px;color:#9fb2c9;font-size:11px;line-height:1.55}
+.ea-xg-diagnostics-body p{margin:9px 0}
+.ea-xg-quality-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.ea-xg-quality-grid>div{background:#0c1c31;border-radius:8px;padding:10px 4px;text-align:center}
+.ea-xg-quality-grid strong{display:block;color:#fff;font-size:16px}
+.ea-xg-quality-grid span{display:block;font-size:8px;color:#8392a6}
+.ea-xg-table-scroll{overflow-x:auto}
+.ea-xg-table{width:100%;border-collapse:collapse;font-size:10px;text-align:left}
+.ea-xg-table th,.ea-xg-table td{padding:9px 6px;border-bottom:1px solid #25384f;white-space:nowrap}
+.ea-xg-table td:first-child{white-space:normal;min-width:125px}
+.ea-xg-table td small{display:block;color:#8392a6}
+@media(max-width:480px){.ea-xg-quality-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 
 <style>
@@ -7319,27 +7337,69 @@ function eaDefendingHtml(player){
 /* Olympus estimated xG: read-only, location-bucket model (not official EA xG).
    Use only decoded shot location counts; never infer missing locations or double-count goals. */
 function eaEstimatedXg(performances){
-  const result={inside:0,outside:0,located:0,namedShots:0,goals:0,unlocated:0,conflicts:0};
+  const result={inside:0,outside:0,located:0,namedShots:0,goals:0,unlocated:0,conflicts:0,completeMatches:0,partialMatches:0,conflictMatches:0,zeroShotMatches:0,rows:[],validGoals:0};
   performances.forEach(item=>{
     const player=item.player||item;
     const e=eaEventCounts(player);
     const n=id=>Math.max(0,Number(e[String(id)]||0));
-    const inside=n(13)+n(14), outside=n(18)+n(19);
+    const inside=n(13)+n(14),outside=n(18)+n(19);
     const shots=Math.max(0,Number(player.shots||0));
     const goals=Math.max(0,Number(player.goals||0));
+    const located=inside+outside;
+    const match=item.match||{};
+    const status=located>shots?"conflict":located<shots?"partial":"complete";
+    const missing=Math.max(0,shots-located);
+    const row={opponent:String(match.opponent_name||"Unknown opponent"),date:match.played_at||null,matchId:String(match.match_id||player.match_id||""),shots,goals,inside,outside,located,missing,status};
+    result.rows.push(row);
     result.namedShots+=shots;
     result.goals+=goals;
-    // Some EA event aggregates may be incomplete or contradictory.
-    // Skip location weights for such matches rather than report false precision.
-    if(inside+outside>shots){result.conflicts++;result.unlocated+=shots;return;}
+    if(status==="conflict"){
+      result.conflicts++;
+      result.conflictMatches++;
+      result.unlocated+=shots;
+      return;
+    }
     result.inside+=inside;
     result.outside+=outside;
-    result.located+=inside+outside;
-    result.unlocated+=shots-inside-outside;
+    result.located+=located;
+    result.unlocated+=missing;
+    if(status==="partial")result.partialMatches++;
+    else{
+      result.completeMatches++;
+      result.validGoals+=goals;
+      if(!shots)result.zeroShotMatches++;
+    }
   });
   result.xg=result.inside*0.15+result.outside*0.04;
   result.complete=result.unlocated===0&&result.conflicts===0;
+  result.validRows=result.rows.filter(row=>row.status==="complete");
+  result.validXg=result.validRows.reduce((total,row)=>total+row.inside*0.15+row.outside*0.04,0);
+  result.validShots=result.validRows.reduce((total,row)=>total+row.shots,0);
   return result;
+}
+function eaXgDiagnosticsHtml(xg){
+  const issues=xg.rows.filter(row=>row.status!=="complete");
+  const dateLabel=value=>{
+    if(!value)return "Date unavailable";
+    const date=new Date(value);
+    return Number.isNaN(date.getTime())?"Date unavailable":date.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
+  };
+  const rowHtml=row=>`<tr><td>${eaEscape(dateLabel(row.date))}<small>${eaEscape(row.opponent)}</small></td><td>${row.shots}</td><td>${row.located}</td><td>${row.missing}</td><td>${row.status==="conflict"?"Conflicting counts":"Missing locations"}</td></tr>`;
+  return `<details class="ea-xg-diagnostics">
+    <summary>SHOT DATA QUALITY · ${issues.length} MATCH${issues.length===1?"":"ES"} TO REVIEW <span>⌄</span></summary>
+    <div class="ea-xg-diagnostics-body">
+      <div class="ea-xg-quality-grid">
+        <div><strong>${xg.rows.length}</strong><span>MATCHES CHECKED</span></div>
+        <div><strong>${xg.completeMatches}</strong><span>COMPLETE</span></div>
+        <div><strong>${xg.partialMatches}</strong><span>PARTIAL</span></div>
+        <div><strong>${xg.conflictMatches}</strong><span>CONFLICTING</span></div>
+      </div>
+      <p>${xg.located} of ${xg.namedShots} named shots have usable locations. ${xg.unlocated} named shots are not included in the provisional xG total. Matches with more decoded shots than named shots are excluded from the estimate entirely.</p>
+      <p><b>Comparison sample:</b> ${xg.completeMatches} complete matches (${xg.validShots} shots, ${xg.validGoals} goals). Goals − xG and xG / Match above refer only to this sample, not the player's full history.</p>
+      ${issues.length?`<div class="ea-xg-table-scroll"><table class="ea-xg-table"><thead><tr><th>Match</th><th>Shots</th><th>Located</th><th>Missing</th><th>Issue</th></tr></thead><tbody>${issues.map(rowHtml).join("")}</tbody></table></div>`:'<p>All matches have matching shot-location totals.</p>'}
+      <p>EA event counts are community-decoded, not official shot-by-shot xG. This audit is read-only and follows the selected analytics date range.</p>
+    </div>
+  </details>`;
 }
 
 function eaAttackingHtml(player){
@@ -7751,8 +7811,8 @@ function openEaAnalyticsProfile(name){
   const n=id=>Number(events[String(id)]||0);
   const xg=eaEstimatedXg(performances);
   const xgValue=xg.located?xg.xg.toFixed(2):"—";
-  const xgDelta=xg.complete?(summary.goals-xg.xg>=0?"+":"")+(summary.goals-xg.xg).toFixed(2):"—";
-  const xgPerMatch=xg.complete?(xg.xg/summary.matches).toFixed(2):"—";
+  const xgDelta=xg.completeMatches?(xg.validGoals-xg.validXg>=0?"+":"")+(xg.validGoals-xg.validXg).toFixed(2):"—";
+  const xgPerMatch=xg.completeMatches?(xg.validXg/xg.completeMatches).toFixed(2):"—";
   const rawRows=performances.map(item=>eaRawPlayerData(item.player));
   const redCards=rawRows.reduce((sum,raw)=>sum+Number(raw?.redcards||0),0);
   const eaMotms=performances.reduce((sum,item)=>sum+(item.player.ea_motm?1:0),0);
@@ -7877,10 +7937,11 @@ function openEaAnalyticsProfile(name){
         <div class="ea-xg-heading">ESTIMATED EXPECTED GOALS (xG Est.)</div>
         <div class="ea-xg-grid">
           <div class="ea-xg-stat"><strong>${xgValue}</strong><span>LOCATION-BASED xG</span></div>
-          <div class="ea-xg-stat"><strong>${xgDelta}</strong><span>GOALS − xG</span></div>
-          <div class="ea-xg-stat"><strong>${xgPerMatch}</strong><span>xG / MATCH</span></div>
+          <div class="ea-xg-stat"><strong>${xgDelta}</strong><span>GOALS − xG · COMPLETE MATCHES</span></div>
+          <div class="ea-xg-stat"><strong>${xgPerMatch}</strong><span>xG / COMPLETE MATCH</span></div>
         </div>
-        <div class="ea-xg-note">Olympus estimate, not official EA xG. Inside-box shots × 0.15; outside-box shots × 0.04. Based on ${xg.located} of ${xg.namedShots} recorded shots with decoded locations.${xg.unlocated?` ${xg.unlocated} shot(s) lack reliable location data, so Goals − xG and xG / Match are withheld.`:""}${xg.conflicts?` ${xg.conflicts} match(es) have inconsistent event counts and were excluded from the estimate.`:""} The weights are provisional and do not account for shot distance, angle, penalties or shot type.</div>
+        <div class="ea-xg-note">Olympus estimate, not official EA xG. Inside-box shots × 0.15; outside-box shots × 0.04. Total xG uses ${xg.located} of ${xg.namedShots} recorded shots with usable locations; ${xg.conflictMatches} conflicting match(es) excluded. Goals − xG and xG / Match use only ${xg.completeMatches} complete match(es) so the comparison uses the same data on both sides. Weights are provisional; shot distance, angle, penalties and shot type are not modelled.</div>
+        ${eaXgDiagnosticsHtml(xg)}
       </div>
       <div class="eap2-detail-columns"><div class="eap2-stat-list">
         ${eaP2StatRow("Named shots",summary.shots)}${eaP2StatRow("Shots on target",n(217))}${eaP2StatRow("Shots off target",n(218))}
