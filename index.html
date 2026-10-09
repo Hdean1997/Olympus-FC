@@ -8630,7 +8630,7 @@ function matchdaySummaryHTML(session,compact=false){
       ${!compact && session.status === "ended" ? matchdayPotnHTML(session) : ""}
       ${isAdmin ? `<div class="matchday-actions">
         <button class="matchday-action secondary" onclick="event.stopPropagation();openEditMatchdaySquadModal(${session.id})">Edit Squad</button>
-        ${session.status === "ended" ? `<button class="matchday-action primary" onclick="event.stopPropagation();openMissingMatchForSession(${session.id})">＋ Add Missing Match</button>` : ""}
+        ${session.status === "ended" ? `<button class="matchday-action secondary" onclick="event.stopPropagation();openMissingMatchForSession(${session.id})">＋ Add Missing Match</button>` : ""}
         ${session.status === "active" ? `<button class="matchday-action primary" onclick="event.stopPropagation();endMatchday(${session.id})">End Matchday</button>` : ""}
         <button class="matchday-action danger" onclick="event.stopPropagation();deleteMatchday(${session.id})">Delete Matchday</button>
       </div>` : ""}
