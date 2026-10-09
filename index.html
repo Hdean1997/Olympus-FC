@@ -707,6 +707,19 @@ h1{
 @media(max-width:390px){.matchday-grid{grid-template-columns:repeat(2,1fr)}.matchday-actions{grid-template-columns:1fr}.matchday-squad-row{grid-template-columns:auto 1fr 95px;gap:8px}}
 
 
+
+/* EA Player Analytics date-range filter (read-only) */
+.ea-range-filter{margin:0 16px 18px;padding:16px;border:1px solid #315d9d;border-radius:16px;background:#101d2e}
+.ea-range-heading{color:#dce6f4;font-size:14px;font-weight:900;margin-bottom:10px}
+.ea-range-modes{display:flex;gap:8px;margin-bottom:12px}
+.ea-range-mode{flex:1;min-height:42px;border:1px solid #315d9d;border-radius:10px;background:#0a1626;color:#b9d2ff;font-weight:800}
+.ea-range-mode.active{background:#326eff;border-color:#326eff;color:#fff}
+.ea-range-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ea-range-fields label{display:block;color:#9aa9bc;font-size:11px;font-weight:700;margin-bottom:5px}
+.ea-range-fields input{display:block;width:100%;min-width:0;min-height:43px;padding:8px;border:1px solid #315d9d;border-radius:9px;background:#07111f;color:#fff;font-size:16px;color-scheme:dark}
+.ea-range-apply{width:100%;min-height:43px;margin-top:12px;border:0;border-radius:10px;background:#326eff;color:#fff;font-weight:900}
+.ea-range-message{margin-top:10px;color:#9fb9df;font-size:11px;line-height:1.5}
+
 /* EA MATCH CENTRE — isolated read-only display */
 .ea-centre-status-card{margin:0 16px 14px;padding:16px;border:1px solid #29425f;border-radius:18px;background:#101d2e;display:flex;align-items:center;justify-content:space-between;gap:14px}
 .ea-centre-kicker{color:#6f9dff;font-size:10px;font-weight:900;letter-spacing:1px}
@@ -4624,6 +4637,23 @@ textarea.bug-form-control{
     <div class="eaps-title">Choose a Player</div>
     <div class="eaps-copy">Select a player to explore their complete imported EA performance profile.</div>
   </div>
+  <div class="ea-range-filter" id="eaRangeFilter">
+    <div class="ea-range-heading">Filter player performances</div>
+    <div class="ea-range-modes">
+      <button type="button" id="eaRangeAll" class="ea-range-mode active" onclick="setEaAnalyticsRangeMode('all')">All Matches</button>
+      <button type="button" id="eaRangeCustom" class="ea-range-mode" onclick="setEaAnalyticsRangeMode('custom')">Custom Range</button>
+    </div>
+    <div id="eaRangeCustomFields" style="display:none">
+      <div class="ea-range-fields">
+        <div><label for="eaRangeStartDate">Start date</label><input id="eaRangeStartDate" type="date"></div>
+        <div><label for="eaRangeStartTime">Start time</label><input id="eaRangeStartTime" type="time" value="20:00"></div>
+        <div><label for="eaRangeEndDate">End date</label><input id="eaRangeEndDate" type="date"></div>
+        <div><label for="eaRangeEndTime">End time</label><input id="eaRangeEndTime" type="time" value="01:00"></div>
+      </div>
+      <button type="button" class="ea-range-apply" onclick="applyEaAnalyticsRange()">Apply Date &amp; Time Range</button>
+    </div>
+    <div id="eaRangeMessage" class="ea-range-message">Showing all imported EA matches.</div>
+  </div>
   <div id="eaAnalyticsLeaders" style="display:none"></div>
   <div id="eaAnalyticsPlayers" class="eaps-list"></div>
   <div class="ea-analytics-note eaps-note">Read-only EA analytics. Normal Olympus stats, records, achievements, POTN and Matchday Reports remain separate.</div>
@@ -7388,10 +7418,68 @@ function eaFormatTotalMinutes(seconds){
   return `${Math.round(seconds/60).toLocaleString("en-GB")}m`;
 }
 
+// Filter only EA Player Analytics; EA Match Centre and comparison remain unchanged.
+let eaAnalyticsRange=null;
+function eaAnalyticsMatchInRange(match){
+  if(!eaAnalyticsRange) return true;
+  if(!match?.played_at) return false;
+  const timestamp=new Date(match.played_at).getTime();
+  return Number.isFinite(timestamp)&&timestamp>=eaAnalyticsRange.start&&timestamp<=eaAnalyticsRange.end;
+}
+function eaAnalyticsFilteredPlayers(){
+  if(!eaAnalyticsRange) return eaMatchCentrePlayers;
+  const matchIds=new Set(eaMatchCentreRows.filter(eaAnalyticsMatchInRange).map(m=>String(m.match_id)));
+  return eaMatchCentrePlayers.filter(p=>matchIds.has(String(p.match_id)));
+}
+function eaUkWallTimeParts(date){
+  const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(date);
+  const data=Object.fromEntries(parts.map(p=>[p.type,p.value]));
+  return `${data.year}-${data.month}-${data.day}T${data.hour}:${data.minute}`;
+}
+function eaUkWallTimeToEpoch(date,time){
+  const wanted=`${date}T${time}`;
+  const approx=Date.parse(`${wanted}:00Z`);
+  if(!Number.isFinite(approx))return NaN;
+  // Match UK wall time, including daylight-saving offsets (and the autumn repeated hour).
+  const matches=[];
+  for(const offset of [-60,0,60]){
+    const t=approx+offset*60000;
+    if(eaUkWallTimeParts(new Date(t))===wanted)matches.push(t);
+  }
+  return matches.length?Math.min(...matches):NaN;
+}
+function setEaAnalyticsRangeMode(mode){
+  if(mode==='all'){
+    eaAnalyticsRange=null;
+    el('eaRangeCustomFields').style.display='none';
+    el('eaRangeAll').classList.add('active');
+    el('eaRangeCustom').classList.remove('active');
+    el('eaRangeMessage').textContent='Showing all imported EA matches.';
+    renderEaPlayerAnalytics();
+  }else{
+    el('eaRangeCustomFields').style.display='block';
+    el('eaRangeAll').classList.remove('active');
+    el('eaRangeCustom').classList.add('active');
+    el('eaRangeMessage').textContent=eaAnalyticsRange?'Current date range remains applied until you press Apply.':'Choose the session start and end, then press Apply.';
+  }
+}
+function applyEaAnalyticsRange(){
+  const sd=el('eaRangeStartDate').value,st=el('eaRangeStartTime').value;
+  const ed=el('eaRangeEndDate').value,et=el('eaRangeEndTime').value;
+  const start=eaUkWallTimeToEpoch(sd,st),end=eaUkWallTimeToEpoch(ed,et);
+  const message=el('eaRangeMessage');
+  if(!Number.isFinite(start)||!Number.isFinite(end)||end<start){
+    message.textContent='Enter a valid start and end date/time (end must be after start).';return;
+  }
+  eaAnalyticsRange={start,end};
+  renderEaPlayerAnalytics();
+  const count=eaMatchCentreRows.filter(eaAnalyticsMatchInRange).length;
+  message.textContent=`${count} imported match${count===1?'':'es'} in this UK-time range · ${sd} ${st} to ${ed} ${et}.`;
+}
 function eaAnalyticsRows(){
   const groups=new Map();
 
-  eaMatchCentrePlayers.forEach(player=>{
+  eaAnalyticsFilteredPlayers().forEach(player=>{
     const name=String(player.olympus_player_name||player.gamertag||"Unknown");
     if(!groups.has(name)){
       groups.set(name,{
@@ -7451,7 +7539,7 @@ function renderEaPlayerAnalytics(){
 
   const rows=eaAnalyticsRows();
   if(!rows.length){
-    host.innerHTML=`<div class="ea-centre-empty">No imported EA player data is available yet.</div>`;
+    host.innerHTML=`<div class="ea-centre-empty">No EA player performances found for this selection.</div>`;
     return;
   }
 
@@ -7475,7 +7563,7 @@ function eaMatchForPlayerRow(player){
 
 function eaPlayerAnalyticsPerformances(name){
   return eaMatchCentrePlayers
-    .filter(player=>String(player.olympus_player_name||player.gamertag||"Unknown")===String(name))
+    .filter(player=>eaAnalyticsMatchInRange(eaMatchForPlayerRow(player))&&String(player.olympus_player_name||player.gamertag||"Unknown")===String(name))
     .map(player=>({player,match:eaMatchForPlayerRow(player)}))
     .sort((a,b)=>new Date(b.match?.played_at||0)-new Date(a.match?.played_at||0));
 }
