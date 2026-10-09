@@ -747,6 +747,22 @@ h1{
 .ea-xg-stat span{display:block;margin-top:5px;font-size:8px;color:#91a0b4;font-weight:800}
 .ea-xg-note{margin-top:11px;font-size:10px;line-height:1.55;color:#91a0b4}
 
+
+/* EA Analytics: position-specific imported performance (read-only) */
+.eap-pos-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:13px 0}
+.eap-pos-choice{min-width:0;padding:14px 9px;text-align:left;background:#0b1a2c;border:1px solid #29425f;border-radius:13px;color:#fff;cursor:pointer}
+.eap-pos-choice.active{background:#163462;border-color:#4e89ff}
+.eap-pos-choice:disabled{opacity:.5;cursor:default}
+.eap-pos-choice strong{display:block;font-size:20px}
+.eap-pos-choice span{display:block;margin-top:5px;color:#a1b4ce;font-size:10px}
+.eap-pos-choice small{display:block;margin-top:7px;color:#7892b2;font-size:9px}
+.eap-pos-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:13px}
+.eap-pos-metric{min-width:0;background:#07111f;border-radius:11px;padding:12px 7px;text-align:center}
+.eap-pos-metric strong{display:block;font-size:19px;color:#fff}
+.eap-pos-metric span{display:block;font-size:9px;color:#91a0b4;margin-top:5px}
+.eap-pos-note{font-size:11px;color:#91a0b4;line-height:1.55;margin-top:12px}
+@media(max-width:700px){.eap-pos-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.eap-pos-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 /* EA MATCH CENTRE — isolated read-only display */
 .ea-centre-status-card{margin:0 16px 14px;padding:16px;border:1px solid #29425f;border-radius:18px;background:#101d2e;display:flex;align-items:center;justify-content:space-between;gap:14px}
 .ea-centre-kicker{color:#6f9dff;font-size:10px;font-weight:900;letter-spacing:1px}
@@ -3568,7 +3584,7 @@ textarea.bug-form-control{
 .eap2-form-average{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-top:15px;padding-top:13px;border-top:1px solid #20364e}
 .eap2-form-average strong{font-size:27px}
 .eap2-form-average span{color:#8395ab;font-size:8px;font-weight:900}
-.eap2-tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:8px;background:#091725;border-top:1px solid #203a59}
+.eap2-tabs{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:8px;background:#091725;border-top:1px solid #203a59}
 .eap2-tab{min-height:42px;border:1px solid transparent;border-radius:10px;background:transparent;color:#91a4bb;font-size:10px;font-weight:900}
 .eap2-tab.active{background:#326eff;color:#fff;box-shadow:0 5px 18px rgba(50,110,255,.22)}
 .eap2-panel{display:none;margin-top:14px}.eap2-panel.active{display:block}
@@ -7801,6 +7817,70 @@ function eaP2ToggleHistory(button){
   button.textContent=opening?"HIDE MATCH-BY-MATCH PERFORMANCES":"VIEW MATCH-BY-MATCH PERFORMANCES";
 }
 
+
+// Use EA's per-match position, never the manual squad position.
+function eaPositionGroup(player){
+  const raw=String(player?.position||eaRawPlayerData(player)?.position||"").trim().toLowerCase();
+  if(["forward","forwards","attacker","striker","fwd","st","lw","rw","cf"].includes(raw))return "Forward";
+  if(["midfielder","midfield","mid","cm","cam","cdm","lm","rm"].includes(raw))return "Midfielder";
+  if(["defender","defence","defense","def","cb","lb","rb","lwb","rwb"].includes(raw))return "Defender";
+  if(["goalkeeper","keeper","gk"].includes(raw))return "Goalkeeper";
+  return "Unrecorded";
+}
+function eaPositionMetrics(items){
+  const sum=(field)=>items.reduce((total,item)=>total+Number(item.player[field]||0),0);
+  const games=items.length, goals=sum("goals"),assists=sum("assists");
+  const passes=sum("passes_made"),attempts=sum("pass_attempts");
+  const tackles=sum("tackles_made"),tackleAttempts=sum("tackle_attempts");
+  const ratings=items.map(item=>item.player.rating).filter(v=>v!==null&&v!==undefined&&v!==""&&Number.isFinite(Number(v)));
+  const interceptions=items.reduce((total,item)=>total+Number(eaEventCounts(item.player)["6"]||0),0);
+  return {games,goals,assists,passes,attempts,tackles,tackleAttempts,interceptions,shots:sum("shots"),
+    rating:ratings.length?ratings.reduce((a,b)=>a+Number(b),0)/ratings.length:null,
+    motm:items.filter(item=>item.player.ea_motm).length};
+}
+function eaPositionStat(value,label){
+  return `<div class="eap-pos-metric"><strong>${eaEscape(String(value))}</strong><span>${eaEscape(label)}</span></div>`;
+}
+function eaPositionPanelHtml(performances){
+  const categories=["Forward","Midfielder","Defender","Goalkeeper","Unrecorded"];
+  const groups=Object.fromEntries(categories.map(category=>[category,performances.filter(item=>eaPositionGroup(item.player)===category)]));
+  const selected=categories.find(category=>groups[category].length)||"Unrecorded";
+  const choices=categories.map(category=>{
+    const m=eaPositionMetrics(groups[category]);
+    if(category==="Unrecorded"&&!m.games)return "";
+    return `<button type="button" class="eap-pos-choice ${category===selected?"active":""}" data-position="${category}" onclick="eaSelectPosition(this)"><strong>${m.rating===null?"—":m.rating.toFixed(2)}</strong><span>${category}</span><small>${m.games} match${m.games===1?"":"es"} · avg rating</small></button>`;
+  }).join("");
+  return `<div class="eap2-detail-head"><div><div class="eap2-detail-title">Performance by Position</div><div class="eap2-detail-copy">EA-recorded match positions · ${performances.length} imported appearances in the selected date range</div></div></div>
+    <div class="eap-pos-grid">${choices}</div>
+    ${categories.map(category=>{
+      const m=eaPositionMetrics(groups[category]);
+      if(!m.games)return "";
+      const per=(v)=>(v/m.games).toFixed(2);
+      return `<div class="eap-pos-detail" data-position="${category}" style="display:${category===selected?"block":"none"}">
+        <div class="eap2-card"><div class="eap2-card-title">${category} · ${m.games} matches</div>
+        <div class="eap-pos-metrics">
+          ${eaPositionStat(m.rating===null?"—":m.rating.toFixed(2),"AVG MATCH RATING")}
+          ${eaPositionStat(m.goals,"GOALS")}${eaPositionStat(m.assists,"ASSISTS")}
+          ${eaPositionStat(per(m.goals+m.assists),"G+A / MATCH")}
+          ${eaPositionStat(m.shots,"SHOTS")}${eaPositionStat(per(m.shots),"SHOTS / MATCH")}
+          ${eaPositionStat(m.attempts?(100*m.passes/m.attempts).toFixed(1)+"%":"—","PASS SUCCESS")}
+          ${eaPositionStat(per(m.passes),"PASSES COMPLETED / MATCH")}
+          ${eaPositionStat(per(m.tackles),"TACKLES WON / MATCH")}
+          ${eaPositionStat(per(m.interceptions),"INTERCEPTIONS / MATCH")}
+          ${eaPositionStat(m.tackleAttempts?(100*m.tackles/m.tackleAttempts).toFixed(1)+"%":"—","TACKLE SUCCESS")}
+          ${eaPositionStat(m.motm,"EA MOTM")}
+        </div></div></div>`;
+    }).join("")}
+    <div class="eap-pos-note">Each appearance is counted under the position EA recorded for that match, not the player's usual squad position. Rates use appearances in that position; percentages use total successful actions divided by total attempts. Smaller samples can produce misleading comparisons. Goalkeeper-specific stats remain excluded.</div>`;
+}
+function eaSelectPosition(button){
+  const panel=button.closest('.eap2-panel');
+  if(!panel)return;
+  const selected=button.dataset.position;
+  panel.querySelectorAll('.eap-pos-choice').forEach(node=>node.classList.toggle('active',node===button));
+  panel.querySelectorAll('.eap-pos-detail').forEach(node=>node.style.display=node.dataset.position===selected?'block':'none');
+}
+
 function openEaAnalyticsProfile(name){
   const rows=eaAnalyticsRows();
   const summary=rows.find(row=>row.name===name);
@@ -7856,7 +7936,7 @@ function openEaAnalyticsProfile(name){
         </div>
       </div>
       <div class="eap2-tabs">
-        ${["overview","passing","defending","attacking","discipline","trends"].map((t,i)=>`<button class="eap2-tab ${i===0?"active":""}" data-tab="${t}" onclick="eaP2SwitchTab('${t}')">${t.toUpperCase()}</button>`).join("")}
+        ${["overview","passing","defending","attacking","discipline","positions","trends"].map((t,i)=>`<button class="eap2-tab ${i===0?"active":""}" data-tab="${t}" onclick="eaP2SwitchTab('${t}')">${t.toUpperCase()}</button>`).join("")}
       </div>
     </div>
 
@@ -7964,6 +8044,8 @@ function openEaAnalyticsProfile(name){
         ${eaP2StatRow("Red cards",redCards)}${eaP2StatRow("Penalties conceded",n(94))}${eaP2StatRow("Corners conceded",n(10))}${eaP2StatRow("Corners taken",n(145))}
       </div></div>
     </div>
+
+    <div class="eap2-panel" data-panel="positions">${eaPositionPanelHtml(performances)}</div>
 
     <div class="eap2-panel" data-panel="trends">
       <div class="eap2-detail-head"><div><div class="eap2-detail-title">Last 5 vs Overall</div><div class="eap2-detail-copy">Recent form compared with the complete imported FC27 sample.</div></div></div>
