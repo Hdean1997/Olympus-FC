@@ -7973,7 +7973,7 @@ async function loadEaMatchCentre(force){
       .from("ea_matches")
       .select("match_id,played_at,opponent_name,olympus_goals,opponent_goals,result,match_type,imported_at")
       .order("played_at",{ascending:false})
-      .limit(20);
+      .range(0,999);
     if(matchError) throw matchError;
 
     const matchRows=matches||[];
