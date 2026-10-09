@@ -8897,11 +8897,24 @@ async function saveMatchdaySquadEdit(){
   if(!isAdmin || !editingMatchdaySessionId) return;
   const session=matchdaySessions.find(item=>String(item.id)===String(editingMatchdaySessionId));
   if(!session) return;
-  if(draftSessionForMatchday(session.id)){
-    alert("This Matchday's Draft is already locked, so the participating squad can no longer be changed.");
-    return;
-  }
+  const lockedDraft=draftSessionForMatchday(session.id);
   const selected=players.filter(player=>el(`edit-matchday-player-${player.id}`)?.checked);
+  if(lockedDraft){
+    const before=new Set((session.players||[]).map(item=>item.playerKey));
+    const after=new Set(selected.map(player=>player.id));
+    if([...after].some(key=>!before.has(key))){
+      alert("The Draft is locked. You can mark a non-attending player absent, but cannot add new Draft participants.");
+      return;
+    }
+    const absent=[...before].filter(key=>!after.has(key));
+    if(absent.some(key=>matchesForMatchday(session.id).some(match=>match.playerStats?.[key]?.played))){
+      alert("A player with logged appearances cannot be marked absent. Check the logged matches first.");
+      return;
+    }
+    if(!absent.length && selected.length===before.size){
+      // Position corrections are allowed; Draft assignments remain untouched.
+    }else if(!confirm("Mark the removed player(s) as absent? Their Draft assignments will stay locked, anyone who drafted them receives average normal points from players who attended, and they will no longer be required for POTN voting."))return;
+  }
   if(!selected.length){
     el("editMatchdaySquadError").textContent="Select at least one player.";
     el("editMatchdaySquadError").classList.add("show");
@@ -14464,10 +14477,22 @@ function draftHotStreakBonus(session,playerId){
 }
 function calculateDraftFinalScore(session,assignment){
   const normal=calculateDraftScore(session,assignment?.draftedPlayerId),use=assignment?draftChipUseForSession(draftSessionForMatchday(session?.id),assignment.participantPlayerId):null;
+  // A locked Draft assignment survives an admin marking a no-show absent.
+  // Protect its score using only normal (pre-chip) scores of actual attendees.
+  const squad=new Set((session?.players||[]).map(item=>item.playerKey));
+  const absent=Boolean(session && assignment?.draftedPlayerId && !squad.has(assignment.draftedPlayerId));
+  if(absent){
+    const attendees=(session.players||[]).map(item=>item.playerKey)
+      .filter(key=>matchesForMatchday(session.id).some(match=>match.playerStats?.[key]?.played));
+    const values=attendees.map(key=>calculateDraftScore(session,key).total);
+    normal.total=values.length?Math.round(values.reduce((sum,value)=>sum+value,0)/values.length):0;
+    normal.averageProtection=true;
+    normal.protectedPlayerCount=values.length;
+  }
   let bonus=0;
-  if(use?.chipType==="double") bonus=normal.goalPoints+normal.assistPoints+normal.ratingPoints+normal.potmPoints+normal.hatTrickPoints+normal.playmakerPoints;
-  else if(use?.chipType==="insurance") bonus=40;
-  else if(use?.chipType==="hot_streak") bonus=draftHotStreakBonus(session,assignment.draftedPlayerId);
+  if(!absent && use?.chipType==="double") bonus=normal.goalPoints+normal.assistPoints+normal.ratingPoints+normal.potmPoints+normal.hatTrickPoints+normal.playmakerPoints;
+  else if(!absent && use?.chipType==="insurance") bonus=40;
+  else if(!absent && use?.chipType==="hot_streak") bonus=draftHotStreakBonus(session,assignment.draftedPlayerId);
   return {normal,bonus,total:normal.total+bonus,use};
 }
 function draftWalletHTML(playerId){
@@ -14530,7 +14555,7 @@ function renderDraft(){
   }else{
     const p=players.find(x=>x.id===mine.draftedPlayerId),finalScore=calculateDraftFinalScore(active,mine),score=finalScore.normal;
     const chipLine=finalScore.use?`<div class="draft-chip-bonus">${DRAFT_CHIPS[finalScore.use.chipType]?.icon||"🎴"} ${escapeHTML(DRAFT_CHIPS[finalScore.use.chipType]?.name||finalScore.use.chipType)}${finalScore.bonus?` · +${finalScore.bonus} bonus`:" · ACTIVE"}</div>`:"";
-    tonight=`<div class="draft-card gold"><div class="draft-card-title">🔒 Tonight's Draft</div><div class="draft-reveal-card"><div class="draft-reveal-kicker">YOUR PLAYER TONIGHT</div><div class="draft-reveal-number">#${p?.number??""}</div><div class="draft-reveal-name">${escapeHTML(p?.name||mine.draftedPlayerId)}</div><div class="draft-reveal-meta">${escapeHTML(p?.position||"")} · ${escapeHTML(p?.nation||"")}</div><div style="font-size:34px;font-weight:900;margin-top:14px">${finalScore.total} PTS</div>${chipLine}<div class="draft-reveal-message">${finalScore.use?`Normal ${score.total} pts${finalScore.bonus?` · Chip bonus +${finalScore.bonus}`:""}`:"Live Draft score from this Matchday."}</div></div>${draftBoardHTML(assignments,mine)}${draftChipWindowHTML(ds,active,assignments,mine)}${draftScoreBreakdownHTML(score)}<div class="draft-lock">Draft locked · ${assignments.length} controlled players participating</div></div>`;
+    tonight=`<div class="draft-card gold"><div class="draft-card-title">🔒 Tonight's Draft</div><div class="draft-reveal-card"><div class="draft-reveal-kicker">YOUR PLAYER TONIGHT</div><div class="draft-reveal-number">#${p?.number??""}</div><div class="draft-reveal-name">${escapeHTML(p?.name||mine.draftedPlayerId)}</div><div class="draft-reveal-meta">${escapeHTML(p?.position||"")} · ${escapeHTML(p?.nation||"")}</div><div style="font-size:34px;font-weight:900;margin-top:14px">${finalScore.total} PTS</div>${score.averageProtection?`<div class="draft-chip-bonus">🛡️ Average Points Protection · ${score.protectedPlayerCount} attendees</div>`:chipLine}<div class="draft-reveal-message">${score.averageProtection?"Absent player · average normal points of players who attended":finalScore.use?`Normal ${score.total} pts${finalScore.bonus?` · Chip bonus +${finalScore.bonus}`:""}`:"Live Draft score from this Matchday."}</div></div>${draftBoardHTML(assignments,mine)}${draftChipWindowHTML(ds,active,assignments,mine)}${score.averageProtection?`<div class="draft-empty">Protected average: ${score.total} points · no chip bonuses included.</div>`:draftScoreBreakdownHTML(score)}<div class="draft-lock">Draft locked · ${assignments.length} controlled players participating</div></div>`;
   }
 
   const endedDraftAssignments=draftAssignments.filter(a=>{const session=draftSessionByDraftId(a.draftSessionId);return session&&session.status==="ended";});
@@ -14539,7 +14564,7 @@ function renderDraft(){
   const hasCompleted=endedDraftAssignments.length>0;
   const standingRows=standings.map((r,i)=>`<div class="draft-leader-row"><div class="draft-rank">${i+1}</div><div class="draft-leader-name ${hasCompleted?"":"draft-coming"}">${escapeHTML(r.p.name)}</div><div class="draft-leader-points">${hasCompleted?r.points:"—"}</div></div>`).join("");
   const history=currentClubPlayerKey?draftAssignments.filter(a=>a.participantPlayerId===currentClubPlayerKey&&a.revealed&&Boolean(draftSessionByDraftId(a.draftSessionId))).sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||""))):[];
-  const historyRows=history.length?history.slice(0,10).map(a=>{const session=draftSessionByDraftId(a.draftSessionId),f=calculateDraftFinalScore(session,a),status=session?.status==="ended"?"FINAL":"LIVE",tag=f.use?`<div class="draft-chip-history-tag">${DRAFT_CHIPS[f.use.chipType]?.icon||"🎴"} ${escapeHTML(DRAFT_CHIPS[f.use.chipType]?.name||f.use.chipType)}${f.bonus?` · +${f.bonus}`:""}</div>`:"";return `<div class="draft-leader-row"><div class="draft-rank">🎲</div><div><div class="draft-leader-name">${escapeHTML(draftPlayerName(a.draftedPlayerId))}</div><div class="leader-detail">${escapeHTML(session?.sessionDate||"")} · ${status}</div>${tag}</div><div class="draft-leader-points">${f.total} pts</div></div>`;}).join(""):`<div class="draft-empty">${currentClubPlayerKey?"No Draft history yet.":"Sign in to view your Draft history."}</div>`;
+  const historyRows=history.length?history.slice(0,10).map(a=>{const session=draftSessionByDraftId(a.draftSessionId),f=calculateDraftFinalScore(session,a),status=session?.status==="ended"?"FINAL":"LIVE",tag=f.use?`<div class="draft-chip-history-tag">${DRAFT_CHIPS[f.use.chipType]?.icon||"🎴"} ${escapeHTML(DRAFT_CHIPS[f.use.chipType]?.name||f.use.chipType)}${f.bonus?` · +${f.bonus}`:""}</div>`:"";return `<div class="draft-leader-row"><div class="draft-rank">🎲</div><div><div class="draft-leader-name">${escapeHTML(draftPlayerName(a.draftedPlayerId))}</div><div class="leader-detail">${escapeHTML(session?.sessionDate||"")} · ${status}</div>${tag}${f.normal.averageProtection?`<div class="draft-chip-history-tag">🛡️ Average Points Protection</div>`:""}</div><div class="draft-leader-points">${f.total} pts</div></div>`;}).join(""):`<div class="draft-empty">${currentClubPlayerKey?"No Draft history yet.":"Sign in to view your Draft history."}</div>`;
   const wallet=currentClubPlayerKey?`<div class="draft-section"><div class="draft-section-heading">MY CHIPS</div><div class="draft-card"><div class="draft-card-title">🎴 Chip Wallet</div><div class="draft-card-copy">One chip maximum per Matchday. Confirmed chips cannot be changed.</div>${draftWalletHTML(currentClubPlayerKey)}</div></div>`:"";
   body.innerHTML=`<div class="draft-section"><div class="draft-section-heading">TONIGHT'S DRAFT</div>${tonight}</div>${wallet}<div class="draft-section"><div class="draft-section-heading">FC27 SEASON LEADERBOARD</div><div class="draft-card"><div class="draft-card-title">🏆 Season Standings</div><div class="draft-card-copy">Only completed Matchdays count towards the FC27 Draft leaderboard.</div><div class="draft-leader-preview">${standingRows}</div></div></div><div class="draft-section"><div class="draft-section-heading">MY DRAFT</div><div class="draft-card"><div class="draft-card-title">👤 My Draft History</div><div class="draft-card-copy">Live and completed Draft assignments appear here. Deleted Matchdays are removed completely.</div><div class="draft-leader-preview">${historyRows}</div></div></div>`;
   startDraftChipTimer();
