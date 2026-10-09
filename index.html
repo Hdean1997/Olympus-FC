@@ -2982,6 +2982,21 @@ input[type="date"]::-webkit-date-and-time-value{
 .draft-season-pill{display:inline-flex;align-items:center;min-height:28px;margin-top:14px;padding:0 11px;border-radius:999px;background:#07111f;border:1px solid #315d9d;color:#9fc1ff;font-size:10px;font-weight:900;letter-spacing:.7px}
 .draft-section{margin:0 16px 18px}
 .draft-section-heading{margin:0 0 10px;color:#91a0b4;font-size:11px;font-weight:900;letter-spacing:1.1px}
+/* Read-only completed Matchday Draft results */
+.draft-results-toggle{display:block;width:100%;min-height:48px;padding:12px 14px;border:1px solid #315d9d;border-radius:12px;background:#10233b;color:#dce9ff;font-weight:900;text-align:center;cursor:pointer}
+.draft-results-panel{margin-top:12px}
+.draft-results-session{margin-top:9px;border:1px solid #29425f;border-radius:12px;background:#0a1625;overflow:hidden}
+.draft-results-session summary{padding:13px 12px;cursor:pointer;color:#dce6f4;font-size:13px;font-weight:800;list-style:none;display:flex;justify-content:space-between;gap:10px}
+.draft-results-session summary::-webkit-details-marker{display:none}
+.draft-results-session[open] summary{border-bottom:1px solid #29425f}
+.draft-results-rows{padding:4px 10px 10px}
+.draft-results-row{padding:11px 2px;border-bottom:1px solid #25384f}
+.draft-results-row:last-child{border-bottom:0}
+.draft-results-row-head{display:flex;align-items:center;gap:9px}
+.draft-results-row-name{flex:1;min-width:0;font-size:12px;font-weight:800;color:#fff}
+.draft-results-row-total{font-size:16px;font-weight:900;color:#e8bd4b;white-space:nowrap}
+.draft-results-row-meta{margin:5px 0 0 32px;font-size:10px;color:#9aa9bc;line-height:1.6}
+
 .draft-card{padding:17px;border-radius:18px;background:#101d2e;border:1px solid #29425f}
 .draft-card.gold{border-color:#725d22;background:linear-gradient(145deg,#151f2c,#101d2e)}
 .draft-card-title{font-size:18px;font-weight:900}
@@ -14574,6 +14589,26 @@ async function confirmDraftChip(type,targetParticipantId=null){
   finally{draftBusy=false;renderDraft();}
 }
 
+
+/* Completed-session results are display-only: no database writes or score mutations. */
+function draftCompletedMatchdayResultsHTML(){
+  const sessions=matchdaySessions.filter(session=>session.status==="ended" && draftSessionForMatchday(session.id))
+    .sort((a,b)=>String(b.sessionDate||"").localeCompare(String(a.sessionDate||"")));
+  if(!sessions.length)return `<div class="draft-empty">No completed Matchday Draft results yet.</div>`;
+  return sessions.map(session=>{
+    const ds=draftSessionForMatchday(session.id);
+    const rows=draftAssignmentsForSession(ds.id).map(assignment=>({assignment,score:calculateDraftFinalScore(session,assignment)}))
+      .sort((a,b)=>b.score.total-a.score.total||draftPlayerName(a.assignment.participantPlayerId).localeCompare(draftPlayerName(b.assignment.participantPlayerId)));
+    const items=rows.map((row,index)=>{
+      const a=row.assignment,f=row.score;
+      const chip=f.use?`${DRAFT_CHIPS[f.use.chipType]?.icon||"🎴"} ${escapeHTML(DRAFT_CHIPS[f.use.chipType]?.name||f.use.chipType)}`:"No chip";
+      const protection=f.normal.averageProtection?` · 🛡️ Average Points Protection (${f.normal.protectedPlayerCount} attendees)`:"";
+      return `<div class="draft-results-row"><div class="draft-results-row-head"><span class="draft-rank">${index+1}</span><span class="draft-results-row-name">${escapeHTML(draftPlayerName(a.participantPlayerId))}</span><span class="draft-results-row-total">${f.total} pts</span></div><div class="draft-results-row-meta">Drafted: ${escapeHTML(draftPlayerName(a.draftedPlayerId))}<br>Base: ${f.normal.total} pts · Chip bonus: +${f.bonus} pts<br>${chip}${protection}</div></div>`;
+    }).join("");
+    return `<details class="draft-results-session"><summary><span>${escapeHTML(session.sessionDate||"Completed Matchday")}</span><span>${rows.length} managers ▾</span></summary><div class="draft-results-rows">${items||'<div class="draft-empty">No assignments recorded.</div>'}</div></details>`;
+  }).join("");
+}
+
 function renderDraft(){
   const body=el("draftBody"); if(!body)return;
   const active=getActiveMatchday("FC27");
@@ -14607,8 +14642,9 @@ function renderDraft(){
   const standingRows=standings.map((r,i)=>`<div class="draft-leader-row"><div class="draft-rank">${i+1}</div><div class="draft-leader-name ${hasCompleted?"":"draft-coming"}">${escapeHTML(r.p.name)}</div><div class="draft-leader-points">${hasCompleted?r.points:"—"}</div></div>`).join("");
   const history=currentClubPlayerKey?draftAssignments.filter(a=>a.participantPlayerId===currentClubPlayerKey&&a.revealed&&Boolean(draftSessionByDraftId(a.draftSessionId))).sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||""))):[];
   const historyRows=history.length?history.slice(0,10).map(a=>{const session=draftSessionByDraftId(a.draftSessionId),f=calculateDraftFinalScore(session,a),status=session?.status==="ended"?"FINAL":"LIVE",tag=f.use?`<div class="draft-chip-history-tag">${DRAFT_CHIPS[f.use.chipType]?.icon||"🎴"} ${escapeHTML(DRAFT_CHIPS[f.use.chipType]?.name||f.use.chipType)}${f.bonus?` · +${f.bonus}`:""}</div>`:"";return `<div class="draft-leader-row"><div class="draft-rank">🎲</div><div><div class="draft-leader-name">${escapeHTML(draftPlayerName(a.draftedPlayerId))}</div><div class="leader-detail">${escapeHTML(session?.sessionDate||"")} · ${status}</div>${tag}${f.normal.averageProtection?`<div class="draft-chip-history-tag">🛡️ Average Points Protection</div>`:""}</div><div class="draft-leader-points">${f.total} pts</div></div>`;}).join(""):`<div class="draft-empty">${currentClubPlayerKey?"No Draft history yet.":"Sign in to view your Draft history."}</div>`;
+  const completedResults=`<div class="draft-section"><div class="draft-section-heading">MATCHDAY RESULTS</div><div class="draft-card"><div class="draft-card-title">🏆 Matchday Draft Results</div><div class="draft-card-copy">View everyone's final points from completed Matchdays. Live Drafts stay private.</div><button type="button" class="draft-results-toggle" onclick="const panel=document.getElementById('draftCompletedResultsPanel');panel.hidden=!panel.hidden;this.textContent=panel.hidden?'🏆 VIEW MATCHDAY DRAFT RESULTS':'▴ HIDE MATCHDAY DRAFT RESULTS'">🏆 VIEW MATCHDAY DRAFT RESULTS</button><div id="draftCompletedResultsPanel" class="draft-results-panel" hidden>${draftCompletedMatchdayResultsHTML()}</div></div></div>`;
   const wallet=currentClubPlayerKey?`<div class="draft-section"><div class="draft-section-heading">MY CHIPS</div><div class="draft-card"><div class="draft-card-title">🎴 Chip Wallet</div><div class="draft-card-copy">One chip maximum per Matchday. Confirmed chips cannot be changed.</div>${draftWalletHTML(currentClubPlayerKey)}</div></div>`:"";
-  body.innerHTML=`<div class="draft-section"><div class="draft-section-heading">TONIGHT'S DRAFT</div>${tonight}</div>${wallet}<div class="draft-section"><div class="draft-section-heading">FC27 SEASON LEADERBOARD</div><div class="draft-card"><div class="draft-card-title">🏆 Season Standings</div><div class="draft-card-copy">Only completed Matchdays count towards the FC27 Draft leaderboard.</div><div class="draft-leader-preview">${standingRows}</div></div></div><div class="draft-section"><div class="draft-section-heading">MY DRAFT</div><div class="draft-card"><div class="draft-card-title">👤 My Draft History</div><div class="draft-card-copy">Live and completed Draft assignments appear here. Deleted Matchdays are removed completely.</div><div class="draft-leader-preview">${historyRows}</div></div></div>`;
+  body.innerHTML=`<div class="draft-section"><div class="draft-section-heading">TONIGHT'S DRAFT</div>${tonight}</div>${wallet}${completedResults}<div class="draft-section"><div class="draft-section-heading">FC27 SEASON LEADERBOARD</div><div class="draft-card"><div class="draft-card-title">🏆 Season Standings</div><div class="draft-card-copy">Only completed Matchdays count towards the FC27 Draft leaderboard.</div><div class="draft-leader-preview">${standingRows}</div></div></div><div class="draft-section"><div class="draft-section-heading">MY DRAFT</div><div class="draft-card"><div class="draft-card-title">👤 My Draft History</div><div class="draft-card-copy">Live and completed Draft assignments appear here. Deleted Matchdays are removed completely.</div><div class="draft-leader-preview">${historyRows}</div></div></div>`;
   startDraftChipTimer();
   ensureDraftChipRefresh();
 }
