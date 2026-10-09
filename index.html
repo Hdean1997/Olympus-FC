@@ -720,6 +720,24 @@ h1{
 .ea-range-apply{width:100%;min-height:43px;margin-top:12px;border:0;border-radius:10px;background:#326eff;color:#fff;font-weight:900}
 .ea-range-message{margin-top:10px;color:#9fb9df;font-size:11px;line-height:1.5}
 
+
+/* EA Trends: full rating history, isolated read-only chart */
+.ea-rating-history{margin-top:20px;padding:15px;border:1px solid #29425f;border-radius:16px;background:#101d2e}
+.ea-rating-history-title{font-size:16px;font-weight:900;color:#fff}
+.ea-rating-history-sub{margin-top:5px;color:#91a0b4;font-size:11px;line-height:1.5}
+.ea-rating-history-scroll{overflow-x:auto;overflow-y:hidden;margin-top:12px;border-radius:10px;background:#081525;-webkit-overflow-scrolling:touch}
+.ea-rating-history-scroll svg{display:block;height:225px;max-width:none}
+.ea-rating-history-point{cursor:pointer;outline:none}
+.ea-rating-history-point:focus circle{stroke:#fff;stroke-width:4}
+.ea-rating-history-detail{min-height:44px;margin-top:10px;padding:11px;border:1px solid #29425f;border-radius:10px;color:#dce6f4;font-size:12px;line-height:1.5}
+.ea-rating-history-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:11px;color:#9fb2c9;font-size:10px}
+.ea-rating-history-legend span{display:inline-flex;align-items:center;gap:5px}
+.ea-rating-history-legend i{display:inline-block;width:15px;height:3px;border-radius:3px}
+.ea-rating-history-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:12px}
+.ea-rating-history-stat{padding:10px 5px;border-radius:10px;background:#07111f;text-align:center}
+.ea-rating-history-stat strong{display:block;color:#fff;font-size:16px}
+.ea-rating-history-stat span{display:block;margin-top:3px;color:#8392a6;font-size:9px}
+
 /* EA MATCH CENTRE — isolated read-only display */
 .ea-centre-status-card{margin:0 16px 14px;padding:16px;border:1px solid #29425f;border-radius:18px;background:#101d2e;display:flex;align-items:center;justify-content:space-between;gap:14px}
 .ea-centre-kicker{color:#6f9dff;font-size:10px;font-weight:900;letter-spacing:1px}
@@ -7642,6 +7660,45 @@ function eaP2Chart(recent5){
     ${points.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="5" fill="#48d58b" stroke="#d8fff0" stroke-width="2"/><text x="${p.x}" y="${p.y-10}" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">${p.v.toFixed(1)}</text>`).join("")}
   </svg></div><div class="eap2-chart-labels">${chronological.map(x=>`<span>${eaEscape(x.match?.opponent_name||"Opponent")}</span>`).join("")}</div>`;
 }
+
+function eaP2RatingHistory(performances){
+  // Data comes solely from the already-filtered EA player appearances.
+  const ordered=[...performances].reverse().filter(item=>Number.isFinite(Number(item.player?.rating))&&Number(item.player.rating)>0);
+  if(!ordered.length) return `<div class="ea-rating-history"><div class="ea-rating-history-title">Full Rating History</div><div class="ea-rating-history-sub">No EA ratings available for this selection.</div></div>`;
+  const vals=ordered.map(item=>Number(item.player.rating));
+  const avg=vals.reduce((sum,v)=>sum+v,0)/vals.length;
+  const highest=Math.max(...vals),lowest=Math.min(...vals);
+  const w=Math.max(340,ordered.length*38+72),h=225,left=36,right=20,top=22,bottom=37;
+  const yMin=Math.min(0,Math.floor(lowest)),yMax=Math.max(10,Math.ceil(highest));
+  const x=i=>left+(ordered.length===1?(w-left-right)/2:i*(w-left-right)/(ordered.length-1));
+  const y=v=>top+(yMax-v)*(h-top-bottom)/(yMax-yMin||1);
+  const path=values=>values.map((v,i)=>`${i?'L':'M'}${x(i).toFixed(2)},${y(v).toFixed(2)}`).join(' ');
+  const moving=vals.map((_,i)=>{const sample=vals.slice(Math.max(0,i-4),i+1);return sample.reduce((sum,v)=>sum+v,0)/sample.length;});
+  const ticks=[0,2,4,6,8,10].filter(t=>t>=yMin&&t<=yMax);
+  const dates=ordered.map(item=>item.match?.played_at?new Date(item.match.played_at).toLocaleString('en-GB',{timeZone:'Europe/London',day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'Date unavailable');
+  const labels=ordered.map((item,i)=>`Match ${i+1} · ${dates[i]} · vs ${item.match?.opponent_name||'Unknown opponent'} · Rating ${vals[i].toFixed(1)}`);
+  const labelText=labels.map(t=>eaEscape(t));
+  return `<div class="ea-rating-history">
+    <div class="ea-rating-history-title">Full Rating History</div>
+    <div class="ea-rating-history-sub">${ordered.length} rated appearances · oldest to newest. Scroll sideways to explore every match; tap a point for details.</div>
+    <div class="ea-rating-history-scroll"><svg width="${w}" viewBox="0 0 ${w} ${h}" role="img" aria-label="EA match ratings across ${ordered.length} appearances">
+      ${ticks.map(t=>`<line x1="${left}" y1="${y(t)}" x2="${w-right}" y2="${y(t)}" stroke="#23364e" stroke-width="1"/><text x="${left-7}" y="${y(t)+4}" text-anchor="end" fill="#8392a6" font-size="10">${t}</text>`).join('')}
+      <line x1="${left}" y1="${y(avg)}" x2="${w-right}" y2="${y(avg)}" stroke="#e8bd4b" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <path d="${path(moving)}" fill="none" stroke="#75a4ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="${path(vals)}" fill="none" stroke="#48d58b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      ${vals.map((v,i)=>`<g class="ea-rating-history-point" tabindex="0" role="button" aria-label="${labelText[i]}" onclick="eaP2SelectRatingPoint(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();eaP2SelectRatingPoint(this)}" data-detail="${labelText[i]}"><circle cx="${x(i)}" cy="${y(v)}" r="9" fill="transparent"/><circle cx="${x(i)}" cy="${y(v)}" r="4" fill="${v===highest?'#f3c85b':v===lowest?'#ff9ba6':'#48d58b'}" stroke="#081525" stroke-width="1.5"/><title>${labelText[i]}</title></g><text x="${x(i)}" y="${h-12}" text-anchor="middle" fill="#8392a6" font-size="9">${i+1}</text>`).join('')}
+    </svg></div>
+    <div class="ea-rating-history-legend"><span><i style="background:#48d58b"></i>Match rating</span><span><i style="background:#75a4ff"></i>Last 5 average</span><span><i style="background:#e8bd4b"></i>Overall average</span></div>
+    <div class="ea-rating-history-detail" aria-live="polite">Tap any point to view its match date, opponent and rating.</div>
+    <div class="ea-rating-history-stats"><div class="ea-rating-history-stat"><strong>${avg.toFixed(2)}</strong><span>AVERAGE</span></div><div class="ea-rating-history-stat"><strong>${highest.toFixed(1)}</strong><span>HIGHEST</span></div><div class="ea-rating-history-stat"><strong>${lowest.toFixed(1)}</strong><span>LOWEST</span></div></div>
+  </div>`;
+}
+function eaP2SelectRatingPoint(point){
+  const box=point.closest('.ea-rating-history');
+  const detail=box?.querySelector('.ea-rating-history-detail');
+  if(detail) detail.textContent=point.getAttribute('data-detail')||'';
+}
+
 function eaP2ToggleHistory(button){
   const history=el("eaP2History");
   const opening=!history.classList.contains("open");
@@ -7809,6 +7866,7 @@ function openEaAnalyticsProfile(name){
         ${eaP2Trend("INTERCEPTIONS / MATCH",summary.interceptionsPerMatch,recentInterceptionsPerMatch,"",1)}
         ${eaP2Trend("SHOTS / MATCH",summary.shots/summary.matches,recentShotsPerMatch,"",1)}
       </div>
+      ${eaP2RatingHistory(performances)}
     </div>
   </div>`;
 
