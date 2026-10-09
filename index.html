@@ -4705,7 +4705,7 @@ textarea.bug-form-control{
 
   <div id="matchdayControls" class="matchday-wrap"></div>
 
-  <button id="addMatchButton" class="add-match-button" onclick="openMatchForm()">
+  <button id="addMatchButton" class="add-match-button" onclick="missingMatchTargetSessionId=null;openMatchForm()">
     + Add Match
   </button>
 
@@ -8630,6 +8630,7 @@ function matchdaySummaryHTML(session,compact=false){
       ${!compact && session.status === "ended" ? matchdayPotnHTML(session) : ""}
       ${isAdmin ? `<div class="matchday-actions">
         <button class="matchday-action secondary" onclick="event.stopPropagation();openEditMatchdaySquadModal(${session.id})">Edit Squad</button>
+        ${session.status === "ended" ? `<button class="matchday-action primary" onclick="event.stopPropagation();openMissingMatchForSession(${session.id})">＋ Add Missing Match</button>` : ""}
         ${session.status === "active" ? `<button class="matchday-action primary" onclick="event.stopPropagation();endMatchday(${session.id})">End Matchday</button>` : ""}
         <button class="matchday-action danger" onclick="event.stopPropagation();deleteMatchday(${session.id})">Delete Matchday</button>
       </div>` : ""}
@@ -8860,6 +8861,22 @@ function renderMatchday(){
     : `<div class="report-history-empty">No previous Matchday reports yet.</div>`;
   renderReportArchive();
   updateMatchdayTimers();
+}
+
+// Explicit historical Matchday target for the existing Add Match form.
+let missingMatchTargetSessionId = null;
+function openMissingMatchForSession(sessionId){
+  if(!isAdmin) return;
+  const session=matchdaySessions.find(item=>String(item.id)===String(sessionId));
+  if(!session){alert("Matchday not found. Refresh and try again.");return;}
+  if(!seasonData[session.season]){alert("This Matchday's season is unavailable.");return;}
+  missingMatchTargetSessionId=String(session.id);
+  openMatchForm();
+  el("matchDate").value=session.sessionDate;
+  el("matchModalTitle").textContent="Add Missing Match";
+  el("addMatchSubtitle").textContent=`Adding a missing result to the ${formatDate(session.sessionDate)} Matchday.`;
+  el("matchEntrySeason").textContent=session.season;
+  el("matchEntrySeasonStep2").textContent=session.season;
 }
 
 let editingMatchdaySessionId = null;
@@ -9106,12 +9123,13 @@ function openMatchForm(){
     return;
   }
 
-  if(activeSeason === "ALL_TIME"){
+  if(activeSeason === "ALL_TIME" && !missingMatchTargetSessionId){
     return;
   }
 
   editContext = null;
   pendingMatch = null;
+  // The historical target is intentionally retained when opened from a report.
 
   el("opponent").value = "";
   el("matchDate").value = localDate();
@@ -9123,7 +9141,8 @@ function openMatchForm(){
   el("matchError").classList.remove("show");
   el("playerError").classList.remove("show");
 
-  configureMatchModal(activeSeason,false);
+  const target=missingMatchTargetSessionId ? matchdaySessions.find(item=>String(item.id)===missingMatchTargetSessionId) : null;
+  configureMatchModal(target?.season || activeSeason,false);
 
   el("matchStep1").style.display = "block";
   el("matchStep2").style.display = "none";
@@ -9178,6 +9197,7 @@ function closeMatchForm(){
   document.body.style.overflow = "";
   pendingMatch = null;
   editContext = null;
+  missingMatchTargetSessionId = null;
 }
 
 function showMatchError(message){
@@ -9223,7 +9243,12 @@ function continueToPlayerStats(){
     result = "L";
   }
 
-  const season = editContext ? editContext.season : activeSeason;
+  const targetSession = missingMatchTargetSessionId
+    ? matchdaySessions.find(item=>String(item.id)===missingMatchTargetSessionId)
+    : null;
+  if(missingMatchTargetSessionId && !targetSession){showMatchError("The selected Matchday no longer exists.");return;}
+  if(targetSession && date!==targetSession.sessionDate){showMatchError("Use the original Matchday date for this missing match.");return;}
+  const season = editContext ? editContext.season : (targetSession?.season || activeSeason);
 
   if(type === "Playoffs") {
     if(olympusScore === opponentScore){
@@ -9265,7 +9290,7 @@ function continueToPlayerStats(){
     result,
     matchdaySessionId:existingMatch
       ? (existingMatch.matchdaySessionId ?? null)
-      : (getActiveMatchday(season)?.id ?? null),
+      : (targetSession?.id ?? getActiveMatchday(season)?.id ?? null),
     playerStats:existingMatch ? existingMatch.playerStats || {} : {},
     potmPlayerId:existingMatch ? existingMatch.potmPlayerId || null : null
   };
@@ -9286,7 +9311,7 @@ function renderPlayerEntry(existingMatch = null){
   el("playerEntryList").innerHTML = players.map(player => {
 
     const activeSession = !existingMatch && pendingMatch
-      ? getActiveMatchday(pendingMatch.season)
+      ? (matchdaySessions.find(item=>String(item.id)===String(pendingMatch.matchdaySessionId)) || getActiveMatchday(pendingMatch.season))
       : null;
     const selectedForMatchday = activeSession
       ? activeSession.players.some(item => item.playerKey === player.id)
@@ -9495,6 +9520,7 @@ async function finishMatch(){
     editContext ? editContext.season : activeSeason;
 
   const savedId = pendingMatch.id;
+  const savedMatchdaySessionId = pendingMatch.matchdaySessionId;
 
   // Stage 3: capture the FC27 achievement state before this save so we can
   // celebrate only achievements that become newly unlocked because of it.
@@ -9524,7 +9550,7 @@ async function finishMatch(){
 
   }else{
 
-    seasonData[activeSeason].matches.unshift(pendingMatch);
+    seasonData[savedSeason].matches.unshift(pendingMatch);
   }
 
   saveSeasonData();
@@ -9534,7 +9560,13 @@ async function finishMatch(){
 
   pendingMatch = null;
   editContext = null;
+  missingMatchTargetSessionId = null;
 
+  // Recompute stored Draft points from the updated manual Matchday matches.
+  if(savedMatchdaySessionId && draftSessionForMatchday(savedMatchdaySessionId)){
+    try{await syncDraftPointsForSession(savedMatchdaySessionId);}
+    catch(error){console.error("Draft points refresh failed:",error);alert("Match saved, but Draft points could not be refreshed. Please refresh and check the Draft.");}
+  }
   renderEverything();
 
   if(savedSeason === "FC27" && achievementStateBeforeSave){
