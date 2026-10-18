@@ -950,6 +950,20 @@ h1{
 
 /* MATCHES */
 
+/* Logged match history date-range filter — display only */
+.logged-range{margin:0 16px 15px;padding:15px;border:1px solid #315d9d;border-radius:16px;background:#101d2e}
+.logged-range-title{font-size:14px;font-weight:800;color:#dce6f4;margin-bottom:11px}
+.logged-range-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.logged-range-fields label{display:block;color:#9aa9bc;font-size:11px;font-weight:700;margin-bottom:6px}
+.logged-range-fields input{width:100%;min-width:0;min-height:44px;padding:8px;border:1px solid #315d9d;border-radius:10px;background:#07111f;color:#fff;font-size:16px;color-scheme:dark}
+.logged-range-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.logged-range-actions button{min-height:43px;border-radius:10px;border:1px solid #315d9d;background:#10233b;color:#b9d2ff;font-weight:800}
+.logged-range-actions button:first-child{background:#326eff;border-color:#326eff;color:#fff}
+.logged-range-feedback{margin-top:11px;color:#9fb9df;font-size:11px;line-height:1.5}
+.logged-range-stats{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.logged-range-stats span{padding:7px 9px;border-radius:9px;background:#07111f;color:#cdd9eb;font-size:11px}
+
+
 .matches-summary{
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -4862,6 +4876,20 @@ textarea.bug-form-control{
   </div>
 
   <div class="match-list-title">Recorded Match History</div>
+
+  <div class="logged-range" aria-label="Filter recorded match history by date">
+    <div class="logged-range-title">Filter Logged Matches</div>
+    <div class="logged-range-fields">
+      <div><label for="loggedRangeFrom">From date</label><input id="loggedRangeFrom" type="date"></div>
+      <div><label for="loggedRangeTo">To date</label><input id="loggedRangeTo" type="date"></div>
+    </div>
+    <div class="logged-range-actions">
+      <button type="button" onclick="applyLoggedMatchRange()">Apply Filter</button>
+      <button type="button" onclick="clearLoggedMatchRange()">Clear</button>
+    </div>
+    <div id="loggedRangeFeedback" class="logged-range-feedback" aria-live="polite">Showing all recorded matches for the selected season.</div>
+    <div id="loggedRangeStats" class="logged-range-stats" style="display:none"></div>
+  </div>
 
   <div id="matchHistory"></div>
 </div>
@@ -10623,10 +10651,59 @@ function updatePlayoffMatchHint(){
 
 /* MATCH LIST */
 
+// A read-only display filter. It never changes stored matches or club statistics.
+let loggedMatchRange = null;
+
+function applyLoggedMatchRange(){
+  const from = el("loggedRangeFrom").value;
+  const to = el("loggedRangeTo").value;
+  if(!from && !to){
+    loggedMatchRange = null;
+    renderMatches();
+    return;
+  }
+  if(from && to && from > to){
+    el("loggedRangeFeedback").textContent = "The From date must be on or before the To date.";
+    return;
+  }
+  loggedMatchRange = {from,to};
+  renderMatches();
+}
+
+function clearLoggedMatchRange(){
+  loggedMatchRange = null;
+  el("loggedRangeFrom").value = "";
+  el("loggedRangeTo").value = "";
+  renderMatches();
+}
+
 function renderMatches(){
 
-  const matches = currentMatches();
+  const allMatches = currentMatches();
+  const matches = loggedMatchRange
+    ? allMatches.filter(match => {
+        const date = String(match.date || "").slice(0,10);
+        return date && (!loggedMatchRange.from || date >= loggedMatchRange.from)
+          && (!loggedMatchRange.to || date <= loggedMatchRange.to);
+      })
+    : allMatches;
   const club = calculateClubStats();
+
+  const feedback = el("loggedRangeFeedback");
+  const rangeStats = el("loggedRangeStats");
+  if(loggedMatchRange){
+    const wins = matches.filter(m => m.result === "W").length;
+    const draws = matches.filter(m => m.result === "D").length;
+    const losses = matches.filter(m => m.result === "L").length;
+    const rate = matches.length ? Math.round(wins * 100 / matches.length) : 0;
+    feedback.textContent = `Showing ${matches.length} of ${allMatches.length} recorded matches in the selected date range (inclusive).`;
+    rangeStats.style.display = "flex";
+    rangeStats.innerHTML = `<span><b>${matches.length}</b> Matches</span><span><b>${wins}</b> Wins</span><span><b>${draws}</b> Draws</span><span><b>${losses}</b> Losses</span><span><b>${rate}%</b> Win rate</span>`;
+  }else{
+    feedback.textContent = "Showing all recorded matches for the selected season.";
+    rangeStats.style.display = "none";
+    rangeStats.innerHTML = "";
+  }
 
   el("matchesPlayed").textContent = club.played;
   el("matchesWins").textContent = club.wins;
@@ -10645,7 +10722,7 @@ function renderMatches(){
     el("matchHistory").innerHTML = `
       <div class="empty-matches">
 
-        <div class="empty-title">No matches recorded</div>
+        <div class="empty-title">${loggedMatchRange && allMatches.length ? "No matches in this date range" : "No matches recorded"}</div>
 
         <div class="empty-text">
           ${
