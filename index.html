@@ -763,6 +763,23 @@ h1{
 .eap-pos-note{font-size:11px;color:#91a0b4;line-height:1.55;margin-top:12px}
 @media(max-width:700px){.eap-pos-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.eap-pos-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+/* EA Positions: match history for the selected recorded position (read-only) */
+.eap-pos-history{margin-top:15px;padding-top:14px;border-top:1px solid #29425f}
+.eap-pos-history-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.eap-pos-history-title{font-size:13px;font-weight:900;color:#dce6f4}
+.eap-pos-history-count{font-size:10px;color:#91a0b4}
+.eap-pos-history-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.eap-pos-history-match{width:100%;min-width:0;border:1px solid #29425f;border-radius:12px;background:#0a1626;color:#fff;padding:12px;text-align:left;cursor:pointer}
+.eap-pos-history-match:focus-visible{outline:2px solid #6f9dff;outline-offset:2px}
+.eap-pos-history-match-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.eap-pos-history-opponent{font-size:12px;font-weight:900;overflow-wrap:anywhere}
+.eap-pos-history-date{font-size:9px;color:#91a0b4;margin-top:4px}
+.eap-pos-history-score{font-size:14px;font-weight:900;white-space:nowrap}
+.eap-pos-history-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;color:#9fb2c9;font-size:10px}
+.eap-pos-history-stats b{color:#fff}
+.eap-pos-history-hint{margin-top:9px;font-size:10px;color:#7892b2}
+@media(max-width:700px){.eap-pos-history-list{grid-template-columns:1fr}}
+
 /* EA MATCH CENTRE — isolated read-only display */
 .ea-centre-status-card{margin:0 16px 14px;padding:16px;border:1px solid #29425f;border-radius:18px;background:#101d2e;display:flex;align-items:center;justify-content:space-between;gap:14px}
 .ea-centre-kicker{color:#6f9dff;font-size:10px;font-weight:900;letter-spacing:1px}
@@ -7854,6 +7871,23 @@ function eaPositionMetrics(items){
 function eaPositionStat(value,label){
   return `<div class="eap-pos-metric"><strong>${eaEscape(String(value))}</strong><span>${eaEscape(label)}</span></div>`;
 }
+function eaPositionMatchHistoryHtml(items,category){
+  const matches=items.map(item=>{
+    const match=item.match||{}, player=item.player||{};
+    const date=match.played_at?new Date(match.played_at).toLocaleString('en-GB',{
+      timeZone:'Europe/London',day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'
+    }):'Date unavailable';
+    const rating=player.rating==null?'—':Number(player.rating).toFixed(1);
+    const score=`${Number(match.olympus_goals||0)}–${Number(match.opponent_goals||0)}`;
+    const matchId=String(match.match_id||'');
+    const action=matchId?`onclick='openEaMatchDetail(${JSON.stringify(matchId)})'`:'';
+    return `<button type="button" class="eap-pos-history-match" ${action} ${matchId?'':'disabled'}>
+      <div class="eap-pos-history-match-top"><div><div class="eap-pos-history-opponent">vs ${eaEscape(match.opponent_name||'Unknown opponent')}</div><div class="eap-pos-history-date">${eaEscape(date)} · ${eaEscape(match.match_type==='playoffMatch'?'Playoffs':'League')}</div></div><div class="eap-pos-history-score">${eaEscape(score)}</div></div>
+      <div class="eap-pos-history-stats"><span>Rating <b>${eaEscape(rating)}</b></span><span>Goals <b>${Number(player.goals||0)}</b></span><span>Assists <b>${Number(player.assists||0)}</b></span></div>
+    </button>`;
+  }).join('');
+  return `<div class="eap-pos-history"><div class="eap-pos-history-head"><div class="eap-pos-history-title">Matches played as ${eaEscape(category)}</div><div class="eap-pos-history-count">${items.length} matches</div></div><div class="eap-pos-history-list">${matches}</div><div class="eap-pos-history-hint">Tap a match to view its full EA match data. Showing imported appearances in the selected date range.</div></div>`;
+}
 function eaPositionPanelHtml(performances){
   const categories=["Forward","Midfielder","Defender","Goalkeeper","Unrecorded"];
   const groups=Object.fromEntries(categories.map(category=>[category,performances.filter(item=>eaPositionGroup(item.player)===category)]));
@@ -7882,7 +7916,7 @@ function eaPositionPanelHtml(performances){
           ${eaPositionStat(per(m.interceptions),"INTERCEPTIONS / MATCH")}
           ${eaPositionStat(m.tackleAttempts?(100*m.tackles/m.tackleAttempts).toFixed(1)+"%":"—","TACKLE SUCCESS")}
           ${eaPositionStat(m.motm,"EA MOTM")}
-        </div></div></div>`;
+        </div>${eaPositionMatchHistoryHtml(groups[category],category)}</div></div>`;
     }).join("")}
     <div class="eap-pos-note">Each appearance is counted under the position EA recorded for that match, not the player's usual squad position. Rates use appearances in that position; percentages use total successful actions divided by total attempts. Smaller samples can produce misleading comparisons. Goalkeeper-specific stats remain excluded.</div>`;
 }
