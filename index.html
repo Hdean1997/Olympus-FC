@@ -6821,11 +6821,11 @@ const PLAYER_PROFILE_IMAGES = {
 };
 
 const FC27_PASSING = {
-  // FC27 passing snapshot from the in-game Club Squad screen — 18 Oct 2026.
+  // FC27 passing snapshot from the in-game Club Squad screen — 20 Oct 2026.
   // Passing only: match-entered appearances, goals, assists, ratings and POTM are untouched.
-  tyrone:{passes:2803,passCompletion:83},
-  baganor:{passes:1766,passCompletion:75},
-  deano:{passes:1967,passCompletion:86},
+  tyrone:{passes:2877,passCompletion:83},
+  baganor:{passes:1791,passCompletion:75},
+  deano:{passes:2022,passCompletion:86},
   kenny:{passes:673,passCompletion:82},
   juanny:{passes:352,passCompletion:84}
 };
@@ -6846,6 +6846,13 @@ const FC26_BASELINE = {
 // These figures are for session reports/records only; FC26_BASELINE already
 // contains the latest cumulative passing totals and must not be added again.
 const MATCHDAY_PASSING = [
+  {
+    season:"FC27",
+    sessionDate:"2026-10-20",
+    // Difference between the 18 Oct and 20 Oct cumulative Club Squad snapshots.
+    // Regular Matchday on 20 Oct 2026.
+    passes:{tyrone:74,baganor:25,kenny:0,deano:55,juanny:0}
+  },
   {
     season:"FC27",
     sessionDate:"2026-10-16",
