@@ -6821,13 +6821,13 @@ const PLAYER_PROFILE_IMAGES = {
 };
 
 const FC27_PASSING = {
-  // FC27 passing snapshot from the in-game Club Squad screen — 20 Oct 2026.
+  // FC27 passing snapshot from the in-game Club Squad screen — 29 Oct 2026.
   // Passing only: match-entered appearances, goals, assists, ratings and POTM are untouched.
-  tyrone:{passes:2877,passCompletion:83},
-  baganor:{passes:1791,passCompletion:75},
-  deano:{passes:2022,passCompletion:86},
-  kenny:{passes:673,passCompletion:82},
-  juanny:{passes:352,passCompletion:84}
+  tyrone:{passes:3738,passCompletion:82},
+  baganor:{passes:2141,passCompletion:75},
+  deano:{passes:2586,passCompletion:85},
+  kenny:{passes:787,passCompletion:83},
+  juanny:{passes:426,passCompletion:84}
 };
 
 const FC26_BASELINE = {
@@ -6846,6 +6846,25 @@ const FC26_BASELINE = {
 // These figures are for session reports/records only; FC26_BASELINE already
 // contains the latest cumulative passing totals and must not be added again.
 const MATCHDAY_PASSING = [
+  {
+    season:"FC27",
+    sessionDate:"2026-10-29",
+    // EA match-level passes: all 16 games, including five after midnight on 30 Oct.
+    passes:{tyrone:468,baganor:184,kenny:0,deano:302,juanny:0}
+  },
+  {
+    season:"FC27",
+    sessionDate:"2026-10-23",
+    // EA match-level passes from 9 of 11 recorded games. Two games are absent
+    // from the EA export, so this is a partial session total, not a full reconstruction.
+    passes:{tyrone:213,baganor:83,kenny:108,deano:140,juanny:71}
+  },
+  {
+    season:"FC27",
+    sessionDate:"2026-10-22",
+    // EA match-level passes: all five recorded games.
+    passes:{tyrone:143,baganor:57,kenny:0,deano:97,juanny:0}
+  },
   {
     season:"FC27",
     sessionDate:"2026-10-20",
