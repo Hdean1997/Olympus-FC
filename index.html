@@ -10456,7 +10456,7 @@ function renderSquad(){
         <div class="number">${player.number}</div>
         <div class="squad-player-copy">
           <div class="player-name">${player.name}</div>
-          <div class="player-meta">${player.position} · ${player.nation}</div>
+          <div class="player-meta">${player.nation}</div>
           ${player.captain ? `<span class="captain">DUAL CAPTAIN</span>` : ""}
           ${player.nonControlled ? `<span class="non-controlled-badge">NON-CONTROLLED</span>` : ""}
         </div>
@@ -10885,7 +10885,7 @@ function renderStatsPage(){
             <div class="stats-player-name">${player.name}</div>
 
             <div class="stats-player-meta">
-              #${player.number} · ${player.position}
+              #${player.number}
             </div>
           </div>
 
